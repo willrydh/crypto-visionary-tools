@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { 
@@ -34,16 +33,13 @@ const Dashboard = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  // Initialize data
   useEffect(() => {
     updateData();
-    // Set interval to update price
     const interval = setInterval(() => {
       const price = getMockBtcPrice();
       setBtcPrice(price);
     }, 5000);
     
-    // Update market sessions every minute
     const sessionsInterval = setInterval(() => {
       setMarketSessions(getMockMarketSessions());
     }, 60000);
@@ -65,7 +61,6 @@ const Dashboard = () => {
   const generateTechnicalAnalysis = () => {
     setIsGenerating(true);
     
-    // Simulate API call delay
     setTimeout(() => {
       if (btcPrice) {
         const newIndicators = getMockTechnicalIndicators();
@@ -113,7 +108,6 @@ const Dashboard = () => {
         </Button>
       </div>
 
-      {/* Price and Market Sessions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="md:col-span-2">
           <CardHeader className="pb-2">
@@ -196,7 +190,6 @@ const Dashboard = () => {
         </Card>
       </div>
 
-      {/* Technical Analysis Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="md:col-span-2">
           <CardHeader className="pb-2">
@@ -300,13 +293,6 @@ const Dashboard = () => {
                           ? 'bg-muted' 
                           : 'bg-muted'
                     }`}
-                    indicatorClassName={
-                      tradeSuggestion.confidence >= 70 
-                        ? 'bg-bullish' 
-                        : tradeSuggestion.confidence >= 50 
-                          ? 'bg-yellow-500' 
-                          : 'bg-bearish'
-                    }
                   />
                 </div>
                 

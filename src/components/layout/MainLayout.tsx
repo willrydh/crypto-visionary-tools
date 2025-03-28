@@ -12,7 +12,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
-        <Sidebar defaultCollapsed={false} collapsible className="border-r border-border">
+        <Sidebar defaultCollapsed={false} collapsible="icon" className="border-r border-border">
           <SidebarHeader className="p-4">
             <div className="flex items-center space-x-2">
               <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
