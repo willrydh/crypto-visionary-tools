@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { 
@@ -121,7 +122,7 @@ const Dashboard = () => {
                     <p className="text-sm text-muted-foreground">BTC/USDT</p>
                     <div className="flex items-baseline gap-2">
                       <h2 className="text-3xl font-bold font-mono">
-                        ${btcPrice.price.toFixed(2)}
+                        ${Math.round(btcPrice.price)}
                       </h2>
                       <Badge 
                         className={btcPrice.change24h >= 0 ? "bg-bullish" : "bg-bearish"}
@@ -130,14 +131,14 @@ const Dashboard = () => {
                           <ArrowUp className="h-3 w-3 mr-1" /> : 
                           <ArrowDown className="h-3 w-3 mr-1" />
                         }
-                        {Math.abs(btcPrice.change24h).toFixed(2)}%
+                        {Math.abs(Math.round(btcPrice.change24h))}%
                       </Badge>
                     </div>
                   </div>
                   <div className="text-right">
                     <p className="text-sm text-muted-foreground">24h Volume</p>
                     <p className="font-mono font-medium">
-                      ${(btcPrice.volume24h / 1000000000).toFixed(2)}B
+                      ${Math.round(btcPrice.volume24h / 1000000000)}B
                     </p>
                   </div>
                 </div>
@@ -263,15 +264,15 @@ const Dashboard = () => {
                 <div className="grid grid-cols-3 gap-3 text-center">
                   <div className="space-y-1">
                     <p className="text-xs text-muted-foreground">Entry</p>
-                    <p className="indicator-value">${tradeSuggestion.entry.toFixed(1)}</p>
+                    <p className="indicator-value">${Math.round(tradeSuggestion.entry)}</p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-xs text-muted-foreground">Stop Loss</p>
-                    <p className="indicator-value text-bearish">${tradeSuggestion.stopLoss.toFixed(1)}</p>
+                    <p className="indicator-value text-bearish">${Math.round(tradeSuggestion.stopLoss)}</p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-xs text-muted-foreground">Take Profit</p>
-                    <p className="indicator-value text-bullish">${tradeSuggestion.takeProfit.toFixed(1)}</p>
+                    <p className="indicator-value text-bullish">${Math.round(tradeSuggestion.takeProfit)}</p>
                   </div>
                 </div>
                 

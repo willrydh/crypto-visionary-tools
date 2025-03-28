@@ -186,18 +186,18 @@ const TradeSuggestionPage = () => {
               <div className="grid grid-cols-3 gap-4 text-center">
                 <div className="p-3 border rounded-lg">
                   <div className="text-sm text-muted-foreground mb-1">Entry Price</div>
-                  <div className="text-xl font-mono font-bold">${tradeSuggestion.entry.toFixed(1)}</div>
+                  <div className="text-xl font-mono font-bold">${Math.round(tradeSuggestion.entry)}</div>
                 </div>
                 <div className="p-3 border rounded-lg">
                   <div className="text-sm text-muted-foreground mb-1">Stop Loss</div>
                   <div className="text-xl font-mono font-bold text-bearish">
-                    ${tradeSuggestion.stopLoss.toFixed(1)}
+                    ${Math.round(tradeSuggestion.stopLoss)}
                   </div>
                 </div>
                 <div className="p-3 border rounded-lg">
                   <div className="text-sm text-muted-foreground mb-1">Take Profit</div>
                   <div className="text-xl font-mono font-bold text-bullish">
-                    ${tradeSuggestion.takeProfit.toFixed(1)}
+                    ${Math.round(tradeSuggestion.takeProfit)}
                   </div>
                 </div>
               </div>
@@ -231,11 +231,11 @@ const TradeSuggestionPage = () => {
                 <div className="space-y-4">
                   <div className="flex justify-between p-3 border rounded-lg bg-muted/50">
                     <span>Potential Profit</span>
-                    <span className="font-bold text-bullish">+{potentialOutcome.profit.toFixed(2)}%</span>
+                    <span className="font-bold text-bullish">+{Math.round(potentialOutcome.profit)}%</span>
                   </div>
                   <div className="flex justify-between p-3 border rounded-lg bg-muted/50">
                     <span>Potential Loss</span>
-                    <span className="font-bold text-bearish">-{potentialOutcome.loss.toFixed(2)}%</span>
+                    <span className="font-bold text-bearish">-{Math.round(potentialOutcome.loss)}%</span>
                   </div>
                 </div>
               </div>
@@ -261,7 +261,7 @@ const TradeSuggestionPage = () => {
             <CardContent className="space-y-4">
               <div className="p-3 border rounded-lg bg-muted/50">
                 <div className="text-sm mb-1">Current Price</div>
-                <div className="text-xl font-mono font-bold">${btcPrice.toFixed(1)}</div>
+                <div className="text-xl font-mono font-bold">${Math.round(btcPrice)}</div>
                 <div className="text-xs text-muted-foreground">
                   Last updated: {new Date().toLocaleTimeString()}
                 </div>
