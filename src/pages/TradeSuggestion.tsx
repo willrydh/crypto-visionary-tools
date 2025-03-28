@@ -17,11 +17,12 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { 
-  getMockTradeSuggestion,
-  getMockBtcPrice,
   TradeSuggestion,
   TechnicalIndicator
 } from '@/utils/mockData';
+import { formatCurrency } from '@/lib/utils';
+import { fetchCurrentPrice, generateTradeSuggestion } from '@/services/priceDataService';
+import PriceChart from '@/components/PriceChart';
 
 const TradeSuggestionPage = () => {
   const [btcPrice, setBtcPrice] = useState(0);
@@ -32,30 +33,42 @@ const TradeSuggestionPage = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const price = getMockBtcPrice();
-    setBtcPrice(price.price);
-    generateSuggestion(price.price, selectedTimeframe);
+    const loadInitialData = async () => {
+      try {
+        const price = await fetchCurrentPrice();
+        setBtcPrice(price.price);
+        generateSuggestion(price.price, selectedTimeframe);
+      } catch (error) {
+        console.error("Error loading initial data:", error);
+      }
+    };
+    
+    loadInitialData();
     
     // Update price periodically
-    const interval = setInterval(() => {
-      const updatedPrice = getMockBtcPrice();
-      setBtcPrice(updatedPrice.price);
-    }, 5000);
+    const interval = setInterval(async () => {
+      try {
+        const updatedPrice = await fetchCurrentPrice();
+        setBtcPrice(updatedPrice.price);
+      } catch (error) {
+        console.error("Error updating price:", error);
+      }
+    }, 10000);
     
     return () => clearInterval(interval);
   }, []);
 
-  const generateSuggestion = (price: number, timeframe: 'scalp' | 'day' | 'swing') => {
+  const generateSuggestion = async (price: number, timeframe: 'scalp' | 'day' | 'swing') => {
     setIsLoading(true);
     
-    // Simulate API call delay
-    setTimeout(() => {
-      const suggestion = getMockTradeSuggestion(price);
-      suggestion.timeframe = timeframe;
-      suggestion.leverage = leverage;
+    try {
+      const suggestion = await generateTradeSuggestion('bitcoin', timeframe, leverage);
       setTradeSuggestion(suggestion);
+    } catch (error) {
+      console.error("Error generating trade suggestion:", error);
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   const handleTimeframeChange = (timeframe: 'scalp' | 'day' | 'swing') => {
@@ -177,27 +190,27 @@ const TradeSuggestionPage = () => {
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="chart-container">
-                <div className="h-full flex items-center justify-center">
-                  <p className="text-muted-foreground">Trade visualization chart placeholder</p>
-                </div>
+              <div className="chart-container h-64">
+                <PriceChart />
               </div>
               
               <div className="grid grid-cols-3 gap-4 text-center">
                 <div className="p-3 border rounded-lg">
                   <div className="text-sm text-muted-foreground mb-1">Entry Price</div>
-                  <div className="text-xl font-mono font-bold">${Math.round(tradeSuggestion.entry)}</div>
+                  <div className="text-xl font-mono font-bold">
+                    {formatCurrency(tradeSuggestion.entry)}
+                  </div>
                 </div>
                 <div className="p-3 border rounded-lg">
                   <div className="text-sm text-muted-foreground mb-1">Stop Loss</div>
                   <div className="text-xl font-mono font-bold text-bearish">
-                    ${Math.round(tradeSuggestion.stopLoss)}
+                    {formatCurrency(tradeSuggestion.stopLoss)}
                   </div>
                 </div>
                 <div className="p-3 border rounded-lg">
                   <div className="text-sm text-muted-foreground mb-1">Take Profit</div>
                   <div className="text-xl font-mono font-bold text-bullish">
-                    ${Math.round(tradeSuggestion.takeProfit)}
+                    {formatCurrency(tradeSuggestion.takeProfit)}
                   </div>
                 </div>
               </div>
@@ -261,7 +274,7 @@ const TradeSuggestionPage = () => {
             <CardContent className="space-y-4">
               <div className="p-3 border rounded-lg bg-muted/50">
                 <div className="text-sm mb-1">Current Price</div>
-                <div className="text-xl font-mono font-bold">${Math.round(btcPrice)}</div>
+                <div className="text-xl font-mono font-bold">{formatCurrency(btcPrice)}</div>
                 <div className="text-xs text-muted-foreground">
                   Last updated: {new Date().toLocaleTimeString()}
                 </div>
@@ -317,7 +330,7 @@ const TradeSuggestionPage = () => {
               </Button>
               
               <div className="text-sm text-center text-muted-foreground mt-4">
-                <p>This is a simulated trading suggestion.</p>
+                <p>This trading signal is based on technical analysis.</p>
                 <p>Always do your own research before trading.</p>
               </div>
             </CardContent>

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { 
@@ -13,9 +14,6 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { 
-  getMockBtcPrice, 
-  getMockTechnicalIndicators, 
-  getMockTradeSuggestion,
   getMockMarketSessions,
   formatTimeUntil,
   CryptoPrice,
@@ -23,6 +21,13 @@ import {
   TradeSuggestion,
   MarketSession
 } from '@/utils/mockData';
+import { formatCurrency, formatInteger } from '@/lib/utils';
+import { 
+  fetchCurrentPrice, 
+  calculateTechnicalIndicators, 
+  generateTradeSuggestion 
+} from '@/services/priceDataService';
+import PriceChart from '@/components/PriceChart';
 
 const Dashboard = () => {
   const { toast } = useToast();
@@ -36,9 +41,10 @@ const Dashboard = () => {
   useEffect(() => {
     updateData();
     const interval = setInterval(() => {
-      const price = getMockBtcPrice();
-      setBtcPrice(price);
-    }, 5000);
+      fetchCurrentPrice().then(price => {
+        setBtcPrice(price);
+      });
+    }, 10000); // Update price every 10 seconds
     
     const sessionsInterval = setInterval(() => {
       setMarketSessions(getMockMarketSessions());
@@ -50,34 +56,55 @@ const Dashboard = () => {
     };
   }, []);
 
-  const updateData = () => {
-    const price = getMockBtcPrice();
-    setBtcPrice(price);
-    setIndicators(getMockTechnicalIndicators());
-    setMarketSessions(getMockMarketSessions());
-    setLastUpdated(new Date());
+  const updateData = async () => {
+    try {
+      const price = await fetchCurrentPrice();
+      setBtcPrice(price);
+      
+      const techs = await calculateTechnicalIndicators();
+      setIndicators(techs);
+      
+      setMarketSessions(getMockMarketSessions());
+      setLastUpdated(new Date());
+      
+    } catch (error) {
+      console.error("Error updating data:", error);
+      toast({
+        title: "Update Failed",
+        description: "Could not update market data. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
-  const generateTechnicalAnalysis = () => {
+  const generateTechnicalAnalysis = async () => {
     setIsGenerating(true);
     
-    setTimeout(() => {
-      if (btcPrice) {
-        const newIndicators = getMockTechnicalIndicators();
-        const suggestion = getMockTradeSuggestion(btcPrice.price);
-        
-        setIndicators(newIndicators);
-        setTradeSuggestion(suggestion);
-        setLastUpdated(new Date());
-        
-        toast({
-          title: "Analysis Complete",
-          description: "Technical analysis has been generated successfully.",
-        });
-      }
+    try {
+      // Fetch updated indicators
+      const newIndicators = await calculateTechnicalIndicators();
+      setIndicators(newIndicators);
       
+      // Generate trade suggestion
+      const suggestion = await generateTradeSuggestion('bitcoin', 'day', 5);
+      setTradeSuggestion(suggestion);
+      
+      setLastUpdated(new Date());
+      
+      toast({
+        title: "Analysis Complete",
+        description: "Technical analysis has been generated successfully.",
+      });
+    } catch (error) {
+      console.error("Error generating analysis:", error);
+      toast({
+        title: "Analysis Failed",
+        description: "Could not generate technical analysis. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
       setIsGenerating(false);
-    }, 1500);
+    }
   };
 
   const getConfidenceColor = (confidence: number) => {
@@ -121,7 +148,7 @@ const Dashboard = () => {
                     <p className="text-sm text-muted-foreground">BTC/USDT</p>
                     <div className="flex items-baseline gap-2">
                       <h2 className="text-3xl font-bold font-mono">
-                        ${btcPrice.price.toLocaleString(undefined, {maximumFractionDigits: 0})}
+                        {formatCurrency(btcPrice.price)}
                       </h2>
                       <Badge 
                         className={btcPrice.change24h >= 0 ? "bg-bullish" : "bg-bearish"}
@@ -142,9 +169,7 @@ const Dashboard = () => {
                   </div>
                 </div>
                 
-                <div className="h-24 bg-muted rounded flex items-center justify-center">
-                  <p className="text-muted-foreground text-sm">Price chart placeholder</p>
-                </div>
+                <PriceChart />
                 
                 <div className="text-xs text-muted-foreground">
                   Last updated: {btcPrice.lastUpdated.toLocaleTimeString()}
