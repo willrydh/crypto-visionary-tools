@@ -4,32 +4,85 @@ import { CryptoPrice, TechnicalIndicator } from '@/utils/mockData';
 // API endpoint constants
 const COINBASE_API_URL = 'https://api.coinbase.com/v2';
 const COINGECKO_API_URL = 'https://api.coingecko.com/api/v3';
+const TAAPI_IO_URL = 'https://api.taapi.io';
+const TAAPI_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'; // Replace with actual key when available
 
 // Fetch current price data from Coinbase API
 export async function fetchCurrentPrice(symbol: string = 'BTC-USD'): Promise<CryptoPrice> {
   try {
     // Get spot price
     const spotResponse = await fetch(`${COINBASE_API_URL}/prices/${symbol}/spot`);
+    
+    if (!spotResponse.ok) {
+      throw new Error(`Coinbase API error: ${spotResponse.status}`);
+    }
+    
     const spotData = await spotResponse.json();
-    
-    // Get 24h stats
-    const statsResponse = await fetch(`${COINBASE_API_URL}/products/${symbol}/stats`);
-    const statsData = await statsResponse.json();
-    
-    // Calculate change percentage
     const currentPrice = parseFloat(spotData.data.amount);
-    const openPrice = parseFloat(statsData.data.open);
-    const change24h = ((currentPrice - openPrice) / openPrice) * 100;
     
-    // Format response to match our CryptoPrice interface
-    return {
-      symbol: symbol.replace('-', '/'),
-      price: currentPrice,
-      change24h: change24h,
-      volume24h: parseFloat(statsData.data.volume) * currentPrice,
-      marketCap: 0, // Not provided by this API
-      lastUpdated: new Date()
-    };
+    // Try to get 24h stats, but fallback if it fails
+    try {
+      const statsResponse = await fetch(`${COINBASE_API_URL}/products/${symbol}/stats`);
+      
+      if (statsResponse.ok) {
+        const statsData = await statsResponse.json();
+        
+        // Calculate change percentage
+        const openPrice = parseFloat(statsData.data.open);
+        const change24h = ((currentPrice - openPrice) / openPrice) * 100;
+        
+        // Format response to match our CryptoPrice interface
+        return {
+          symbol: symbol.replace('-', '/'),
+          price: currentPrice,
+          change24h: change24h,
+          volume24h: parseFloat(statsData.data.volume) * currentPrice,
+          marketCap: 0, // Not provided by this API
+          lastUpdated: new Date()
+        };
+      } else {
+        throw new Error('Stats API failed');
+      }
+    } catch (statsError) {
+      console.error('Error fetching stats data:', statsError);
+      
+      // Fallback to CoinGecko for additional data
+      try {
+        const coinId = symbol.toLowerCase().startsWith('btc') ? 'bitcoin' : 
+                      symbol.toLowerCase().startsWith('eth') ? 'ethereum' : 'bitcoin';
+        
+        const geckoResponse = await fetch(
+          `${COINGECKO_API_URL}/simple/price?ids=${coinId}&vs_currencies=usd&include_24hr_vol=true&include_24hr_change=true&include_market_cap=true`
+        );
+        
+        if (geckoResponse.ok) {
+          const geckoData = await geckoResponse.json();
+          
+          return {
+            symbol: symbol.replace('-', '/'),
+            price: currentPrice, // Use Coinbase price as it's more real-time
+            change24h: geckoData[coinId].usd_24h_change || 0,
+            volume24h: geckoData[coinId].usd_24h_vol || 0,
+            marketCap: geckoData[coinId].usd_market_cap || 0,
+            lastUpdated: new Date()
+          };
+        } else {
+          throw new Error('CoinGecko API failed');
+        }
+      } catch (geckoError) {
+        console.error('Error fetching CoinGecko data:', geckoError);
+        
+        // Return with minimal data
+        return {
+          symbol: symbol.replace('-', '/'),
+          price: currentPrice,
+          change24h: 0, // No data available
+          volume24h: 0, // No data available
+          marketCap: 0, // No data available
+          lastUpdated: new Date()
+        };
+      }
+    }
   } catch (error) {
     console.error('Error fetching price data:', error);
     // Return mock data as fallback
@@ -43,12 +96,25 @@ export async function fetchCurrentPrice(symbol: string = 'BTC-USD'): Promise<Cry
 export async function fetchHistoricalPrices(
   coinId: string = 'bitcoin',
   days: number = 7,
-  interval: string = 'hourly'
+  interval?: string
 ): Promise<{ timestamps: number[], prices: number[] }> {
   try {
-    const response = await fetch(
-      `${COINGECKO_API_URL}/coins/${coinId}/market_chart?vs_currency=usd&days=${days}&interval=${interval}`
-    );
+    // Build the URL based on parameters
+    let url = `${COINGECKO_API_URL}/coins/${coinId}/market_chart?vs_currency=usd&days=${days}`;
+    
+    // Only add interval if specified (hourly is restricted to Enterprise plan)
+    if (interval) {
+      url += `&interval=${interval}`;
+    }
+    
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('CoinGecko API error:', errorData);
+      throw new Error(`CoinGecko API error: ${response.status}`);
+    }
+    
     const data = await response.json();
     
     // Extract timestamps and prices from the response
@@ -72,7 +138,12 @@ export async function calculateTechnicalIndicators(
   days: number = 14
 ): Promise<TechnicalIndicator[]> {
   try {
-    // Fetch historical data to calculate indicators
+    // In a production app, we would fetch data from Taapi.io here
+    // For example:
+    // const rsiResponse = await fetch(`${TAAPI_IO_URL}/rsi?secret=${TAAPI_API_KEY}&exchange=binance&symbol=BTC/USDT&interval=1h&optInTimePeriod=14`);
+    // const rsiData = await rsiResponse.json();
+    
+    // Fetch historical data to calculate indicators (as a fallback)
     const { prices } = await fetchHistoricalPrices(coinId, days, 'daily');
     
     // Calculate Simple Moving Average (SMA)

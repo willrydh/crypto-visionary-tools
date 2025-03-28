@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, AlertTriangle } from 'lucide-react';
 import { fetchHistoricalPrices } from '@/services/priceDataService';
 import { formatCurrency } from '@/lib/utils';
 import {
@@ -32,14 +32,20 @@ const PriceChart: React.FC<PriceChartProps> = ({
   const [chartData, setChartData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [timeframe, setTimeframe] = useState<string>('1d');
+  const [error, setError] = useState<string | null>(null);
   
   const loadChartData = async (days: number = 1) => {
     setIsLoading(true);
+    setError(null);
     try {
+      // For 1d, we should use different parameters due to CoinGecko API limitations
+      // (hourly data is for Enterprise plan only)
+      const interval = days === 1 ? undefined : days > 1 ? 'daily' : 'hourly';
+      
       const { timestamps, prices } = await fetchHistoricalPrices(
         coinId, 
-        days, 
-        days > 1 ? 'daily' : 'hourly'
+        days,
+        interval
       );
       
       // Format data for chart
@@ -52,6 +58,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
       setChartData(data);
     } catch (error) {
       console.error('Error loading chart data:', error);
+      setError('Failed to load price data. Please try again later.');
     } finally {
       setIsLoading(false);
     }
@@ -97,6 +104,22 @@ const PriceChart: React.FC<PriceChartProps> = ({
         {isLoading ? (
           <div className="h-64 flex items-center justify-center">
             <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
+          </div>
+        ) : error ? (
+          <div className="h-64 flex flex-col items-center justify-center text-destructive">
+            <AlertTriangle className="h-8 w-8 mb-2" />
+            <p className="text-sm">{error}</p>
+            <button 
+              onClick={() => {
+                const days = timeframe === '1d' ? 1 : 
+                          timeframe === '7d' ? 7 : 
+                          timeframe === '30d' ? 30 : 90;
+                loadChartData(days);
+              }} 
+              className="mt-4 text-xs underline text-muted-foreground"
+            >
+              Try again
+            </button>
           </div>
         ) : (
           <div className="h-64">
