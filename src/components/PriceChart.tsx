@@ -103,7 +103,6 @@ const PriceChart: React.FC<PriceChartProps> = ({
             <ChartContainer
               config={{
                 price: {
-                  color: 'hsl(var(--primary))',
                   theme: {
                     light: 'hsl(var(--primary))',
                     dark: 'hsl(var(--primary))'
