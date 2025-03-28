@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { 
@@ -122,7 +121,7 @@ const Dashboard = () => {
                     <p className="text-sm text-muted-foreground">BTC/USDT</p>
                     <div className="flex items-baseline gap-2">
                       <h2 className="text-3xl font-bold font-mono">
-                        ${Math.round(btcPrice.price)}
+                        ${btcPrice.price.toLocaleString(undefined, {maximumFractionDigits: 0})}
                       </h2>
                       <Badge 
                         className={btcPrice.change24h >= 0 ? "bg-bullish" : "bg-bearish"}
