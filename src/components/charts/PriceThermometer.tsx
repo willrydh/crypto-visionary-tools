@@ -19,25 +19,27 @@ export const PriceThermometer: React.FC<PriceThermometerProps> = ({ symbol = 'BT
   
   const [isLoading, setIsLoading] = useState(true);
   
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const highLowData = await fetchHighLowData(symbol);
-        setData(highLowData);
-      } catch (error) {
-        console.error('Error fetching high-low data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    fetchData();
-    
-    // Update every minute
-    const interval = setInterval(fetchData, 60000);
-    return () => clearInterval(interval);
-  }, [symbol]);
+useEffect(() => {
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const highLowData = await fetchHighLowData(symbol);
+      const price = await fetchCurrentPrice(symbol); // Lägg till detta om du vill inkludera live price separat
+      setData({ ...highLowData, currentPrice: price });
+    } catch (error) {
+      console.error('Error fetching high-low data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  fetchData();
+
+  // 💡 Ändrat till 5 minuter (300 000 ms)
+  const interval = setInterval(fetchData, 300000);
+  return () => clearInterval(interval);
+}, [symbol]);
+
   
   if (!data || isLoading) {
     return (
