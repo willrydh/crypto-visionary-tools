@@ -14,28 +14,30 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import Logo from '@/assets/logo.svg';
+
 
 const Welcome = () => {
   // Feature items to display
   const features = [
     {
-      title: "Live Market Analysis",
-      description: "Get real-time technical analysis with confidence scores",
+      title: "Live Deep Market Analysis",
+      description: "Get real-time market, macro and technical analysis with AI-powered signals",
       icon: <LineChart className="h-5 w-5 text-primary" />
     },
     {
-      title: "AI-Powered Trade Suggestions",
-      description: "Receive smart trade setups with entry, stop loss, and target levels",
+      title: "AI-Powered Trade Signals",
+      description: "Receive smart trade setups based on scalping, daytrading and over night",
       icon: <ArrowUpRight className="h-5 w-5 text-primary" />
     },
     {
-      title: "Economic Calendar",
-      description: "Stay informed with upcoming market-moving events",
+      title: "Live Economic Events",
+      description: "Stay informed with live and upcoming market-moving events",
       icon: <BellRing className="h-5 w-5 text-primary" />
     },
     {
-      title: "Support & Resistance Finder",
-      description: "Discover key price levels based on market structure",
+      title: "The Perfect AI Trading Tool",
+      description: "Discover our free version and sign up for ProfitPilot AI Pro",
       icon: <CandlestickChart className="h-5 w-5 text-primary" />
     }
   ];
@@ -57,12 +59,12 @@ const Welcome = () => {
       <div className="w-full max-w-md space-y-8 text-center animate-fade-in">
         {/* Logo and title */}
         <div className="space-y-2">
-          <div className="inline-flex items-center justify-center h-20 w-20 rounded-full bg-primary/10 text-primary mb-4">
-            <Sparkles className="h-10 w-10" />
-          </div>
+       <div className="inline-flex items-center justify-center h-20 w-20 rounded-full bg-primary/10 text-primary mb-4 overflow-hidden">
+  <img src={Logo} alt="Logo" className="h-12 w-12 object-contain" />
+      </div>
           <h1 className="text-4xl font-bold tracking-tight">ProfitPilot AI</h1>
           <p className="text-xl text-muted-foreground">
-            Trade Smarter. React Faster.
+            The best AI trading companion of 2025*
           </p>
         </div>
         
