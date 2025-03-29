@@ -66,66 +66,9 @@ const MainNavigation: React.FC = () => {
         
         <div className="p-4 border-t border-border">
           <div className="text-xs text-muted-foreground text-center">
-            © 2023 ProfitPilot AI
+            © 2025 Tradingbot - ProfitPilot AI by Zentra LLC
           </div>
         </div>
       </div>
-      
-      {/* Mobile Navigation - Sheet/drawer that opens on smaller screens */}
-      <div className="md:hidden">
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="absolute top-4 left-4 z-50">
-              <Menu className="h-5 w-5" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="p-0">
-            <div className="flex flex-col h-full">
-              <div className="p-6 border-b border-border">
-                <div className="flex items-center space-x-2">
-                  <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-                    <span className="text-primary-foreground font-bold">P</span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="font-bold text-lg">ProfitPilot AI</span>
-                    <span className="text-xs text-muted-foreground">v1.0.0</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="flex-1 overflow-auto py-4">
-                <nav className="space-y-1 px-3">
-                  {navItems.map((item) => (
-                    <NavLink
-                      key={item.path}
-                      to={item.path}
-                      className={({ isActive }) => 
-                        cn(
-                          "flex items-center gap-3 px-3 py-2 rounded-md transition-colors",
-                          isActive 
-                            ? "bg-primary/10 text-primary font-medium" 
-                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                        )
-                      }
-                    >
-                      {item.icon}
-                      <span>{item.label}</span>
-                    </NavLink>
-                  ))}
-                </nav>
-              </div>
-              
-              <div className="p-4 border-t border-border">
-                <div className="text-xs text-muted-foreground text-center">
-                  © 2023 ProfitPilot AI
-                </div>
-              </div>
-            </div>
-          </SheetContent>
-        </Sheet>
-      </div>
-    </>
-  );
-};
-
+        
 export default MainNavigation;
