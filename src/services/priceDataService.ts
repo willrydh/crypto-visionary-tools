@@ -39,9 +39,8 @@ export const fetchCurrentPrice = async (symbol: string = 'BTC/USDT'): Promise<{
 };
 
 const getMockCurrentPrice = () => {
-  // Consistent base price to avoid large jumps
   const basePrice = 83300;
-  const variation = (Math.random() * 400) - 200; // ±200 variation
+  const variation = (Math.random() * 400) - 200;
   
   return {
     price: basePrice + variation,
@@ -51,7 +50,6 @@ const getMockCurrentPrice = () => {
   };
 };
 
-// Store the last generated candles to ensure consistency
 let lastGeneratedCandles: { [key: string]: PriceCandle[] } = {};
 
 export const fetchHistoricalPrices = async (
@@ -60,31 +58,24 @@ export const fetchHistoricalPrices = async (
   limit: number = 100
 ): Promise<PriceCandle[]> => {
   try {
-    // Try to fetch from API if available
-    // For now, we'll use mock data that doesn't have large jumps
-    
     const cacheKey = `${symbol}_${timeframe}_${limit}`;
     
-    // If we've already generated data for this configuration, use it as a base and extend it
     if (lastGeneratedCandles[cacheKey]) {
       const existingCandles = lastGeneratedCandles[cacheKey];
       const lastCandle = existingCandles[existingCandles.length - 1];
       const now = Date.now();
       const millisecondsPerInterval = getMillisecondsForTimeframe(timeframe);
       
-      // If enough time has passed for a new candle
       if (now - lastCandle.timestamp > millisecondsPerInterval) {
-        // Generate new candles from the last one
         const newCandles = generateConsistentCandles(
           lastCandle,
           timeframe,
           Math.min(5, Math.floor((now - lastCandle.timestamp) / millisecondsPerInterval))
         );
         
-        // Update the cached data with the new candles
         lastGeneratedCandles[cacheKey] = [
-          ...existingCandles.slice(newCandles.length * -1), // Remove oldest candles
-          ...newCandles // Add new candles
+          ...existingCandles.slice(newCandles.length * -1),
+          ...newCandles
         ];
         
         return lastGeneratedCandles[cacheKey];
@@ -93,13 +84,11 @@ export const fetchHistoricalPrices = async (
       return existingCandles;
     }
     
-    // Generate fresh data if none exists
     lastGeneratedCandles[cacheKey] = generateSmoothCandles(timeframe, limit);
     return lastGeneratedCandles[cacheKey];
   } catch (error) {
     console.error('Error fetching historical prices:', error);
     
-    // Generate consistent mock data on error
     const cacheKey = `${symbol}_${timeframe}_${limit}`;
     if (!lastGeneratedCandles[cacheKey]) {
       lastGeneratedCandles[cacheKey] = generateSmoothCandles(timeframe, limit);
@@ -114,36 +103,29 @@ const generateSmoothCandles = (timeframe: Timeframe, limit: number): PriceCandle
   const now = Date.now();
   const millisecondsPerInterval = getMillisecondsForTimeframe(timeframe);
   
-  // Generate the first candle
   let currentPrice = basePrice;
   let lastClose = currentPrice;
   
   for (let i = 0; i < limit; i++) {
-    // Small random movement for realistic price action, but not huge jumps
     const volatilityFactor = getVolatilityForTimeframe(timeframe);
     const movement = (Math.random() * 2 - 1) * basePrice * volatilityFactor;
     
-    // Ensure some continuity with the previous candle
     currentPrice = lastClose + movement;
     
-    // Keep price within reasonable bounds
     currentPrice = Math.max(currentPrice, basePrice * 0.9);
     currentPrice = Math.min(currentPrice, basePrice * 1.1);
     
-    const open = lastClose; // Open at the previous close
+    const open = lastClose;
     const close = currentPrice;
     
-    // Generate realistic high and low
     const candleRange = Math.abs(close - open) * (1 + Math.random());
     const high = Math.max(open, close) + (Math.random() * candleRange * 0.5);
     const low = Math.min(open, close) - (Math.random() * candleRange * 0.5);
     
-    // Generate volume with some correlation to price movement
     const volumeBase = 100000000 + Math.random() * 50000000;
     const volumeMultiplier = 1 + (Math.abs(close - open) / open);
     const volume = volumeBase * volumeMultiplier;
     
-    // Calculate timestamp for this candle
     const timestamp = now - (millisecondsPerInterval * (limit - i - 1));
     
     candles.push({
@@ -161,7 +143,6 @@ const generateSmoothCandles = (timeframe: Timeframe, limit: number): PriceCandle
   return candles;
 };
 
-// Generate new candles that continue from the last known candle
 const generateConsistentCandles = (
   lastCandle: PriceCandle,
   timeframe: Timeframe,
@@ -172,25 +153,20 @@ const generateConsistentCandles = (
   let lastClose = lastCandle.close;
   
   for (let i = 0; i < count; i++) {
-    // Small random movement for realistic price action
     const volatilityFactor = getVolatilityForTimeframe(timeframe);
     const movement = (Math.random() * 2 - 1) * lastClose * volatilityFactor;
     
-    // Ensure some continuity with the previous candle
     const open = lastClose;
     const close = lastClose + movement;
     
-    // Generate realistic high and low
     const candleRange = Math.abs(close - open) * (1 + Math.random());
     const high = Math.max(open, close) + (Math.random() * candleRange * 0.5);
     const low = Math.min(open, close) - (Math.random() * candleRange * 0.5);
     
-    // Generate volume with some correlation to price movement
     const volumeBase = 100000000 + Math.random() * 50000000;
     const volumeMultiplier = 1 + (Math.abs(close - open) / open);
     const volume = volumeBase * volumeMultiplier;
     
-    // Calculate timestamp for this candle
     const timestamp = lastCandle.timestamp + (millisecondsPerInterval * (i + 1));
     
     candles.push({
@@ -231,25 +207,24 @@ const getMillisecondsForTimeframe = (timeframe: Timeframe): number => {
   }
 };
 
-// Return appropriate volatility factors for different timeframes
 const getVolatilityForTimeframe = (timeframe: Timeframe): number => {
   switch (timeframe) {
     case '1m':
-      return 0.0005; // 0.05%
+      return 0.0005;
     case '5m':
-      return 0.001; // 0.1%
+      return 0.001;
     case '15m':
-      return 0.0015; // 0.15%
+      return 0.0015;
     case '30m':
-      return 0.002; // 0.2%
+      return 0.002;
     case '1h':
-      return 0.003; // 0.3%
+      return 0.003;
     case '4h':
-      return 0.005; // 0.5%
+      return 0.005;
     case '1d':
-      return 0.01; // 1%
+      return 0.01;
     case '1w':
-      return 0.02; // 2%
+      return 0.02;
     default:
       return 0.003;
   }
@@ -383,11 +358,9 @@ export interface TradeSuggestion {
   entry?: number;
   probability?: number;
   leverage?: number;
+  summary?: string;
 }
 
-/**
- * Generates a mock trade suggestion based on current market conditions
- */
 export const generateTradeSuggestion = async (
   symbol: string = 'BTC/USDT',
   tradingStyle: 'scalp' | 'day' | 'swing' = 'day'
@@ -403,16 +376,16 @@ export const generateTradeSuggestion = async (
     
     switch (tradingStyle) {
       case 'scalp':
-        stopPercentage = 0.005; // 0.5%
-        profitPercentage = 0.01; // 1% 
+        stopPercentage = 0.005;
+        profitPercentage = 0.01;
         break;
       case 'day': 
-        stopPercentage = 0.01; // 1%
-        profitPercentage = 0.03; // 3%
+        stopPercentage = 0.01;
+        profitPercentage = 0.03;
         break;
       case 'swing':
-        stopPercentage = 0.03; // 3%
-        profitPercentage = 0.09; // 9%
+        stopPercentage = 0.03;
+        profitPercentage = 0.09;
         break;
     }
     
@@ -425,7 +398,7 @@ export const generateTradeSuggestion = async (
       : price * (1 - profitPercentage);
     
     const riskRewardRatio = profitPercentage / stopPercentage;
-    const confidence = 50 + Math.floor(Math.random() * 40); // 50-90% confidence
+    const confidence = 50 + Math.floor(Math.random() * 40);
     
     let reasoning = '';
     if (type === 'buy') {
@@ -464,7 +437,8 @@ export const generateTradeSuggestion = async (
       direction: type === 'buy' ? 'long' : (type === 'sell' ? 'short' : 'neutral'),
       entry: entryPrice,
       probability: confidence,
-      leverage: tradingStyle === 'scalp' ? 10 : (tradingStyle === 'day' ? 5 : 3)
+      leverage: tradingStyle === 'scalp' ? 10 : (tradingStyle === 'day' ? 5 : 3),
+      summary: reasoning
     };
   } catch (error) {
     console.error('Error generating trade suggestion:', error);
@@ -482,7 +456,8 @@ export const generateTradeSuggestion = async (
       direction: 'neutral',
       entry: 83300,
       probability: 60,
-      leverage: 5
+      leverage: 5,
+      summary: 'Error generating analysis. Waiting is recommended.'
     };
   }
 };
