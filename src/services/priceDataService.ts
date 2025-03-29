@@ -18,7 +18,8 @@ export interface HighLowData {
   source: string;
 }
 
-const API_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHVlIjoiNjdlNmVhNGM4MDZmZjE2NTFlNmNhYjE0IiwiaWF0IjoxNzQzMTg2NTA4LCJleHAiOjMzMjQ3NjUwNTA4fQ.AjwNZgOaSiqb4hfjGGSUSoMLIfdg7kBnFFPqH-reMZM";
+const API_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHVlIjoiNjdlNmVhNGM4MDZmZjE2NTFlNmNhYjE0IiwiaWF0IjoxNzQzMTg2NTA4LCJleHAiOjMzMjQ3NjUwNTA4fQ.AjwNZgOaSiqb4hfjGGSUSoMLIfdg7kBnFFPqH-reMZM
+"; // Lägg in din fullständiga token här
 const BASE_CANDLES_URL = "https://api.taapi.io/candles";
 const BASE_PRICE_URL = "https://api.taapi.io/price";
 
@@ -77,7 +78,7 @@ export async function fetchCurrentPrice(symbol: string = "BTC/USDT"): Promise<nu
   const exchange = "binance";
   const pair = symbol.toUpperCase().includes("ETH") ? "ETH/USDT" : "BTC/USDT";
 
-  const url = `${BASE_PRICE_URL}?secret=${API_TOKEN}&exchange=${exchange}&symbol=${pair}&interval=1m`;
+  const url = `${BASE_PRICE_URL}?secret=${API_TOKEN}&exchange=${exchange}&symbol=${pair}`;
 
   try {
     const res = await fetch(url);
