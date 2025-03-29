@@ -1,3 +1,5 @@
+// services/priceDataService.ts
+
 export interface CandleData {
   timestamp: number;
   open: number;
@@ -18,48 +20,39 @@ export interface HighLowData {
   source: string;
 }
 
-const API_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHVlIjoiNjdlNmVhNGM4MDZmZjE2NTFlNmNhYjE0IiwiaWF0IjoxNzQzMTg2NTA4LCJleHAiOjMzMjQ3NjUwNTA4fQ.AjwNZgOaSiqb4hfjGGSUSoMLIfdg7kBnFFPqH-reMZM";
-
-const BASE_CANDLES_URL = "https://api.taapi.io/candles";
-const BASE_PRICE_URL = "https://api.taapi.io/price";
-
-const timeframeMap: Record<string, string> = {
-  "1d": "1d",
-  "7d": "4h",
-  "30d": "1d",
-  "90d": "1d"
-};
+const API_KEY = "YOUR_TWELVEDATA_API_KEY"; // Replace with env variable later
+const BASE_URL = "https://api.twelvedata.com";
 
 export async function fetchHistoricalPrices(
   symbol: string = "BTC/USDT",
-  timeframe: "1d" | "7d" | "30d" | "90d" = "1d"
+  interval: string = "1h",
+  outputsize: number = 100
 ): Promise<CandleData[]> {
-  const exchange = "binance";
-  const pair = symbol.toUpperCase().includes("ETH") ? "ETH/USDT" : "BTC/USDT";
-  const interval = timeframeMap[timeframe] || "1d";
+  const now = new Date().toISOString();
+  const [base, quote] = symbol.split("/");
 
-  const url = `${BASE_CANDLES_URL}?secret=${API_TOKEN}&exchange=${exchange}&symbol=${pair}&interval=${interval}&limit=100`;
+  const url = `${BASE_URL}/time_series?symbol=${base}/${quote}&interval=${interval}&outputsize=${outputsize}&apikey=${API_KEY}`;
 
   try {
     const res = await fetch(url);
-    const json = await res.json();
-    const now = new Date().toISOString();
+    const data = await res.json();
 
-    return (json.value || []).map((candle: any) => ({
-      timestamp: candle.timestamp * 1000,
-      open: candle.open,
-      high: candle.high,
-      low: candle.low,
-      close: candle.close,
-      volume: candle.volume ?? 0,
-      source: "TAAPI.io",
+    if (!data || !data.values) throw new Error("No data returned");
+
+    return data.values.map((item: any) => ({
+      timestamp: new Date(item.datetime).getTime(),
+      open: parseFloat(item.open),
+      high: parseFloat(item.high),
+      low: parseFloat(item.low),
+      close: parseFloat(item.close),
+      volume: parseFloat(item.volume ?? 0),
+      source: "TwelveData",
       fetchedAt: now
     }));
-  } catch (error) {
-    console.error("TAAPI.io error – using mock data.", error);
-    const now = Date.now();
+  } catch (err) {
+    console.error("TwelveData fetch error, returning mock data", err);
     return Array.from({ length: 24 }, (_, i) => {
-      const ts = now - i * 3600000;
+      const ts = Date.now() - i * 3600000;
       return {
         timestamp: ts,
         open: 25000 + Math.random() * 500,
@@ -74,63 +67,41 @@ export async function fetchHistoricalPrices(
   }
 }
 
-export async function fetchCurrentPrice(symbol: string = "BTC/USDT"): Promise<number> {
-  const exchange = "binance";
-  const pair = symbol.toUpperCase().includes("ETH") ? "ETH/USDT" : "BTC/USDT";
+export async function fetchHighLowData(symbol: string = "BTC/USDT"): Promise<HighLowData> {
+  const now = new Date().toISOString();
+  const candles = await fetchHistoricalPrices(symbol, "1h", 168); // 1 week of hourly data
 
-  const url = `${BASE_PRICE_URL}?secret=${API_TOKEN}&exchange=${exchange}&symbol=${pair}`;
+  const dailyCandles = candles.slice(-24);
+  const weeklyCandles = candles;
+
+  const dailyHigh = Math.max(...dailyCandles.map((c) => c.high));
+  const dailyLow = Math.min(...dailyCandles.map((c) => c.low));
+  const weeklyHigh = Math.max(...weeklyCandles.map((c) => c.high));
+  const weeklyLow = Math.min(...weeklyCandles.map((c) => c.low));
+
+  return {
+    dailyHigh,
+    dailyLow,
+    weeklyHigh,
+    weeklyLow,
+    fetchedAt: now,
+    source: "TwelveData"
+  };
+}
+
+export async function fetchCurrentPrice(symbol: string = "BTC/USDT"): Promise<number> {
+  const [base, quote] = symbol.split("/");
+  const url = `${BASE_URL}/price?symbol=${base}/${quote}&apikey=${API_KEY}`;
 
   try {
     const res = await fetch(url);
     const data = await res.json();
 
-    if (typeof data.value === "number") {
-      return data.value;
-    } else {
-      throw new Error("Invalid response from TAAPI.io");
-    }
+    if (data && data.price) return parseFloat(data.price);
+
+    throw new Error("Invalid price data");
   } catch (error) {
-    console.error("TAAPI.io price fetch failed – returning mock value.", error);
+    console.error("TwelveData price fetch failed, returning mock", error);
     return 25000 + Math.random() * 1000;
-  }
-}
-
-export async function fetchHighLowData(symbol: string = "BTC/USDT"): Promise<HighLowData> {
-  const exchange = "binance";
-  const pair = symbol.toUpperCase().includes("ETH") ? "ETH/USDT" : "BTC/USDT";
-  const now = new Date().toISOString();
-
-  try {
-    const [daily, weekly] = await Promise.all([
-      fetch(`${BASE_CANDLES_URL}?secret=${API_TOKEN}&exchange=${exchange}&symbol=${pair}&interval=1h&limit=24`),
-      fetch(`${BASE_CANDLES_URL}?secret=${API_TOKEN}&exchange=${exchange}&symbol=${pair}&interval=4h&limit=42`)
-    ]);
-
-    const dailyData = (await daily.json()).value || [];
-    const weeklyData = (await weekly.json()).value || [];
-
-    const dailyHigh = Math.max(...dailyData.map((c: any) => c.high));
-    const dailyLow = Math.min(...dailyData.map((c: any) => c.low));
-    const weeklyHigh = Math.max(...weeklyData.map((c: any) => c.high));
-    const weeklyLow = Math.min(...weeklyData.map((c: any) => c.low));
-
-    return {
-      dailyHigh,
-      dailyLow,
-      weeklyHigh,
-      weeklyLow,
-      fetchedAt: now,
-      source: "TAAPI.io"
-    };
-  } catch (err) {
-    console.error("Failed to fetch high/low data. Returning mock.", err);
-    return {
-      dailyHigh: 27500,
-      dailyLow: 24500,
-      weeklyHigh: 28500,
-      weeklyLow: 24000,
-      fetchedAt: now,
-      source: "MockData"
-    };
   }
 }
