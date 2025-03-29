@@ -3,6 +3,7 @@ import React from 'react';
 import { Braces } from 'lucide-react';
 import { useTradingMode } from '@/hooks/useTradingMode';
 import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
+import Logo from "@/assets/logo.svg";
 
 const TopHeader: React.FC = () => {
   const { tradingMode } = useTradingMode();
@@ -12,7 +13,7 @@ const TopHeader: React.FC = () => {
       <div className="flex justify-between items-center w-full">
         <div className="flex items-center space-x-3">
           <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-            <Braces className="h-5 w-5 text-primary-foreground" />
+            <img src={Logo} alt="Logo" className="h-5 w-5" />
           </div>
           <div>
             <h1 className="font-bold text-lg">ProfitPilot AI</h1>
