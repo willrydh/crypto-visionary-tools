@@ -1,5 +1,3 @@
-import axios from "axios";
-
 export interface CandleData {
   timestamp: number;
   open: number;
@@ -11,8 +9,7 @@ export interface CandleData {
   fetchedAt: string;
 }
 
-const API_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHVlIjoiNjdlNmVhNGM4MDZmZjE2NTFlNmNhYjE0IiwiaWF0IjoxNzQzMTg2NTA4LCJleHAiOjMzMjQ3NjUwNTA4fQ.AjwNZgOaSiqb4hfjGGSUSoMLIfdg7kBnFFPqH-reMZM";
-
+const API_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
 const BASE_URL = "https://api.taapi.io/candles";
 
 const timeframeMap: Record<string, string> = {
@@ -30,35 +27,29 @@ export async function fetchHistoricalPrices(
   const pair = symbol.toUpperCase().includes("ETH") ? "ETH/USDT" : "BTC/USDT";
   const interval = timeframeMap[timeframe] || "1d";
 
+  const url = `${BASE_URL}?secret=${API_TOKEN}&exchange=${exchange}&symbol=${pair}&interval=${interval}&limit=100`;
+
   try {
-    const res = await axios.get(BASE_URL, {
-      params: {
-        secret: API_TOKEN,
-        exchange,
-        symbol: pair,
-        interval,
-        limit: 100
-      }
-    });
+    const res = await fetch(url);
+    const json = await res.json();
 
     const now = new Date().toISOString();
 
-    const candles: CandleData[] = res.data?.value?.map((candle: any) => ({
+    return (json.value || []).map((candle: any) => ({
       timestamp: candle.timestamp * 1000,
       open: candle.open,
       high: candle.high,
       low: candle.low,
       close: candle.close,
-      volume: candle.volume || 0,
+      volume: candle.volume ?? 0,
       source: "TAAPI.io",
       fetchedAt: now
-    })) ?? [];
+    }));
+  } catch (error) {
+    console.error("TAAPI.io error – using mock data.", error);
 
-    return candles;
-  } catch (err) {
-    console.error("🔥 TAAPI.io API error. Returning mock data.", err);
     const now = Date.now();
-    const mock: CandleData[] = Array.from({ length: 24 }, (_, i) => {
+    return Array.from({ length: 24 }, (_, i) => {
       const ts = now - i * 3600000;
       return {
         timestamp: ts,
@@ -71,7 +62,5 @@ export async function fetchHistoricalPrices(
         fetchedAt: new Date().toISOString()
       };
     }).reverse();
-
-    return mock;
   }
 }
