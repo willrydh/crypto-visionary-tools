@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
 import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
 import { useTradingMode } from '@/hooks/useTradingMode';
-import { generateTradeSuggestion } from '@/services/priceDataService';
+import { generateTradeSuggestion } from '@/services/analysisService';
 import { useToast } from '@/hooks/use-toast';
 
 // Define our own complete type that includes all properties we need
