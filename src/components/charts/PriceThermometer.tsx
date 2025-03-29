@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { fetchHighLowData } from '@/services/priceDataService';
+import { fetchHighLowData } from '../../services/priceDataService';
 import { formatCurrency } from '@/utils/numberUtils';
 
 interface PriceThermometerProps {
