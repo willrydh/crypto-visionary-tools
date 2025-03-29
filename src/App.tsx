@@ -8,14 +8,13 @@ import RootLayout from "./components/layout/RootLayout";
 import Dashboard from "./pages/Dashboard";
 import ChartView from "./pages/ChartView";
 import CalendarView from "./pages/CalendarView";
-import LevelsView from "./pages/LevelsView";
+import SignalsView from "./pages/SignalsView";
 import SettingsView from "./pages/SettingsView";
 import TradeSuggestion from "./pages/TradeSuggestion";
 import NotFound from "./pages/NotFound";
 import Welcome from "./pages/Welcome";
-import FAQ from "./pages/FAQ";
 import Miner from "./pages/Miner";
-import SignalsView from "./pages/SignalsView";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -30,14 +29,11 @@ const App = () => (
           {/* Protected routes */}
           <Route path="/" element={<RootLayout />}>
             <Route index element={<Dashboard />} />
-            <Route path="/chart" element={<ChartView />} />
-            <Route path="/calendar" element={<CalendarView />} />
-            <Route path="/levels" element={<LevelsView />} />
             <Route path="/signals" element={<SignalsView />} />
-            <Route path="/settings" element={<SettingsView />} />
             <Route path="/trade-suggestion" element={<TradeSuggestion />} />
-            <Route path="/faq" element={<FAQ />} />
+            <Route path="/calendar" element={<CalendarView />} />
             <Route path="/miner" element={<Miner />} />
+            <Route path="/settings" element={<Settings />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

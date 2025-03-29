@@ -1,15 +1,13 @@
-
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
   BarChart3, 
   CandlestickChart, 
   Calendar, 
-  Layers, 
   Settings,
   Zap,
-  HelpCircle,
   Webhook,
+  Radar,
   Menu,
   X
 } from 'lucide-react';
@@ -20,12 +18,10 @@ import { cn } from '@/lib/utils';
 // Navigation items for the sidebar
 const navItems = [
   { path: '/', label: 'Dashboard', icon: <BarChart3 className="h-5 w-5" /> },
-  { path: '/chart', label: 'Chart', icon: <CandlestickChart className="h-5 w-5" /> },
+  { path: '/signals', label: 'Signals', icon: <Radar className="h-5 w-5" /> },
   { path: '/trade-suggestion', label: 'Trade', icon: <Zap className="h-5 w-5" /> },
-  { path: '/calendar', label: 'Calendar', icon: <Calendar className="h-5 w-5" /> },
-  { path: '/levels', label: 'Levels', icon: <Layers className="h-5 w-5" /> },
+  { path: '/calendar', label: 'Events', icon: <Calendar className="h-5 w-5" /> },
   { path: '/miner', label: 'Miner', icon: <Webhook className="h-5 w-5" /> },
-  { path: '/faq', label: 'FAQ', icon: <HelpCircle className="h-5 w-5" /> },
   { path: '/settings', label: 'Settings', icon: <Settings className="h-5 w-5" /> },
 ];
 

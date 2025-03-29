@@ -21,8 +21,11 @@ const Miner = () => {
   const [progress, setProgress] = useState<number>(0);
   const [coinsFound, setCoinsFound] = useState<number>(0);
   const [currentTask, setCurrentTask] = useState<string>('Idle');
-  const [consoleOutput, setConsoleOutput] = useState<string[]>([]);
+  const [consoleOutput, setConsoleOutput] = useState<string>('System: Mining operations idle...');
   const consoleRef = useRef<HTMLDivElement>(null);
+  
+  // Intervals reference to clear them when stopping
+  const intervalsRef = useRef<{[key: string]: NodeJS.Timeout}>({});
   
   // Sample crypto names for mining simulation
   const cryptoNames = [
@@ -80,10 +83,12 @@ const Miner = () => {
   
   // Function to start mining simulation
   const startMining = () => {
+    if (isMining) return; // Don't start if already mining
+    
     setIsMining(true);
     setProgress(0);
     setCurrentTask('Initializing mining operations');
-    setConsoleOutput(['System: Mining operations starting...']);
+    setConsoleOutput('System: Mining operations starting...');
     
     toast({
       title: "Mining Started",
@@ -91,7 +96,7 @@ const Miner = () => {
     });
     
     // Simulate increasing hash rate
-    const hashInterval = setInterval(() => {
+    intervalsRef.current.hashInterval = setInterval(() => {
       setHashRate(prev => {
         const newRate = prev + (Math.random() * 5);
         return newRate > 100 ? 100 : newRate;
@@ -99,11 +104,10 @@ const Miner = () => {
     }, 1000);
     
     // Simulate progress
-    const progressInterval = setInterval(() => {
+    intervalsRef.current.progressInterval = setInterval(() => {
       setProgress(prev => {
         const newProgress = prev + (Math.random() * 0.5);
         if (newProgress >= 100) {
-          clearInterval(progressInterval);
           // Simulate finding a coin
           handleCoinFound();
           return 0; // Reset progress
@@ -113,31 +117,14 @@ const Miner = () => {
     }, 300);
     
     // Simulate changing tasks
-    const taskInterval = setInterval(() => {
+    intervalsRef.current.taskInterval = setInterval(() => {
       setCurrentTask(miningOperations[Math.floor(Math.random() * miningOperations.length)]);
     }, 5000);
     
-    // Simulate console output
-    const consoleInterval = setInterval(() => {
-      setConsoleOutput(prev => {
-        // Keep only the last 100 lines
-        const newLines = [...prev, generateCodeLine()];
-        if (newLines.length > 100) {
-          return newLines.slice(newLines.length - 100);
-        }
-        return newLines;
-      });
-    }, 150);
-    
-    // Store all intervals so we can clear them later
-    const intervalIds = { hashInterval, progressInterval, taskInterval, consoleInterval };
-    
-    return () => {
-      clearInterval(intervalIds.hashInterval);
-      clearInterval(intervalIds.progressInterval);
-      clearInterval(intervalIds.taskInterval);
-      clearInterval(intervalIds.consoleInterval);
-    };
+    // Simulate console output - only update one line
+    intervalsRef.current.consoleInterval = setInterval(() => {
+      setConsoleOutput(generateCodeLine());
+    }, 200);
   };
   
   const stopMining = () => {
@@ -145,7 +132,11 @@ const Miner = () => {
     setHashRate(0);
     setProgress(0);
     setCurrentTask('Idle');
-    setConsoleOutput(['System: Mining operations stopped.']);
+    setConsoleOutput('System: Mining operations stopped.');
+    
+    // Clear all intervals
+    Object.values(intervalsRef.current).forEach(interval => clearInterval(interval));
+    intervalsRef.current = {};
     
     toast({
       title: "Mining Stopped",
@@ -157,10 +148,7 @@ const Miner = () => {
     const randomCoin = cryptoNames[Math.floor(Math.random() * cryptoNames.length)];
     const amount = (Math.random() * 10).toFixed(4);
     
-    setConsoleOutput(prev => [
-      ...prev, 
-      `SUCCESS: Found ${amount} ${randomCoin} tokens!`
-    ]);
+    setConsoleOutput(`SUCCESS: Found ${amount} ${randomCoin} tokens!`);
     
     setCoinsFound(prev => prev + 1);
     
@@ -171,12 +159,12 @@ const Miner = () => {
     });
   };
   
-  // Auto-scroll console to bottom
+  // Clean up intervals on unmount
   useEffect(() => {
-    if (consoleRef.current) {
-      consoleRef.current.scrollTop = consoleRef.current.scrollHeight;
-    }
-  }, [consoleOutput]);
+    return () => {
+      Object.values(intervalsRef.current).forEach(interval => clearInterval(interval));
+    };
+  }, []);
   
   return (
     <div className="container py-6 max-w-4xl mx-auto">
@@ -216,16 +204,12 @@ const Miner = () => {
             <CardContent>
               <div 
                 ref={consoleRef}
-                className="h-[400px] overflow-y-auto bg-black/80 text-green-400 font-mono text-xs p-4 rounded-md"
+                className="h-[400px] flex items-center bg-black/80 text-green-400 font-mono text-xs p-4 rounded-md"
               >
-                {consoleOutput.map((line, index) => (
-                  <div key={index} className={line.includes('SUCCESS') ? 'text-yellow-300 font-bold' : ''}>
-                    {line}
-                  </div>
-                ))}
-                {isMining && (
-                  <div className="inline-block animate-pulse">_</div>
-                )}
+                <div className={isMining ? 'animate-pulse' : ''}>
+                  {consoleOutput}
+                  {isMining && <span className="ml-1 animate-pulse">_</span>}
+                </div>
               </div>
             </CardContent>
             

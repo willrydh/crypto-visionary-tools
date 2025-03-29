@@ -3,10 +3,11 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
   BarChart3, 
-  Briefcase, 
-  LineChart, 
+  Zap, 
   Settings, 
-  BellRing
+  Webhook,
+  Calendar,
+  Radar
 } from 'lucide-react';
 import { 
   SidebarGroup, 
@@ -19,8 +20,10 @@ import {
 const NavigationMenu: React.FC = () => {
   const navItems = [
     { path: '/', label: 'Dashboard', icon: <BarChart3 size={20} /> },
-    { path: '/trade', label: 'Trade Suggestions', icon: <LineChart size={20} /> },
-    { path: '/notifications', label: 'Notifications', icon: <BellRing size={20} /> },
+    { path: '/signals', label: 'Signals', icon: <Radar size={20} /> },
+    { path: '/trade-suggestion', label: 'Trade', icon: <Zap size={20} /> },
+    { path: '/calendar', label: 'Events', icon: <Calendar size={20} /> },
+    { path: '/miner', label: 'Miner', icon: <Webhook size={20} /> },
     { path: '/settings', label: 'Settings', icon: <Settings size={20} /> },
   ];
 
