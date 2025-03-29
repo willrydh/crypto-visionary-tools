@@ -37,15 +37,15 @@ const TradeSuggestion = () => {
       
       // Create a complete suggestion object with all required properties
       const suggestionWithData: TradeSuggestionType = {
-        direction: response.direction as 'long' | 'short' | 'neutral',
+        direction: response.direction as 'long' | 'short' | 'neutral' || (response.type === 'buy' ? 'long' : response.type === 'sell' ? 'short' : 'neutral'),
         entry: response.entry || response.entryPrice,
         stopLoss: response.stopLoss,
         takeProfit: response.takeProfit,
-        probability: response.probability,
-        confidence: response.confidence,
-        timeframe: response.timeframe,
+        probability: response.probability || 50,
+        confidence: response.confidence || 50,
+        timeframe: response.timeframe || '1h',
         indicators: [],
-        summary: response.summary || 'Suggestion based on current market conditions',
+        summary: response.summary || response.reasoning || 'Suggestion based on current market conditions',
         createdAt: new Date()
       };
       
