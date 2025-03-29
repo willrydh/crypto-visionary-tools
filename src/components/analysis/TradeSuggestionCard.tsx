@@ -7,7 +7,20 @@ import { TrendingUp, TrendingDown, AlertCircle, Target } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { formatCurrency } from '@/utils/numberUtils';
 import { formatTimeUntil } from '@/utils/dateUtils';
-import { TradeSuggestion } from '@/contexts/TechnicalAnalysisContext';
+
+// Define interface locally to ensure it has all required properties
+interface TradeSuggestion {
+  direction: 'long' | 'short' | 'neutral';
+  entry: number;
+  stopLoss: number;
+  takeProfit: number;
+  probability: number;
+  confidence: number;
+  timeframe: string;
+  indicators: any[];
+  summary: string;
+  createdAt: Date;
+}
 
 interface TradeSuggestionCardProps {
   tradeSuggestion: TradeSuggestion | null;

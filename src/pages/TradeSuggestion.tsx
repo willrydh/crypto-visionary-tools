@@ -8,7 +8,7 @@ import { useTradingMode } from '@/hooks/useTradingMode';
 import { generateTradeSuggestion } from '@/services/priceDataService';
 import { useToast } from '@/hooks/use-toast';
 
-// Make sure TradeSuggestionType includes the summary property
+// Define our own complete type that includes all properties we need
 interface TradeSuggestionType {
   direction: 'long' | 'short' | 'neutral';
   entry: number;
