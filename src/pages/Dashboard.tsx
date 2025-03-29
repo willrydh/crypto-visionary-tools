@@ -17,7 +17,6 @@ const Dashboard = () => {
   const { 
     indicators, 
     currentBias, 
-    tradeSuggestion, 
     confidenceScore, 
     isLoading, 
     lastUpdated, 
