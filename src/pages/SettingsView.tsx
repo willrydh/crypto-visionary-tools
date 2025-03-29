@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   Select,
@@ -13,10 +13,12 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
 import { useToast } from '@/hooks/use-toast';
 
 const SettingsView = () => {
   const { toast } = useToast();
+  const [leverage, setLeverage] = useState<number>(5);
   
   const handleSaveSettings = () => {
     toast({
@@ -121,6 +123,22 @@ const SettingsView = () => {
                   <SelectItem value="1d">1 day</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="leverage">Trading Leverage: {leverage}x</Label>
+                <Slider 
+                  id="leverage"
+                  min={1} 
+                  max={100} 
+                  step={1} 
+                  value={[leverage]} 
+                  onValueChange={(value) => setLeverage(value[0])}
+                  className="mt-2"
+                />
+                <p className="text-xs text-muted-foreground mt-1">Set your preferred trading leverage from 1x to 100x</p>
+              </div>
             </div>
             
             <div className="space-y-2">

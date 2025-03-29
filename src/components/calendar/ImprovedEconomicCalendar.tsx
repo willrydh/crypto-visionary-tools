@@ -373,8 +373,8 @@ export const ImprovedEconomicCalendar: React.FC<ImprovedEconomicCalendarProps> =
           <TabsList className="w-full">
             <TabsTrigger value="today" className="flex-1">Today</TabsTrigger>
             <TabsTrigger value="tomorrow" className="flex-1">Tomorrow</TabsTrigger>
-            <TabsTrigger value="week" className="flex-1">This Week</TabsTrigger>
-            <TabsTrigger value="month" className="flex-1">This Month</TabsTrigger>
+            <TabsTrigger value="week" className="flex-1">Week</TabsTrigger>
+            <TabsTrigger value="month" className="flex-1">Month</TabsTrigger>
           </TabsList>
           
           <TabsContent value="today" className="mt-2">

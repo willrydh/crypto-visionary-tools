@@ -31,9 +31,10 @@ const App = () => (
             <Route index element={<Dashboard />} />
             <Route path="/signals" element={<SignalsView />} />
             <Route path="/trade-suggestion" element={<TradeSuggestion />} />
+            <Route path="/chart" element={<ChartView />} />
             <Route path="/calendar" element={<CalendarView />} />
             <Route path="/miner" element={<Miner />} />
-            <Route path="/settings" element={<Settings />} />
+            <Route path="/settings" element={<SettingsView />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

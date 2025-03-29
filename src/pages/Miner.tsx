@@ -9,7 +9,7 @@ import {
   MoveDown,
   Webhook
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
@@ -204,7 +204,7 @@ const Miner = () => {
             <CardContent>
               <div 
                 ref={consoleRef}
-                className="h-[400px] flex items-center bg-black/80 text-green-400 font-mono text-xs p-4 rounded-md"
+                className="h-10 flex items-center bg-black/80 text-green-400 font-mono text-xs p-4 rounded-md"
               >
                 <div className={isMining ? 'animate-pulse' : ''}>
                   {consoleOutput}
