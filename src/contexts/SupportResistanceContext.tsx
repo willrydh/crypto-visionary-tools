@@ -25,8 +25,10 @@ export interface MarketStructure {
 interface SupportResistanceContextType {
   levels: PriceLevel[];
   marketStructure: MarketStructure | null;
+  structure: MarketStructure | null; // Alias for marketStructure to maintain compatibility
   isLoading: boolean;
   updateLevels: (symbol: string) => Promise<void>;
+  fetchLevels: (symbol: string) => Promise<void>; // Alias for updateLevels to maintain compatibility
   lastUpdated: Date | null;
 }
 
@@ -68,9 +70,11 @@ export const SupportResistanceProvider: React.FC<SupportResistanceProviderProps>
     <SupportResistanceContext.Provider 
       value={{ 
         levels, 
-        marketStructure, 
+        marketStructure,
+        structure: marketStructure, // Add structure as an alias to marketStructure
         isLoading, 
         updateLevels, 
+        fetchLevels: updateLevels, // Add fetchLevels as an alias to updateLevels
         lastUpdated 
       }}
     >

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -77,11 +76,9 @@ export const PriceChart: React.FC<PriceChartProps> = ({
     setIsLoading(true);
     setError(null);
     try {
-      // Fetch current price
       const price = await fetchCurrentPrice(symbol);
       setCurrentPrice(price);
       
-      // Fetch historical data for the chart
       const data = await fetchHistoricalPrices(symbol, currentTimeframe, 100);
       setChartData(data);
       
@@ -106,7 +103,6 @@ export const PriceChart: React.FC<PriceChartProps> = ({
   useEffect(() => {
     loadChartData();
     
-    // Set up refresh interval - every 30 seconds
     const interval = setInterval(() => {
       loadChartData();
     }, 30000);
@@ -114,36 +110,29 @@ export const PriceChart: React.FC<PriceChartProps> = ({
     return () => clearInterval(interval);
   }, [currentTimeframe, symbol]);
   
-  // Format the x-axis based on timeframe
   const formatXAxis = (timestamp: number) => {
     return formatChartTime(timestamp, currentTimeframe);
   };
   
-  // Custom tooltip formatter for the chart
   const tooltipFormatter = (value: number) => {
     return formatCurrency(value);
   };
   
-  // Handle timeframe change
   const handleTimeframeChange = (timeframe: string) => {
     setCurrentTimeframe(timeframe as Timeframe);
   };
   
-  // Transform candlestick data for the ComposedChart
   const getCandlestickData = (candle: PriceCandle) => {
     return {
       ...candle,
       color: candle.close > candle.open ? "rgba(0, 255, 0, 0.7)" : "rgba(255, 0, 0, 0.7)",
-      // For candle body
       openToClose: candle.close - candle.open,
       openToCloseY: Math.min(candle.open, candle.close),
-      // For full range (wick)
       highToLow: candle.high - candle.low,
       highToLowY: candle.low
     };
   };
   
-  // Data transformation for chart based on chart type
   const getChartData = () => {
     if (chartType === 'line') {
       return chartData.map(candle => ({
@@ -301,7 +290,6 @@ export const PriceChart: React.FC<PriceChartProps> = ({
                     isAnimationActive={false}
                   />
                   
-                  {/* Support and resistance levels if enabled */}
                   {showLevels && levels.map((level, idx) => (
                     <ReferenceLine 
                       key={idx}
@@ -341,9 +329,8 @@ export const PriceChart: React.FC<PriceChartProps> = ({
                     formatter={tooltipFormatter}
                   />
                   
-                  {/* Candlestick wicks */}
                   <Bar 
-                    dataKey="highToLow" 
+                    dataKey="highToLow"
                     fill="transparent"
                     stroke={(entry) => entry.color || "#000"}
                     barSize={5}
@@ -352,9 +339,8 @@ export const PriceChart: React.FC<PriceChartProps> = ({
                     isAnimationActive={false}
                   />
                   
-                  {/* Candlestick bodies */}
                   <Bar 
-                    dataKey="openToClose" 
+                    dataKey="openToClose"
                     fill={(entry) => entry.color || "#000"}
                     stroke={(entry) => entry.color || "#000"}
                     barSize={15}
@@ -362,7 +348,6 @@ export const PriceChart: React.FC<PriceChartProps> = ({
                     isAnimationActive={false}
                   />
                   
-                  {/* Support and resistance levels if enabled */}
                   {showLevels && levels.map((level, idx) => (
                     <ReferenceLine 
                       key={idx}

@@ -12,6 +12,7 @@ export interface EconomicEvent {
   actual?: string;
   description?: string;
   type: string; // 'cpi', 'interest_rate', 'nfp', 'gdp', etc.
+  source?: string; // Adding source property to fix TypeScript errors
 }
 
 // Function to fetch economic events for a given date range
