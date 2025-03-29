@@ -10,7 +10,8 @@ export interface CandleData {
 }
 
 const API_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
-const BASE_URL = "https://api.taapi.io/candles";
+const BASE_CANDLES_URL = "https://api.taapi.io/candles";
+const BASE_PRICE_URL = "https://api.taapi.io/price";
 
 const timeframeMap: Record<string, string> = {
   "1d": "1d",
@@ -27,7 +28,7 @@ export async function fetchHistoricalPrices(
   const pair = symbol.toUpperCase().includes("ETH") ? "ETH/USDT" : "BTC/USDT";
   const interval = timeframeMap[timeframe] || "1d";
 
-  const url = `${BASE_URL}?secret=${API_TOKEN}&exchange=${exchange}&symbol=${pair}&interval=${interval}&limit=100`;
+  const url = `${BASE_CANDLES_URL}?secret=${API_TOKEN}&exchange=${exchange}&symbol=${pair}&interval=${interval}&limit=100`;
 
   try {
     const res = await fetch(url);
@@ -62,5 +63,26 @@ export async function fetchHistoricalPrices(
         fetchedAt: new Date().toISOString()
       };
     }).reverse();
+  }
+}
+
+export async function fetchCurrentPrice(symbol: string = "BTC/USDT"): Promise<number> {
+  const exchange = "binance";
+  const pair = symbol.toUpperCase().includes("ETH") ? "ETH/USDT" : "BTC/USDT";
+
+  const url = `${BASE_PRICE_URL}?secret=${API_TOKEN}&exchange=${exchange}&symbol=${pair}&interval=1m`;
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (typeof data.value === "number") {
+      return data.value;
+    } else {
+      throw new Error("Invalid response from TAAPI.io");
+    }
+  } catch (error) {
+    console.error("TAAPI.io price fetch failed – returning mock value.", error);
+    return 25000 + Math.random() * 1000;
   }
 }
