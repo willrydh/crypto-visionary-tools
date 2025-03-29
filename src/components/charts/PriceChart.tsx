@@ -144,6 +144,9 @@ export const PriceChart: React.FC<PriceChartProps> = ({
     }
   };
   
+  const renderWickColor = (entry: any) => entry.color || "#000";
+  const renderBodyColor = (entry: any) => entry.color || "#000";
+  
   return (
     <Card className="h-full max-w-5xl mx-auto">
       <CardHeader className="p-4">
@@ -332,7 +335,7 @@ export const PriceChart: React.FC<PriceChartProps> = ({
                   <Bar 
                     dataKey="highToLow"
                     fill="transparent"
-                    stroke={(entry) => entry.color || "#000"}
+                    stroke={renderWickColor}
                     barSize={5}
                     yAxisId={0}
                     stackId="stack"
@@ -341,8 +344,8 @@ export const PriceChart: React.FC<PriceChartProps> = ({
                   
                   <Bar 
                     dataKey="openToClose"
-                    fill={(entry) => entry.color || "#000"}
-                    stroke={(entry) => entry.color || "#000"}
+                    fill={renderBodyColor}
+                    stroke={renderBodyColor}
                     barSize={15}
                     yAxisId={0}
                     isAnimationActive={false}

@@ -135,7 +135,8 @@ export const ImprovedEconomicCalendar: React.FC<ImprovedEconomicCalendarProps> =
       previous: '5.0%',
       forecast: '5.1%',
       actual: null,
-      source: 'Federal Reserve'
+      source: 'Federal Reserve',
+      type: 'fomc'
     });
     
     mockEvents.push({
@@ -147,7 +148,8 @@ export const ImprovedEconomicCalendar: React.FC<ImprovedEconomicCalendarProps> =
       previous: '0.3%',
       forecast: '0.2%',
       actual: '0.4%',
-      source: 'Census Bureau'
+      source: 'Census Bureau',
+      type: 'retail_sales'
     });
     
     // Tomorrow's events
@@ -163,7 +165,8 @@ export const ImprovedEconomicCalendar: React.FC<ImprovedEconomicCalendarProps> =
       previous: '0.2%',
       forecast: '0.3%',
       actual: null,
-      source: 'Eurostat'
+      source: 'Eurostat',
+      type: 'cpi'
     });
     
     mockEvents.push({
@@ -175,7 +178,8 @@ export const ImprovedEconomicCalendar: React.FC<ImprovedEconomicCalendarProps> =
       previous: '215K',
       forecast: '220K',
       actual: null,
-      source: 'Department of Labor'
+      source: 'Department of Labor',
+      type: 'unemployment'
     });
     
     // This week's events
@@ -191,7 +195,8 @@ export const ImprovedEconomicCalendar: React.FC<ImprovedEconomicCalendarProps> =
       previous: '0.6%',
       forecast: '0.5%',
       actual: null,
-      source: 'Office for National Statistics'
+      source: 'Office for National Statistics',
+      type: 'gdp'
     });
     
     mockEvents.push({
@@ -203,7 +208,8 @@ export const ImprovedEconomicCalendar: React.FC<ImprovedEconomicCalendarProps> =
       previous: '236K',
       forecast: '230K',
       actual: null,
-      source: 'Bureau of Labor Statistics'
+      source: 'Bureau of Labor Statistics',
+      type: 'nfp'
     });
     
     // Later this month
@@ -219,7 +225,8 @@ export const ImprovedEconomicCalendar: React.FC<ImprovedEconomicCalendarProps> =
       previous: '5.00%',
       forecast: '5.25%',
       actual: null,
-      source: 'Federal Reserve'
+      source: 'Federal Reserve',
+      type: 'interest_rate'
     });
     
     mockEvents.push({
@@ -231,7 +238,8 @@ export const ImprovedEconomicCalendar: React.FC<ImprovedEconomicCalendarProps> =
       previous: '3.75%',
       forecast: '4.00%',
       actual: null,
-      source: 'European Central Bank'
+      source: 'European Central Bank',
+      type: 'interest_rate'
     });
     
     return mockEvents;
