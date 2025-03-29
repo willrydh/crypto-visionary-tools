@@ -1,9 +1,7 @@
-
 import React from 'react';
-import { Braces } from 'lucide-react';
+import Logo from "@/assets/logo.svg";
 import { useTradingMode } from '@/hooks/useTradingMode';
 import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
-import Logo from "@/assets/logo.svg";
 
 const TopHeader: React.FC = () => {
   const { tradingMode } = useTradingMode();
