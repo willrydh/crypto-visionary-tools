@@ -7,7 +7,7 @@ import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';
 import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { TradeModeSelector } from '@/components/trading/TradingModeSelector';
+import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
 
 const ChartView = () => {
   const { toast } = useToast();
@@ -51,7 +51,7 @@ const ChartView = () => {
         
         <div className="flex gap-2 items-center">
           <div className="md:hidden">
-            <TradeModeSelector />
+            <TradingModeSelector />
           </div>
           <Button 
             onClick={handleRefresh} 

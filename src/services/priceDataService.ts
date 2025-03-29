@@ -227,3 +227,109 @@ export const fetchHighLowData = async (
     };
   }
 };
+
+export interface TradeSuggestion {
+  type: 'buy' | 'sell' | 'wait';
+  entryPrice: number;
+  stopLoss: number;
+  takeProfit: number;
+  riskRewardRatio: number;
+  confidence: number;
+  reasoning: string;
+  timeframe: string;
+  tradingStyle: 'scalp' | 'day' | 'swing';
+}
+
+/**
+ * Generates a mock trade suggestion based on current market conditions
+ */
+export const generateTradeSuggestion = async (
+  symbol: string = 'BTC/USDT',
+  tradingStyle: 'scalp' | 'day' | 'swing' = 'day'
+): Promise<TradeSuggestion> => {
+  try {
+    const { price } = await fetchCurrentPrice(symbol);
+    
+    const randomValue = Math.random();
+    const type = randomValue > 0.6 ? 'buy' : (randomValue > 0.2 ? 'sell' : 'wait');
+    
+    let stopPercentage = 0;
+    let profitPercentage = 0;
+    
+    switch (tradingStyle) {
+      case 'scalp':
+        stopPercentage = 0.005; // 0.5%
+        profitPercentage = 0.01; // 1% 
+        break;
+      case 'day': 
+        stopPercentage = 0.01; // 1%
+        profitPercentage = 0.03; // 3%
+        break;
+      case 'swing':
+        stopPercentage = 0.03; // 3%
+        profitPercentage = 0.09; // 9%
+        break;
+    }
+    
+    const entryPrice = price;
+    const stopLoss = type === 'buy' 
+      ? price * (1 - stopPercentage) 
+      : price * (1 + stopPercentage);
+    const takeProfit = type === 'buy' 
+      ? price * (1 + profitPercentage) 
+      : price * (1 - profitPercentage);
+    
+    const riskRewardRatio = profitPercentage / stopPercentage;
+    const confidence = 50 + Math.floor(Math.random() * 40); // 50-90% confidence
+    
+    let reasoning = '';
+    if (type === 'buy') {
+      reasoning = `Price is showing strength with ${tradingStyle === 'scalp' ? 'short-term' : 'bullish'} momentum. Multiple indicators suggesting upward movement.`;
+    } else if (type === 'sell') {
+      reasoning = `Resistance zone reached with ${tradingStyle === 'scalp' ? 'short-term' : 'bearish'} divergence. Risk of rejection is high.`;
+    } else {
+      reasoning = 'Market conditions unclear. Better to wait for clearer signals before entering a position.';
+    }
+    
+    let timeframe: string;
+    switch (tradingStyle) {
+      case 'scalp':
+        timeframe = Math.random() > 0.5 ? '5m' : '15m';
+        break;
+      case 'day':
+        timeframe = Math.random() > 0.5 ? '1h' : '4h';
+        break;
+      case 'swing':
+        timeframe = Math.random() > 0.5 ? '4h' : '1d';
+        break;
+      default:
+        timeframe = '1h';
+    }
+    
+    return {
+      type,
+      entryPrice,
+      stopLoss,
+      takeProfit,
+      riskRewardRatio,
+      confidence,
+      reasoning,
+      timeframe,
+      tradingStyle
+    };
+  } catch (error) {
+    console.error('Error generating trade suggestion:', error);
+    
+    return {
+      type: 'wait',
+      entryPrice: 83300,
+      stopLoss: 82500,
+      takeProfit: 84500,
+      riskRewardRatio: 1.5,
+      confidence: 60,
+      reasoning: 'Error generating analysis. Waiting is recommended.',
+      timeframe: '1h',
+      tradingStyle: 'day'
+    };
+  }
+};
