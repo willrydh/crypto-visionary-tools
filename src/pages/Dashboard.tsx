@@ -58,18 +58,21 @@ const Dashboard = () => {
             Market overview and trading signals
           </p>
         </div>
-        <Button 
-          onClick={handleAnalysisGeneration} 
-          disabled={isLoading} 
-          className="gap-2"
-        >
-          {isLoading ? (
-            <LineChart className="h-4 w-4 animate-pulse" />
-          ) : (
-            <LineChart className="h-4 w-4" />
-          )}
-          Generate Analysis
-        </Button>
+      <div className="w-full">
+  <Button 
+    onClick={handleAnalysisGeneration} 
+    disabled={isLoading} 
+    className="w-full sm:w-auto gap-2"
+  >
+    {isLoading ? (
+      <LineChart className="h-4 w-4 animate-pulse" />
+    ) : (
+      <LineChart className="h-4 w-4" />
+    )}
+    Generate Analysis
+  </Button>
+</div>
+
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
