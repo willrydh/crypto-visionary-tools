@@ -8,7 +8,7 @@ import { useTradingMode } from '@/hooks/useTradingMode';
 import { generateTradeSuggestion } from '@/services/priceDataService';
 import { useToast } from '@/hooks/use-toast';
 
-// Define the TradeSuggestion type locally to match what's expected by components
+// Define the TradeSuggestion type to match the type expected by TradeSuggestionCard
 interface TradeSuggestion {
   type: 'buy' | 'sell' | 'wait';
   direction: string;
@@ -25,6 +25,8 @@ interface TradeSuggestion {
   leverage: number;
   summary?: string;
   createdAt: Date;
+  // Adding the indicators property required by TradeSuggestionCard
+  indicators: any[];
 }
 
 const TradeSuggestion = () => {
@@ -40,13 +42,15 @@ const TradeSuggestion = () => {
       const tradingStyle = tradingMode === 'scalp' ? 'scalp' : (tradingMode === 'day' ? 'day' : 'swing');
       const response = await generateTradeSuggestion('BTC/USDT', tradingStyle);
       
-      // Add createdAt date if it doesn't exist
-      const suggestionWithDate = {
+      // Create a complete suggestion object with all required properties
+      const suggestionWithData = {
         ...response,
-        createdAt: new Date()
+        entryPrice: response.entry || response.entryPrice,
+        createdAt: new Date(),
+        indicators: [] // Empty array to satisfy the type requirement
       } as TradeSuggestion;
       
-      setSuggestion(suggestionWithDate);
+      setSuggestion(suggestionWithData);
       
       toast({
         title: "Trade Suggestion Updated",

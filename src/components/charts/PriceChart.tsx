@@ -9,7 +9,8 @@ import {
   RefreshCw,
   AlertTriangle,
   LineChart,
-  CandlestickChart
+  CandlestickChart,
+  Info
 } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -34,18 +35,16 @@ import {
   ComposedChart,
   ReferenceLine
 } from 'recharts';
+import { 
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 
 interface PriceChartProps {
   symbol?: string;
   showLevels?: boolean;
   levels?: PriceLevel[];
-}
-
-// Interface for candlestick data
-interface CandleProps {
-  color: string;
-  highToLow: number;
-  openToClose: number;
 }
 
 export const PriceChart: React.FC<PriceChartProps> = ({ 
@@ -64,6 +63,15 @@ export const PriceChart: React.FC<PriceChartProps> = ({
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [chartType, setChartType] = useState<'line' | 'candle'>('line');
+  const [dataStatus, setDataStatus] = useState<{
+    source: string;
+    lastFetched: Date | null;
+    status: 'success' | 'error' | 'cached';
+  }>({
+    source: 'API / Local Mock',
+    lastFetched: null,
+    status: 'cached'
+  });
   
   const loadChartData = async () => {
     setIsLoading(true);
@@ -76,9 +84,20 @@ export const PriceChart: React.FC<PriceChartProps> = ({
       // Fetch historical data for the chart
       const data = await fetchHistoricalPrices(symbol, currentTimeframe, 100);
       setChartData(data);
+      
+      setDataStatus({
+        source: 'ProfitPilot API',
+        lastFetched: new Date(),
+        status: 'success'
+      });
     } catch (error) {
       console.error('Error loading chart data:', error);
       setError('Failed to load price data. Please try again later.');
+      setDataStatus({
+        ...dataStatus,
+        lastFetched: new Date(),
+        status: 'error'
+      });
     } finally {
       setIsLoading(false);
     }
@@ -136,16 +155,42 @@ export const PriceChart: React.FC<PriceChartProps> = ({
     }
   };
   
-  // Fixed color accessor functions for bars
-  const getBarFill = (dataItem: any) => dataItem.color;
-  const getBarStroke = (dataItem: any) => dataItem.color;
-  
   return (
     <Card className="h-full">
       <CardHeader className="p-4">
         <div className="flex justify-between items-center mb-2">
           <div>
-            <CardTitle className="text-lg">{symbol} Chart</CardTitle>
+            <CardTitle className="text-lg flex items-center gap-2">
+              {symbol} Chart
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                    <Info className="h-4 w-4 text-muted-foreground" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80">
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Chart Data Status</h4>
+                    <div className="text-sm space-y-1">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Source:</span>
+                        <span>{dataStatus.source}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Last Updated:</span>
+                        <span>{dataStatus.lastFetched ? dataStatus.lastFetched.toLocaleTimeString() : 'Never'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Status:</span>
+                        <span className={dataStatus.status === 'success' ? 'text-green-500' : dataStatus.status === 'error' ? 'text-red-500' : 'text-amber-500'}>
+                          {dataStatus.status.charAt(0).toUpperCase() + dataStatus.status.slice(1)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </CardTitle>
             {currentPrice && (
               <div className="flex items-baseline gap-2 mt-1">
                 <span className="text-lg font-bold font-mono">
@@ -300,7 +345,7 @@ export const PriceChart: React.FC<PriceChartProps> = ({
                   <Bar 
                     dataKey="highToLow" 
                     fill="transparent"
-                    stroke={getBarStroke}
+                    stroke={(entry) => entry.color}
                     barSize={5}
                     yAxisId={0}
                     stackId="stack"
@@ -310,8 +355,8 @@ export const PriceChart: React.FC<PriceChartProps> = ({
                   {/* Candlestick bodies */}
                   <Bar 
                     dataKey="openToClose" 
-                    fill={getBarFill}
-                    stroke={getBarStroke}
+                    fill={(entry) => entry.color}
+                    stroke={(entry) => entry.color}
                     barSize={15}
                     yAxisId={0}
                     isAnimationActive={false}

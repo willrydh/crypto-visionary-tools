@@ -10,7 +10,7 @@ import { TradeSuggestionCard } from '@/components/analysis/TradeSuggestionCard';
 import { MarketStatus } from '@/components/markets/MarketStatus';
 import { PriceThermometer } from '@/components/charts/PriceThermometer';
 import { PriceChart } from '@/components/charts/PriceChart';
-import { EconomicCalendar } from '@/components/calendar/EconomicCalendar';
+import { ImprovedEconomicCalendar } from '@/components/calendar/ImprovedEconomicCalendar';
 
 const Dashboard = () => {
   const { toast } = useToast();
@@ -50,7 +50,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6 animate-fade-in max-w-7xl mx-auto px-4">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold">Dashboard</h1>
@@ -76,7 +76,9 @@ const Dashboard = () => {
         {/* Main content - 2/3 width */}
         <div className="md:col-span-2 space-y-6">
           {/* Price chart */}
-          <PriceChart />
+          <div className="max-w-full overflow-hidden">
+            <PriceChart />
+          </div>
           
           {/* Analysis cards - 2 columns on larger screens */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -104,8 +106,8 @@ const Dashboard = () => {
           {/* Price thermometer */}
           <PriceThermometer />
           
-          {/* Economic calendar (compact version) */}
-          <EconomicCalendar compact={true} />
+          {/* Economic calendar (improved version) */}
+          <ImprovedEconomicCalendar compact={true} />
         </div>
       </div>
     </div>

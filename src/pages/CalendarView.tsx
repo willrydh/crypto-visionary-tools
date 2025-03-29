@@ -1,20 +1,18 @@
 
 import React from 'react';
-import { EconomicCalendar } from '@/components/calendar/EconomicCalendar';
+import { ImprovedEconomicCalendar } from '@/components/calendar/ImprovedEconomicCalendar';
 
 const CalendarView = () => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-5xl mx-auto px-4">
       <div>
         <h1 className="text-2xl font-bold">Economic Calendar</h1>
         <p className="text-muted-foreground">
-          Upcoming economic events and market releases
+          Track market-moving economic events and announcements
         </p>
       </div>
       
-      <div className="h-[calc(100vh-12rem)]">
-        <EconomicCalendar />
-      </div>
+      <ImprovedEconomicCalendar compact={false} />
     </div>
   );
 };

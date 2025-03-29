@@ -34,14 +34,25 @@ export const fetchCurrentPrice = async (symbol: string = 'BTC/USDT'): Promise<{
   } catch (error) {
     console.error('Error fetching price data:', error);
     
-    return {
-      price: 83300 + (Math.random() * 1000 - 500),
-      change24h: (Math.random() * 6) - 3,
-      volume24h: 24500000000 + (Math.random() * 5000000000),
-      timestamp: Date.now()
-    };
+    return getMockCurrentPrice();
   }
 };
+
+const getMockCurrentPrice = () => {
+  // Consistent base price to avoid large jumps
+  const basePrice = 83300;
+  const variation = (Math.random() * 400) - 200; // ±200 variation
+  
+  return {
+    price: basePrice + variation,
+    change24h: (Math.random() * 6) - 3,
+    volume24h: 24500000000 + (Math.random() * 5000000000),
+    timestamp: Date.now()
+  };
+};
+
+// Store the last generated candles to ensure consistency
+let lastGeneratedCandles: { [key: string]: PriceCandle[] } = {};
 
 export const fetchHistoricalPrices = async (
   symbol: string = 'BTC/USDT',
@@ -49,35 +60,90 @@ export const fetchHistoricalPrices = async (
   limit: number = 100
 ): Promise<PriceCandle[]> => {
   try {
-    return generateMockCandles(timeframe, limit);
+    // Try to fetch from API if available
+    // For now, we'll use mock data that doesn't have large jumps
+    
+    const cacheKey = `${symbol}_${timeframe}_${limit}`;
+    
+    // If we've already generated data for this configuration, use it as a base and extend it
+    if (lastGeneratedCandles[cacheKey]) {
+      const existingCandles = lastGeneratedCandles[cacheKey];
+      const lastCandle = existingCandles[existingCandles.length - 1];
+      const now = Date.now();
+      const millisecondsPerInterval = getMillisecondsForTimeframe(timeframe);
+      
+      // If enough time has passed for a new candle
+      if (now - lastCandle.timestamp > millisecondsPerInterval) {
+        // Generate new candles from the last one
+        const newCandles = generateConsistentCandles(
+          lastCandle,
+          timeframe,
+          Math.min(5, Math.floor((now - lastCandle.timestamp) / millisecondsPerInterval))
+        );
+        
+        // Update the cached data with the new candles
+        lastGeneratedCandles[cacheKey] = [
+          ...existingCandles.slice(newCandles.length * -1), // Remove oldest candles
+          ...newCandles // Add new candles
+        ];
+        
+        return lastGeneratedCandles[cacheKey];
+      }
+      
+      return existingCandles;
+    }
+    
+    // Generate fresh data if none exists
+    lastGeneratedCandles[cacheKey] = generateSmoothCandles(timeframe, limit);
+    return lastGeneratedCandles[cacheKey];
   } catch (error) {
     console.error('Error fetching historical prices:', error);
-    return generateMockCandles(timeframe, limit);
+    
+    // Generate consistent mock data on error
+    const cacheKey = `${symbol}_${timeframe}_${limit}`;
+    if (!lastGeneratedCandles[cacheKey]) {
+      lastGeneratedCandles[cacheKey] = generateSmoothCandles(timeframe, limit);
+    }
+    return lastGeneratedCandles[cacheKey];
   }
 };
 
-const generateMockCandles = (timeframe: Timeframe, limit: number): PriceCandle[] => {
+const generateSmoothCandles = (timeframe: Timeframe, limit: number): PriceCandle[] => {
   const candles: PriceCandle[] = [];
-  const basePrice = 83000;
+  const basePrice = 83300;
   const now = Date.now();
   const millisecondsPerInterval = getMillisecondsForTimeframe(timeframe);
   
+  // Generate the first candle
   let currentPrice = basePrice;
+  let lastClose = currentPrice;
   
   for (let i = 0; i < limit; i++) {
-    const trend = Math.random() > 0.48 ? 1 : -1;
-    const movement = Math.random() * 300 * trend;
-    currentPrice += movement;
+    // Small random movement for realistic price action, but not huge jumps
+    const volatilityFactor = getVolatilityForTimeframe(timeframe);
+    const movement = (Math.random() * 2 - 1) * basePrice * volatilityFactor;
     
-    currentPrice = Math.max(currentPrice, basePrice * 0.8);
-    currentPrice = Math.min(currentPrice, basePrice * 1.2);
+    // Ensure some continuity with the previous candle
+    currentPrice = lastClose + movement;
     
-    const open = currentPrice;
-    const close = open + (Math.random() * 200 - 100);
-    const high = Math.max(open, close) + Math.random() * 100;
-    const low = Math.min(open, close) - Math.random() * 100;
-    const volume = 100000000 + Math.random() * 50000000;
+    // Keep price within reasonable bounds
+    currentPrice = Math.max(currentPrice, basePrice * 0.9);
+    currentPrice = Math.min(currentPrice, basePrice * 1.1);
     
+    const open = lastClose; // Open at the previous close
+    const close = currentPrice;
+    
+    // Generate realistic high and low
+    const candleRange = Math.abs(close - open) * (1 + Math.random());
+    const high = Math.max(open, close) + (Math.random() * candleRange * 0.5);
+    const low = Math.min(open, close) - (Math.random() * candleRange * 0.5);
+    
+    // Generate volume with some correlation to price movement
+    const volumeBase = 100000000 + Math.random() * 50000000;
+    const volumeMultiplier = 1 + (Math.abs(close - open) / open);
+    const volume = volumeBase * volumeMultiplier;
+    
+    // Calculate timestamp for this candle
     const timestamp = now - (millisecondsPerInterval * (limit - i - 1));
     
     candles.push({
@@ -88,6 +154,55 @@ const generateMockCandles = (timeframe: Timeframe, limit: number): PriceCandle[]
       close,
       volume
     });
+    
+    lastClose = close;
+  }
+  
+  return candles;
+};
+
+// Generate new candles that continue from the last known candle
+const generateConsistentCandles = (
+  lastCandle: PriceCandle,
+  timeframe: Timeframe,
+  count: number
+): PriceCandle[] => {
+  const candles: PriceCandle[] = [];
+  const millisecondsPerInterval = getMillisecondsForTimeframe(timeframe);
+  let lastClose = lastCandle.close;
+  
+  for (let i = 0; i < count; i++) {
+    // Small random movement for realistic price action
+    const volatilityFactor = getVolatilityForTimeframe(timeframe);
+    const movement = (Math.random() * 2 - 1) * lastClose * volatilityFactor;
+    
+    // Ensure some continuity with the previous candle
+    const open = lastClose;
+    const close = lastClose + movement;
+    
+    // Generate realistic high and low
+    const candleRange = Math.abs(close - open) * (1 + Math.random());
+    const high = Math.max(open, close) + (Math.random() * candleRange * 0.5);
+    const low = Math.min(open, close) - (Math.random() * candleRange * 0.5);
+    
+    // Generate volume with some correlation to price movement
+    const volumeBase = 100000000 + Math.random() * 50000000;
+    const volumeMultiplier = 1 + (Math.abs(close - open) / open);
+    const volume = volumeBase * volumeMultiplier;
+    
+    // Calculate timestamp for this candle
+    const timestamp = lastCandle.timestamp + (millisecondsPerInterval * (i + 1));
+    
+    candles.push({
+      timestamp,
+      open,
+      high,
+      low,
+      close,
+      volume
+    });
+    
+    lastClose = close;
   }
   
   return candles;
@@ -116,6 +231,30 @@ const getMillisecondsForTimeframe = (timeframe: Timeframe): number => {
   }
 };
 
+// Return appropriate volatility factors for different timeframes
+const getVolatilityForTimeframe = (timeframe: Timeframe): number => {
+  switch (timeframe) {
+    case '1m':
+      return 0.0005; // 0.05%
+    case '5m':
+      return 0.001; // 0.1%
+    case '15m':
+      return 0.0015; // 0.15%
+    case '30m':
+      return 0.002; // 0.2%
+    case '1h':
+      return 0.003; // 0.3%
+    case '4h':
+      return 0.005; // 0.5%
+    case '1d':
+      return 0.01; // 1%
+    case '1w':
+      return 0.02; // 2%
+    default:
+      return 0.003;
+  }
+};
+
 export const fetchSupportResistanceLevels = async (
   symbol: string,
   timeframe: Timeframe
@@ -125,11 +264,12 @@ export const fetchSupportResistanceLevels = async (
 }> => {
   await new Promise(resolve => setTimeout(resolve, 800));
   
-  const basePrice = 83300;
+  const { price } = await fetchCurrentPrice(symbol);
+  const basePrice = price;
   const levels: PriceLevel[] = [];
   
   levels.push({
-    price: basePrice - 1200,
+    price: basePrice - (basePrice * 0.015),
     type: 'support',
     strength: 'strong',
     timeframe: timeframe,
@@ -138,7 +278,7 @@ export const fetchSupportResistanceLevels = async (
   });
   
   levels.push({
-    price: basePrice - 800,
+    price: basePrice - (basePrice * 0.01),
     type: 'support',
     strength: 'medium',
     timeframe: timeframe,
@@ -147,7 +287,7 @@ export const fetchSupportResistanceLevels = async (
   });
   
   levels.push({
-    price: basePrice - 400,
+    price: basePrice - (basePrice * 0.005),
     type: 'support',
     strength: 'weak',
     timeframe: timeframe,
@@ -156,7 +296,7 @@ export const fetchSupportResistanceLevels = async (
   });
   
   levels.push({
-    price: basePrice + 500,
+    price: basePrice + (basePrice * 0.006),
     type: 'resistance',
     strength: 'weak',
     timeframe: timeframe,
@@ -165,7 +305,7 @@ export const fetchSupportResistanceLevels = async (
   });
   
   levels.push({
-    price: basePrice + 1000,
+    price: basePrice + (basePrice * 0.012),
     type: 'resistance',
     strength: 'medium',
     timeframe: timeframe,
@@ -174,7 +314,7 @@ export const fetchSupportResistanceLevels = async (
   });
   
   levels.push({
-    price: basePrice + 1800,
+    price: basePrice + (basePrice * 0.022),
     type: 'resistance',
     strength: 'strong',
     timeframe: timeframe,
@@ -185,10 +325,10 @@ export const fetchSupportResistanceLevels = async (
   const structure: MarketStructure = {
     trend: Math.random() > 0.5 ? 'uptrend' : 'downtrend',
     description: 'Market structure based on recent price action',
-    hh: basePrice + 1500,
-    lh: basePrice + 700,
-    hl: basePrice - 600,
-    ll: basePrice - 1500,
+    hh: basePrice + (basePrice * 0.018),
+    lh: basePrice + (basePrice * 0.008),
+    hl: basePrice - (basePrice * 0.007),
+    ll: basePrice - (basePrice * 0.018),
     timeframe: timeframe
   };
   
@@ -205,13 +345,14 @@ export const fetchHighLowData = async (
   currentPrice: number;
 }> => {
   try {
-    const currentPrice = 83300 + (Math.random() * 1000 - 500);
+    const { price } = await fetchCurrentPrice(symbol);
+    const currentPrice = price;
     
     return {
-      weeklyHigh: currentPrice + 3000 + (Math.random() * 1000),
-      weeklyLow: currentPrice - 3000 - (Math.random() * 1000),
-      dailyHigh: currentPrice + 800 + (Math.random() * 400),
-      dailyLow: currentPrice - 800 - (Math.random() * 400),
+      weeklyHigh: currentPrice * 1.036,
+      weeklyLow: currentPrice * 0.964,
+      dailyHigh: currentPrice * 1.01,
+      dailyLow: currentPrice * 0.99,
       currentPrice
     };
   } catch (error) {
