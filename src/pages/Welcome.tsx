@@ -7,7 +7,10 @@ import {
   LogIn,
   ChevronRight,
   Sparkles,
-  LucideIcon
+  LineChart,
+  ArrowUpRight,
+  BellRing,
+  CandlestickChart
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -17,48 +20,23 @@ const Welcome = () => {
   const features = [
     {
       title: "Live Market Analysis",
-      description: "Get real-time technical analysis with confidence scores"
+      description: "Get real-time technical analysis with confidence scores",
+      icon: <LineChart className="h-5 w-5 text-primary" />
     },
     {
       title: "AI-Powered Trade Suggestions",
-      description: "Receive smart trade setups with entry, stop loss, and target levels"
+      description: "Receive smart trade setups with entry, stop loss, and target levels",
+      icon: <ArrowUpRight className="h-5 w-5 text-primary" />
     },
     {
       title: "Economic Calendar",
-      description: "Stay informed with upcoming market-moving events"
+      description: "Stay informed with upcoming market-moving events",
+      icon: <BellRing className="h-5 w-5 text-primary" />
     },
     {
       title: "Support & Resistance Finder",
-      description: "Discover key price levels based on market structure"
-    }
-  ];
-  
-  // Login options with icons
-  interface LoginOption {
-    label: string;
-    icon: LucideIcon;
-    variant: "default" | "outline" | "secondary" | "ghost" | "link" | "destructive";
-    action: () => void;
-  }
-  
-  const loginOptions: LoginOption[] = [
-    {
-      label: "Sign in with GitHub",
-      icon: Github,
-      variant: "outline",
-      action: () => handleLogin('github')
-    },
-    {
-      label: "Sign in with Email",
-      icon: Mail,
-      variant: "outline",
-      action: () => handleLogin('email')
-    },
-    {
-      label: "Guest Access",
-      icon: LogIn,
-      variant: "secondary",
-      action: () => handleGuestAccess()
+      description: "Discover key price levels based on market structure",
+      icon: <CandlestickChart className="h-5 w-5 text-primary" />
     }
   ];
   
@@ -90,27 +68,47 @@ const Welcome = () => {
         
         {/* Login options */}
         <div className="space-y-3">
-          {loginOptions.map((option, index) => (
-            <Button 
-              key={index}
-              variant={option.variant}
-              className="w-full justify-start text-base"
-              onClick={option.action}
-            >
-              <option.icon className="mr-2 h-5 w-5" />
-              {option.label}
-              <ChevronRight className="ml-auto h-5 w-5" />
-            </Button>
-          ))}
+          <Button 
+            variant="outline"
+            className="w-full justify-start text-base"
+            onClick={() => handleLogin('github')}
+          >
+            <Github className="mr-2 h-5 w-5" />
+            Sign in with GitHub
+            <ChevronRight className="ml-auto h-5 w-5" />
+          </Button>
+          
+          <Button 
+            variant="outline"
+            className="w-full justify-start text-base"
+            onClick={() => handleLogin('email')}
+          >
+            <Mail className="mr-2 h-5 w-5" />
+            Sign in with Email
+            <ChevronRight className="ml-auto h-5 w-5" />
+          </Button>
+          
+          <Button 
+            variant="secondary"
+            className="w-full justify-start text-base"
+            onClick={handleGuestAccess}
+          >
+            <LogIn className="mr-2 h-5 w-5" />
+            Guest Access
+            <ChevronRight className="ml-auto h-5 w-5" />
+          </Button>
         </div>
         
         {/* Features */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left mt-12">
           {features.map((feature, index) => (
-            <Card key={index} className="bg-card/50 backdrop-blur border-border/50">
-              <CardContent className="p-4">
-                <h3 className="font-medium">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground">{feature.description}</p>
+            <Card key={index} className="bg-card/50 backdrop-blur border-border/50 overflow-hidden">
+              <CardContent className="p-4 flex items-start space-x-4">
+                <div className="mt-1">{feature.icon}</div>
+                <div>
+                  <h3 className="font-medium">{feature.title}</h3>
+                  <p className="text-sm text-muted-foreground">{feature.description}</p>
+                </div>
               </CardContent>
             </Card>
           ))}

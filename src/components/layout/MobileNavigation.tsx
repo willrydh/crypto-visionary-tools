@@ -9,17 +9,18 @@ import {
   Settings,
   Zap,
   HelpCircle,
-  Webhook
+  Webhook,
+  Radar
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const MobileNavigation: React.FC = () => {
   const navItems = [
     { path: '/', label: 'Home', icon: <BarChart3 size={20} /> },
+    { path: '/signals', label: 'Signals', icon: <Radar size={20} /> },
     { path: '/chart', label: 'Chart', icon: <CandlestickChart size={20} /> },
     { path: '/trade-suggestion', label: 'Trade', icon: <Zap size={20} /> },
     { path: '/calendar', label: 'Calendar', icon: <Calendar size={20} /> },
-    { path: '/levels', label: 'Levels', icon: <Layers size={20} /> },
     { path: '/miner', label: 'Miner', icon: <Webhook size={20} /> },
     { path: '/faq', label: 'FAQ', icon: <HelpCircle size={20} /> },
     { path: '/settings', label: 'Settings', icon: <Settings size={20} /> },

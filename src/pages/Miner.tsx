@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   Play, 
@@ -166,7 +167,7 @@ const Miner = () => {
     toast({
       title: "Microcap Token Found!",
       description: `Successfully mined ${amount} ${randomCoin} tokens`,
-      variant: "success"
+      variant: "default"
     });
   };
   

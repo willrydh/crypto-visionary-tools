@@ -7,32 +7,12 @@ import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
 import { useTradingMode } from '@/hooks/useTradingMode';
 import { generateTradeSuggestion } from '@/services/priceDataService';
 import { useToast } from '@/hooks/use-toast';
-
-// Define the TradeSuggestion type to match the type expected by TradeSuggestionCard
-interface TradeSuggestion {
-  type: 'buy' | 'sell' | 'wait';
-  direction: string;
-  entry: number;
-  entryPrice: number;
-  stopLoss: number;
-  takeProfit: number;
-  riskRewardRatio: number;
-  confidence: number;
-  probability: number;
-  reasoning: string;
-  timeframe: string;
-  tradingStyle: 'scalp' | 'day' | 'swing';
-  leverage: number;
-  summary?: string;
-  createdAt: Date;
-  // Adding the indicators property required by TradeSuggestionCard
-  indicators: any[];
-}
+import { TradeSuggestion as TradeSuggestionType } from '@/contexts/TechnicalAnalysisContext';
 
 const TradeSuggestion = () => {
   const { toast } = useToast();
   const { tradingMode } = useTradingMode();
-  const [suggestion, setSuggestion] = useState<TradeSuggestion | null>(null);
+  const [suggestion, setSuggestion] = useState<TradeSuggestionType | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   
   // Get trade suggestion based on current mode
@@ -43,12 +23,18 @@ const TradeSuggestion = () => {
       const response = await generateTradeSuggestion('BTC/USDT', tradingStyle);
       
       // Create a complete suggestion object with all required properties
-      const suggestionWithData = {
-        ...response,
-        entryPrice: response.entry || response.entryPrice,
-        createdAt: new Date(),
-        indicators: [] // Empty array to satisfy the type requirement
-      } as TradeSuggestion;
+      const suggestionWithData: TradeSuggestionType = {
+        direction: response.direction as 'long' | 'short' | 'neutral',
+        entry: response.entry || response.entryPrice,
+        stopLoss: response.stopLoss,
+        takeProfit: response.takeProfit,
+        probability: response.probability,
+        confidence: response.confidence,
+        timeframe: response.timeframe,
+        indicators: [],
+        summary: response.summary || 'Suggestion based on current market conditions',
+        createdAt: new Date()
+      };
       
       setSuggestion(suggestionWithData);
       

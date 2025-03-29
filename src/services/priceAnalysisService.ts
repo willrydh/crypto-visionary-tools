@@ -105,7 +105,7 @@ export const fetchSupportResistanceLevels = async (
     
     const trend = (lastHigh > prevHigh && lastLow > prevLow) ? 'uptrend' : 
                   (lastHigh < prevHigh && lastLow < prevLow) ? 'downtrend' : 
-                  'ranging';
+                  'range';
     
     const structure: MarketStructure = {
       trend,

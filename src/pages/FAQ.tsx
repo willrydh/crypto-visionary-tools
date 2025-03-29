@@ -49,6 +49,10 @@ const FAQ = () => {
       title: "Trading Styles",
       questions: [
         {
+          question: "What's the difference between Scalp, Day, and Swing trading?",
+          answer: "Scalping focuses on very short-term trades (minutes to hours) with small profit targets. Day trading opens and closes positions within the same trading day (hours to a full day). Swing trading holds positions for several days to weeks to capture larger market movements. Each style requires different timeframes, risk management, and psychological approach."
+        },
+        {
           question: "Why does timing matter in different trading styles?",
           answer: "Different trading styles require different timing approaches. Scalping demands immediate execution and quick exits, typically within minutes or hours. Day trading follows intraday trends and requires closing positions by end-of-day. Swing trading looks for larger market moves over days or weeks, requiring patience and wider stop-losses. ProfitPilot tailors its suggestions to match your selected style."
         },

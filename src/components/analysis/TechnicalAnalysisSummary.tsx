@@ -63,6 +63,9 @@ export const TechnicalAnalysisSummary: React.FC<TechnicalAnalysisSummaryProps> =
     }
   };
   
+  // Ensure confidence score has a valid value or use a fallback
+  const displayConfidence = isNaN(confidenceScore) ? 50 : confidenceScore;
+  
   return (
     <Card>
       <CardHeader className="pb-2">
@@ -89,16 +92,16 @@ export const TechnicalAnalysisSummary: React.FC<TechnicalAnalysisSummaryProps> =
               <span className="text-sm">Confidence</span>
               <span 
                 className={`font-medium ${
-                  confidenceScore >= 70 ? 'text-green-500' : 
-                  confidenceScore >= 50 ? 'text-yellow-500' : 
+                  displayConfidence >= 70 ? 'text-green-500' : 
+                  displayConfidence >= 50 ? 'text-yellow-500' : 
                   'text-red-500'
                 }`}
               >
-                {confidenceScore}%
+                {displayConfidence}%
               </span>
             </div>
             <Progress 
-              value={confidenceScore}
+              value={displayConfidence}
               className="h-2"
             />
           </div>
@@ -106,15 +109,15 @@ export const TechnicalAnalysisSummary: React.FC<TechnicalAnalysisSummaryProps> =
           <div className="grid grid-cols-3 gap-2 text-center text-sm">
             <div className="space-y-1 bg-muted/30 rounded p-2">
               <p className="text-xs text-muted-foreground">Bullish</p>
-              <p className="font-semibold text-green-500">{bullishCount}</p>
+              <p className="font-semibold text-green-500">{bullishCount || 0}</p>
             </div>
             <div className="space-y-1 bg-muted/30 rounded p-2">
               <p className="text-xs text-muted-foreground">Neutral</p>
-              <p className="font-semibold text-yellow-500">{neutralCount}</p>
+              <p className="font-semibold text-yellow-500">{neutralCount || 0}</p>
             </div>
             <div className="space-y-1 bg-muted/30 rounded p-2">
               <p className="text-xs text-muted-foreground">Bearish</p>
-              <p className="font-semibold text-red-500">{bearishCount}</p>
+              <p className="font-semibold text-red-500">{bearishCount || 0}</p>
             </div>
           </div>
         </div>

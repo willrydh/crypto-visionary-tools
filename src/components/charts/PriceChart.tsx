@@ -156,7 +156,7 @@ export const PriceChart: React.FC<PriceChartProps> = ({
   };
   
   return (
-    <Card className="h-full">
+    <Card className="h-full max-w-5xl mx-auto">
       <CardHeader className="p-4">
         <div className="flex justify-between items-center mb-2">
           <div>
@@ -345,7 +345,7 @@ export const PriceChart: React.FC<PriceChartProps> = ({
                   <Bar 
                     dataKey="highToLow" 
                     fill="transparent"
-                    stroke={(entry) => entry.color}
+                    stroke={(entry) => entry.color || "#000"}
                     barSize={5}
                     yAxisId={0}
                     stackId="stack"
@@ -355,8 +355,8 @@ export const PriceChart: React.FC<PriceChartProps> = ({
                   {/* Candlestick bodies */}
                   <Bar 
                     dataKey="openToClose" 
-                    fill={(entry) => entry.color}
-                    stroke={(entry) => entry.color}
+                    fill={(entry) => entry.color || "#000"}
+                    stroke={(entry) => entry.color || "#000"}
                     barSize={15}
                     yAxisId={0}
                     isAnimationActive={false}

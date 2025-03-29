@@ -59,6 +59,10 @@ export const TradeSuggestionCard: React.FC<TradeSuggestionCardProps> = ({
       ? 'bg-red-500 text-white' 
       : 'bg-yellow-500 text-white';
 
+  // Handle NaN values
+  const displayConfidence = isNaN(confidence) ? 50 : confidence;
+  const displayProbability = isNaN(probability) ? 60 : probability;
+
   return (
     <Card className="relative overflow-hidden">
       <div className={`absolute top-0 left-0 w-1 h-full ${
@@ -105,16 +109,16 @@ export const TradeSuggestionCard: React.FC<TradeSuggestionCardProps> = ({
               <span className="text-sm">Confidence</span>
               <span 
                 className={`font-medium ${
-                  confidence >= 70 ? 'text-green-500' : 
-                  confidence >= 50 ? 'text-yellow-500' : 
+                  displayConfidence >= 70 ? 'text-green-500' : 
+                  displayConfidence >= 50 ? 'text-yellow-500' : 
                   'text-red-500'
                 }`}
               >
-                {confidence}%
+                {displayConfidence}%
               </span>
             </div>
             <Progress 
-              value={confidence}
+              value={displayConfidence}
               className="h-2"
             />
           </div>
@@ -126,7 +130,7 @@ export const TradeSuggestionCard: React.FC<TradeSuggestionCardProps> = ({
           
           <div className="flex justify-between text-sm">
             <span>Probability</span>
-            <span className="font-medium">{probability}%</span>
+            <span className="font-medium">{displayProbability}%</span>
           </div>
           
           <div className="flex justify-between text-sm">
@@ -137,7 +141,7 @@ export const TradeSuggestionCard: React.FC<TradeSuggestionCardProps> = ({
       </CardContent>
       <CardFooter className="border-t pt-4 flex justify-between items-center">
         <p className="text-xs text-muted-foreground">
-          Created {formatTimeUntil(createdAt)}
+          Created {createdAt ? formatTimeUntil(createdAt) : 'recently'}
         </p>
         <Button 
           variant="outline" 

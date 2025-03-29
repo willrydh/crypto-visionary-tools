@@ -15,6 +15,7 @@ import NotFound from "./pages/NotFound";
 import Welcome from "./pages/Welcome";
 import FAQ from "./pages/FAQ";
 import Miner from "./pages/Miner";
+import SignalsView from "./pages/SignalsView";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/chart" element={<ChartView />} />
             <Route path="/calendar" element={<CalendarView />} />
             <Route path="/levels" element={<LevelsView />} />
+            <Route path="/signals" element={<SignalsView />} />
             <Route path="/settings" element={<SettingsView />} />
             <Route path="/trade-suggestion" element={<TradeSuggestion />} />
             <Route path="/faq" element={<FAQ />} />
