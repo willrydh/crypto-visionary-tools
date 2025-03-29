@@ -1,312 +1,229 @@
+import { Timeframe } from '@/contexts/TimeframeContext';
+import { PriceLevel, MarketStructure } from '@/contexts/SupportResistanceContext';
 
-import { CryptoPrice, TechnicalIndicator } from '@/utils/mockData';
+export interface PriceCandle {
+  timestamp: number;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+}
 
-// API endpoint constants
-const COINBASE_API_URL = 'https://api.coinbase.com/v2';
-const COINGECKO_API_URL = 'https://api.coingecko.com/api/v3';
-const TAAPI_IO_URL = 'https://api.taapi.io';
-const TAAPI_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'; // Replace with actual key when available
-
-// Fetch current price data from Coinbase API
-export async function fetchCurrentPrice(symbol: string = 'BTC-USD'): Promise<CryptoPrice> {
+export const fetchCurrentPrice = async (symbol: string = 'BTC/USDT'): Promise<{
+  price: number;
+  change24h: number;
+  volume24h: number;
+  timestamp: number;
+}> => {
   try {
-    // Get spot price
-    const spotResponse = await fetch(`${COINBASE_API_URL}/prices/${symbol}/spot`);
+    const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_vol=true&include_24hr_change=true&include_market_cap=true`);
     
-    if (!spotResponse.ok) {
-      throw new Error(`Coinbase API error: ${spotResponse.status}`);
-    }
-    
-    const spotData = await spotResponse.json();
-    const currentPrice = parseFloat(spotData.data.amount);
-    
-    // Try to get 24h stats, but fallback if it fails
-    try {
-      const statsResponse = await fetch(`${COINBASE_API_URL}/products/${symbol}/stats`);
+    if (response.ok) {
+      const data = await response.json();
       
-      if (statsResponse.ok) {
-        const statsData = await statsResponse.json();
-        
-        // Calculate change percentage
-        const openPrice = parseFloat(statsData.data.open);
-        const change24h = ((currentPrice - openPrice) / openPrice) * 100;
-        
-        // Format response to match our CryptoPrice interface
-        return {
-          symbol: symbol.replace('-', '/'),
-          price: currentPrice,
-          change24h: change24h,
-          volume24h: parseFloat(statsData.data.volume) * currentPrice,
-          marketCap: 0, // Not provided by this API
-          lastUpdated: new Date()
-        };
-      } else {
-        throw new Error('Stats API failed');
-      }
-    } catch (statsError) {
-      console.error('Error fetching stats data:', statsError);
-      
-      // Fallback to CoinGecko for additional data
-      try {
-        const coinId = symbol.toLowerCase().startsWith('btc') ? 'bitcoin' : 
-                      symbol.toLowerCase().startsWith('eth') ? 'ethereum' : 'bitcoin';
-        
-        const geckoResponse = await fetch(
-          `${COINGECKO_API_URL}/simple/price?ids=${coinId}&vs_currencies=usd&include_24hr_vol=true&include_24hr_change=true&include_market_cap=true`
-        );
-        
-        if (geckoResponse.ok) {
-          const geckoData = await geckoResponse.json();
-          
-          return {
-            symbol: symbol.replace('-', '/'),
-            price: currentPrice, // Use Coinbase price as it's more real-time
-            change24h: geckoData[coinId].usd_24h_change || 0,
-            volume24h: geckoData[coinId].usd_24h_vol || 0,
-            marketCap: geckoData[coinId].usd_market_cap || 0,
-            lastUpdated: new Date()
-          };
-        } else {
-          throw new Error('CoinGecko API failed');
-        }
-      } catch (geckoError) {
-        console.error('Error fetching CoinGecko data:', geckoError);
-        
-        // Return with minimal data
-        return {
-          symbol: symbol.replace('-', '/'),
-          price: currentPrice,
-          change24h: 0, // No data available
-          volume24h: 0, // No data available
-          marketCap: 0, // No data available
-          lastUpdated: new Date()
-        };
-      }
+      return {
+        price: data.bitcoin.usd,
+        change24h: data.bitcoin.usd_24h_change,
+        volume24h: data.bitcoin.usd_24h_vol,
+        timestamp: Date.now()
+      };
+    } else {
+      throw new Error('CoinGecko API failed');
     }
   } catch (error) {
     console.error('Error fetching price data:', error);
-    // Return mock data as fallback
-    const mockPrice = getMockBtcPrice();
-    console.log('Using mock price data as fallback:', mockPrice);
-    return mockPrice;
-  }
-}
-
-// Fetch historical price data for charts from CoinGecko
-export async function fetchHistoricalPrices(
-  coinId: string = 'bitcoin',
-  days: number = 7,
-  interval?: string
-): Promise<{ timestamps: number[], prices: number[] }> {
-  try {
-    // Build the URL based on parameters
-    let url = `${COINGECKO_API_URL}/coins/${coinId}/market_chart?vs_currency=usd&days=${days}`;
     
-    // Only add interval if specified (hourly is restricted to Enterprise plan)
-    if (interval) {
-      url += `&interval=${interval}`;
-    }
-    
-    const response = await fetch(url);
-    
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('CoinGecko API error:', errorData);
-      throw new Error(`CoinGecko API error: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    
-    // Extract timestamps and prices from the response
-    const timestamps = data.prices.map((item: [number, number]) => item[0]);
-    const prices = data.prices.map((item: [number, number]) => item[1]);
-    
-    return { timestamps, prices };
-  } catch (error) {
-    console.error('Error fetching historical price data:', error);
-    // Return mock data as fallback
     return {
-      timestamps: Array.from({ length: 24 }, (_, i) => Date.now() - (23 - i) * 3600000),
-      prices: Array.from({ length: 24 }, () => 35000 + Math.random() * 2000)
+      price: 83300 + (Math.random() * 1000 - 500),
+      change24h: (Math.random() * 6) - 3,
+      volume24h: 24500000000 + (Math.random() * 5000000000),
+      timestamp: Date.now()
     };
   }
-}
+};
 
-// Calculate technical indicators based on historical price data
-export async function calculateTechnicalIndicators(
-  coinId: string = 'bitcoin',
-  days: number = 14
-): Promise<TechnicalIndicator[]> {
+export const fetchHistoricalPrices = async (
+  symbol: string = 'BTC/USDT',
+  timeframe: Timeframe = '1h',
+  limit: number = 100
+): Promise<PriceCandle[]> => {
   try {
-    // In a production app, we would fetch data from Taapi.io here
-    // For example:
-    // const rsiResponse = await fetch(`${TAAPI_IO_URL}/rsi?secret=${TAAPI_API_KEY}&exchange=binance&symbol=BTC/USDT&interval=1h&optInTimePeriod=14`);
-    // const rsiData = await rsiResponse.json();
-    
-    // Fetch historical data to calculate indicators (as a fallback)
-    const { prices } = await fetchHistoricalPrices(coinId, days, 'daily');
-    
-    // Calculate Simple Moving Average (SMA)
-    const calculateSMA = (period: number): number => {
-      if (prices.length < period) return 0;
-      const sum = prices.slice(-period).reduce((acc, price) => acc + price, 0);
-      return sum / period;
-    };
-    
-    // Calculate Relative Strength Index (RSI)
-    const calculateRSI = (): number => {
-      if (prices.length < 14) return 50;
-      
-      let gains = 0;
-      let losses = 0;
-      
-      for (let i = prices.length - 14; i < prices.length - 1; i++) {
-        const change = prices[i + 1] - prices[i];
-        if (change >= 0) {
-          gains += change;
-        } else {
-          losses -= change;
-        }
-      }
-      
-      if (losses === 0) return 100;
-      
-      const rs = gains / losses;
-      return 100 - (100 / (1 + rs));
-    };
-    
-    // Get current price
-    const currentPrice = prices[prices.length - 1];
-    
-    // Calculate SMA values
-    const sma20 = calculateSMA(20);
-    const sma50 = calculateSMA(50);
-    
-    // Calculate RSI
-    const rsi = calculateRSI();
-    
-    // Determine signals based on indicator values
-    const ma20Signal = currentPrice > sma20 ? 'bullish' : 'bearish';
-    const rsiSignal = rsi > 70 ? 'bearish' : rsi < 30 ? 'bullish' : 'neutral';
-    
-    return [
-      {
-        name: 'MA20',
-        value: Math.round(sma20),
-        signal: ma20Signal,
-        description: '20-period Moving Average'
-      },
-      {
-        name: 'MA50',
-        value: Math.round(sma50),
-        signal: currentPrice > sma50 ? 'bullish' : 'bearish',
-        description: '50-period Moving Average'
-      },
-      {
-        name: 'RSI',
-        value: Math.round(rsi),
-        signal: rsiSignal,
-        description: 'Relative Strength Index'
-      },
-      {
-        name: 'Price',
-        value: Math.round(currentPrice),
-        signal: currentPrice > sma20 ? 'bullish' : 'bearish',
-        description: 'Current Price vs MA20'
-      },
-      {
-        name: 'Vol Avg',
-        value: '24H',
-        signal: 'neutral',
-        description: '24 Hour Volume Average'
-      }
-    ];
+    return generateMockCandles(timeframe, limit);
   } catch (error) {
-    console.error('Error calculating technical indicators:', error);
-    // Return mock indicators as fallback
-    return getMockTechnicalIndicators();
+    console.error('Error fetching historical prices:', error);
+    return generateMockCandles(timeframe, limit);
   }
-}
+};
 
-// Function to create a trade suggestion based on current technical analysis
-export async function generateTradeSuggestion(
-  coinId: string = 'bitcoin',
-  timeframe: 'scalp' | 'day' | 'swing' = 'day',
-  leverage: number = 5
-): Promise<any> {
-  try {
-    // Fetch current price
-    const priceData = await fetchCurrentPrice();
-    const currentPrice = priceData.price;
+const generateMockCandles = (timeframe: Timeframe, limit: number): PriceCandle[] => {
+  const candles: PriceCandle[] = [];
+  const basePrice = 83000;
+  const now = Date.now();
+  const millisecondsPerInterval = getMillisecondsForTimeframe(timeframe);
+  
+  let currentPrice = basePrice;
+  
+  for (let i = 0; i < limit; i++) {
+    const trend = Math.random() > 0.48 ? 1 : -1;
+    const movement = Math.random() * 300 * trend;
+    currentPrice += movement;
     
-    // Calculate technical indicators
-    const indicators = await calculateTechnicalIndicators(coinId);
+    currentPrice = Math.max(currentPrice, basePrice * 0.8);
+    currentPrice = Math.min(currentPrice, basePrice * 1.2);
     
-    // Determine trade direction based on indicators
-    let bullishSignals = 0;
-    let bearishSignals = 0;
+    const open = currentPrice;
+    const close = open + (Math.random() * 200 - 100);
+    const high = Math.max(open, close) + Math.random() * 100;
+    const low = Math.min(open, close) - Math.random() * 100;
+    const volume = 100000000 + Math.random() * 50000000;
     
-    indicators.forEach(indicator => {
-      if (indicator.signal === 'bullish') bullishSignals++;
-      if (indicator.signal === 'bearish') bearishSignals++;
+    const timestamp = now - (millisecondsPerInterval * (limit - i - 1));
+    
+    candles.push({
+      timestamp,
+      open,
+      high,
+      low,
+      close,
+      volume
     });
-    
-    const direction = bullishSignals > bearishSignals ? 'long' : 'short';
-    
-    // Calculate entry, stop loss and take profit based on timeframe
-    let stopLossPercentage = 0;
-    let takeProfitPercentage = 0;
-    
-    switch(timeframe) {
-      case 'scalp':
-        stopLossPercentage = 0.5;
-        takeProfitPercentage = 1.5;
-        break;
-      case 'day':
-        stopLossPercentage = 1.0;
-        takeProfitPercentage = 3.0;
-        break;
-      case 'swing':
-        stopLossPercentage = 2.0;
-        takeProfitPercentage = 6.0;
-        break;
-    }
-    
-    let entry = currentPrice;
-    let stopLoss = direction === 'long' 
-      ? entry * (1 - stopLossPercentage / 100) 
-      : entry * (1 + stopLossPercentage / 100);
-    let takeProfit = direction === 'long' 
-      ? entry * (1 + takeProfitPercentage / 100) 
-      : entry * (1 - takeProfitPercentage / 100);
-    
-    // Calculate confidence based on indicator agreement
-    const totalSignals = indicators.length;
-    const dominantSignals = Math.max(bullishSignals, bearishSignals);
-    const confidence = Math.round((dominantSignals / totalSignals) * 100);
-    
-    // Calculate probability based on confluence of signals
-    const probability = Math.round(50 + (confidence - 50) * 0.8);
+  }
+  
+  return candles;
+};
+
+const getMillisecondsForTimeframe = (timeframe: Timeframe): number => {
+  switch (timeframe) {
+    case '1m':
+      return 60 * 1000;
+    case '5m':
+      return 5 * 60 * 1000;
+    case '15m':
+      return 15 * 60 * 1000;
+    case '30m':
+      return 30 * 60 * 1000;
+    case '1h':
+      return 60 * 60 * 1000;
+    case '4h':
+      return 4 * 60 * 60 * 1000;
+    case '1d':
+      return 24 * 60 * 60 * 1000;
+    case '1w':
+      return 7 * 24 * 60 * 60 * 1000;
+    default:
+      return 60 * 60 * 1000;
+  }
+};
+
+export const fetchSupportResistanceLevels = async (
+  symbol: string,
+  timeframe: Timeframe
+): Promise<{
+  levels: PriceLevel[];
+  structure: MarketStructure;
+}> => {
+  await new Promise(resolve => setTimeout(resolve, 800));
+  
+  const basePrice = 83300;
+  const levels: PriceLevel[] = [];
+  
+  levels.push({
+    price: basePrice - 1200,
+    type: 'support',
+    strength: 'strong',
+    timeframe: timeframe,
+    source: 'pivot',
+    description: 'Daily pivot support'
+  });
+  
+  levels.push({
+    price: basePrice - 800,
+    type: 'support',
+    strength: 'medium',
+    timeframe: timeframe,
+    source: 'swing',
+    description: 'Previous swing low'
+  });
+  
+  levels.push({
+    price: basePrice - 400,
+    type: 'support',
+    strength: 'weak',
+    timeframe: timeframe,
+    source: 'volume',
+    description: 'Volume cluster'
+  });
+  
+  levels.push({
+    price: basePrice + 500,
+    type: 'resistance',
+    strength: 'weak',
+    timeframe: timeframe,
+    source: 'swing',
+    description: 'Previous swing high'
+  });
+  
+  levels.push({
+    price: basePrice + 1000,
+    type: 'resistance',
+    strength: 'medium',
+    timeframe: timeframe,
+    source: 'historical',
+    description: 'Historical resistance'
+  });
+  
+  levels.push({
+    price: basePrice + 1800,
+    type: 'resistance',
+    strength: 'strong',
+    timeframe: timeframe,
+    source: 'pivot',
+    description: 'Monthly resistance'
+  });
+  
+  const structure: MarketStructure = {
+    trend: Math.random() > 0.5 ? 'uptrend' : 'downtrend',
+    description: 'Market structure based on recent price action',
+    hh: basePrice + 1500,
+    lh: basePrice + 700,
+    hl: basePrice - 600,
+    ll: basePrice - 1500,
+    timeframe: timeframe
+  };
+  
+  return { levels, structure };
+};
+
+export const fetchHighLowData = async (
+  symbol: string = 'BTC/USDT'
+): Promise<{
+  weeklyHigh: number;
+  weeklyLow: number;
+  dailyHigh: number;
+  dailyLow: number;
+  currentPrice: number;
+}> => {
+  try {
+    const currentPrice = 83300 + (Math.random() * 1000 - 500);
     
     return {
-      direction,
-      entry,
-      stopLoss,
-      takeProfit,
-      probability,
-      leverage,
-      timeframe,
-      createdAt: new Date(),
-      indicators,
-      confidence
+      weeklyHigh: currentPrice + 3000 + (Math.random() * 1000),
+      weeklyLow: currentPrice - 3000 - (Math.random() * 1000),
+      dailyHigh: currentPrice + 800 + (Math.random() * 400),
+      dailyLow: currentPrice - 800 - (Math.random() * 400),
+      currentPrice
     };
   } catch (error) {
-    console.error('Error generating trade suggestion:', error);
-    // Return mock suggestion as fallback
-    const currentPrice = (await fetchCurrentPrice()).price;
-    return getMockTradeSuggestion(currentPrice);
+    console.error('Error fetching high-low data:', error);
+    
+    const currentPrice = 83300;
+    return {
+      weeklyHigh: 87500,
+      weeklyLow: 80100,
+      dailyHigh: 84200,
+      dailyLow: 82500,
+      currentPrice
+    };
   }
-}
-
-// Import mock data generators for fallback
-import { getMockBtcPrice, getMockTechnicalIndicators, getMockTradeSuggestion } from '@/utils/mockData';
+};
