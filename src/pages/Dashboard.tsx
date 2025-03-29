@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';
 import { useTradingMode } from '@/hooks/useTradingMode';
 import { TechnicalAnalysisSummary } from '@/components/analysis/TechnicalAnalysisSummary';
-import { TradeSuggestionCard } from '@/components/analysis/TradeSuggestionCard';
 import { MarketStatus } from '@/components/markets/MarketStatus';
 import { PriceThermometer } from '@/components/charts/PriceThermometer';
 import { PriceChart } from '@/components/charts/PriceChart';
@@ -94,10 +93,7 @@ const Dashboard = () => {
               onRefresh={handleAnalysisGeneration}
             />
             
-            <TradeSuggestionCard 
-              tradeSuggestion={tradeSuggestion} 
-              isLoading={isLoading} 
-            />
+       
           </div>
         </div>
         
