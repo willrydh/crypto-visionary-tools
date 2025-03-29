@@ -18,7 +18,7 @@ export interface HighLowData {
   source: string;
 }
 
-const API_TOKEN = "din-TAAPI-token-här";
+const API_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHVlIjoiNjdlNmVhNGM4MDZmZjE2NTFlNmNhYjE0IiwiaWF0IjoxNzQzMTg2NTA4LCJleHAiOjMzMjQ3NjUwNTA4fQ.AjwNZgOaSiqb4hfjGGSUSoMLIfdg7kBnFFPqH-reMZM";
 const BASE_CANDLES_URL = "https://api.taapi.io/candles";
 const BASE_PRICE_URL = "https://api.taapi.io/price";
 
@@ -82,6 +82,7 @@ export async function fetchCurrentPrice(symbol: string = "BTC/USDT"): Promise<nu
   try {
     const res = await fetch(url);
     const data = await res.json();
+
     if (typeof data.value === "number") {
       return data.value;
     } else {
