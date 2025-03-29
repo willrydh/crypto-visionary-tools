@@ -23,11 +23,13 @@ interface TradeSuggestion {
   timeframe: string;
   tradingStyle: 'scalp' | 'day' | 'swing';
   leverage: number;
+  summary?: string;
+  createdAt: Date;
 }
 
 const TradeSuggestion = () => {
   const { toast } = useToast();
-  const { currentMode } = useTradingMode();
+  const { tradingMode } = useTradingMode();
   const [suggestion, setSuggestion] = useState<TradeSuggestion | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   
@@ -35,9 +37,16 @@ const TradeSuggestion = () => {
   const getTradeSuggestion = async () => {
     setIsLoading(true);
     try {
-      const tradingStyle = currentMode === 'scalping' ? 'scalp' : (currentMode === 'day' ? 'day' : 'swing');
+      const tradingStyle = tradingMode === 'scalp' ? 'scalp' : (tradingMode === 'day' ? 'day' : 'swing');
       const response = await generateTradeSuggestion('BTC/USDT', tradingStyle);
-      setSuggestion(response as TradeSuggestion);
+      
+      // Add createdAt date if it doesn't exist
+      const suggestionWithDate = {
+        ...response,
+        createdAt: new Date()
+      } as TradeSuggestion;
+      
+      setSuggestion(suggestionWithDate);
       
       toast({
         title: "Trade Suggestion Updated",
@@ -58,7 +67,7 @@ const TradeSuggestion = () => {
   // Generate suggestion when trading mode changes
   useEffect(() => {
     getTradeSuggestion();
-  }, [currentMode]);
+  }, [tradingMode]);
   
   return (
     <div className="space-y-6">
@@ -91,7 +100,7 @@ const TradeSuggestion = () => {
       
       <div className="grid grid-cols-1 gap-6">
         {suggestion ? (
-          <TradeSuggestionCard suggestion={suggestion} />
+          <TradeSuggestionCard tradeSuggestion={suggestion} isLoading={isLoading} />
         ) : (
           <div className="flex items-center justify-center h-[400px]">
             <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />

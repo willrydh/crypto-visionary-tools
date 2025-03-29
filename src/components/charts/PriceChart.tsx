@@ -41,6 +41,13 @@ interface PriceChartProps {
   levels?: PriceLevel[];
 }
 
+// Interface for candlestick data
+interface CandleProps {
+  color: string;
+  highToLow: number;
+  openToClose: number;
+}
+
 export const PriceChart: React.FC<PriceChartProps> = ({ 
   symbol = 'BTC/USDT',
   showLevels = false,
@@ -128,6 +135,10 @@ export const PriceChart: React.FC<PriceChartProps> = ({
       return chartData.map(getCandlestickData);
     }
   };
+  
+  // Fixed color accessor functions for bars
+  const getBarFill = (dataItem: any) => dataItem.color;
+  const getBarStroke = (dataItem: any) => dataItem.color;
   
   return (
     <Card className="h-full">
@@ -289,7 +300,7 @@ export const PriceChart: React.FC<PriceChartProps> = ({
                   <Bar 
                     dataKey="highToLow" 
                     fill="transparent"
-                    stroke={(props) => props.color}
+                    stroke={getBarStroke}
                     barSize={5}
                     yAxisId={0}
                     stackId="stack"
@@ -299,8 +310,8 @@ export const PriceChart: React.FC<PriceChartProps> = ({
                   {/* Candlestick bodies */}
                   <Bar 
                     dataKey="openToClose" 
-                    fill={(props) => props.color}
-                    stroke={(props) => props.color}
+                    fill={getBarFill}
+                    stroke={getBarStroke}
                     barSize={15}
                     yAxisId={0}
                     isAnimationActive={false}

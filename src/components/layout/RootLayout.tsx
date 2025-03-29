@@ -15,11 +15,11 @@ import MobileNavigation from './MobileNavigation';
 const RootLayout: React.FC = () => {
   return (
     <TooltipProvider>
-      <TradingModeProvider>
-        <TechnicalAnalysisProvider>
-          <MarketsProvider>
-            <SupportResistanceProvider>
-              <TimeframeProvider>
+      <TimeframeProvider>
+        <TradingModeProvider>
+          <TechnicalAnalysisProvider>
+            <MarketsProvider>
+              <SupportResistanceProvider>
                 <div className="flex flex-col min-h-screen">
                   <TopHeader />
                   <main className="flex-1 overflow-auto pb-16 md:pb-0">
@@ -29,11 +29,11 @@ const RootLayout: React.FC = () => {
                   <Toaster />
                   <Sonner />
                 </div>
-              </TimeframeProvider>
-            </SupportResistanceProvider>
-          </MarketsProvider>
-        </TechnicalAnalysisProvider>
-      </TradingModeProvider>
+              </SupportResistanceProvider>
+            </MarketsProvider>
+          </TechnicalAnalysisProvider>
+        </TradingModeProvider>
+      </TimeframeProvider>
     </TooltipProvider>
   );
 };
