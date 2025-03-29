@@ -7,7 +7,20 @@ import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
 import { useTradingMode } from '@/hooks/useTradingMode';
 import { generateTradeSuggestion } from '@/services/priceDataService';
 import { useToast } from '@/hooks/use-toast';
-import { TradeSuggestion as TradeSuggestionType } from '@/contexts/TechnicalAnalysisContext';
+
+// Make sure TradeSuggestionType includes the summary property
+interface TradeSuggestionType {
+  direction: 'long' | 'short' | 'neutral';
+  entry: number;
+  stopLoss: number;
+  takeProfit: number;
+  probability: number;
+  confidence: number;
+  timeframe: string;
+  indicators: any[];
+  summary: string;
+  createdAt: Date;
+}
 
 const TradeSuggestion = () => {
   const { toast } = useToast();

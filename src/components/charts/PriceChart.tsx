@@ -143,10 +143,35 @@ export const PriceChart: React.FC<PriceChartProps> = ({
       return chartData.map(getCandlestickData);
     }
   };
-  
-  const renderWickColor = (entry: any) => entry.color || "#000";
-  const renderBodyColor = (entry: any) => entry.color || "#000";
-  
+
+  const CandlestickBody = (props: any) => {
+    const { x, y, width, height, color } = props;
+    return (
+      <rect 
+        x={x} 
+        y={y} 
+        width={width} 
+        height={height} 
+        fill={color} 
+        stroke={color}
+      />
+    );
+  };
+
+  const CandlestickWick = (props: any) => {
+    const { x, y, width, height, color } = props;
+    return (
+      <rect 
+        x={x + width / 2 - 0.5} 
+        y={y} 
+        width={1} 
+        height={height} 
+        fill={color} 
+        stroke={color}
+      />
+    );
+  };
+
   return (
     <Card className="h-full max-w-5xl mx-auto">
       <CardHeader className="p-4">
@@ -335,7 +360,7 @@ export const PriceChart: React.FC<PriceChartProps> = ({
                   <Bar 
                     dataKey="highToLow"
                     fill="transparent"
-                    stroke={renderWickColor}
+                    stroke="#000"
                     barSize={5}
                     yAxisId={0}
                     stackId="stack"
@@ -344,8 +369,8 @@ export const PriceChart: React.FC<PriceChartProps> = ({
                   
                   <Bar 
                     dataKey="openToClose"
-                    fill={renderBodyColor}
-                    stroke={renderBodyColor}
+                    fill="currentColor"
+                    stroke="currentColor"
                     barSize={15}
                     yAxisId={0}
                     isAnimationActive={false}
