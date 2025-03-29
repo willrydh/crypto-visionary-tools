@@ -1,5 +1,3 @@
-// services/priceDataService.ts
-
 export interface CandleData {
   timestamp: number;
   open: number;
@@ -20,39 +18,50 @@ export interface HighLowData {
   source: string;
 }
 
-const API_KEY = "YOUR_TWELVEDATA_API_KEY"; // Replace with env variable later
+const API_KEY = "83bf08e89ae944609632771c593961a3";
 const BASE_URL = "https://api.twelvedata.com";
+
+function convertToTimestamp(dateStr: string): number {
+  return new Date(dateStr).getTime();
+}
 
 export async function fetchHistoricalPrices(
   symbol: string = "BTC/USDT",
-  interval: string = "1h",
-  outputsize: number = 100
+  timeframe: "1d" | "7d" | "30d" | "90d" = "1d"
 ): Promise<CandleData[]> {
-  const now = new Date().toISOString();
-  const [base, quote] = symbol.split("/");
+  const intervalMap: Record<string, string> = {
+    "1d": "1h",
+    "7d": "1h",
+    "30d": "1d",
+    "90d": "1d",
+  };
 
-  const url = `${BASE_URL}/time_series?symbol=${base}/${quote}&interval=${interval}&outputsize=${outputsize}&apikey=${API_KEY}`;
+  const interval = intervalMap[timeframe] || "1d";
+  const url = `${BASE_URL}/time_series?symbol=${symbol}&interval=${interval}&outputsize=100&apikey=${API_KEY}`;
 
   try {
     const res = await fetch(url);
-    const data = await res.json();
+    const json = await res.json();
 
-    if (!data || !data.values) throw new Error("No data returned");
+    if (!json?.values) throw new Error("No data");
 
-    return data.values.map((item: any) => ({
-      timestamp: new Date(item.datetime).getTime(),
-      open: parseFloat(item.open),
-      high: parseFloat(item.high),
-      low: parseFloat(item.low),
-      close: parseFloat(item.close),
-      volume: parseFloat(item.volume ?? 0),
-      source: "TwelveData",
-      fetchedAt: now
+    const now = new Date().toISOString();
+
+    return json.values.map((candle: any) => ({
+      timestamp: convertToTimestamp(candle.datetime),
+      open: parseFloat(candle.open),
+      high: parseFloat(candle.high),
+      low: parseFloat(candle.low),
+      close: parseFloat(candle.close),
+      volume: parseFloat(candle.volume ?? "0"),
+      source: "Twelve Data",
+      fetchedAt: now,
     }));
   } catch (err) {
-    console.error("TwelveData fetch error, returning mock data", err);
+    console.error("Failed to fetch historical prices. Returning mock.", err);
+    const now = Date.now();
     return Array.from({ length: 24 }, (_, i) => {
-      const ts = Date.now() - i * 3600000;
+      const ts = now - i * 3600000;
       return {
         timestamp: ts,
         open: 25000 + Math.random() * 500,
@@ -61,47 +70,50 @@ export async function fetchHistoricalPrices(
         close: 25000 + Math.random() * 500,
         volume: 0,
         source: "MockData",
-        fetchedAt: new Date().toISOString()
+        fetchedAt: new Date().toISOString(),
       };
     }).reverse();
   }
 }
 
-export async function fetchHighLowData(symbol: string = "BTC/USDT"): Promise<HighLowData> {
-  const now = new Date().toISOString();
-  const candles = await fetchHistoricalPrices(symbol, "1h", 168); // 1 week of hourly data
-
-  const dailyCandles = candles.slice(-24);
-  const weeklyCandles = candles;
-
-  const dailyHigh = Math.max(...dailyCandles.map((c) => c.high));
-  const dailyLow = Math.min(...dailyCandles.map((c) => c.low));
-  const weeklyHigh = Math.max(...weeklyCandles.map((c) => c.high));
-  const weeklyLow = Math.min(...weeklyCandles.map((c) => c.low));
-
-  return {
-    dailyHigh,
-    dailyLow,
-    weeklyHigh,
-    weeklyLow,
-    fetchedAt: now,
-    source: "TwelveData"
-  };
-}
-
 export async function fetchCurrentPrice(symbol: string = "BTC/USDT"): Promise<number> {
-  const [base, quote] = symbol.split("/");
-  const url = `${BASE_URL}/price?symbol=${base}/${quote}&apikey=${API_KEY}`;
-
+  const url = `${BASE_URL}/price?symbol=${symbol}&apikey=${API_KEY}`;
   try {
     const res = await fetch(url);
     const data = await res.json();
 
-    if (data && data.price) return parseFloat(data.price);
+    if (!data?.price) throw new Error("Missing price");
 
-    throw new Error("Invalid price data");
+    return parseFloat(data.price);
   } catch (error) {
-    console.error("TwelveData price fetch failed, returning mock", error);
+    console.error("Failed to fetch current price. Returning mock.", error);
     return 25000 + Math.random() * 1000;
+  }
+}
+
+export async function fetchHighLowData(symbol: string = "BTC/USDT"): Promise<HighLowData> {
+  try {
+    const candles = await fetchHistoricalPrices(symbol, "7d");
+    const highs = candles.map(c => c.high);
+    const lows = candles.map(c => c.low);
+
+    return {
+      dailyHigh: Math.max(...highs.slice(0, 24)),
+      dailyLow: Math.min(...lows.slice(0, 24)),
+      weeklyHigh: Math.max(...highs),
+      weeklyLow: Math.min(...lows),
+      fetchedAt: new Date().toISOString(),
+      source: "Twelve Data"
+    };
+  } catch (err) {
+    console.error("Failed to fetch high/low data. Returning mock.", err);
+    return {
+      dailyHigh: 27500,
+      dailyLow: 24500,
+      weeklyHigh: 28500,
+      weeklyLow: 24000,
+      fetchedAt: new Date().toISOString(),
+      source: "MockData"
+    };
   }
 }
