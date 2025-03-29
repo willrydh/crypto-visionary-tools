@@ -14,11 +14,6 @@ import {
   ResponsiveContainer, 
   AreaChart
 } from 'recharts';
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent
-} from "@/components/ui/chart";
 
 interface PriceChartProps {
   symbol?: string;
@@ -38,21 +33,14 @@ const PriceChart: React.FC<PriceChartProps> = ({
     setIsLoading(true);
     setError(null);
     try {
-      // For 1d, we should use different parameters due to CoinGecko API limitations
-      // (hourly data is for Enterprise plan only)
-      const interval = days === 1 ? undefined : days > 1 ? 'daily' : 'hourly';
-      
-      const { timestamps, prices } = await fetchHistoricalPrices(
-        coinId, 
-        days,
-        interval
-      );
+      // Fetch historical prices
+      const candleData = await fetchHistoricalPrices(symbol, timeframe as any, days);
       
       // Format data for chart
-      const data = timestamps.map((timestamp, i) => ({
-        time: new Date(timestamp).toLocaleString(),
-        price: prices[i],
-        date: new Date(timestamp)
+      const data = candleData.map(candle => ({
+        time: new Date(candle.timestamp).toLocaleString(),
+        price: candle.close,
+        date: new Date(candle.timestamp)
       }));
       
       setChartData(data);
@@ -123,16 +111,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
           </div>
         ) : (
           <div className="h-64">
-            <ChartContainer
-              config={{
-                price: {
-                  theme: {
-                    light: 'hsl(var(--primary))',
-                    dark: 'hsl(var(--primary))'
-                  }
-                }
-              }}
-            >
+            <ResponsiveContainer width="100%" height="100%">
               <AreaChart
                 data={chartData}
                 margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
@@ -157,10 +136,9 @@ const PriceChart: React.FC<PriceChartProps> = ({
                   width={60}
                 />
                 <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
-                <ChartTooltip
-                  content={
-                    <ChartTooltipContent labelFormatter={(value) => `${value}`} />
-                  }
+                <Tooltip
+                  labelFormatter={(value) => `${value}`}
+                  formatter={(value) => [formatCurrency(value as number), "Price"]}
                 />
                 <Area 
                   type="monotone" 
@@ -170,7 +148,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
                   isAnimationActive={false}
                 />
               </AreaChart>
-            </ChartContainer>
+            </ResponsiveContainer>
           </div>
         )}
       </CardContent>

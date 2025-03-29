@@ -29,8 +29,10 @@ import {
   ResponsiveContainer,
   LineChart as RechartsLineChart,
   Line,
-  CandlestickChart as RechartsCandlestickChart,
-  Candle
+  BarChart,
+  Bar,
+  ComposedChart,
+  ReferenceLine
 } from 'recharts';
 
 interface PriceChartProps {
@@ -101,6 +103,20 @@ export const PriceChart: React.FC<PriceChartProps> = ({
     setCurrentTimeframe(timeframe as Timeframe);
   };
   
+  // Transform candlestick data for the ComposedChart
+  const getCandlestickData = (candle: PriceCandle) => {
+    return {
+      ...candle,
+      color: candle.close > candle.open ? "rgba(0, 255, 0, 0.7)" : "rgba(255, 0, 0, 0.7)",
+      // For candle body
+      openToClose: candle.close - candle.open,
+      openToCloseY: Math.min(candle.open, candle.close),
+      // For full range (wick)
+      highToLow: candle.high - candle.low,
+      highToLowY: candle.low
+    };
+  };
+  
   // Data transformation for chart based on chart type
   const getChartData = () => {
     if (chartType === 'line') {
@@ -109,7 +125,7 @@ export const PriceChart: React.FC<PriceChartProps> = ({
         price: candle.close
       }));
     } else {
-      return chartData;
+      return chartData.map(getCandlestickData);
     }
   };
   
@@ -231,23 +247,24 @@ export const PriceChart: React.FC<PriceChartProps> = ({
                   
                   {/* Support and resistance levels if enabled */}
                   {showLevels && levels.map((level, idx) => (
-                    <RechartsLineChart key={idx} data={getChartData()}>
-                      <Line 
-                        type="monotone" 
-                        dataKey={() => level.price} 
-                        stroke={level.type === 'support' ? "rgba(0, 255, 0, 0.5)" : "rgba(255, 0, 0, 0.5)"} 
-                        strokeDasharray={level.strength === 'strong' ? "0" : "5 5"} 
-                        strokeWidth={level.strength === 'strong' ? 2 : 1}
-                        dot={false}
-                        activeDot={false}
-                        isAnimationActive={false}
-                      />
-                    </RechartsLineChart>
+                    <ReferenceLine 
+                      key={idx}
+                      y={level.price}
+                      stroke={level.type === 'support' ? "rgba(0, 255, 0, 0.5)" : "rgba(255, 0, 0, 0.5)"}
+                      strokeDasharray={level.strength === 'strong' ? "0" : "5 5"}
+                      strokeWidth={level.strength === 'strong' ? 2 : 1}
+                      label={{ 
+                        value: `${level.type} (${level.price.toFixed(1)})`, 
+                        position: 'insideBottomRight',
+                        fill: level.type === 'support' ? "rgba(0, 255, 0, 0.8)" : "rgba(255, 0, 0, 0.8)",
+                        fontSize: 10
+                      }}
+                    />
                   ))}
                 </AreaChart>
               ) : (
-                <RechartsCandlestickChart
-                  data={chartData}
+                <ComposedChart
+                  data={getChartData()}
                   margin={{ top: 5, right: 5, left: 5, bottom: 5 }}
                 >
                   <XAxis 
@@ -267,29 +284,45 @@ export const PriceChart: React.FC<PriceChartProps> = ({
                     labelFormatter={(label) => formatXAxis(label as number)}
                     formatter={tooltipFormatter}
                   />
-                  <Candle
-                    fill={(props) => (props.close > props.open ? "rgba(0, 255, 0, 0.7)" : "rgba(255, 0, 0, 0.7)")}
-                    stroke={(props) => (props.close > props.open ? "rgba(0, 255, 0, 1)" : "rgba(255, 0, 0, 1)")}
-                    wickStroke={(props) => (props.close > props.open ? "rgba(0, 255, 0, 1)" : "rgba(255, 0, 0, 1)")}
-                    yAccessor={(data) => [data.high, data.open, data.close, data.low]}
+                  
+                  {/* Candlestick wicks */}
+                  <Bar 
+                    dataKey="highToLow" 
+                    fill="transparent"
+                    stroke={(props) => props.color}
+                    barSize={5}
+                    yAxisId={0}
+                    stackId="stack"
+                    isAnimationActive={false}
+                  />
+                  
+                  {/* Candlestick bodies */}
+                  <Bar 
+                    dataKey="openToClose" 
+                    fill={(props) => props.color}
+                    stroke={(props) => props.color}
+                    barSize={15}
+                    yAxisId={0}
+                    isAnimationActive={false}
                   />
                   
                   {/* Support and resistance levels if enabled */}
                   {showLevels && levels.map((level, idx) => (
-                    <RechartsLineChart key={idx} data={chartData}>
-                      <Line 
-                        type="monotone" 
-                        dataKey={() => level.price} 
-                        stroke={level.type === 'support' ? "rgba(0, 255, 0, 0.5)" : "rgba(255, 0, 0, 0.5)"} 
-                        strokeDasharray={level.strength === 'strong' ? "0" : "5 5"} 
-                        strokeWidth={level.strength === 'strong' ? 2 : 1}
-                        dot={false}
-                        activeDot={false}
-                        isAnimationActive={false}
-                      />
-                    </RechartsLineChart>
+                    <ReferenceLine 
+                      key={idx}
+                      y={level.price}
+                      stroke={level.type === 'support' ? "rgba(0, 255, 0, 0.5)" : "rgba(255, 0, 0, 0.5)"}
+                      strokeDasharray={level.strength === 'strong' ? "0" : "5 5"}
+                      strokeWidth={level.strength === 'strong' ? 2 : 1}
+                      label={{ 
+                        value: `${level.type} (${level.price.toFixed(1)})`, 
+                        position: 'insideBottomRight',
+                        fill: level.type === 'support' ? "rgba(0, 255, 0, 0.8)" : "rgba(255, 0, 0, 0.8)",
+                        fontSize: 10
+                      }}
+                    />
                   ))}
-                </RechartsCandlestickChart>
+                </ComposedChart>
               )}
             </ResponsiveContainer>
           </div>

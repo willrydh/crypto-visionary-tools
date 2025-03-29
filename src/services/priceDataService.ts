@@ -238,6 +238,10 @@ export interface TradeSuggestion {
   reasoning: string;
   timeframe: string;
   tradingStyle: 'scalp' | 'day' | 'swing';
+  direction?: string;
+  entry?: number;
+  probability?: number;
+  leverage?: number;
 }
 
 /**
@@ -315,7 +319,11 @@ export const generateTradeSuggestion = async (
       confidence,
       reasoning,
       timeframe,
-      tradingStyle
+      tradingStyle,
+      direction: type === 'buy' ? 'long' : (type === 'sell' ? 'short' : 'neutral'),
+      entry: entryPrice,
+      probability: confidence,
+      leverage: tradingStyle === 'scalp' ? 10 : (tradingStyle === 'day' ? 5 : 3)
     };
   } catch (error) {
     console.error('Error generating trade suggestion:', error);
@@ -329,7 +337,11 @@ export const generateTradeSuggestion = async (
       confidence: 60,
       reasoning: 'Error generating analysis. Waiting is recommended.',
       timeframe: '1h',
-      tradingStyle: 'day'
+      tradingStyle: 'day',
+      direction: 'neutral',
+      entry: 83300,
+      probability: 60,
+      leverage: 5
     };
   }
 };
