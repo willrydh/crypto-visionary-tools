@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RefreshCw, AlertTriangle, Info } from 'lucide-react';
-import { fetchHistoricalPrices } from '@/services/priceDataService';
+import { fetchHistoricalPrices, fetchCurrentPrice } from '@/services/priceDataService';
 import { formatCurrency } from '@/lib/utils';
 import {
   AreaChart,
@@ -14,7 +14,6 @@ import {
   ResponsiveContainer
 } from 'recharts';
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 interface PriceChartProps {
   symbol?: string;
@@ -22,10 +21,11 @@ interface PriceChartProps {
 }
 
 const PriceChart: React.FC<PriceChartProps> = ({
-  symbol = 'BTC/USD',
+  symbol = 'BTC/USDT',
   coinId = 'bitcoin'
 }) => {
   const [chartData, setChartData] = useState<any[]>([]);
+  const [currentPrice, setCurrentPrice] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [timeframe, setTimeframe] = useState<string>('1d');
   const [error, setError] = useState<string | null>(null);
@@ -36,7 +36,6 @@ const PriceChart: React.FC<PriceChartProps> = ({
     setError(null);
     try {
       const candleData = await fetchHistoricalPrices(symbol, timeframe as any, days);
-
       const data = candleData.map(candle => ({
         time: new Date(candle.timestamp).toLocaleString(),
         price: candle.close,
@@ -53,19 +52,28 @@ const PriceChart: React.FC<PriceChartProps> = ({
     }
   };
 
+  const loadCurrentPrice = async () => {
+    try {
+      const price = await fetchCurrentPrice(symbol);
+      setCurrentPrice(price);
+    } catch (error) {
+      console.error('Failed to fetch current price:', error);
+    }
+  };
+
   useEffect(() => {
-    const days = timeframe === '1d' ? 1 :
-      timeframe === '7d' ? 7 :
-      timeframe === '30d' ? 30 : 90;
-
+    const days = timeframe === '1d' ? 1 : timeframe === '7d' ? 7 : timeframe === '30d' ? 30 : 90;
     loadChartData(days);
+    loadCurrentPrice();
 
-    const interval = setInterval(() => {
-      loadChartData(days);
-    }, timeframe === '1d' ? 60000 : 300000);
+    const chartInterval = setInterval(() => loadChartData(days), timeframe === '1d' ? 60000 : 300000);
+    const priceInterval = setInterval(loadCurrentPrice, 30000);
 
-    return () => clearInterval(interval);
-  }, [timeframe, coinId]);
+    return () => {
+      clearInterval(chartInterval);
+      clearInterval(priceInterval);
+    };
+  }, [timeframe, symbol]);
 
   const formatXAxis = (timestamp: string) => {
     const date = new Date(timestamp);
@@ -79,7 +87,13 @@ const PriceChart: React.FC<PriceChartProps> = ({
     <Card className="rounded-lg border bg-card text-card-foreground shadow-sm">
       <CardContent className="p-4">
         <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-4 gap-2">
-          <h3 className="font-medium">{symbol} Price Chart</h3>
+          <div>
+            <h3 className="font-medium">{symbol} Price Chart</h3>
+            <div className="text-xl font-bold">
+              {currentPrice !== null ? formatCurrency(currentPrice) : 'Loading...'}
+            </div>
+          </div>
+
           <div className="flex items-center gap-2">
             <Tabs value={timeframe} onValueChange={setTimeframe} className="w-auto">
               <TabsList className="h-7">
@@ -108,9 +122,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
               variant="ghost"
               size="sm"
               onClick={() => {
-                const days = timeframe === '1d' ? 1 :
-                  timeframe === '7d' ? 7 :
-                  timeframe === '30d' ? 30 : 90;
+                const days = timeframe === '1d' ? 1 : timeframe === '7d' ? 7 : timeframe === '30d' ? 30 : 90;
                 loadChartData(days);
               }}
             >
