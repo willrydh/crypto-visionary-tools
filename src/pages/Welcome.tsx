@@ -59,8 +59,9 @@ const Welcome = () => {
       <div className="w-full max-w-md space-y-8 text-center animate-fade-in">
         {/* Logo and title */}
         <div className="space-y-2">
-       <div className="inline-flex items-center justify-center h-20 w-20 rounded-full bg-primary/10 text-primary mb-4 overflow-hidden">
-  <img src={Logo} alt="Logo" className="h-12 w-12 object-contain" />
+       <div className="inline-flex items-center justify-center h-28 w-28 rounded-full bg-primary/10 text-primary mb-4 overflow-hidden">
+  <img src={Logo} alt="Logo" className="h-24 w-24 object-contain" />
+
       </div>
           <h1 className="text-4xl font-bold tracking-tight">ProfitPilot AI</h1>
           <p className="text-xl text-muted-foreground">
