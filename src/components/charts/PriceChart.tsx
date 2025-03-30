@@ -45,13 +45,15 @@ interface PriceChartProps {
   showLevels?: boolean;
   levels?: PriceLevel[];
   coinId?: string;
+  excludeTimeframes?: string[];
 }
 
 export const PriceChart: React.FC<PriceChartProps> = ({ 
   symbol = 'BTC/USDT',
   showLevels = false,
   levels = [],
-  coinId = 'bitcoin'
+  coinId = 'bitcoin',
+  excludeTimeframes = []
 }) => {
   const { currentTimeframe, setCurrentTimeframe } = useTimeframe();
   const [chartData, setChartData] = useState<PriceCandle[]>([]);

@@ -91,7 +91,7 @@ const Dashboard = () => {
         <div className="lg:col-span-2 space-y-6">
           {/* Price chart */}
           <div className="max-w-full overflow-hidden">
-           <PriceChart symbol="BTC/USDT" excludeTimeframes={[]} />
+           <PriceChart symbol="BTC/USDT" />
           </div>
           
           {/* Analysis cards - 2 columns on larger screens */}
@@ -105,7 +105,7 @@ const Dashboard = () => {
               onRefresh={handleAnalysisGeneration}
             />
             
-            <MarketStatus />
+            <MarketStatus showDetails={true} />
           </div>
         </div>
         

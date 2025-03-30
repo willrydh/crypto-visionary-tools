@@ -78,7 +78,7 @@ const ChartView = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="md:col-span-3">
           {/* Full-featured price chart with support/resistance levels */}
-          <PriceChart showLevels={true} levels={levels} excludeTimeframes={[]} />
+          <PriceChart showLevels={true} levels={levels} />
         </div>
         
         <div>
