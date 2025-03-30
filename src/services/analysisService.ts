@@ -1,4 +1,3 @@
-
 import { TechnicalIndicator, TradeSuggestion, MarketBias } from '@/contexts/TechnicalAnalysisContext';
 import { TradingMode } from '@/contexts/TradingModeContext';
 import { formatMockData } from '@/utils/mockDataUtils';
@@ -46,7 +45,7 @@ export const generateTradeSuggestion = async (
   // Count signals by type
   let bullishCount = 0;
   let bearishCount = 0;
-  let totalCount = indicators.length;
+  let totalCount = indicators.length || 1; // Avoid divide by zero
   
   indicators.forEach(indicator => {
     if (indicator.signal === 'bullish') bullishCount++;

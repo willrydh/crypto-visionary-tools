@@ -76,8 +76,8 @@ export const PriceChart: React.FC<PriceChartProps> = ({
     setIsLoading(true);
     setError(null);
     try {
-      const price = await fetchCurrentPrice(symbol);
-      setCurrentPrice(price);
+      const priceData = await fetchCurrentPrice(symbol);
+      setCurrentPrice(priceData);
       
       const data = await fetchHistoricalPrices(symbol, currentTimeframe, 100);
       setChartData(data);

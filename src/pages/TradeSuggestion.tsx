@@ -35,20 +35,21 @@ const TradeSuggestion = () => {
   const getTradeSuggestion = async () => {
     setIsLoading(true);
     try {
-      const tradingStyle = tradingMode;
-      const response = await generateTradeSuggestion(selectedSymbol, [], tradingStyle, tradingMode);
+      // Get trading bias from trading mode
+      const tradingBias = tradingMode === 'scalp' ? 'neutral' : tradingMode === 'day' ? 'bullish' : 'bearish';
+      const response = await generateTradeSuggestion(selectedSymbol, [], tradingBias, tradingMode);
       
       // Create a complete suggestion object with all required properties
       const suggestionWithData: TradeSuggestionType = {
-        direction: response.direction as 'long' | 'short' | 'neutral' || (response.type === 'buy' ? 'long' : response.type === 'sell' ? 'short' : 'neutral'),
-        entry: response.entry || response.entryPrice,
+        direction: response.direction as 'long' | 'short' | 'neutral',
+        entry: response.entry,
         stopLoss: response.stopLoss,
         takeProfit: response.takeProfit,
         probability: response.probability || 50,
         confidence: response.confidence || 50,
         timeframe: response.timeframe || '1h',
         indicators: response.indicators || [],
-        summary: response.summary || response.reasoning || 'Suggestion based on current market conditions',
+        summary: response.summary || 'Suggestion based on current market conditions',
         createdAt: new Date()
       };
       
@@ -68,7 +69,7 @@ const TradeSuggestion = () => {
       
       toast({
         title: "Trade Suggestion Updated",
-        description: `New ${tradingStyle} trading suggestion for ${selectedSymbol} has been generated.`,
+        description: `New trading suggestion for ${selectedSymbol} has been generated.`,
       });
     } catch (error) {
       console.error('Error generating trade suggestion:', error);

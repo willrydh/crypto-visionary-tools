@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { fetchHighLowData } from '../../services/priceDataService';
+import { fetchHighLowData, fetchCurrentPrice } from '../../services/priceDataService';
 import { formatCurrency } from '@/utils/numberUtils';
 
 interface PriceThermometerProps {
@@ -19,26 +19,26 @@ export const PriceThermometer: React.FC<PriceThermometerProps> = ({ symbol = 'BT
   
   const [isLoading, setIsLoading] = useState(true);
   
-useEffect(() => {
-  const fetchData = async () => {
-    setIsLoading(true);
-    try {
-      const highLowData = await fetchHighLowData(symbol);
-      const price = await fetchCurrentPrice(symbol); // Lägg till detta om du vill inkludera live price separat
-      setData({ ...highLowData, currentPrice: price });
-    } catch (error) {
-      console.error('Error fetching high-low data:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const highLowData = await fetchHighLowData(symbol);
+        const priceData = await fetchCurrentPrice(symbol);
+        setData({ ...highLowData, currentPrice: priceData.price });
+      } catch (error) {
+        console.error('Error fetching high-low data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  fetchData();
+    fetchData();
 
-  // 💡 Ändrat till 5 minuter (300 000 ms)
-  const interval = setInterval(fetchData, 300000);
-  return () => clearInterval(interval);
-}, [symbol]);
+    // Update every 5 minutes
+    const interval = setInterval(fetchData, 300000);
+    return () => clearInterval(interval);
+  }, [symbol]);
 
   
   if (!data || isLoading) {

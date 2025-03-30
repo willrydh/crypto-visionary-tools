@@ -1,4 +1,3 @@
-
 import { PriceLevel, MarketStructure } from '@/contexts/SupportResistanceContext';
 import { Timeframe } from '@/contexts/TimeframeContext';
 import { fetchHistoricalPrices, fetchCurrentPrice } from './priceDataService';
@@ -13,10 +12,10 @@ export const fetchSupportResistanceLevels = async (
   try {
     // First, fetch real price data to establish current market conditions
     const candles = await fetchHistoricalPrices(symbol, timeframe, 200);
-    const currentPrice = await fetchCurrentPrice(symbol);
+    const currentPriceData = await fetchCurrentPrice(symbol);
     
     // Use the actual price data to generate support and resistance levels
-    const price = currentPrice.price;
+    const price = currentPriceData.price;
     const levels: PriceLevel[] = [];
     
     // Analyze price data to find potential support and resistance levels

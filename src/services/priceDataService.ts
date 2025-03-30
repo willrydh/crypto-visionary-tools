@@ -10,6 +10,18 @@ export interface CandleData {
   fetchedAt: string;
 }
 
+// Renamed from CandleData to PriceCandle to match references in PriceChart.tsx
+export interface PriceCandle {
+  timestamp: number;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+  source: string;
+  fetchedAt: string;
+}
+
 export interface HighLowData {
   dailyHigh: number;
   dailyLow: number;
@@ -54,7 +66,7 @@ export async function fetchHistoricalPrices(
   symbol: string = "BTCUSDT",
   interval: string = "D", // D = daily, 60 = hourly, 240 = 4h
   limit: number = 100
-): Promise<CandleData[]> {
+): Promise<PriceCandle[]> {
   const formattedSymbol = formatSymbol(symbol);
   const formattedInterval = typeof interval === 'string' && interval.length <= 2 ? 
     formatTimeframe(interval) : interval;
@@ -91,7 +103,13 @@ export async function fetchHistoricalPrices(
   }
 }
 
-export async function fetchCurrentPrice(symbol: string = "BTCUSDT"): Promise<number> {
+// Updated to return an object with price, change24h and other properties
+export async function fetchCurrentPrice(symbol: string = "BTCUSDT"): Promise<{
+  price: number;
+  change24h: number;
+  volume24h: number;
+  timestamp: number;
+}> {
   const formattedSymbol = formatSymbol(symbol);
   const url = `${BASE_URL}/market/tickers?category=linear&symbol=${formattedSymbol}`;
 
@@ -107,11 +125,21 @@ export async function fetchCurrentPrice(symbol: string = "BTCUSDT"): Promise<num
 
     if (json.retMsg !== "OK") throw new Error(json.retMsg);
 
-    return parseFloat(json.result.list[0].lastPrice);
+    return {
+      price: parseFloat(json.result.list[0].lastPrice),
+      change24h: parseFloat(json.result.list[0].price24hPcnt) * 100,
+      volume24h: parseFloat(json.result.list[0].volume24h),
+      timestamp: Date.now()
+    };
   } catch (error) {
     console.error("Bybit API error (current price):", error);
     // Return mock price as fallback
-    return 68000 + (Math.random() * 1000 - 500);
+    return {
+      price: 68000 + (Math.random() * 1000 - 500),
+      change24h: (Math.random() * 6) - 3,
+      volume24h: Math.random() * 1000000,
+      timestamp: Date.now()
+    };
   }
 }
 
@@ -163,9 +191,9 @@ export async function fetchHighLowData(symbol: string = "BTCUSDT"): Promise<High
 }
 
 // Generate mock candle data for fallback purposes
-function generateMockCandleData(count: number): CandleData[] {
+function generateMockCandleData(count: number): PriceCandle[] {
   const now = new Date();
-  const result: CandleData[] = [];
+  const result: PriceCandle[] = [];
   const basePrice = 68000;
 
   for (let i = 0; i < count; i++) {
