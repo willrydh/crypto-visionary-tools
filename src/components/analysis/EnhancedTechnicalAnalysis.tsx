@@ -143,188 +143,186 @@ const EnhancedTechnicalAnalysis: React.FC<EnhancedTechnicalAnalysisProps> = ({
             <TabsTrigger value="details">Details</TabsTrigger>
             <TabsTrigger value="indicators">Indicators</TabsTrigger>
           </TabsList>
-        </Tabs>
-      </CardHeader>
-      
-      <CardContent>
-        <TabsContent value="summary" className="mt-0 space-y-4">
-          <div className="space-y-2">
-            <h3 className="font-semibold">{analysis.title}</h3>
-            <p className="text-sm text-muted-foreground">{analysis.summary}</p>
-            
-            {analysis.warning && (
-              <div className="flex items-start gap-2 text-sm p-2 border bg-yellow-50/10 text-yellow-600 dark:text-yellow-400 rounded-md mt-2">
-                <AlertTriangle className="h-4 w-4 flex-shrink-0 mt-0.5" />
-                <p>{analysis.warning}</p>
-              </div>
-            )}
-          </div>
-          
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <span className="text-sm">Analysis Confidence</span>
-              <span 
-                className={`font-medium text-sm ${
-                  displayConfidence >= 70 ? 'text-green-500' : 
-                  displayConfidence >= 50 ? 'text-yellow-500' : 
-                  'text-red-500'
-                }`}
-              >
-                {getConfidenceStatus(displayConfidence)} ({displayConfidence}%)
-              </span>
-            </div>
-            <Progress 
-              value={displayConfidence}
-              className="h-2"
-            />
-          </div>
-          
-          <div className="grid grid-cols-3 gap-2 text-center text-sm">
-            <div className="space-y-1 bg-muted/30 rounded p-2">
-              <p className="text-xs text-muted-foreground">Bullish</p>
-              <p className="font-semibold text-green-500">{bullishCount || 0}</p>
-            </div>
-            <div className="space-y-1 bg-muted/30 rounded p-2">
-              <p className="text-xs text-muted-foreground">Neutral</p>
-              <p className="font-semibold text-yellow-500">{neutralCount || 0}</p>
-            </div>
-            <div className="space-y-1 bg-muted/30 rounded p-2">
-              <p className="text-xs text-muted-foreground">Bearish</p>
-              <p className="font-semibold text-red-500">{bearishCount || 0}</p>
-            </div>
-          </div>
-          
-          <div className="flex items-center text-xs text-muted-foreground space-x-1">
-            <Clock className="h-3.5 w-3.5" />
-            <span>Updated {lastUpdated ? formatTimeUntil(lastUpdated) : 'never'}</span>
-          </div>
-        </TabsContent>
         
-        <TabsContent value="details" className="mt-0 space-y-4">
-          <div className="space-y-3">
-            {analysis.details.map((detail, index) => (
-              <div key={index} className="flex items-start gap-2 text-sm">
-                <div className="h-5 w-5 rounded-full bg-primary/20 flex items-center justify-center text-xs flex-shrink-0">
-                  {index + 1}
+          <TabsContent value="summary" className="mt-0 space-y-4">
+            <div className="space-y-2">
+              <h3 className="font-semibold">{analysis.title}</h3>
+              <p className="text-sm text-muted-foreground">{analysis.summary}</p>
+              
+              {analysis.warning && (
+                <div className="flex items-start gap-2 text-sm p-2 border bg-yellow-50/10 text-yellow-600 dark:text-yellow-400 rounded-md mt-2">
+                  <AlertTriangle className="h-4 w-4 flex-shrink-0 mt-0.5" />
+                  <p>{analysis.warning}</p>
                 </div>
-                <p>{detail}</p>
-              </div>
-            ))}
-          </div>
-          
-          <Accordion type="single" collapsible className="w-full">
-            <AccordionItem value="trading-implications">
-              <AccordionTrigger className="text-sm font-medium">
-                Trading Implications
-              </AccordionTrigger>
-              <AccordionContent className="text-sm space-y-2">
-                <p className="text-muted-foreground">Based on the current {tradingMode} mode:</p>
-                
-                {currentBias === 'bullish' && (
-                  <ul className="list-disc pl-4 space-y-1 text-sm">
-                    <li>Consider long positions with strong risk management</li>
-                    <li>Look for pullbacks to key support levels for entries</li>
-                    <li>Monitor volume for confirmation of trend continuation</li>
-                    <li>Set take profit targets at key resistance levels</li>
-                  </ul>
-                )}
-                
-                {currentBias === 'bearish' && (
-                  <ul className="list-disc pl-4 space-y-1 text-sm">
-                    <li>Consider short positions with defined risk parameters</li>
-                    <li>Look for rallies to key resistance levels for entries</li>
-                    <li>Monitor for potential bull traps at previous support levels</li>
-                    <li>Be aware of oversold bounces in downtrends</li>
-                  </ul>
-                )}
-                
-                {currentBias === 'neutral' && (
-                  <ul className="list-disc pl-4 space-y-1 text-sm">
-                    <li>Consider reducing position size due to unclear direction</li>
-                    <li>Range trading strategies may be appropriate</li>
-                    <li>Wait for breakout confirmation before directional trades</li>
-                    <li>Monitor for changes in volume patterns for early signals</li>
-                  </ul>
-                )}
-              </AccordionContent>
-            </AccordionItem>
+              )}
+            </div>
             
-            <AccordionItem value="multi-timeframe">
-              <AccordionTrigger className="text-sm font-medium">
-                Multi-Timeframe Analysis
-              </AccordionTrigger>
-              <AccordionContent className="text-sm">
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span>1 Hour</span>
-                    <Badge className={
-                      currentBias === 'bullish' ? 'bg-green-500/20 text-green-600 hover:bg-green-500/20' : 
-                      currentBias === 'bearish' ? 'bg-red-500/20 text-red-600 hover:bg-red-500/20' : 
-                      'bg-yellow-500/20 text-yellow-600 hover:bg-yellow-500/20'
-                    }>
-                      {currentBias.toUpperCase()}
-                    </Badge>
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-sm">Analysis Confidence</span>
+                <span 
+                  className={`font-medium text-sm ${
+                    displayConfidence >= 70 ? 'text-green-500' : 
+                    displayConfidence >= 50 ? 'text-yellow-500' : 
+                    'text-red-500'
+                  }`}
+                >
+                  {getConfidenceStatus(displayConfidence)} ({displayConfidence}%)
+                </span>
+              </div>
+              <Progress 
+                value={displayConfidence}
+                className="h-2"
+              />
+            </div>
+            
+            <div className="grid grid-cols-3 gap-2 text-center text-sm">
+              <div className="space-y-1 bg-muted/30 rounded p-2">
+                <p className="text-xs text-muted-foreground">Bullish</p>
+                <p className="font-semibold text-green-500">{bullishCount || 0}</p>
+              </div>
+              <div className="space-y-1 bg-muted/30 rounded p-2">
+                <p className="text-xs text-muted-foreground">Neutral</p>
+                <p className="font-semibold text-yellow-500">{neutralCount || 0}</p>
+              </div>
+              <div className="space-y-1 bg-muted/30 rounded p-2">
+                <p className="text-xs text-muted-foreground">Bearish</p>
+                <p className="font-semibold text-red-500">{bearishCount || 0}</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center text-xs text-muted-foreground space-x-1">
+              <Clock className="h-3.5 w-3.5" />
+              <span>Updated {lastUpdated ? formatTimeUntil(lastUpdated) : 'never'}</span>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="details" className="mt-0 space-y-4">
+            <div className="space-y-3">
+              {analysis.details.map((detail, index) => (
+                <div key={index} className="flex items-start gap-2 text-sm">
+                  <div className="h-5 w-5 rounded-full bg-primary/20 flex items-center justify-center text-xs flex-shrink-0">
+                    {index + 1}
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span>4 Hour</span>
-                    <Badge className={
-                      currentBias === 'neutral' ? 'bg-green-500/20 text-green-600 hover:bg-green-500/20' : 
-                      currentBias === 'bullish' ? 'bg-green-500/20 text-green-600 hover:bg-green-500/20' : 
-                      'bg-yellow-500/20 text-yellow-600 hover:bg-yellow-500/20'
-                    }>
-                      {currentBias === 'neutral' ? 'BULLISH' : 
-                       currentBias === 'bullish' ? 'BULLISH' : 'NEUTRAL'}
-                    </Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span>1 Day</span>
-                    <Badge className={
-                      currentBias === 'bearish' ? 'bg-red-500/20 text-red-600 hover:bg-red-500/20' :
-                      currentBias === 'bullish' ? 'bg-green-500/20 text-green-600 hover:bg-green-500/20' : 
-                      'bg-green-500/20 text-green-600 hover:bg-green-500/20'
-                    }>
-                      {currentBias === 'bearish' ? 'BEARISH' : 'BULLISH'}
-                    </Badge>
-                  </div>
+                  <p>{detail}</p>
                 </div>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </TabsContent>
-        
-        <TabsContent value="indicators" className="mt-0 space-y-4">
-          <Accordion type="multiple" className="w-full">
-            {categories.map((category) => (
-              <AccordionItem value={category.id} key={category.id}>
-                <AccordionTrigger className="text-sm">
-                  <div className="flex items-center gap-2">
-                    {category.icon}
-                    <span>{category.name} Indicators</span>
-                  </div>
+              ))}
+            </div>
+            
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="trading-implications">
+                <AccordionTrigger className="text-sm font-medium">
+                  Trading Implications
                 </AccordionTrigger>
-                <AccordionContent>
+                <AccordionContent className="text-sm space-y-2">
+                  <p className="text-muted-foreground">Based on the current {tradingMode} mode:</p>
+                  
+                  {currentBias === 'bullish' && (
+                    <ul className="list-disc pl-4 space-y-1 text-sm">
+                      <li>Consider long positions with strong risk management</li>
+                      <li>Look for pullbacks to key support levels for entries</li>
+                      <li>Monitor volume for confirmation of trend continuation</li>
+                      <li>Set take profit targets at key resistance levels</li>
+                    </ul>
+                  )}
+                  
+                  {currentBias === 'bearish' && (
+                    <ul className="list-disc pl-4 space-y-1 text-sm">
+                      <li>Consider short positions with defined risk parameters</li>
+                      <li>Look for rallies to key resistance levels for entries</li>
+                      <li>Monitor for potential bull traps at previous support levels</li>
+                      <li>Be aware of oversold bounces in downtrends</li>
+                    </ul>
+                  )}
+                  
+                  {currentBias === 'neutral' && (
+                    <ul className="list-disc pl-4 space-y-1 text-sm">
+                      <li>Consider reducing position size due to unclear direction</li>
+                      <li>Range trading strategies may be appropriate</li>
+                      <li>Wait for breakout confirmation before directional trades</li>
+                      <li>Monitor for changes in volume patterns for early signals</li>
+                    </ul>
+                  )}
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="multi-timeframe">
+                <AccordionTrigger className="text-sm font-medium">
+                  Multi-Timeframe Analysis
+                </AccordionTrigger>
+                <AccordionContent className="text-sm">
                   <div className="space-y-2">
-                    {indicators.filter(i => i.category === category.id).map((indicator, index) => (
-                      <div 
-                        key={index} 
-                        className="flex justify-between items-center p-2 text-sm border rounded-md"
-                      >
-                        <div className="font-medium">{indicator.name}</div>
-                        <Badge variant="outline" className={
-                          indicator.signal === 'bullish' ? 'bg-green-500/10 text-green-600 border-green-200' :
-                          indicator.signal === 'bearish' ? 'bg-red-500/10 text-red-600 border-red-200' :
-                          'bg-yellow-500/10 text-yellow-600 border-yellow-200'
-                        }>
-                          {typeof indicator.value === 'number' ? indicator.value.toFixed(2) : indicator.value}
-                        </Badge>
-                      </div>
-                    ))}
+                    <div className="flex justify-between items-center">
+                      <span>1 Hour</span>
+                      <Badge className={
+                        currentBias === 'bullish' ? 'bg-green-500/20 text-green-600 hover:bg-green-500/20' : 
+                        currentBias === 'bearish' ? 'bg-red-500/20 text-red-600 hover:bg-red-500/20' : 
+                        'bg-yellow-500/20 text-yellow-600 hover:bg-yellow-500/20'
+                      }>
+                        {currentBias.toUpperCase()}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span>4 Hour</span>
+                      <Badge className={
+                        currentBias === 'neutral' ? 'bg-green-500/20 text-green-600 hover:bg-green-500/20' : 
+                        currentBias === 'bullish' ? 'bg-green-500/20 text-green-600 hover:bg-green-500/20' : 
+                        'bg-yellow-500/20 text-yellow-600 hover:bg-yellow-500/20'
+                      }>
+                        {currentBias === 'neutral' ? 'BULLISH' : 
+                         currentBias === 'bullish' ? 'BULLISH' : 'NEUTRAL'}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span>1 Day</span>
+                      <Badge className={
+                        currentBias === 'bearish' ? 'bg-red-500/20 text-red-600 hover:bg-red-500/20' :
+                        currentBias === 'bullish' ? 'bg-green-500/20 text-green-600 hover:bg-green-500/20' : 
+                        'bg-green-500/20 text-green-600 hover:bg-green-500/20'
+                      }>
+                        {currentBias === 'bearish' ? 'BEARISH' : 'BULLISH'}
+                      </Badge>
+                    </div>
                   </div>
                 </AccordionContent>
               </AccordionItem>
-            ))}
-          </Accordion>
-        </TabsContent>
+            </Accordion>
+          </TabsContent>
+          
+          <TabsContent value="indicators" className="mt-0 space-y-4">
+            <Accordion type="multiple" className="w-full">
+              {categories.map((category) => (
+                <AccordionItem value={category.id} key={category.id}>
+                  <AccordionTrigger className="text-sm">
+                    <div className="flex items-center gap-2">
+                      {category.icon}
+                      <span>{category.name} Indicators</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="space-y-2">
+                      {indicators.filter(i => i.category === category.id).map((indicator, index) => (
+                        <div 
+                          key={index} 
+                          className="flex justify-between items-center p-2 text-sm border rounded-md"
+                        >
+                          <div className="font-medium">{indicator.name}</div>
+                          <Badge variant="outline" className={
+                            indicator.signal === 'bullish' ? 'bg-green-500/10 text-green-600 border-green-200' :
+                            indicator.signal === 'bearish' ? 'bg-red-500/10 text-red-600 border-red-200' :
+                            'bg-yellow-500/10 text-yellow-600 border-yellow-200'
+                          }>
+                            {typeof indicator.value === 'number' ? indicator.value.toFixed(2) : indicator.value}
+                          </Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </TabsContent>
+        </Tabs>
       </CardContent>
       
       <CardFooter className="border-t pt-4 flex justify-between">

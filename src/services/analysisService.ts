@@ -1,83 +1,208 @@
-import { TechnicalIndicator, TradeSuggestion, MarketBias } from '@/contexts/TechnicalAnalysisContext';
-import { TradingMode } from '@/contexts/TradingModeContext';
-import { formatMockData } from '@/utils/mockDataUtils';
 
-// Mock data for development purposes
-// This would be replaced with actual API calls in production
+import { MarketBias, TechnicalIndicator, TradeSuggestion } from '@/contexts/TechnicalAnalysisContext';
+import { calculateProbability } from '@/utils/mockDataUtils';
+
+// This is a mock service for the technical analysis
+// In a real application, this would call an API 
 export const fetchTechnicalIndicators = async (
-  symbol: string,
-  timeframes: string[], 
+  symbol: string, 
+  timeframes: string[],
   indicatorTypes: string[]
 ): Promise<TechnicalIndicator[]> => {
-  console.log(`Fetching indicators for ${symbol}, timeframes: ${timeframes}, indicators: ${indicatorTypes}`);
+  // Simulate API call delay
+  await new Promise(resolve => setTimeout(resolve, 800));
   
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1500));
+  // In a real app, we would make API calls here
+  // For this demo, we'll just return some mock data
+  const indicators: TechnicalIndicator[] = [
+    {
+      name: 'Moving Average (50)',
+      value: 'Uptrend',
+      signal: 'bullish',
+      timeframe: '1h',
+      category: 'trend',
+      description: 'Price above MA shows bullish momentum'
+    },
+    {
+      name: 'MACD',
+      value: 'Converging',
+      signal: 'neutral',
+      timeframe: '1h',
+      category: 'momentum',
+      description: 'MACD lines are converging, showing decreasing momentum'
+    },
+    {
+      name: 'RSI',
+      value: 62,
+      signal: 'bullish',
+      timeframe: '1h',
+      category: 'momentum',
+      description: 'RSI above 50 shows bullish momentum'
+    },
+    {
+      name: 'Bollinger Bands',
+      value: 'Expanding',
+      signal: 'neutral',
+      timeframe: '4h',
+      category: 'volatility',
+      description: 'Expanding bands indicate increased volatility'
+    },
+    {
+      name: 'Volume',
+      value: 'Increasing',
+      signal: 'bullish',
+      timeframe: '1h',
+      category: 'volume',
+      description: 'Increasing volume on up moves confirms bullish trend'
+    },
+    {
+      name: 'Support/Resistance',
+      value: 'Near Support',
+      signal: 'bullish',
+      timeframe: '4h',
+      category: 'trend',
+      description: 'Price near support level, potential bounce'
+    },
+    {
+      name: 'Stochastic',
+      value: 75,
+      signal: 'bullish',
+      timeframe: '1h',
+      category: 'momentum',
+      description: 'Stochastic above 50 shows bullish momentum'
+    },
+    {
+      name: 'Average Directional Index (ADX)',
+      value: 28,
+      signal: 'bullish',
+      timeframe: '4h',
+      category: 'trend',
+      description: 'ADX above 25 indicates a strong trend'
+    },
+    {
+      name: 'On-Balance Volume',
+      value: 'Rising',
+      signal: 'bullish',
+      timeframe: '1d',
+      category: 'volume',
+      description: 'Rising OBV indicates accumulation'
+    },
+    {
+      name: 'Ichimoku Cloud',
+      value: 'Above Cloud',
+      signal: 'bullish',
+      timeframe: '4h',
+      category: 'trend',
+      description: 'Price above cloud indicates bullish trend'
+    },
+    {
+      name: 'Moving Average (200)',
+      value: 'Uptrend',
+      signal: 'bullish',
+      timeframe: '1d',
+      category: 'trend',
+      description: 'Price above 200 MA shows long-term bullish momentum'
+    },
+    {
+      name: 'Chaikin Money Flow',
+      value: 0.15,
+      signal: 'bullish',
+      timeframe: '1h',
+      category: 'volume',
+      description: 'Positive CMF indicates buying pressure'
+    }
+  ];
   
-  // Generate mock indicators based on requested types and timeframes
-  const mockIndicators: TechnicalIndicator[] = [];
-  
-  timeframes.forEach(timeframe => {
-    indicatorTypes.forEach(indicator => {
-      const mockValue = getMockIndicatorValue(indicator);
-      mockIndicators.push({
-        name: formatIndicatorName(indicator),
-        value: mockValue.value,
-        signal: mockValue.signal,
-        timeframe: timeframe,
-        description: getIndicatorDescription(indicator)
-      });
-    });
-  });
-  
-  return mockIndicators;
+  // Filter by requested timeframes and indicator types
+  return indicators.filter(i => 
+    timeframes.includes(i.timeframe) || 
+    indicatorTypes.includes(i.name.toLowerCase())
+  );
 };
 
 export const generateTradeSuggestion = async (
   symbol: string,
   indicators: TechnicalIndicator[],
   bias: MarketBias,
-  tradingMode: TradingMode
+  tradingMode: string
 ): Promise<TradeSuggestion> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  // Simulate API call delay
+  await new Promise(resolve => setTimeout(resolve, 500));
   
-  // Count signals by type
-  let bullishCount = 0;
-  let bearishCount = 0;
-  let totalCount = indicators.length || 1; // Avoid divide by zero
+  // Calculate the percentage of bullish indicators
+  const bullishCount = indicators.filter(i => i.signal === 'bullish').length;
+  const bearishCount = indicators.filter(i => i.signal === 'bearish').length;
+  const bullishPercentage = (bullishCount / indicators.length) * 100;
+  const bearishPercentage = (bearishCount / indicators.length) * 100;
   
-  indicators.forEach(indicator => {
-    if (indicator.signal === 'bullish') bullishCount++;
-    if (indicator.signal === 'bearish') bearishCount++;
-  });
-  
-  // Calculate confidence and probability
-  const confidence = Math.round((Math.max(bullishCount, bearishCount) / totalCount) * 100);
-  const probability = Math.min(95, confidence + Math.floor(Math.random() * 15));
-  
-  // Determine direction based on bias
-  const direction = bias === 'bullish' ? 'long' : bias === 'bearish' ? 'short' : 'neutral';
-  
-  // Get mock price for calculations
-  const currentPrice = 83300 + (Math.random() * 1000 - 500);
-  
-  // Calculate ATR-based stops and targets (mock values)
-  const atr = currentPrice * 0.015; // 1.5% as mock ATR
-  
-  let entry = currentPrice;
-  let stopLoss = direction === 'long' ? entry - (atr * 1.5) : entry + (atr * 1.5);
-  let takeProfit = direction === 'long' ? entry + (atr * 2.5) : entry - (atr * 2.5);
-  
-  // If neutral, set values but note they're less relevant
-  if (direction === 'neutral') {
-    stopLoss = entry - (atr * 1.2);
-    takeProfit = entry + (atr * 1.2);
+  // Determine direction based on bias and percentages
+  let direction: 'long' | 'short' | 'neutral' = 'neutral';
+  if (bias === 'bullish' && bullishPercentage >= 50) {
+    direction = 'long';
+  } else if (bias === 'bearish' && bearishPercentage >= 50) {
+    direction = 'short';
   }
   
-  // Generate a summary based on trading mode and bias
-  const summary = generateTradeSummary(bias, confidence, tradingMode, indicators);
+  // Define timeframe based on trading mode
+  const timeframe = tradingMode === 'scalp' ? '1h' : 
+                   tradingMode === 'day' ? '4h' : '1d';
   
+  // Calculate mock entry, stop loss, and take profit
+  const basePrice = 83500; // Mock BTC price
+  const volatility = 1000; // Mock price volatility
+  
+  const entry = direction === 'long' ? 
+    basePrice + (Math.random() * 200 - 100) : 
+    basePrice + (Math.random() * 200 - 100);
+  
+  const stopLoss = direction === 'long' ? 
+    entry - (volatility * 0.5 * (1 + Math.random() * 0.5)) : 
+    entry + (volatility * 0.5 * (1 + Math.random() * 0.5));
+  
+  const takeProfit = direction === 'long' ? 
+    entry + (volatility * (1 + Math.random())) : 
+    entry - (volatility * (1 + Math.random()));
+  
+  // Calculate risk-reward ratio and probability
+  const reward = direction === 'long' ? 
+    takeProfit - entry : 
+    entry - takeProfit;
+  
+  const risk = direction === 'long' ? 
+    entry - stopLoss : 
+    stopLoss - entry;
+  
+  const riskRewardRatio = reward / risk;
+  
+  // Calculate confidence based on indicators and risk-reward
+  const confidence = Math.min(
+    Math.round(
+      (direction === 'long' ? bullishPercentage : 
+       direction === 'short' ? bearishPercentage : 50) * 
+      (riskRewardRatio / 3) * 
+      (Math.random() * 0.3 + 0.7)
+    ),
+    95
+  );
+  
+  // Calculate probability of success
+  const probability = calculateProbability(
+    indicators, 
+    direction,
+    confidence
+  );
+  
+  // Generate summary
+  let summary = '';
+  if (direction === 'long') {
+    summary = `Strong ${tradingMode} long opportunity with ${confidence}% confidence. Entry near ${entry.toFixed(0)} with defined stop loss and take profit levels. Risk-reward ratio of ${riskRewardRatio.toFixed(1)}:1 and ${probability}% probability of success based on technical analysis.`;
+  } else if (direction === 'short') {
+    summary = `Potential ${tradingMode} short opportunity with ${confidence}% confidence. Entry near ${entry.toFixed(0)} with defined stop loss and take profit levels. Risk-reward ratio of ${riskRewardRatio.toFixed(1)}:1 and ${probability}% probability of success based on technical analysis.`;
+  } else {
+    summary = `Market conditions unclear for ${tradingMode} trades. Consider waiting for better setups or reducing position size. Current analysis shows mixed signals.`;
+  }
+  
+  // Generate trade suggestion
   return {
     direction,
     entry,
@@ -85,181 +210,9 @@ export const generateTradeSuggestion = async (
     takeProfit,
     probability,
     confidence,
-    timeframe: getTimeframeForTradingMode(tradingMode),
-    indicators,
+    timeframe,
+    indicators: indicators.slice(0, 5), // Include top 5 most relevant indicators
     summary,
     createdAt: new Date()
   };
-};
-
-// Helper function to generate trade summary
-const generateTradeSummary = (
-  bias: MarketBias, 
-  confidence: number,
-  tradingMode: TradingMode,
-  indicators: TechnicalIndicator[]
-): string => {
-  const timeframe = getTimeframeForTradingMode(tradingMode);
-  const strength = confidence > 80 ? 'strong' : confidence > 60 ? 'moderate' : 'weak';
-  
-  if (bias === 'bullish') {
-    return `Market shows ${strength} bullish structure on ${timeframe} timeframe. ${getRandomSummaryDetail(indicators, 'bullish')}`;
-  } else if (bias === 'bearish') {
-    return `Market shows ${strength} bearish structure on ${timeframe} timeframe. ${getRandomSummaryDetail(indicators, 'bearish')}`;
-  } else {
-    return `Market lacks clear direction on ${timeframe} timeframe. Choppy conditions may persist.`;
-  }
-};
-
-// Helper function to get a random detail for the summary
-const getRandomSummaryDetail = (
-  indicators: TechnicalIndicator[],
-  bias: 'bullish' | 'bearish'
-): string => {
-  const relevantIndicators = indicators.filter(ind => ind.signal === bias);
-  
-  if (relevantIndicators.length === 0) return '';
-  
-  const randomIndicator = relevantIndicators[Math.floor(Math.random() * relevantIndicators.length)];
-  
-  if (randomIndicator.name.includes('MA')) {
-    return bias === 'bullish' 
-      ? `Price is holding above ${randomIndicator.name} with momentum.` 
-      : `Price broke below ${randomIndicator.name}, showing weakness.`;
-  } else if (randomIndicator.name.includes('RSI')) {
-    return bias === 'bullish'
-      ? `${randomIndicator.name} showing upward momentum.`
-      : `${randomIndicator.name} indicating downward pressure.`;
-  } else if (randomIndicator.name.includes('MACD')) {
-    return bias === 'bullish'
-      ? `${randomIndicator.name} shows bullish crossover.`
-      : `${randomIndicator.name} shows bearish crossover.`;
-  }
-  
-  return `${randomIndicator.name} confirms the ${bias} bias.`;
-};
-
-// Helper function to get appropriate timeframe based on trading mode
-const getTimeframeForTradingMode = (tradingMode: TradingMode): string => {
-  switch (tradingMode) {
-    case 'scalp':
-      return '15m';
-    case 'day':
-      return '1h';
-    case 'night':
-      return '4h';
-    default:
-      return '1h';
-  }
-};
-
-// Helper functions for mock data generation
-const getMockIndicatorValue = (indicator: string): { value: number | string; signal: 'bullish' | 'bearish' | 'neutral' } => {
-  // Generate random values based on indicator type
-  if (indicator.includes('ma')) {
-    const basePrice = 83300 + (Math.random() * 1000 - 500);
-    const currentPrice = 83300 + (Math.random() * 1000 - 500);
-    const isBullish = Math.random() > 0.4; // Slightly biased to bullish for demo
-    
-    return {
-      value: Math.round(basePrice),
-      signal: currentPrice > basePrice ? 'bullish' : currentPrice < basePrice ? 'bearish' : 'neutral'
-    };
-  } else if (indicator.includes('rsi')) {
-    const value = Math.floor(Math.random() * 100);
-    return {
-      value,
-      signal: value < 30 ? 'bullish' : value > 70 ? 'bearish' : 'neutral'
-    };
-  } else if (indicator.includes('macd')) {
-    // MACD Line value
-    const value = (Math.random() * 200 - 100).toFixed(2);
-    const signal = Math.random() > 0.5 ? 'bullish' : 'bearish';
-    return { value, signal };
-  } else if (indicator.includes('stoch')) {
-    const value = Math.floor(Math.random() * 100);
-    return {
-      value,
-      signal: value < 20 ? 'bullish' : value > 80 ? 'bearish' : 'neutral'
-    };
-  } else if (indicator.includes('volume')) {
-    const value = `${(Math.random() * 10000).toFixed(0)}K`;
-    return {
-      value,
-      signal: Math.random() > 0.5 ? 'bullish' : 'bearish'
-    };
-  } else if (indicator.includes('bbands')) {
-    const width = (Math.random() * 5).toFixed(2);
-    return {
-      value: width,
-      signal: parseFloat(width) > 2.5 ? 'bullish' : 'neutral'
-    };
-  } else if (indicator.includes('vwap')) {
-    const basePrice = 83300;
-    const deviation = (Math.random() * 200 - 100).toFixed(2);
-    return {
-      value: deviation,
-      signal: parseFloat(deviation) > 0 ? 'bullish' : 'bearish'
-    };
-  }
-  
-  // Default case
-  return {
-    value: Math.random() > 0.5 ? 1 : 0,
-    signal: Math.random() > 0.5 ? 'bullish' : 'bearish'
-  };
-};
-
-const formatIndicatorName = (indicator: string): string => {
-  switch (indicator) {
-    case 'ma21':
-      return 'MA21';
-    case 'ma50':
-      return 'MA50';
-    case 'ma100':
-      return 'MA100';
-    case 'ma200':
-      return 'MA200';
-    case 'macd':
-      return 'MACD';
-    case 'rsi':
-      return 'RSI';
-    case 'stochrsi':
-      return 'Stoch RSI';
-    case 'volume':
-      return 'Volume';
-    case 'bbands':
-      return 'BB Width';
-    case 'vwap':
-      return 'VWAP';
-    default:
-      return indicator.toUpperCase();
-  }
-};
-
-const getIndicatorDescription = (indicator: string): string => {
-  switch (indicator) {
-    case 'ma21':
-      return '21-period Moving Average';
-    case 'ma50':
-      return '50-period Moving Average';
-    case 'ma100':
-      return '100-period Moving Average';
-    case 'ma200':
-      return '200-period Moving Average';
-    case 'macd':
-      return 'Moving Average Convergence Divergence';
-    case 'rsi':
-      return 'Relative Strength Index';
-    case 'stochrsi':
-      return 'Stochastic RSI';
-    case 'volume':
-      return 'Trading Volume';
-    case 'bbands':
-      return 'Bollinger Bands Width';
-    case 'vwap':
-      return 'Volume Weighted Average Price';
-    default:
-      return 'Technical Indicator';
-  }
 };

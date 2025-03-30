@@ -1,61 +1,83 @@
 
 import { TechnicalIndicator } from '@/contexts/TechnicalAnalysisContext';
 
-// Helper function for generating mock data
-export const formatMockData = (data: any): any => {
-  // This is a placeholder function to make it clear when we're using mock data
-  return data;
+/**
+ * Calculates a probability value based on technical indicators, direction, and confidence
+ */
+export const calculateProbability = (
+  indicators: TechnicalIndicator[],
+  direction: 'long' | 'short' | 'neutral',
+  confidence: number
+): number => {
+  if (direction === 'neutral') return 50;
+  
+  // Calculate weighted probability based on indicator signals
+  const supportingSignals = indicators.filter(i => 
+    (direction === 'long' && i.signal === 'bullish') || 
+    (direction === 'short' && i.signal === 'bearish')
+  ).length;
+  
+  const opposingSignals = indicators.filter(i => 
+    (direction === 'long' && i.signal === 'bearish') || 
+    (direction === 'short' && i.signal === 'bullish')
+  ).length;
+  
+  // Calculate base probability from signals
+  let probability = 50 + (supportingSignals - opposingSignals) * 5;
+  
+  // Adjust based on confidence
+  probability = probability * (confidence / 75);
+  
+  // Add some randomness but ensure it stays within 40-95 range
+  probability = Math.min(Math.max(
+    probability + (Math.random() * 10 - 5),
+    40
+  ), 95);
+  
+  return Math.round(probability);
 };
 
-// Generate mock technical indicators
-export const generateMockIndicators = (count: number = 5): TechnicalIndicator[] => {
-  const indicators: TechnicalIndicator[] = [];
-  const names = ['MA20', 'RSI', 'MACD', 'Stoch RSI', 'BB Width'];
-  const timeframes = ['1m', '5m', '15m', '30m', '1h', '4h'];
-  const signals: ('bullish' | 'bearish' | 'neutral')[] = ['bullish', 'bearish', 'neutral'];
-  
-  for (let i = 0; i < count; i++) {
-    const randomNameIndex = Math.floor(Math.random() * names.length);
-    const randomTimeframeIndex = Math.floor(Math.random() * timeframes.length);
-    const randomSignalIndex = Math.floor(Math.random() * signals.length);
-    
-    indicators.push({
-      name: names[randomNameIndex],
-      value: Math.floor(Math.random() * 100),
-      signal: signals[randomSignalIndex],
-      timeframe: timeframes[randomTimeframeIndex],
-      description: `Mock ${names[randomNameIndex]} indicator`
-    });
-  }
+/**
+ * Generates mock technical indicators
+ */
+export const generateMockIndicators = (
+  bias: 'bullish' | 'bearish' | 'neutral',
+  timeframe: string = '1h'
+): TechnicalIndicator[] => {
+  const indicators: TechnicalIndicator[] = [
+    {
+      name: 'Moving Average (50)',
+      value: bias === 'bullish' ? 'Above' : bias === 'bearish' ? 'Below' : 'Crossing',
+      signal: bias === 'bullish' ? 'bullish' : bias === 'bearish' ? 'bearish' : 'neutral',
+      timeframe,
+      category: 'trend',
+      description: `Price ${bias === 'bullish' ? 'above' : bias === 'bearish' ? 'below' : 'near'} MA50`
+    },
+    {
+      name: 'RSI',
+      value: bias === 'bullish' ? 65 : bias === 'bearish' ? 35 : 50,
+      signal: bias === 'bullish' ? 'bullish' : bias === 'bearish' ? 'bearish' : 'neutral',
+      timeframe,
+      category: 'momentum',
+      description: `RSI ${bias === 'bullish' ? 'shows upward momentum' : bias === 'bearish' ? 'shows downward momentum' : 'is neutral'}`
+    },
+    {
+      name: 'MACD',
+      value: bias === 'bullish' ? 'Positive' : bias === 'bearish' ? 'Negative' : 'Crossing',
+      signal: bias === 'bullish' ? 'bullish' : bias === 'bearish' ? 'bearish' : 'neutral',
+      timeframe,
+      category: 'momentum',
+      description: `MACD ${bias === 'bullish' ? 'is positive and rising' : bias === 'bearish' ? 'is negative and falling' : 'is crossing signal line'}`
+    },
+    {
+      name: 'Volume',
+      value: bias === 'bullish' ? 'Increasing' : bias === 'bearish' ? 'Decreasing' : 'Average',
+      signal: bias === 'bullish' ? 'bullish' : bias === 'bearish' ? 'bearish' : 'neutral',
+      timeframe,
+      category: 'volume',
+      description: `Volume ${bias === 'bullish' ? 'is increasing on up moves' : bias === 'bearish' ? 'is increasing on down moves' : 'is average'}`
+    }
+  ];
   
   return indicators;
-};
-
-// Generate mock price data
-export const generateMockPriceData = (count: number = 100, startPrice: number = 83000): {
-  timestamps: number[];
-  prices: number[];
-} => {
-  const timestamps: number[] = [];
-  const prices: number[] = [];
-  
-  let currentPrice = startPrice;
-  const now = Date.now();
-  
-  for (let i = 0; i < count; i++) {
-    // Add a timestamp (going back in time)
-    timestamps.unshift(now - (i * 3600000)); // 1 hour intervals
-    
-    // Random price movement
-    const movement = (Math.random() - 0.48) * 500; // Slight upward bias
-    currentPrice += movement;
-    
-    // Ensure price doesn't go negative
-    currentPrice = Math.max(currentPrice, startPrice * 0.7);
-    currentPrice = Math.min(currentPrice, startPrice * 1.3);
-    
-    prices.unshift(currentPrice);
-  }
-  
-  return { timestamps, prices };
 };
