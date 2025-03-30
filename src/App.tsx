@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,6 +16,7 @@ import Miner from "./pages/Miner";
 import Settings from "./pages/Settings";
 import PricingPage from "./pages/PricingPage";
 import LevelsView from "./pages/LevelsView";
+import Sorry from "./pages/Sorry";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +28,7 @@ const App = () => (
           {/* Public routes */}
           <Route path="/welcome" element={<Welcome />} />
           <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/sorry" element={<Sorry />} />
           
           {/* Protected routes */}
           <Route path="/" element={<RootLayout />}>

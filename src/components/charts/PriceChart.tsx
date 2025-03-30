@@ -135,12 +135,16 @@ export const PriceChart: React.FC<PriceChartProps> = ({
   
   const getChartData = () => {
     if (chartType === 'line') {
-      return chartData.map(candle => ({
-        timestamp: candle.timestamp,
-        price: candle.close
-      }));
+      return [...chartData]
+        .sort((a, b) => a.timestamp - b.timestamp)
+        .map(candle => ({
+          timestamp: candle.timestamp,
+          price: candle.close
+        }));
     } else {
-      return chartData.map(getCandlestickData);
+      return [...chartData]
+        .sort((a, b) => a.timestamp - b.timestamp)
+        .map(getCandlestickData);
     }
   };
 
@@ -151,7 +155,7 @@ export const PriceChart: React.FC<PriceChartProps> = ({
         x={x} 
         y={y} 
         width={width} 
-        height={height} 
+        height={Math.max(height, 1)} 
         fill={color} 
         stroke={color}
       />
@@ -171,6 +175,16 @@ export const PriceChart: React.FC<PriceChartProps> = ({
       />
     );
   };
+
+  useEffect(() => {
+    if (!isLoading && chartData.length > 0) {
+      setDataStatus({
+        source: 'Bybit API',
+        lastFetched: new Date(),
+        status: 'success'
+      });
+    }
+  }, [chartData, isLoading]);
 
   return (
     <Card className="h-full max-w-5xl mx-auto">

@@ -5,7 +5,8 @@ import {
   Info,
   AlertTriangle,
   CheckCircle,
-  Clock
+  Clock,
+  RefreshCw
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { useToast } from '@/hooks/use-toast';
 import { 
   getMockNotifications, 
   getMockMarketSessions,
@@ -21,9 +23,11 @@ import {
 } from '@/utils/mockData';
 
 const NotificationsPage = () => {
+  const { toast } = useToast();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [marketSessions, setMarketSessions] = useState(getMockMarketSessions());
   const [alertsEnabled, setAlertsEnabled] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setNotifications(getMockNotifications());
@@ -36,6 +40,22 @@ const NotificationsPage = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Handler for notification refresh
+  const handleRefresh = () => {
+    setIsLoading(true);
+    
+    // Simulate API call delay
+    setTimeout(() => {
+      setNotifications(getMockNotifications());
+      setIsLoading(false);
+      
+      toast({
+        title: "Notifications Refreshed",
+        description: "Your notifications have been updated.",
+      });
+    }, 1000);
+  };
+
   const markAllAsRead = () => {
     setNotifications(
       notifications.map(notification => ({
@@ -43,6 +63,20 @@ const NotificationsPage = () => {
         read: true
       }))
     );
+    
+    toast({
+      title: "Marked as Read",
+      description: "All notifications have been marked as read.",
+    });
+  };
+
+  const toggleAlerts = (checked: boolean) => {
+    setAlertsEnabled(checked);
+    
+    toast({
+      title: checked ? "Alerts Enabled" : "Alerts Disabled",
+      description: checked ? "You will now receive trading alerts." : "You will no longer receive trading alerts.",
+    });
   };
 
   const getNotificationIcon = (type: string) => {
@@ -88,6 +122,16 @@ const NotificationsPage = () => {
           </p>
         </div>
         <div className="flex items-center gap-4">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={handleRefresh}
+            disabled={isLoading}
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
+          
           {unreadCount > 0 && (
             <Button 
               variant="outline" 
@@ -101,7 +145,7 @@ const NotificationsPage = () => {
             <Switch
               id="alerts"
               checked={alertsEnabled}
-              onCheckedChange={setAlertsEnabled}
+              onCheckedChange={toggleAlerts}
             />
             <Label htmlFor="alerts">Alert me</Label>
           </div>
@@ -201,7 +245,7 @@ const NotificationsPage = () => {
                     Receive notifications about new trading opportunities
                   </p>
                 </div>
-                <Switch id="trade-alerts" checked={alertsEnabled} onCheckedChange={setAlertsEnabled} />
+                <Switch id="trade-alerts" checked={alertsEnabled} onCheckedChange={toggleAlerts} />
               </div>
               
               <Separator />
@@ -226,6 +270,13 @@ const NotificationsPage = () => {
                   </p>
                 </div>
                 <Switch id="price-alerts" defaultChecked />
+              </div>
+              
+              <div className="mt-6 p-3 bg-card/50 rounded-lg border border-border text-center">
+                <p className="text-xs text-muted-foreground">
+                  Data source: <span className="font-medium">Bybit API</span>
+                  <span className="inline-block h-2 w-2 rounded-full bg-green-500 ml-2"></span>
+                </p>
               </div>
             </CardContent>
           </Card>

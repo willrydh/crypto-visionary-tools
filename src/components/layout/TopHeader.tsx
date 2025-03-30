@@ -41,8 +41,14 @@ const TopHeader = () => {
           <TradingModeSelector />
         </div>
         
-        <Button variant="ghost" size="icon">
-          <Bell className="h-5 w-5" />
+        <Button 
+          variant="ghost" 
+          size="icon"
+          asChild
+        >
+          <Link to="/notifications">
+            <Bell className="h-5 w-5" />
+          </Link>
         </Button>
         
         <Button variant="ghost" size="icon" asChild>
