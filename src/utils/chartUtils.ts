@@ -17,6 +17,25 @@ export const calculateSMA = (data: number[], period: number): number[] => {
   return result;
 };
 
+// Apply SMA to price data with timestamps
+export const applySMA = (priceData: { timestamp: number, price: number }[], period: number): { 
+  timestamp: number, 
+  price: number, 
+  sma: number 
+}[] => {
+  // Extract just the prices for SMA calculation
+  const prices = priceData.map(item => item.price);
+  
+  // Calculate SMA
+  const smaValues = calculateSMA(prices, period);
+  
+  // Merge SMA values back with original data
+  return priceData.map((item, index) => ({
+    ...item,
+    sma: smaValues[index]
+  }));
+};
+
 // Calculate Relative Strength Index (RSI)
 export const calculateRSI = (data: number[], period: number = 14): number[] => {
   const result: number[] = [];

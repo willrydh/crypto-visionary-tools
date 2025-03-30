@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -19,6 +20,7 @@ import { formatChartTime } from '@/utils/dateUtils';
 import { useTimeframe } from '@/hooks/useTimeframe';
 import { Timeframe } from '@/contexts/TimeframeContext';
 import { PriceLevel } from '@/contexts/SupportResistanceContext';
+import { applySMA } from '@/utils/chartUtils';
 import {
   AreaChart,
   Area,
@@ -39,6 +41,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 interface PriceChartProps {
   symbol?: string;
@@ -57,6 +61,7 @@ export const PriceChart: React.FC<PriceChartProps> = ({
 }) => {
   const { currentTimeframe, setCurrentTimeframe } = useTimeframe();
   const [chartData, setChartData] = useState<PriceCandle[]>([]);
+  const [processedData, setProcessedData] = useState<any[]>([]);
   const [currentPrice, setCurrentPrice] = useState<{
     price: number;
     change24h: number;
@@ -66,6 +71,7 @@ export const PriceChart: React.FC<PriceChartProps> = ({
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [chartType, setChartType] = useState<'line' | 'candle'>('line');
+  const [showMA200, setShowMA200] = useState<boolean>(true);
   const [dataStatus, setDataStatus] = useState<{
     source: string;
     lastFetched: Date | null;
@@ -87,7 +93,7 @@ export const PriceChart: React.FC<PriceChartProps> = ({
       setChartData(data);
       
       setDataStatus({
-        source: 'ProfitPilot API',
+        source: 'Bybit API',
         lastFetched: new Date(),
         status: 'success'
       });
@@ -114,6 +120,29 @@ export const PriceChart: React.FC<PriceChartProps> = ({
     return () => clearInterval(interval);
   }, [currentTimeframe, symbol]);
   
+  useEffect(() => {
+    if (chartData.length > 0) {
+      // Prepare data for chart display
+      if (chartType === 'line') {
+        const lineData = [...chartData]
+          .sort((a, b) => a.timestamp - b.timestamp)
+          .map(candle => ({
+            timestamp: candle.timestamp,
+            price: candle.close
+          }));
+        
+        // Apply MA 200 calculation to line data
+        const dataWithMA200 = applySMA(lineData, 200);
+        setProcessedData(dataWithMA200);
+      } else {
+        const candleData = [...chartData]
+          .sort((a, b) => a.timestamp - b.timestamp)
+          .map(getCandlestickData);
+        setProcessedData(candleData);
+      }
+    }
+  }, [chartData, chartType]);
+  
   const formatXAxis = (timestamp: number) => {
     return formatChartTime(timestamp, currentTimeframe);
   };
@@ -136,48 +165,9 @@ export const PriceChart: React.FC<PriceChartProps> = ({
       highToLowY: candle.low
     };
   };
-  
-  const getChartData = () => {
-    if (chartType === 'line') {
-      return [...chartData]
-        .sort((a, b) => a.timestamp - b.timestamp)
-        .map(candle => ({
-          timestamp: candle.timestamp,
-          price: candle.close
-        }));
-    } else {
-      return [...chartData]
-        .sort((a, b) => a.timestamp - b.timestamp)
-        .map(getCandlestickData);
-    }
-  };
 
-  const CandlestickBody = (props: any) => {
-    const { x, y, width, height, color } = props;
-    return (
-      <rect 
-        x={x} 
-        y={y} 
-        width={width} 
-        height={Math.max(height, 1)} 
-        fill={color} 
-        stroke={color}
-      />
-    );
-  };
-
-  const CandlestickWick = (props: any) => {
-    const { x, y, width, height, color } = props;
-    return (
-      <rect 
-        x={x + width / 2 - 0.5} 
-        y={y} 
-        width={1} 
-        height={height} 
-        fill={color} 
-        stroke={color}
-      />
-    );
+  const toggleMA200 = () => {
+    setShowMA200(!showMA200);
   };
 
   useEffect(() => {
@@ -244,7 +234,11 @@ export const PriceChart: React.FC<PriceChartProps> = ({
             )}
           </div>
           
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
+            <div className="flex items-center space-x-2 mr-2">
+              <Switch id="ma200" checked={showMA200} onCheckedChange={toggleMA200} />
+              <Label htmlFor="ma200" className="text-xs">MA 200</Label>
+            </div>
             <ToggleGroup type="single" value={chartType} onValueChange={(value) => value && setChartType(value as 'line' | 'candle')}>
               <ToggleGroupItem value="line" aria-label="Line chart">
                 <LineChart className="h-4 w-4" />
@@ -302,7 +296,7 @@ export const PriceChart: React.FC<PriceChartProps> = ({
             <ResponsiveContainer width="100%" height="100%">
               {chartType === 'line' ? (
                 <AreaChart
-                  data={getChartData()}
+                  data={processedData}
                   margin={{ top: 5, right: 5, left: 5, bottom: 5 }}
                 >
                   <defs>
@@ -326,7 +320,10 @@ export const PriceChart: React.FC<PriceChartProps> = ({
                   <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="3 3" opacity={0.1} />
                   <Tooltip 
                     labelFormatter={(label) => formatXAxis(label as number)}
-                    formatter={tooltipFormatter}
+                    formatter={(value, name) => {
+                      if (name === 'sma') return [formatCurrency(value as number), 'MA 200'];
+                      return [formatCurrency(value as number), name === 'price' ? 'Price' : name];
+                    }}
                   />
                   <Area 
                     type="monotone" 
@@ -335,6 +332,18 @@ export const PriceChart: React.FC<PriceChartProps> = ({
                     fill="url(#colorPrice)" 
                     isAnimationActive={false}
                   />
+                  
+                  {showMA200 && (
+                    <Line
+                      type="monotone"
+                      dataKey="sma"
+                      stroke="#ff0000"
+                      strokeWidth={2}
+                      dot={false}
+                      isAnimationActive={false}
+                      name="MA 200"
+                    />
+                  )}
                   
                   {showLevels && levels.map((level, idx) => (
                     <ReferenceLine 
@@ -354,7 +363,7 @@ export const PriceChart: React.FC<PriceChartProps> = ({
                 </AreaChart>
               ) : (
                 <ComposedChart
-                  data={getChartData()}
+                  data={processedData}
                   margin={{ top: 5, right: 5, left: 5, bottom: 5 }}
                 >
                   <XAxis 

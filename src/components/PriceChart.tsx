@@ -1,9 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RefreshCw, AlertTriangle, Info, ArrowUp, ArrowDown, CheckCircle } from 'lucide-react';
 import { fetchHistoricalPrices, fetchCurrentPrice } from '@/services/priceDataService';
 import { formatCurrency } from '@/lib/utils';
+import { applySMA } from '@/utils/chartUtils';
 import {
   AreaChart,
   Area,
@@ -15,11 +17,14 @@ import {
   ReferenceLine,
   BarChart,
   Bar,
-  Cell
+  Cell,
+  Line
 } from 'recharts';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 interface PriceChartProps {
   symbol?: string;
@@ -37,6 +42,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
   excludeTimeframes = []
 }) => {
   const [chartData, setChartData] = useState<any[]>([]);
+  const [processedData, setProcessedData] = useState<any[]>([]);
   const [currentPrice, setCurrentPrice] = useState<{
     price: number;
     change24h: number;
@@ -48,6 +54,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string>("");
   const [chartType, setChartType] = useState<'line' | 'candle'>('line');
+  const [showMA200, setShowMA200] = useState<boolean>(true);
   const [connectionStatus, setConnectionStatus] = useState<'connected' | 'disconnected' | 'connecting'>('connecting');
 
   const loadChartData = async (days: number = 1) => {
@@ -60,6 +67,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
       
       const data = sortedData.map(candle => ({
         time: new Date(candle.timestamp).toLocaleString(),
+        timestamp: candle.timestamp,
         price: candle.close,
         open: candle.open,
         close: candle.close,
@@ -71,6 +79,22 @@ const PriceChart: React.FC<PriceChartProps> = ({
       }));
 
       setChartData(data);
+      
+      // Process data for chart display
+      if (chartType === 'line') {
+        const lineData = data.map(item => ({
+          timestamp: item.timestamp,
+          price: item.price,
+          time: item.time
+        }));
+        
+        // Apply MA 200
+        const dataWithMA200 = applySMA(lineData, 200);
+        setProcessedData(dataWithMA200);
+      } else {
+        setProcessedData(data);
+      }
+      
       setLastUpdated(new Date().toLocaleString());
       setConnectionStatus('connected');
     } catch (error) {
@@ -103,7 +127,26 @@ const PriceChart: React.FC<PriceChartProps> = ({
       clearInterval(chartInterval);
       clearInterval(priceInterval);
     };
-  }, [timeframe, symbol]);
+  }, [timeframe, symbol, chartType]);
+
+  useEffect(() => {
+    // Update processed data when chart type changes
+    if (chartData.length > 0) {
+      if (chartType === 'line') {
+        const lineData = chartData.map(item => ({
+          timestamp: item.timestamp,
+          price: item.price,
+          time: item.time
+        }));
+        
+        // Apply MA 200
+        const dataWithMA200 = applySMA(lineData, 200);
+        setProcessedData(dataWithMA200);
+      } else {
+        setProcessedData(chartData);
+      }
+    }
+  }, [chartType, chartData]);
 
   const formatXAxis = (timestamp: string) => {
     const date = new Date(timestamp);
@@ -117,11 +160,15 @@ const PriceChart: React.FC<PriceChartProps> = ({
     setChartType(chartType === 'line' ? 'candle' : 'line');
   };
 
+  const toggleMA200 = () => {
+    setShowMA200(!showMA200);
+  };
+
   const renderLineChart = () => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
-          data={chartData}
+          data={processedData}
           margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
         >
           <defs>
@@ -146,7 +193,10 @@ const PriceChart: React.FC<PriceChartProps> = ({
           <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
           <Tooltip
             labelFormatter={(value) => `${value}`}
-            formatter={(value) => [formatCurrency(value as number), "Price"]}
+            formatter={(value, name) => {
+              if (name === 'sma') return [formatCurrency(value as number), 'MA 200'];
+              return [formatCurrency(value as number), typeof name === 'string' ? name === 'price' ? 'Price' : name.charAt(0).toUpperCase() + name.slice(1) : name];
+            }}
           />
           <Area
             type="monotone"
@@ -155,6 +205,18 @@ const PriceChart: React.FC<PriceChartProps> = ({
             fill="url(#colorPrice)"
             isAnimationActive={false}
           />
+          
+          {showMA200 && (
+            <Line
+              type="monotone"
+              dataKey="sma"
+              stroke="#ff0000"
+              strokeWidth={2}
+              dot={false}
+              isAnimationActive={false}
+              name="MA 200"
+            />
+          )}
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -164,7 +226,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
     return (
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
-          data={chartData}
+          data={processedData}
           margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
         >
           <XAxis
@@ -271,6 +333,11 @@ const PriceChart: React.FC<PriceChartProps> = ({
           </div>
 
           <div className="flex items-center gap-2">
+            <div className="flex items-center space-x-2 mr-2">
+              <Switch id="chart-ma200" checked={showMA200} onCheckedChange={toggleMA200} />
+              <Label htmlFor="chart-ma200" className="text-xs">MA 200</Label>
+            </div>
+          
             <Tabs value={timeframe} onValueChange={setTimeframe} className="w-auto">
               <TabsList className="h-7">
                 <TabsTrigger value="1d" className="text-xs px-2 h-6">1D</TabsTrigger>
