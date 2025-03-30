@@ -9,7 +9,7 @@ import {
   Webhook,
   Radar,
   Bitcoin,
-  CircleDollarSign
+  LineChart
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Logo from '@/assets/logo.svg';
@@ -18,15 +18,15 @@ import Logo from '@/assets/logo.svg';
 const navItems = [
   { path: '/', label: 'Dashboard', icon: <BarChart3 className="h-5 w-5" /> },
   { path: '/signals', label: 'Signals', icon: <Radar className="h-5 w-5" /> },
-  { path: '/trade-suggestion', label: 'Trade', icon: <Zap className="h-5 w-5" /> },
-  { path: '/calendar', label: 'Events', icon: <Calendar className="h-5 w-5" /> },
-  { path: '/miner', label: 'Miner', icon: <Webhook className="h-5 w-5" /> },
+  { path: '/trade', label: 'Trade', icon: <Zap className="h-5 w-5" /> },
+  { path: '/chart', label: 'Chart', icon: <LineChart className="h-5 w-5" /> },
+  { path: '/calendar', label: 'Calendar', icon: <Calendar className="h-5 w-5" /> },
   { path: '/settings', label: 'Settings', icon: <Settings className="h-5 w-5" /> },
 ];
 
 const MainNavigation: React.FC = () => {
   return (
-    <div className="hidden md:flex h-screen w-64 flex-col fixed left-0 top-0 bottom-0 border-r border-border bg-background z-30">
+    <div className="hidden md:flex h-screen w-64 flex-col fixed left-0 top-0 bottom-0 border-r border-border bg-sidebar-background z-30">
       <div className="p-6">
         <Link to="/" className="flex items-center space-x-2">
           <img src={Logo} alt="ProfitPilot" className="h-8 w-8" />

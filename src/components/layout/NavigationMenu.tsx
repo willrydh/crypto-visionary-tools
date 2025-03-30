@@ -12,7 +12,6 @@ import {
   LayoutDashboard,
   Lightbulb,
   Activity,
-  CreditCard
 } from 'lucide-react';
 import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
 import { useTradingMode } from '@/hooks/useTradingMode';

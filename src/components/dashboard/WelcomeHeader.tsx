@@ -4,94 +4,92 @@ import { Check, AlertTriangle, Info, Zap, Wifi, Database, Globe } from 'lucide-r
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
-interface ApiStatus {
-  name: string;
-  status: 'connected' | 'connecting' | 'error';
-  latency?: number;
-  icon: React.ReactNode;
-}
+const systemServices = [
+  {
+    name: 'Bybit API',
+    status: 'connected',
+    latency: 72,
+    icon: <Wifi className="h-4 w-4" />,
+  },
+  {
+    name: 'Forex Factory',
+    status: 'connected',
+    latency: 87,
+    icon: <Globe className="h-4 w-4" />,
+  },
+  {
+    name: 'Market Data',
+    status: 'connected',
+    latency: 153,
+    icon: <Database className="h-4 w-4" />,
+  },
+  {
+    name: 'Signal Engine',
+    status: 'connected',
+    latency: 146,
+    icon: <Zap className="h-4 w-4" />,
+  }
+];
 
-export const WelcomeHeader = () => {
-  const [userName, setUserName] = useState('Trader');
-  const [apiStatuses, setApiStatuses] = useState<ApiStatus[]>([
-    { name: 'Bybit API', status: 'connecting', icon: <Database className="h-4 w-4" /> },
-    { name: 'Forex Factory', status: 'connecting', icon: <Globe className="h-4 w-4" /> },
-    { name: 'Market Data', status: 'connecting', icon: <Zap className="h-4 w-4" /> },
-    { name: 'Signal Engine', status: 'connecting', icon: <Wifi className="h-4 w-4" /> }
-  ]);
+const WelcomeHeader = () => {
+  const [randomName] = useState(() => {
+    const names = ['Trader', 'Captain', 'Professional', 'Champion'];
+    return names[Math.floor(Math.random() * names.length)];
+  });
 
-  // Simulate API connections
+  const [latencies, setLatencies] = useState(systemServices.map(service => service.latency));
+
+  // Simulate changing latencies
   useEffect(() => {
-    const statusTimeouts = apiStatuses.map((api, index) => {
-      return setTimeout(() => {
-        setApiStatuses(prev => {
-          const updated = [...prev];
-          updated[index] = {
-            ...updated[index],
-            status: Math.random() > 0.1 ? 'connected' : 'error',
-            latency: Math.floor(Math.random() * 150) + 20
-          };
-          return updated;
-        });
-      }, 1000 + (index * 500));
-    });
-
-    return () => {
-      statusTimeouts.forEach(timeout => clearTimeout(timeout));
-    };
+    const interval = setInterval(() => {
+      setLatencies(prev => 
+        prev.map(latency => {
+          const change = Math.random() > 0.5 ? 1 : -1;
+          return Math.max(50, Math.min(200, latency + change * Math.floor(Math.random() * 5)));
+        })
+      );
+    }, 3000);
+    
+    return () => clearInterval(interval);
   }, []);
 
+  const getStatusColor = (latency: number) => {
+    if (latency < 100) return 'text-green-500';
+    if (latency < 150) return 'text-amber-500';
+    return 'text-red-500';
+  };
+
   return (
-    <div className="bg-card/50 border border-border/40 rounded-lg p-4 mb-8 animate-fade-in">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h2 className="text-xl font-bold mb-1">Welcome back, {userName}</h2>
-          <p className="text-muted-foreground">
-            Your AI-powered trading companion - gain the edge with real-time signals and deep market analysis
-          </p>
-        </div>
-        
-        <div className="w-full md:w-auto border-t md:border-t-0 pt-4 md:pt-0 mt-2 md:mt-0">
-          <div className="text-sm font-medium mb-2">System Status</div>
-          <div className="grid grid-cols-2 gap-3">
-            {apiStatuses.map((api) => (
-              <TooltipProvider key={api.name}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className="flex items-center gap-1.5">
-                      {api.icon}
-                      <span className="text-sm">{api.name}</span>
-                      {api.status === 'connected' ? (
-                        <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/20 ml-auto">
-                          <Check className="h-3 w-3 mr-1" />
-                          {api.latency}ms
-                        </Badge>
-                      ) : api.status === 'connecting' ? (
-                        <Badge variant="outline" className="bg-yellow-500/10 text-yellow-500 border-yellow-500/20 ml-auto">
-                          <Info className="h-3 w-3 mr-1" />
-                          Connecting
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-500/20 ml-auto">
-                          <AlertTriangle className="h-3 w-3 mr-1" />
-                          Error
-                        </Badge>
-                      )}
+    <div className="w-full bg-card rounded-lg border border-border p-6 mb-6">
+      <h2 className="text-2xl font-bold mb-2">Welcome back, {randomName}</h2>
+      <p className="text-muted-foreground mb-6">
+        Your AI-powered trading companion - gain the edge with real-time signals and deep market analysis
+      </p>
+      
+      <div className="border-t border-border pt-4">
+        <h3 className="text-lg font-medium mb-4">System Status</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          {systemServices.map((service, index) => (
+            <TooltipProvider key={service.name}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      {service.icon}
+                      <span className="text-sm">{service.name}</span>
                     </div>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom">
-                    {api.status === 'connected' ? (
-                      <>Successfully connected to {api.name} with {api.latency}ms latency</>
-                    ) : api.status === 'connecting' ? (
-                      <>Establishing connection to {api.name}...</>
-                    ) : (
-                      <>Connection failed. Check your network or API credentials</>
-                    )}
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            ))}
-          </div>
+                    <Badge variant="outline" className={`${getStatusColor(latencies[index])} ml-auto`}>
+                      {latencies[index]}ms
+                    </Badge>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{service.name} status: {service.status}</p>
+                  <p className="text-xs">Current latency: {latencies[index]}ms</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ))}
         </div>
       </div>
     </div>

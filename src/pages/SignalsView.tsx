@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import PriceChart from '@/components/PriceChart';
+import { PriceChart } from '@/components/charts/PriceChart';
 import EnhancedTechnicalAnalysis from '@/components/analysis/EnhancedTechnicalAnalysis';
 import { TradeSuggestionCard } from '@/components/analysis/TradeSuggestionCard';
 import { SupportResistanceLevels } from '@/components/support-resistance/SupportResistanceLevels';
@@ -133,7 +133,7 @@ const SignalsView = () => {
           </TabsList>
           
           <TabsContent value="chart" className="pt-4">
-            <PriceChart showLevels={true} levels={levels} />
+            <PriceChart symbol="BTC/USDT" />
           </TabsContent>
           
           <TabsContent value="levels" className="pt-4">
