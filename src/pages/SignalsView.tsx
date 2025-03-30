@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import PriceChart from '@/components/PriceChart';
-import { TechnicalAnalysisSummary } from '@/components/analysis/TechnicalAnalysisSummary';
+import { EnhancedTechnicalAnalysis } from '@/components/analysis/EnhancedTechnicalAnalysis';
 import { TradeSuggestionCard } from '@/components/analysis/TradeSuggestionCard';
 import { SupportResistanceLevels } from '@/components/support-resistance/SupportResistanceLevels';
 import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';
@@ -14,6 +14,8 @@ import PriceRangeIndicator from '@/components/charts/PriceRangeIndicator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { DataSourceIndicator } from '@/components/ui/data-source-indicator';
 import CryptoBubbles from '@/components/crypto/CryptoBubbles';
+import CoinInfo from '@/components/crypto/CoinInfo';
+import MarketEventList from '@/components/markets/MarketEventList';
 
 const SignalsView = () => {
   const { toast } = useToast();
@@ -36,6 +38,9 @@ const SignalsView = () => {
     weeklyHigh: 84500,
     weeklyLow: 80200
   });
+
+  const [showPumpEvents, setShowPumpEvents] = useState(false);
+  const [showDumpEvents, setShowDumpEvents] = useState(false);
 
   useEffect(() => {
     if (indicators.length === 0) {
@@ -70,6 +75,16 @@ const SignalsView = () => {
         description: "Could not update market data. Please try again.",
         variant: "destructive"
       });
+    }
+  };
+
+  const handleMarketEventClick = (type: 'pump' | 'dump') => {
+    if (type === 'pump') {
+      setShowPumpEvents(!showPumpEvents);
+      setShowDumpEvents(false);
+    } else {
+      setShowDumpEvents(!showDumpEvents);
+      setShowPumpEvents(false);
     }
   };
 
@@ -116,12 +131,19 @@ const SignalsView = () => {
         </div>
       </div>
 
+      <CoinInfo 
+        symbol="BTC/USDT"
+        name="Bitcoin"
+        price={priceInfo.currentPrice}
+        change24h={1.8}
+      />
+
       <div className="space-y-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
             <TabsTrigger value="chart">Price Chart</TabsTrigger>
             <TabsTrigger value="levels">Support & Resistance</TabsTrigger>
-            <TabsTrigger value="bubbles">Crypto Bubbles</TabsTrigger>
+            <TabsTrigger value="bubbles">Bubbles</TabsTrigger>
           </TabsList>
           
           <TabsContent value="chart" className="pt-4">
@@ -138,7 +160,7 @@ const SignalsView = () => {
         </Tabs>
         
         <div className="space-y-6">
-          <TechnicalAnalysisSummary 
+          <EnhancedTechnicalAnalysis 
             currentBias={currentBias}
             indicators={indicators}
             confidenceScore={confidenceScore}
@@ -152,13 +174,38 @@ const SignalsView = () => {
             isLoading={isLoading} 
           />
           
-          <PriceRangeIndicator
-            currentPrice={priceInfo.currentPrice}
-            dailyHigh={priceInfo.dailyHigh}
-            dailyLow={priceInfo.dailyLow}
-            weeklyHigh={priceInfo.weeklyHigh}
-            weeklyLow={priceInfo.weeklyLow}
-          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="cursor-pointer" onClick={() => handleMarketEventClick('pump')}>
+              <PriceRangeIndicator
+                title="Latest Market Pump"
+                currentPrice={priceInfo.currentPrice}
+                dailyHigh={priceInfo.dailyHigh}
+                dailyLow={priceInfo.dailyLow}
+                weeklyHigh={priceInfo.weeklyHigh}
+                weeklyLow={priceInfo.weeklyLow}
+                type="pump"
+              />
+            </div>
+            <div className="cursor-pointer" onClick={() => handleMarketEventClick('dump')}>
+              <PriceRangeIndicator
+                title="Latest Market Dump"
+                currentPrice={priceInfo.currentPrice}
+                dailyHigh={priceInfo.dailyHigh}
+                dailyLow={priceInfo.dailyLow}
+                weeklyHigh={priceInfo.weeklyHigh}
+                weeklyLow={priceInfo.weeklyLow}
+                type="dump"
+              />
+            </div>
+          </div>
+          
+          {showPumpEvents && (
+            <MarketEventList eventType="pump" limit={5} />
+          )}
+          
+          {showDumpEvents && (
+            <MarketEventList eventType="dump" limit={5} />
+          )}
         </div>
       </div>
     </div>

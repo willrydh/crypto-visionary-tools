@@ -9,6 +9,7 @@ import { RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
 import { DataSourceIndicator } from '@/components/ui/data-source-indicator';
+import CoinInfo from '@/components/crypto/CoinInfo';
 
 const ChartView = () => {
   const { toast } = useToast();
@@ -74,6 +75,12 @@ const ChartView = () => {
           </div>
         </div>
       </div>
+      
+      <CoinInfo 
+        symbol="BTC/USDT" 
+        price={82500}
+        change24h={1.8}
+      />
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="md:col-span-3">

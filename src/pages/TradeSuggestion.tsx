@@ -1,164 +1,137 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EnhancedTechnicalAnalysis } from '@/components/analysis/EnhancedTechnicalAnalysis';
 import { TradeSuggestionCard } from '@/components/analysis/TradeSuggestionCard';
-import { Button } from '@/components/ui/button';
-import { RefreshCw } from 'lucide-react';
-import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
-import { useTradingMode } from '@/hooks/useTradingMode';
-import { generateTradeSuggestion } from '@/services/analysisService';
+import { PriceChart } from '@/components/charts/PriceChart';
+import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';
 import { useToast } from '@/hooks/use-toast';
-import DataInsights from '@/components/analysis/DataInsights';
-import { logTradingSignal } from '@/services/dataLoggingService';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-
-// Define our own complete type that includes all properties we need
-interface TradeSuggestionType {
-  direction: 'long' | 'short' | 'neutral';
-  entry: number;
-  stopLoss: number;
-  takeProfit: number;
-  probability: number;
-  confidence: number;
-  timeframe: string;
-  indicators: any[];
-  summary: string;
-  createdAt: Date;
-}
+import { Button } from '@/components/ui/button';
+import { RefreshCw, Wallet } from 'lucide-react';
+import CoinInfo from '@/components/crypto/CoinInfo';
+import InitiateTrade from '@/components/trading/InitiateTrade';
 
 const TradeSuggestion = () => {
   const { toast } = useToast();
-  const { tradingMode } = useTradingMode();
-  const [suggestion, setSuggestion] = useState<TradeSuggestionType | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [selectedSymbol, setSelectedSymbol] = useState<string>("BTCUSDT");
+  const [currentPrice, setCurrentPrice] = useState(82450);
+  const { 
+    indicators,
+    currentBias,
+    confidenceScore,
+    tradeSuggestion,
+    isLoading,
+    lastUpdated,
+    generateAnalysis
+  } = useTechnicalAnalysis();
   
-  // Available symbols
-  const availableSymbols = [
-    { value: "BTCUSDT", label: "Bitcoin (BTC/USDT)" },
-    { value: "ETHUSDT", label: "Ethereum (ETH/USDT)" },
-    { value: "SOLUSDT", label: "Solana (SOL/USDT)" },
-    { value: "BNBUSDT", label: "Binance Coin (BNB/USDT)" },
-  ];
+  useEffect(() => {
+    if (indicators.length === 0) {
+      generateAnalysis('BTC/USDT');
+    }
+    
+    // Simulate price updates
+    const interval = setInterval(() => {
+      setCurrentPrice(prev => prev + (Math.random() * 200 - 100));
+    }, 3000);
+    
+    return () => clearInterval(interval);
+  }, []);
   
-  // Get trade suggestion based on current mode
-  const getTradeSuggestion = async () => {
-    setIsLoading(true);
+  const handleRefresh = async () => {
     try {
-      // Get trading bias from trading mode
-      const tradingBias = tradingMode === 'scalp' ? 'neutral' : tradingMode === 'day' ? 'bullish' : 'bearish';
-      const response = await generateTradeSuggestion(selectedSymbol, [], tradingBias, tradingMode);
-      
-      // Create a complete suggestion object with all required properties
-      const suggestionWithData: TradeSuggestionType = {
-        direction: response.direction as 'long' | 'short' | 'neutral',
-        entry: response.entry,
-        stopLoss: response.stopLoss,
-        takeProfit: response.takeProfit,
-        probability: response.probability || 50,
-        confidence: response.confidence || 50,
-        timeframe: response.timeframe || '1h',
-        indicators: response.indicators || [],
-        summary: response.summary || 'Suggestion based on current market conditions',
-        createdAt: new Date()
-      };
-      
-      setSuggestion(suggestionWithData);
-      
-      // Log the trading signal
-      const triggeredIndicators = suggestionWithData.indicators.map(i => i.name.toLowerCase());
-      logTradingSignal(
-        suggestionWithData.direction,
-        suggestionWithData.entry,
-        suggestionWithData.stopLoss,
-        suggestionWithData.takeProfit,
-        tradingMode,
-        triggeredIndicators,
-        selectedSymbol
-      );
-      
+      await generateAnalysis('BTC/USDT', true);
       toast({
-        title: "Trade Suggestion Updated",
-        description: `New trading suggestion for ${selectedSymbol} has been generated.`,
+        title: "Analysis Updated",
+        description: "Trade suggestions and technical analysis have been refreshed.",
       });
     } catch (error) {
-      console.error('Error generating trade suggestion:', error);
+      console.error('Error refreshing analysis:', error);
       toast({
-        title: "Generation Failed",
-        description: "Could not generate trade suggestion. Please try again.",
+        title: "Update Failed",
+        description: "Could not refresh analysis. Please try again.",
         variant: "destructive"
       });
-    } finally {
-      setIsLoading(false);
     }
   };
-  
-  // Generate suggestion when trading mode changes
-  useEffect(() => {
-    getTradeSuggestion();
-  }, [tradingMode]);
   
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Trade Suggestion</h1>
+          <h1 className="text-2xl font-bold">Trade Suggestions</h1>
           <p className="text-muted-foreground">
-            AI-generated trade setup based on current market conditions
+            Advanced trade analysis and execution
           </p>
         </div>
-        
-        <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center w-full sm:w-auto">
-          <div className="w-full sm:w-auto">
-            <Select
-              value={selectedSymbol}
-              onValueChange={(value) => setSelectedSymbol(value)}
-            >
-              <SelectTrigger className="w-full sm:w-[200px]">
-                <SelectValue placeholder="Select symbol" />
-              </SelectTrigger>
-              <SelectContent>
-                {availableSymbols.map((symbol) => (
-                  <SelectItem key={symbol.value} value={symbol.value}>
-                    {symbol.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div className="md:hidden w-full">
-            <TradingModeSelector />
-          </div>
-          
-          <Button
-            onClick={getTradeSuggestion}
-            disabled={isLoading}
-            variant="outline"
-            className="w-full sm:w-auto"
-          >
-            {isLoading ? (
-              <RefreshCw className="h-4 w-4 animate-spin mr-2" />
-            ) : (
-              <RefreshCw className="h-4 w-4 mr-2" />
-            )}
-            Refresh
-          </Button>
-        </div>
+        <Button 
+          onClick={handleRefresh} 
+          disabled={isLoading} 
+          className="gap-2"
+        >
+          {isLoading ? (
+            <RefreshCw className="h-4 w-4 animate-spin" />
+          ) : (
+            <RefreshCw className="h-4 w-4" />
+          )}
+          Refresh Analysis
+        </Button>
       </div>
       
+      <CoinInfo 
+        symbol="BTC/USDT" 
+        price={currentPrice}
+        change24h={2.1}
+      />
+      
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          {suggestion ? (
-            <TradeSuggestionCard tradeSuggestion={suggestion} isLoading={isLoading} />
-          ) : (
-            <div className="flex items-center justify-center h-[400px] rounded-lg border border-border bg-card">
-              <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
-            </div>
-          )}
+        {/* Main content - 2/3 width */}
+        <div className="lg:col-span-2 space-y-6">
+          <PriceChart symbol="BTC/USDT" />
+          
+          <div className="grid grid-cols-1 gap-6">
+            <EnhancedTechnicalAnalysis 
+              currentBias={currentBias}
+              indicators={indicators}
+              confidenceScore={confidenceScore}
+              lastUpdated={lastUpdated}
+              isLoading={isLoading}
+              onRefresh={handleRefresh}
+            />
+            
+            <TradeSuggestionCard 
+              tradeSuggestion={tradeSuggestion} 
+              isLoading={isLoading} 
+            />
+          </div>
         </div>
         
-        <div>
-          <DataInsights />
+        {/* Sidebar - 1/3 width */}
+        <div className="space-y-6">
+          <InitiateTrade 
+            currentPrice={currentPrice}
+            tradeSuggestion={tradeSuggestion}
+            coinSymbol="BTC/USDT"
+          />
+          
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Trading Education</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="text-sm space-y-2">
+                <p className="text-muted-foreground">
+                  Recommendations for successful trading:
+                </p>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Always use stop losses to manage risk</li>
+                  <li>Never risk more than 1-2% of your portfolio per trade</li>
+                  <li>Confirm signals across multiple timeframes</li>
+                  <li>Consider fundamental factors alongside technical analysis</li>
+                  <li>Track your trades and learn from outcomes</li>
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

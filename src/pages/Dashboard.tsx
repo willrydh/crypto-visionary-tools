@@ -5,12 +5,13 @@ import { LineChart, Zap } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';
 import { useTradingMode } from '@/hooks/useTradingMode';
-import { TechnicalAnalysisSummary } from '@/components/analysis/TechnicalAnalysisSummary';
+import { EnhancedTechnicalAnalysis } from '@/components/analysis/EnhancedTechnicalAnalysis';
 import { MarketStatus } from '@/components/markets/MarketStatus';
 import { PriceThermometer } from '@/components/charts/PriceThermometer';
 import { PriceChart } from '@/components/charts/PriceChart';
 import { ImprovedEconomicCalendar } from '@/components/calendar/ImprovedEconomicCalendar';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import CoinInfo from '@/components/crypto/CoinInfo';
 
 const Dashboard = () => {
   const { toast } = useToast();
@@ -86,6 +87,12 @@ const Dashboard = () => {
         </div>
       </div>
 
+      <CoinInfo 
+        symbol="BTC/USDT" 
+        price={82500}
+        change24h={2.3}
+      />
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main content - 2/3 width */}
         <div className="lg:col-span-2 space-y-6">
@@ -96,7 +103,7 @@ const Dashboard = () => {
           
           {/* Analysis cards - 2 columns on larger screens */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <TechnicalAnalysisSummary 
+            <EnhancedTechnicalAnalysis 
               currentBias={currentBias}
               indicators={indicators}
               confidenceScore={confidenceScore}
