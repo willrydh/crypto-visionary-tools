@@ -18,9 +18,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           <SidebarHeader className="p-4">
             <Link to="/" className="flex items-center space-x-2">
               <img src={Logo} alt="ProfitPilot AI" className="h-8 w-8" />
-              <div className="flex flex-col">
-                <span className="font-bold text-lg">ProfitPilot AI</span>
-              </div>
+              <span className="font-bold text-lg">ProfitPilot AI</span>
             </Link>
           </SidebarHeader>
           <SidebarContent>

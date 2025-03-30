@@ -42,7 +42,6 @@ const TopHeader = () => {
           <img src={Logo} alt="ProfitPilot AI" className="h-8 w-8" />
           <div className="font-semibold">
             ProfitPilot AI
-            <span className="text-xs text-muted-foreground ml-1">Profits on Autopilot</span>
           </div>
         </Link>
       </div>
