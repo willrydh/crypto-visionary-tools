@@ -2,7 +2,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { TrendingDown, Home, BarChart } from 'lucide-react';
+import { Home, BarChart } from 'lucide-react';
 import Logo from '@/assets/logo.svg';
 
 const NotFound = () => {
@@ -21,10 +21,7 @@ const NotFound = () => {
       <div className="text-center max-w-md mx-auto p-6">
         <img src={Logo} alt="ProfitPilot AI" className="h-16 w-16 mx-auto mb-6" />
         
-        <div className="relative mb-8">
-          <div className="absolute -top-6 -right-6">
-            <TrendingDown className="h-12 w-12 text-red-500 animate-bounce" />
-          </div>
+        <div className="mb-8">
           <h1 className="text-5xl font-bold mb-2">404</h1>
           <h2 className="text-2xl font-semibold text-primary mb-4">Market Not Found</h2>
         </div>

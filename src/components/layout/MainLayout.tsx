@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from "@/components/ui/sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import NavigationMenu from './NavigationMenu';
@@ -15,13 +16,13 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       <div className="min-h-screen flex w-full">
         <Sidebar collapsible="icon" className="border-r border-border">
           <SidebarHeader className="p-4">
-            <div className="flex items-center space-x-2">
+            <Link to="/" className="flex items-center space-x-2">
               <img src={Logo} alt="ProfitPilot AI" className="h-8 w-8" />
               <div className="flex flex-col">
                 <span className="font-bold text-lg">ProfitPilot AI</span>
-                <span className="text-xs text-muted-foreground">v1.0.0</span>
+                <span className="text-xs text-muted-foreground">Profits on Autopilot</span>
               </div>
-            </div>
+            </Link>
           </SidebarHeader>
           <SidebarContent>
             <NavigationMenu />

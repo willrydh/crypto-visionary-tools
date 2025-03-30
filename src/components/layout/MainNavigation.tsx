@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { 
@@ -60,7 +61,7 @@ const MainNavigation: React.FC = () => {
       
       <div className="p-4 border-t border-border">
         <div className="text-xs text-muted-foreground text-center">
-          © 2025 Tradingbot - ProfitPilot AI by Zentra LLC
+          © 2025 ProfitPilot AI by Zentra LLC
         </div>
       </div>
     </div>

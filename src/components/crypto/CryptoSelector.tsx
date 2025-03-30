@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import CryptoCoinIcon from './CryptoCoinIcon';
+import { DataSourceIndicator } from '@/components/ui/data-source-indicator';
 
 export interface CryptoOption {
   symbol: string;
@@ -21,6 +22,7 @@ interface CryptoSelectorProps {
   value: string;
   onChange: (value: string) => void;
   className?: string;
+  showDataSource?: boolean;
 }
 
 const cryptoOptions: CryptoOption[] = [
@@ -37,27 +39,34 @@ const cryptoOptions: CryptoOption[] = [
 export const CryptoSelector: React.FC<CryptoSelectorProps> = ({ 
   value, 
   onChange,
-  className
+  className,
+  showDataSource = false
 }) => {
   return (
-    <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className={`w-[180px] ${className}`}>
-        <SelectValue placeholder="Select cryptocurrency" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectGroup>
-          <SelectLabel>Cryptocurrencies</SelectLabel>
-          {cryptoOptions.map((crypto) => (
-            <SelectItem key={crypto.pairSymbol} value={crypto.pairSymbol}>
-              <div className="flex items-center gap-2">
-                <CryptoCoinIcon coin={crypto.symbol as any} size="sm" />
-                <span>{crypto.name}</span>
-              </div>
-            </SelectItem>
-          ))}
-        </SelectGroup>
-      </SelectContent>
-    </Select>
+    <div className="flex items-center gap-2">
+      <Select value={value} onValueChange={onChange}>
+        <SelectTrigger className={`w-[180px] ${className}`}>
+          <SelectValue placeholder="Select cryptocurrency" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>Cryptocurrencies</SelectLabel>
+            {cryptoOptions.map((crypto) => (
+              <SelectItem key={crypto.pairSymbol} value={crypto.pairSymbol}>
+                <div className="flex items-center gap-2">
+                  <CryptoCoinIcon coin={crypto.symbol as any} size="sm" />
+                  <span>{crypto.name}</span>
+                </div>
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+      
+      {showDataSource && (
+        <DataSourceIndicator source="Bybit API" isLive={true} placement="right" />
+      )}
+    </div>
   );
 };
 
