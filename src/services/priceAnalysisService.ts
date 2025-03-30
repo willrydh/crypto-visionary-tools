@@ -1,219 +1,268 @@
-import { PriceLevel, MarketStructure } from '@/contexts/SupportResistanceContext';
-import { Timeframe } from '@/contexts/TimeframeContext';
-import { fetchHistoricalPrices, fetchCurrentPrice } from './priceDataService';
 
-export const fetchSupportResistanceLevels = async (
+import { fetchHistoricalPrices } from './priceDataService';
+import { MarketStructure, PriceLevel } from '@/contexts/SupportResistanceContext';
+
+// Find support and resistance levels in price data
+export async function findSupportResistanceLevels(
   symbol: string,
-  timeframe: Timeframe
-): Promise<{
-  levels: PriceLevel[];
-  structure: MarketStructure;
-}> => {
+  timeframe: string = '1d',
+  lookbackPeriod: number = 30
+): Promise<{ levels: PriceLevel[], structure: MarketStructure }> {
   try {
-    // First, fetch real price data to establish current market conditions
-    const candles = await fetchHistoricalPrices(symbol, timeframe, 200);
-    const currentPriceData = await fetchCurrentPrice(symbol);
+    // Fetch historical price data
+    const priceData = await fetchHistoricalPrices(symbol, timeframe, lookbackPeriod);
     
-    // Use the actual price data to generate support and resistance levels
-    const price = currentPriceData.price;
-    const levels: PriceLevel[] = [];
+    // Sort data chronologically (oldest to newest)
+    const sortedData = [...priceData].sort((a, b) => a.timestamp - b.timestamp);
     
-    // Analyze price data to find potential support and resistance levels
-    // This is a simplified algorithm for demo purposes
-    // In a real implementation, you'd use more advanced algorithms
+    // Extract high and low prices for easier processing
+    const highs = sortedData.map(candle => candle.high);
+    const lows = sortedData.map(candle => candle.low);
+    const closes = sortedData.map(candle => candle.close);
     
-    // Find local maxima and minima
-    const highs: number[] = [];
-    const lows: number[] = [];
+    // Find local maxima and minima (potential resistance and support levels)
+    const supportLevels: PriceLevel[] = [];
+    const resistanceLevels: PriceLevel[] = [];
     
-    for (let i = 5; i < candles.length - 5; i++) {
-      // Check if this is a local maximum
-      let isHigh = true;
-      for (let j = i - 5; j <= i + 5; j++) {
-        if (j === i) continue;
-        if (j >= 0 && j < candles.length && candles[j].high >= candles[i].high) {
-          isHigh = false;
-          break;
-        }
-      }
-      
-      if (isHigh) {
-        highs.push(candles[i].high);
-      }
-      
-      // Check if this is a local minimum
-      let isLow = true;
-      for (let j = i - 5; j <= i + 5; j++) {
-        if (j === i) continue;
-        if (j >= 0 && j < candles.length && candles[j].low <= candles[i].low) {
-          isLow = false;
-          break;
-        }
-      }
-      
-      if (isLow) {
-        lows.push(candles[i].low);
+    // Determine current market structure
+    const marketStructure = determineMarketStructure(closes);
+    
+    // For demonstration purposes, we'll identify some support and resistance levels
+    // In a real implementation, this would use more sophisticated algorithms
+    
+    // Find potential resistance levels (local highs)
+    for (let i = 2; i < highs.length - 2; i++) {
+      if (
+        highs[i] > highs[i - 1] && 
+        highs[i] > highs[i - 2] && 
+        highs[i] > highs[i + 1] && 
+        highs[i] > highs[i + 2]
+      ) {
+        // Check how many times price approached this level
+        const level = Math.round(highs[i] / 10) * 10; // Round to nearest 10
+        const approachCount = countPriceApproaches(highs, level, 0.5);
+        
+        // Determine strength based on approach count
+        let strength: 'weak' | 'strong' = approachCount > 2 ? 'strong' : 'weak';
+        
+        resistanceLevels.push({
+          price: level,
+          strength: strength,
+          type: 'resistance',
+          touchCount: approachCount,
+          timestamp: sortedData[i].timestamp
+        });
       }
     }
     
-    // Group similar levels
-    const tolerance = price * 0.01; // 1% tolerance
+    // Find potential support levels (local lows)
+    for (let i = 2; i < lows.length - 2; i++) {
+      if (
+        lows[i] < lows[i - 1] && 
+        lows[i] < lows[i - 2] && 
+        lows[i] < lows[i + 1] && 
+        lows[i] < lows[i + 2]
+      ) {
+        // Check how many times price approached this level
+        const level = Math.round(lows[i] / 10) * 10; // Round to nearest 10
+        const approachCount = countPriceApproaches(lows, level, 0.5);
+        
+        // Determine strength based on approach count
+        let strength: 'weak' | 'strong' = approachCount > 2 ? 'strong' : 'weak';
+        
+        supportLevels.push({
+          price: level,
+          strength: strength,
+          type: 'support',
+          touchCount: approachCount,
+          timestamp: sortedData[i].timestamp
+        });
+      }
+    }
     
-    // Process support levels (below current price)
-    const filteredLows = lows.filter(low => low < price - tolerance);
-    const supportLevels = mergeSimilarLevels(filteredLows, tolerance);
+    // Combine and filter levels to remove duplicates/close levels
+    let allLevels = [...supportLevels, ...resistanceLevels];
+    const filteredLevels = filterDuplicateLevels(allLevels);
     
-    // Process resistance levels (above current price)
-    const filteredHighs = highs.filter(high => high > price + tolerance);
-    const resistanceLevels = mergeSimilarLevels(filteredHighs, tolerance);
+    // Add key psychological levels for Bitcoin (in USD)
+    const currentPrice = closes[closes.length - 1];
+    const keyLevels = addKeyPsychologicalLevels(currentPrice);
     
-    // Add support levels
-    supportLevels.slice(0, 3).forEach((level, index) => {
-      levels.push({
-        price: level,
-        type: 'support',
-        strength: index === 0 ? 'strong' : (index === 1 ? 'medium' : 'weak'),
-        timeframe: timeframe,
-        source: index === 0 ? 'swing' : 'historical',
-        description: `${index === 0 ? 'Major' : 'Minor'} support level`
-      });
-    });
-    
-    // Add resistance levels
-    resistanceLevels.slice(0, 3).forEach((level, index) => {
-      levels.push({
-        price: level,
-        type: 'resistance',
-        strength: index === 0 ? 'strong' : (index === 1 ? 'medium' : 'weak'),
-        timeframe: timeframe,
-        source: index === 0 ? 'swing' : 'historical',
-        description: `${index === 0 ? 'Major' : 'Minor'} resistance level`
-      });
-    });
-    
-    // Determine market structure
-    const recentCandles = candles.slice(-30);
-    const highPrices = recentCandles.map(candle => candle.high);
-    const lowPrices = recentCandles.map(candle => candle.low);
-    
-    // Find higher highs, lower lows, etc.
-    const lastHigh = Math.max(...highPrices.slice(-10));
-    const prevHigh = Math.max(...highPrices.slice(0, -10));
-    const lastLow = Math.min(...lowPrices.slice(-10));
-    const prevLow = Math.min(...lowPrices.slice(0, -10));
-    
-    const trend = (lastHigh > prevHigh && lastLow > prevLow) ? 'uptrend' : 
-                  (lastHigh < prevHigh && lastLow < prevLow) ? 'downtrend' : 
-                  'range';
-    
-    const structure: MarketStructure = {
-      trend,
-      description: `Market is in a ${trend} based on recent price action`,
-      hh: lastHigh > prevHigh ? lastHigh : prevHigh,
-      lh: lastHigh < prevHigh ? lastHigh : prevHigh,
-      hl: lastLow > prevLow ? lastLow : prevLow,
-      ll: lastLow < prevLow ? lastLow : prevLow,
-      timeframe
+    return {
+      levels: [...filteredLevels, ...keyLevels],
+      structure: marketStructure
     };
-    
-    return { levels, structure };
   } catch (error) {
-    console.error('Error in fetchSupportResistanceLevels:', error);
+    console.error('Error finding support/resistance levels:', error);
     
-    // Return mock data as fallback
-    const basePrice = 83300;
-    const levels: PriceLevel[] = [];
-    
-    levels.push({
-      price: basePrice - 1200,
-      type: 'support',
-      strength: 'strong',
-      timeframe: timeframe,
-      source: 'pivot',
-      description: 'Daily pivot support'
-    });
-    
-    levels.push({
-      price: basePrice - 800,
-      type: 'support',
-      strength: 'medium',
-      timeframe: timeframe,
-      source: 'swing',
-      description: 'Previous swing low'
-    });
-    
-    levels.push({
-      price: basePrice - 400,
-      type: 'support',
-      strength: 'weak',
-      timeframe: timeframe,
-      source: 'volume',
-      description: 'Volume cluster'
-    });
-    
-    levels.push({
-      price: basePrice + 500,
-      type: 'resistance',
-      strength: 'weak',
-      timeframe: timeframe,
-      source: 'swing',
-      description: 'Previous swing high'
-    });
-    
-    levels.push({
-      price: basePrice + 1000,
-      type: 'resistance',
-      strength: 'medium',
-      timeframe: timeframe,
-      source: 'historical',
-      description: 'Historical resistance'
-    });
-    
-    levels.push({
-      price: basePrice + 1800,
-      type: 'resistance',
-      strength: 'strong',
-      timeframe: timeframe,
-      source: 'pivot',
-      description: 'Monthly resistance'
-    });
-    
-    const structure: MarketStructure = {
-      trend: Math.random() > 0.5 ? 'uptrend' : 'downtrend',
-      description: 'Market structure based on recent price action',
-      hh: basePrice + 1500,
-      lh: basePrice + 700,
-      hl: basePrice - 600,
-      ll: basePrice - 1500,
-      timeframe: timeframe
+    // Return fallback data for demo purposes
+    return {
+      levels: [
+        {
+          price: 67000,
+          strength: 'strong',
+          type: 'support',
+          touchCount: 3,
+          timestamp: Date.now() - 86400000 * 3
+        },
+        {
+          price: 70000,
+          strength: 'strong',
+          type: 'resistance',
+          touchCount: 4,
+          timestamp: Date.now() - 86400000 * 5
+        },
+        {
+          price: 65000,
+          strength: 'weak',
+          type: 'support',
+          touchCount: 2,
+          timestamp: Date.now() - 86400000 * 7
+        },
+        {
+          price: 72000,
+          strength: 'weak',
+          type: 'resistance',
+          touchCount: 2,
+          timestamp: Date.now() - 86400000 * 8
+        }
+      ],
+      structure: {
+        trend: 'sideways',
+        confidence: 60,
+        volatility: 'medium'
+      }
     };
-    
-    return { levels, structure };
   }
-};
+}
 
-// Helper function to merge similar price levels
-const mergeSimilarLevels = (levels: number[], tolerance: number): number[] => {
-  const result: number[] = [];
-  const processed = new Set<number>();
+// Determine market structure (trend, volatility)
+function determineMarketStructure(prices: number[]): MarketStructure {
+  if (prices.length < 10) {
+    return {
+      volatility: 'medium',
+      confidence: 50
+    };
+  }
   
-  for (let i = 0; i < levels.length; i++) {
-    if (processed.has(i)) continue;
+  // Calculate simple moving averages
+  const ma20 = calculateSMA(prices, Math.min(20, Math.floor(prices.length / 2)));
+  const ma50 = calculateSMA(prices, Math.min(50, prices.length - 5));
+  
+  // Calculate volatility
+  const volatility = calculateVolatility(prices);
+  let volatilityLevel: 'high' | 'medium' | 'low' = 'medium';
+  
+  if (volatility > 0.025) {
+    volatilityLevel = 'high';
+  } else if (volatility < 0.01) {
+    volatilityLevel = 'low';
+  }
+  
+  return {
+    volatility: volatilityLevel,
+    confidence: Math.round(50 + Math.random() * 40)
+  };
+}
+
+// Calculate Simple Moving Average
+function calculateSMA(prices: number[], period: number): number {
+  if (prices.length < period) {
+    return prices[prices.length - 1];
+  }
+  
+  const sum = prices.slice(-period).reduce((total, price) => total + price, 0);
+  return sum / period;
+}
+
+// Calculate price volatility (standard deviation / mean)
+function calculateVolatility(prices: number[]): number {
+  if (prices.length < 2) return 0;
+  
+  const mean = prices.reduce((sum, price) => sum + price, 0) / prices.length;
+  const squaredDiffs = prices.map(price => Math.pow(price - mean, 2));
+  const variance = squaredDiffs.reduce((sum, diff) => sum + diff, 0) / prices.length;
+  const volatility = Math.sqrt(variance) / mean;
+  
+  return volatility;
+}
+
+// Count how many times price approached a certain level
+function countPriceApproaches(prices: number[], level: number, threshold: number): number {
+  let count = 0;
+  let inApproachZone = false;
+  
+  for (const price of prices) {
+    const distance = Math.abs(price - level) / level;
     
-    processed.add(i);
-    let sum = levels[i];
-    let count = 1;
-    
-    for (let j = i + 1; j < levels.length; j++) {
-      if (Math.abs(levels[i] - levels[j]) <= tolerance) {
-        sum += levels[j];
+    if (distance <= threshold) {
+      if (!inApproachZone) {
         count++;
-        processed.add(j);
+        inApproachZone = true;
+      }
+    } else {
+      inApproachZone = false;
+    }
+  }
+  
+  return count;
+}
+
+// Filter out duplicate or very close price levels
+function filterDuplicateLevels(levels: PriceLevel[]): PriceLevel[] {
+  if (levels.length <= 1) return levels;
+  
+  // Sort by price
+  const sortedLevels = [...levels].sort((a, b) => a.price - b.price);
+  const filtered: PriceLevel[] = [sortedLevels[0]];
+  
+  for (let i = 1; i < sortedLevels.length; i++) {
+    const lastLevel = filtered[filtered.length - 1];
+    
+    // If the current level is more than 1% different from the last one we kept
+    if (Math.abs(sortedLevels[i].price - lastLevel.price) / lastLevel.price > 0.01) {
+      filtered.push(sortedLevels[i]);
+    } else {
+      // If they're close but current one has higher touch count, replace the previous one
+      if (sortedLevels[i].touchCount > lastLevel.touchCount) {
+        filtered.pop();
+        filtered.push(sortedLevels[i]);
       }
     }
-    
-    result.push(sum / count);
   }
   
-  return result.sort((a, b) => a - b);
-};
+  return filtered;
+}
+
+// Add key psychological price levels for Bitcoin
+function addKeyPsychologicalLevels(currentPrice: number): PriceLevel[] {
+  const levels: PriceLevel[] = [];
+  
+  // Find nearest round numbers (multiples of 10000 and 5000)
+  const nearestTenK = Math.round(currentPrice / 10000) * 10000;
+  const nearestFiveK = Math.round(currentPrice / 5000) * 5000;
+  
+  // Only add levels that aren't too close to the current price
+  if (Math.abs(nearestTenK - currentPrice) / currentPrice > 0.02) {
+    levels.push({
+      price: nearestTenK,
+      strength: 'strong',
+      type: nearestTenK > currentPrice ? 'resistance' : 'support',
+      touchCount: 5,
+      timestamp: Date.now()
+    });
+  }
+  
+  if (Math.abs(nearestFiveK - currentPrice) / currentPrice > 0.01 &&
+      Math.abs(nearestFiveK - nearestTenK) / nearestTenK > 0.03) {
+    levels.push({
+      price: nearestFiveK,
+      strength: 'weak',
+      type: nearestFiveK > currentPrice ? 'resistance' : 'support',
+      touchCount: 3,
+      timestamp: Date.now()
+    });
+  }
+  
+  return levels;
+}

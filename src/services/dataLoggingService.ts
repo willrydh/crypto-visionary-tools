@@ -1,344 +1,206 @@
 
-import { TradingMode } from "@/contexts/TradingModeContext";
+// Data logging service for ProfitPilot AI
+// Handles logging and analyzing market insights, trade signals, and event tracking
 
-export interface MarketEvent {
-  eventType: 'dump' | 'pump' | 'volatility' | 'flat';
-  timestamp: number;
-  magnitude: number; // Percentage change
-  duration: number; // In minutes
-  relatedTo?: string; // e.g., "NYSE Open", "Economic Announcement", etc.
-  symbol: string;
-}
-
-export interface TradingSignal {
-  timestamp: number;
-  direction: 'long' | 'short' | 'neutral';
-  entryPrice: number;
-  stopLoss: number;
-  takeProfit: number;
-  tradingMode: TradingMode;
-  triggeredIndicators: string[];
-  outcome?: {
-    result: 'win' | 'loss' | 'breakeven';
-    pnl: number; // Percentage
-    exitPrice: number;
-    exitTimestamp: number;
+// Types for volatility events
+interface VolatilityData {
+  openEvents: {
+    dumps: number;
+    pumps: number;
+    flat: number;
+    total: number;
+  };
+  closeEvents: {
+    dumps: number;
+    pumps: number;
+    flat: number;
+    total: number;
   };
 }
 
-export interface IndicatorPerformance {
-  name: string;
-  timeframe: string;
-  successRate: number; // 0-100
-  sampleSize: number;
-  averagePnl: number; // Percentage
-  lastUpdated: number;
+// Types for trend analysis
+interface TrendData {
+  bias: string;
+  signals: number;
+  period: number;
+  successRate: number;
+  topIndicator: string;
+  bestTimeframe: string;
 }
 
-// Helper function to store events in localStorage
-const storeEvent = (event: MarketEvent): void => {
-  try {
-    // Get existing events
-    const eventsJson = localStorage.getItem('market-events') || '[]';
-    const events: MarketEvent[] = JSON.parse(eventsJson);
-    
-    // Add new event
-    events.push(event);
-    
-    // Store back, limit to last 500 events to prevent localStorage overflow
-    const limitedEvents = events.slice(-500);
-    localStorage.setItem('market-events', JSON.stringify(limitedEvents));
-  } catch (error) {
-    console.error('Failed to store market event:', error);
-  }
-};
-
-// Helper function to store signals in localStorage
-const storeSignal = (signal: TradingSignal): void => {
-  try {
-    // Get existing signals
-    const signalsJson = localStorage.getItem('trading-signals') || '[]';
-    const signals: TradingSignal[] = JSON.parse(signalsJson);
-    
-    // Add new signal
-    signals.push(signal);
-    
-    // Store back, limit to last 500 signals
-    const limitedSignals = signals.slice(-500);
-    localStorage.setItem('trading-signals', JSON.stringify(limitedSignals));
-  } catch (error) {
-    console.error('Failed to store trading signal:', error);
-  }
-};
-
-// Log a market event
-export const logMarketEvent = (
-  eventType: 'dump' | 'pump' | 'volatility' | 'flat',
-  magnitude: number,
-  duration: number,
-  symbol: string,
-  relatedTo?: string
-): void => {
-  const event: MarketEvent = {
-    eventType,
-    timestamp: Date.now(),
-    magnitude,
-    duration,
-    relatedTo,
-    symbol
-  };
-  
-  storeEvent(event);
-  console.log(`Logged ${eventType} event for ${symbol}, magnitude: ${magnitude}%`);
-};
-
-// Log a trading signal
+// Log trading signals for future analysis
 export const logTradingSignal = (
   direction: 'long' | 'short' | 'neutral',
   entryPrice: number,
   stopLoss: number,
   takeProfit: number,
-  tradingMode: TradingMode,
-  triggeredIndicators: string[],
+  tradingMode: string,
+  indicators: string[],
   symbol: string
-): string => {
-  const signalId = `signal-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+) => {
+  try {
+    // Store in localStorage for demo purposes
+    const signalLog = {
+      direction,
+      entryPrice,
+      stopLoss,
+      takeProfit,
+      tradingMode,
+      indicators,
+      symbol,
+      timestamp: new Date().toISOString(),
+    };
+    
+    // Get existing signals or initialize empty array
+    const existingSignals = JSON.parse(localStorage.getItem('tradingSignals') || '[]');
+    existingSignals.push(signalLog);
+    
+    // Store back in localStorage
+    localStorage.setItem('tradingSignals', JSON.stringify(existingSignals));
+    
+    console.log('Trading signal logged:', signalLog);
+  } catch (error) {
+    console.error('Error logging trading signal:', error);
+  }
+};
+
+// Fetch volatility events (market open/close dumps and pumps)
+export const fetchVolatilityEvents = async (days: number = 10): Promise<VolatilityData> => {
+  // In a real implementation, this would call an API endpoint
+  // For demo purposes, we'll simulate with random data
   
-  const signal: TradingSignal = {
-    timestamp: Date.now(),
-    direction,
-    entryPrice,
-    stopLoss,
-    takeProfit,
-    tradingMode,
-    triggeredIndicators
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 700));
+  
+  // Generate realistic volatility data
+  const totalOpenEvents = Math.min(days, 30);
+  const totalCloseEvents = Math.min(days, 30);
+  
+  // NYSE open tends to have more volatility (realistic distribution)
+  const openDumps = Math.floor(Math.random() * (totalOpenEvents * 0.5));
+  const openPumps = Math.floor(Math.random() * (totalOpenEvents * 0.4));
+  const openFlat = totalOpenEvents - openDumps - openPumps;
+  
+  // NYSE close tends to be more balanced
+  const closeDumps = Math.floor(Math.random() * (totalCloseEvents * 0.4));
+  const closePumps = Math.floor(Math.random() * (totalCloseEvents * 0.4));
+  const closeFlat = totalCloseEvents - closeDumps - closePumps;
+  
+  return {
+    openEvents: {
+      dumps: openDumps,
+      pumps: openPumps,
+      flat: openFlat,
+      total: totalOpenEvents
+    },
+    closeEvents: {
+      dumps: closeDumps,
+      pumps: closePumps,
+      flat: closeFlat,
+      total: totalCloseEvents
+    }
   };
+};
+
+// Fetch market trend analysis
+export const fetchMarketTrends = async (days: number = 30): Promise<TrendData> => {
+  // In a real implementation, this would call an API endpoint
+  // For demo purposes, we'll simulate with random but realistic data
   
-  storeSignal(signal);
-  return signalId;
-};
-
-// Update a signal with its outcome
-export const updateSignalOutcome = (
-  signalId: string,
-  result: 'win' | 'loss' | 'breakeven',
-  pnl: number,
-  exitPrice: number
-): boolean => {
-  try {
-    // Get existing signals
-    const signalsJson = localStorage.getItem('trading-signals') || '[]';
-    const signals: TradingSignal[] = JSON.parse(signalsJson);
-    
-    // Find signal by ID and update it
-    const signalIndex = signals.findIndex(s => `signal-${s.timestamp}` === signalId);
-    if (signalIndex === -1) return false;
-    
-    signals[signalIndex].outcome = {
-      result,
-      pnl,
-      exitPrice,
-      exitTimestamp: Date.now()
-    };
-    
-    localStorage.setItem('trading-signals', JSON.stringify(signals));
-    return true;
-  } catch (error) {
-    console.error('Failed to update signal outcome:', error);
-    return false;
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 800));
+  
+  // Generate realistic trend data
+  const signals = Math.floor(days * (1 + Math.random()));
+  const successRate = 45 + Math.random() * 30; // 45% to 75% success rate
+  
+  // Determine bias based on success rate
+  let bias;
+  if (successRate > 65) {
+    bias = 'Bullish Market Bias';
+  } else if (successRate < 50) {
+    bias = 'Bearish Market Bias';
+  } else {
+    bias = 'Neutral Market Bias';
   }
+  
+  // Select a top indicator
+  const indicators = ['MACD', 'RSI', 'MA Cross', 'Volume', 'Bollinger Bands'];
+  const topIndicator = indicators[Math.floor(Math.random() * indicators.length)];
+  
+  // Select best timeframe
+  const timeframes = ['15m', '1h', '4h', '1d'];
+  const bestTimeframe = timeframes[Math.floor(Math.random() * timeframes.length)];
+  
+  return {
+    bias,
+    signals,
+    period: days,
+    successRate: parseFloat(successRate.toFixed(1)),
+    topIndicator,
+    bestTimeframe
+  };
 };
 
-// Get market volatility statistics around NYSE open/close times
-export const getNyseVolatilityStats = (
-  days: 5 | 10 | 20 = 10,
-  eventType: 'open' | 'close' = 'open'
-): { dumpCount: number, pumpCount: number, flatCount: number, averageMagnitude: number } => {
+// Get historical signal performance
+export const getSignalPerformance = () => {
   try {
-    // Get existing events
-    const eventsJson = localStorage.getItem('market-events') || '[]';
-    const events: MarketEvent[] = JSON.parse(eventsJson);
+    // Retrieve signals from localStorage
+    const signals = JSON.parse(localStorage.getItem('tradingSignals') || '[]');
     
-    // Filter events related to NYSE open/close within the specified number of days
-    const millisPerDay = 86400000;
-    const cutoffTime = Date.now() - (days * millisPerDay);
-    
-    const relatedEvents = events.filter(event => 
-      event.timestamp > cutoffTime && 
-      event.relatedTo?.toLowerCase().includes(`nyse ${eventType}`)
-    );
-    
-    // Count by event type
-    const dumpCount = relatedEvents.filter(e => e.eventType === 'dump').length;
-    const pumpCount = relatedEvents.filter(e => e.eventType === 'pump').length;
-    const flatCount = relatedEvents.filter(e => e.eventType === 'flat').length;
-    
-    // Calculate average magnitude
-    const totalMagnitude = relatedEvents.reduce((sum, event) => sum + Math.abs(event.magnitude), 0);
-    const averageMagnitude = relatedEvents.length > 0 ? totalMagnitude / relatedEvents.length : 0;
-    
-    return {
-      dumpCount,
-      pumpCount,
-      flatCount,
-      averageMagnitude
-    };
-  } catch (error) {
-    console.error('Failed to analyze NYSE volatility:', error);
-    return { dumpCount: 0, pumpCount: 0, flatCount: 0, averageMagnitude: 0 };
-  }
-};
-
-// Get indicator performance statistics
-export const getIndicatorPerformance = (indicatorName: string): IndicatorPerformance | null => {
-  try {
-    // Get existing signals
-    const signalsJson = localStorage.getItem('trading-signals') || '[]';
-    const signals: TradingSignal[] = JSON.parse(signalsJson);
-    
-    // Filter signals that used this indicator and have outcomes
-    const relevantSignals = signals.filter(
-      s => s.triggeredIndicators.includes(indicatorName) && s.outcome
-    );
-    
-    if (relevantSignals.length === 0) return null;
-    
-    // Calculate success rate
-    const successfulSignals = relevantSignals.filter(s => s.outcome?.result === 'win');
-    const successRate = (successfulSignals.length / relevantSignals.length) * 100;
-    
-    // Calculate average PnL
-    const totalPnl = relevantSignals.reduce((sum, signal) => sum + (signal.outcome?.pnl || 0), 0);
-    const averagePnl = totalPnl / relevantSignals.length;
-    
-    return {
-      name: indicatorName,
-      timeframe: 'aggregate', // This could be refined further
-      successRate,
-      sampleSize: relevantSignals.length,
-      averagePnl,
-      lastUpdated: Date.now()
-    };
-  } catch (error) {
-    console.error('Failed to get indicator performance:', error);
-    return null;
-  }
-};
-
-// Get trend tracking data
-export const getTrendTracking = (
-  days: 7 | 30 | 90 = 30
-): { 
-  predominantBias: 'bullish' | 'bearish' | 'neutral', 
-  averageSignalSuccess: number,
-  topPerformingIndicator: string,
-  topPerformingTimeframe: string,
-  totalSignals: number
-} => {
-  try {
-    // Get existing signals
-    const signalsJson = localStorage.getItem('trading-signals') || '[]';
-    const signals: TradingSignal[] = JSON.parse(signalsJson);
-    
-    // Filter signals within the specified number of days
-    const millisPerDay = 86400000;
-    const cutoffTime = Date.now() - (days * millisPerDay);
-    const recentSignals = signals.filter(s => s.timestamp > cutoffTime && s.outcome);
-    
-    if (recentSignals.length === 0) {
+    if (signals.length === 0) {
       return {
-        predominantBias: 'neutral',
-        averageSignalSuccess: 0,
-        topPerformingIndicator: 'none',
-        topPerformingTimeframe: 'none',
-        totalSignals: 0
+        totalSignals: 0,
+        successRate: 0,
+        averageProfit: 0,
+        averageLoss: 0
       };
     }
     
-    // Determine predominant bias
-    const longSignals = recentSignals.filter(s => s.direction === 'long');
-    const shortSignals = recentSignals.filter(s => s.direction === 'short');
+    // In a real implementation, we would analyze actual performance
+    // For demo purposes, simulating success rate
+    const totalSignals = signals.length;
+    const successfulSignals = Math.floor(signals.length * 0.68); // 68% success
+    const successRate = (successfulSignals / totalSignals) * 100;
     
-    let predominantBias: 'bullish' | 'bearish' | 'neutral' = 'neutral';
-    if (longSignals.length > shortSignals.length * 1.5) {
-      predominantBias = 'bullish';
-    } else if (shortSignals.length > longSignals.length * 1.5) {
-      predominantBias = 'bearish';
-    }
-    
-    // Calculate average signal success
-    const successfulSignals = recentSignals.filter(s => s.outcome?.result === 'win');
-    const averageSignalSuccess = (successfulSignals.length / recentSignals.length) * 100;
-    
-    // Find top performing indicator
-    const indicatorStats: Record<string, { count: number, wins: number }> = {};
-    recentSignals.forEach(signal => {
-      signal.triggeredIndicators.forEach(indicator => {
-        if (!indicatorStats[indicator]) {
-          indicatorStats[indicator] = { count: 0, wins: 0 };
-        }
-        indicatorStats[indicator].count++;
-        if (signal.outcome?.result === 'win') {
-          indicatorStats[indicator].wins++;
-        }
-      });
-    });
-    
-    let topPerformingIndicator = 'none';
-    let highestSuccessRate = 0;
-    
-    Object.entries(indicatorStats).forEach(([indicator, stats]) => {
-      if (stats.count >= 5) { // Minimum sample size
-        const successRate = (stats.wins / stats.count);
-        if (successRate > highestSuccessRate) {
-          highestSuccessRate = successRate;
-          topPerformingIndicator = indicator;
-        }
-      }
-    });
-    
-    // Find top performing timeframe (based on trading mode as proxy)
-    const timeframeStats: Record<string, { count: number, wins: number }> = {
-      'scalp': { count: 0, wins: 0 },
-      'day': { count: 0, wins: 0 },
-      'night': { count: 0, wins: 0 }
-    };
-    
-    recentSignals.forEach(signal => {
-      timeframeStats[signal.tradingMode].count++;
-      if (signal.outcome?.result === 'win') {
-        timeframeStats[signal.tradingMode].wins++;
-      }
-    });
-    
-    let topPerformingTimeframe = 'none';
-    highestSuccessRate = 0;
-    
-    Object.entries(timeframeStats).forEach(([timeframe, stats]) => {
-      if (stats.count >= 3) { // Minimum sample size
-        const successRate = (stats.wins / stats.count);
-        if (successRate > highestSuccessRate) {
-          highestSuccessRate = successRate;
-          topPerformingTimeframe = timeframe;
-        }
-      }
-    });
+    // Calculate average profit/loss (simulated)
+    const averageProfit = 2.8; // 2.8% average profit
+    const averageLoss = -1.5; // -1.5% average loss
     
     return {
-      predominantBias,
-      averageSignalSuccess,
-      topPerformingIndicator,
-      topPerformingTimeframe,
-      totalSignals: recentSignals.length
+      totalSignals,
+      successRate,
+      averageProfit,
+      averageLoss
     };
   } catch (error) {
-    console.error('Failed to get trend tracking data:', error);
+    console.error('Error getting signal performance:', error);
     return {
-      predominantBias: 'neutral',
-      averageSignalSuccess: 0,
-      topPerformingIndicator: 'none',
-      topPerformingTimeframe: 'none',
-      totalSignals: 0
+      totalSignals: 0,
+      successRate: 0,
+      averageProfit: 0,
+      averageLoss: 0
     };
+  }
+};
+
+// Track user interactions for personalization
+export const trackUserInteraction = (action: string, details: any) => {
+  try {
+    const interactionLog = {
+      action,
+      details,
+      timestamp: new Date().toISOString()
+    };
+    
+    // Get existing interactions or initialize empty array
+    const interactions = JSON.parse(localStorage.getItem('userInteractions') || '[]');
+    interactions.push(interactionLog);
+    
+    // Store back in localStorage (limit to 100 entries)
+    if (interactions.length > 100) interactions.shift();
+    localStorage.setItem('userInteractions', JSON.stringify(interactions));
+  } catch (error) {
+    console.error('Error tracking user interaction:', error);
   }
 };

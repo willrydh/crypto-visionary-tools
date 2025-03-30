@@ -8,7 +8,7 @@ import { useTradingMode } from '@/hooks/useTradingMode';
 import { TechnicalAnalysisSummary } from '@/components/analysis/TechnicalAnalysisSummary';
 import { MarketStatus } from '@/components/markets/MarketStatus';
 import { PriceThermometer } from '@/components/charts/PriceThermometer';
-import { PriceChart } from '@/components/PriceChart';
+import PriceChart from '@/components/PriceChart';
 import { ImprovedEconomicCalendar } from '@/components/calendar/ImprovedEconomicCalendar';
 
 const Dashboard = () => {

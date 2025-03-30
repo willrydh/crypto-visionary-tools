@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RefreshCw, TrendingUp, TrendingDown, Minus, LineChart } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import { fetchMarketTrends, fetchVolatilityEvents } from '@/services/dataLoggingService';
 import { useToast } from '@/hooks/use-toast';
 
@@ -70,53 +69,30 @@ const DataInsights = () => {
   const EventBox = ({ type, count, total }: { type: 'pumps' | 'dumps' | 'flat', count: number, total: number }) => {
     const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
     
-    const getColors = () => {
+    const getColor = () => {
       switch(type) {
-        case 'pumps': return {
-          bg: 'bg-green-500/10',
-          text: 'text-green-500',
-          border: 'border-green-500/30',
-          progress: 'bg-green-500'
-        };
-        case 'dumps': return {
-          bg: 'bg-red-500/10',
-          text: 'text-red-500',
-          border: 'border-red-500/30',
-          progress: 'bg-red-500'
-        };
-        case 'flat': return {
-          bg: 'bg-yellow-500/10',
-          text: 'text-yellow-500',
-          border: 'border-yellow-500/30',
-          progress: 'bg-yellow-500'
-        };
+        case 'pumps': return 'bg-green-500/10 text-green-500 border-green-500/20';
+        case 'dumps': return 'bg-red-500/10 text-red-500 border-red-500/20';
+        case 'flat': return 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20';
       }
     };
     
-    const colors = getColors();
-    
     const getIcon = () => {
       switch(type) {
-        case 'pumps': return <TrendingUp className="h-3.5 w-3.5" />;
-        case 'dumps': return <TrendingDown className="h-3.5 w-3.5" />;
-        case 'flat': return <Minus className="h-3.5 w-3.5" />;
+        case 'pumps': return <TrendingUp className="h-4 w-4" />;
+        case 'dumps': return <TrendingDown className="h-4 w-4" />;
+        case 'flat': return <Minus className="h-4 w-4" />;
       }
     };
     
     return (
-      <div className={`rounded-lg ${colors.bg} ${colors.text} ${colors.border} border p-3`}>
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-1.5">
-            {getIcon()}
-            <span className="capitalize text-sm font-medium">{type}</span>
-          </div>
-          <span className="text-sm font-bold">{count}/{total}</span>
+      <div className={`p-3 rounded-md border ${getColor()} flex flex-col items-center justify-center`}>
+        <div className="flex items-center gap-1 mb-1">
+          {getIcon()}
+          <span className="capitalize font-medium">{type}</span>
         </div>
-        <Progress 
-          value={percentage} 
-          className={`h-1.5 ${colors.progress} [&>div]:${colors.progress}`}
-        />
-        <div className="mt-1 text-xs text-right font-mono">{percentage}%</div>
+        <div className="text-xl font-bold">{count}</div>
+        <div className="text-xs">{percentage}%</div>
       </div>
     );
   };
