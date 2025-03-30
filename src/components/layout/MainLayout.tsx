@@ -3,6 +3,7 @@ import React from 'react';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from "@/components/ui/sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import NavigationMenu from './NavigationMenu';
+import Logo from '@/assets/logo.svg';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -15,9 +16,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         <Sidebar collapsible="icon" className="border-r border-border">
           <SidebarHeader className="p-4">
             <div className="flex items-center space-x-2">
-              <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground font-bold">P</span>
-              </div>
+              <img src={Logo} alt="ProfitPilot AI" className="h-8 w-8" />
               <div className="flex flex-col">
                 <span className="font-bold text-lg">ProfitPilot AI</span>
                 <span className="text-xs text-muted-foreground">v1.0.0</span>
@@ -29,7 +28,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           </SidebarContent>
           <SidebarFooter className="p-4">
             <div className="text-xs text-muted-foreground text-center">
-              © 2023 ProfitPilot AI
+              © 2025 ProfitPilot AI by Zentra LLC
             </div>
           </SidebarFooter>
         </Sidebar>

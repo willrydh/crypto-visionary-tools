@@ -1,220 +1,122 @@
 
 import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { RefreshCw, ArrowUp, ArrowDown, ArrowRight } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { RefreshCw, ArrowDown, ArrowUp, AlertCircle } from 'lucide-react';
 import { useSupportResistance } from '@/hooks/useSupportResistance';
-import { useTimeframe } from '@/hooks/useTimeframe';
 import { formatCurrency } from '@/utils/numberUtils';
 
-interface SupportResistanceLevelsProps {
-  symbol?: string;
-}
-
-export const SupportResistanceLevels: React.FC<SupportResistanceLevelsProps> = ({ symbol = 'BTC/USDT' }) => {
-  const { levels, marketStructure, isLoading, updateLevels, lastUpdated } = useSupportResistance();
-  const { currentTimeframe, setCurrentTimeframe, availableTimeframes } = useTimeframe();
+export const SupportResistanceLevels = () => {
+  const { levels, structure, isLoading, error, lastUpdated, fetchLevels } = useSupportResistance();
   
-  // Load data on mount and when timeframe changes
   useEffect(() => {
-    updateLevels(symbol);
-  }, [symbol, currentTimeframe, updateLevels]);
-  
-  // Get strength indicator
-  const getStrengthIndicator = (strength: 'weak' | 'medium' | 'strong') => {
-    switch(strength) {
-      case 'strong':
-        return (
-          <div className="flex items-center gap-0.5">
-            <div className="h-1.5 w-1.5 rounded-full bg-primary"></div>
-            <div className="h-1.5 w-1.5 rounded-full bg-primary"></div>
-            <div className="h-1.5 w-1.5 rounded-full bg-primary"></div>
-          </div>
-        );
-      case 'medium':
-        return (
-          <div className="flex items-center gap-0.5">
-            <div className="h-1.5 w-1.5 rounded-full bg-primary"></div>
-            <div className="h-1.5 w-1.5 rounded-full bg-primary"></div>
-            <div className="h-1.5 w-1.5 rounded-full bg-muted"></div>
-          </div>
-        );
-      case 'weak':
-        return (
-          <div className="flex items-center gap-0.5">
-            <div className="h-1.5 w-1.5 rounded-full bg-primary"></div>
-            <div className="h-1.5 w-1.5 rounded-full bg-muted"></div>
-            <div className="h-1.5 w-1.5 rounded-full bg-muted"></div>
-          </div>
-        );
-      default:
-        return null;
+    if (levels.length === 0) {
+      fetchLevels('BTC/USDT');
     }
+  }, [levels.length, fetchLevels]);
+  
+  const getLevelColor = (type: string, strength: string) => {
+    if (type === 'support') {
+      return strength === 'strong' ? 'bg-green-500 text-white' : 'bg-green-500/20 text-green-500';
+    }
+    return strength === 'strong' ? 'bg-red-500 text-white' : 'bg-red-500/20 text-red-500';
   };
   
-  // Get trend badge
-  const getTrendBadge = (trend: 'uptrend' | 'downtrend' | 'range') => {
-    switch(trend) {
+  const getStructureColor = (type: string) => {
+    switch (type) {
       case 'uptrend':
-        return (
-          <Badge className="bg-green-500 text-white">
-            <ArrowUp className="h-3.5 w-3.5 mr-1" />
-            Uptrend
-          </Badge>
-        );
+        return 'bg-green-500/10 text-green-500 border-green-500/20';
       case 'downtrend':
-        return (
-          <Badge className="bg-red-500 text-white">
-            <ArrowDown className="h-3.5 w-3.5 mr-1" />
-            Downtrend
-          </Badge>
-        );
+        return 'bg-red-500/10 text-red-500 border-red-500/20';
       case 'range':
-        return (
-          <Badge variant="outline">
-            <ArrowRight className="h-3.5 w-3.5 mr-1" />
-            Range
-          </Badge>
-        );
+        return 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20';
       default:
-        return null;
+        return 'bg-blue-500/10 text-blue-500 border-blue-500/20';
     }
   };
   
   return (
-    <Card className="h-full">
+    <Card>
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
-          <CardTitle className="text-lg">Support & Resistance</CardTitle>
-          <div className="flex gap-2">
-            <Select value={currentTimeframe} onValueChange={(value) => setCurrentTimeframe(value as any)}>
-              <SelectTrigger className="w-24">
-                <SelectValue placeholder="Timeframe" />
-              </SelectTrigger>
-              <SelectContent>
-                {availableTimeframes.map(tf => (
-                  <SelectItem key={tf} value={tf}>{tf}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            
-            <Button 
-              variant="outline" 
-              size="icon" 
-              onClick={() => updateLevels(symbol)}
-              disabled={isLoading}
-            >
-              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-            </Button>
-          </div>
+          <CardTitle className="text-lg">Support & Resistance Levels</CardTitle>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => fetchLevels('BTC/USDT')}
+            disabled={isLoading}
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
         </div>
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <div className="flex items-center justify-center h-40">
-            <RefreshCw className="h-6 w-6 animate-spin text-muted-foreground" />
+          <div className="h-48 flex items-center justify-center">
+            <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
+          </div>
+        ) : error ? (
+          <div className="h-48 flex flex-col items-center justify-center text-destructive">
+            <AlertCircle className="h-8 w-8 mb-2" />
+            <p className="text-sm">{error}</p>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => fetchLevels('BTC/USDT')}
+              className="mt-2"
+            >
+              Try again
+            </Button>
           </div>
         ) : (
           <div className="space-y-6">
-            {marketStructure && (
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-sm font-medium text-muted-foreground">Market Structure</h3>
-                  {getTrendBadge(marketStructure.trend)}
-                </div>
-                
-                <p className="text-sm">{marketStructure.description}</p>
-                
-                <div className="grid grid-cols-2 gap-4 mt-3">
-                  {marketStructure.hh && (
-                    <div className="space-y-1">
-                      <p className="text-xs text-muted-foreground">Higher High</p>
-                      <p className="font-mono text-green-500">{formatCurrency(marketStructure.hh)}</p>
-                    </div>
-                  )}
-                  
-                  {marketStructure.lh && (
-                    <div className="space-y-1">
-                      <p className="text-xs text-muted-foreground">Lower High</p>
-                      <p className="font-mono text-red-500">{formatCurrency(marketStructure.lh)}</p>
-                    </div>
-                  )}
-                  
-                  {marketStructure.hl && (
-                    <div className="space-y-1">
-                      <p className="text-xs text-muted-foreground">Higher Low</p>
-                      <p className="font-mono text-green-500">{formatCurrency(marketStructure.hl)}</p>
-                    </div>
-                  )}
-                  
-                  {marketStructure.ll && (
-                    <div className="space-y-1">
-                      <p className="text-xs text-muted-foreground">Lower Low</p>
-                      <p className="font-mono text-red-500">{formatCurrency(marketStructure.ll)}</p>
-                    </div>
-                  )}
-                </div>
+            {structure && (
+              <div>
+                <div className="text-sm text-muted-foreground mb-2">Market Structure</div>
+                <Badge 
+                  className={`${getStructureColor(structure.type)} px-3 py-1 text-sm`}
+                >
+                  {structure.type === 'uptrend' ? (
+                    <ArrowUp className="h-3.5 w-3.5 mr-1.5" />
+                  ) : structure.type === 'downtrend' ? (
+                    <ArrowDown className="h-3.5 w-3.5 mr-1.5" />
+                  ) : null}
+                  {structure.description}
+                </Badge>
               </div>
             )}
             
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium text-muted-foreground">Key Levels</h3>
-              
-              <div className="space-y-2">
-                {/* Resistance levels */}
-                <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">Resistance</p>
-                  {levels
-                    .filter(level => level.type === 'resistance')
-                    .sort((a, b) => a.price - b.price)
-                    .map((level, idx) => (
-                      <div 
-                        key={idx}
-                        className="flex justify-between items-center p-2 rounded bg-muted/30"
-                      >
-                        <div className="flex items-center gap-2">
-                          {getStrengthIndicator(level.strength)}
-                          <span className="text-sm">{formatCurrency(level.price)}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Badge variant="outline">{level.source}</Badge>
-                        </div>
+            <div>
+              <div className="text-sm text-muted-foreground mb-2">Key Price Levels</div>
+              {levels.length > 0 ? (
+                <div className="space-y-2">
+                  {levels.map((level, index) => (
+                    <div key={index} className="flex justify-between items-center p-2 rounded-md border">
+                      <div className="flex items-center gap-2">
+                        <Badge className={getLevelColor(level.type, level.strength)}>
+                          {level.type === 'support' ? 'Support' : 'Resistance'}
+                        </Badge>
+                        <span className={level.strength === 'strong' ? 'font-medium' : ''}>
+                          {level.strength === 'strong' ? 'Strong' : 'Weak'}
+                        </span>
                       </div>
-                    ))
-                  }
+                      <span className="font-mono font-medium">
+                        {formatCurrency(level.price)}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-                
-                {/* Support levels */}
-                <div className="space-y-1 mt-4">
-                  <p className="text-xs text-muted-foreground">Support</p>
-                  {levels
-                    .filter(level => level.type === 'support')
-                    .sort((a, b) => b.price - a.price)
-                    .map((level, idx) => (
-                      <div 
-                        key={idx}
-                        className="flex justify-between items-center p-2 rounded bg-muted/30"
-                      >
-                        <div className="flex items-center gap-2">
-                          {getStrengthIndicator(level.strength)}
-                          <span className="text-sm">{formatCurrency(level.price)}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Badge variant="outline">{level.source}</Badge>
-                        </div>
-                      </div>
-                    ))
-                  }
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  No key levels identified at this time
                 </div>
-              </div>
+              )}
+            </div>
+            
+            <div className="text-xs text-muted-foreground text-right">
+              Last updated: {lastUpdated ? new Date(lastUpdated).toLocaleString() : 'Never'}
             </div>
           </div>
         )}

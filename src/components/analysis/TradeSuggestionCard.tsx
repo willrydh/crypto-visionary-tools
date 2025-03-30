@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, TrendingDown, AlertCircle, Target } from 'lucide-react';
+import { TrendingUp, TrendingDown, AlertCircle, Target, Clock, BarChart4 } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { formatCurrency } from '@/utils/numberUtils';
 import { formatTimeUntil } from '@/utils/dateUtils';
@@ -33,7 +33,7 @@ export const TradeSuggestionCard: React.FC<TradeSuggestionCardProps> = ({
 }) => {
   if (!tradeSuggestion) {
     return (
-      <Card>
+      <Card className="w-full">
         <CardHeader className="pb-2">
           <CardTitle className="text-lg">Trade Suggestion</CardTitle>
         </CardHeader>
@@ -57,7 +57,8 @@ export const TradeSuggestionCard: React.FC<TradeSuggestionCardProps> = ({
     confidence, 
     timeframe,
     summary,
-    createdAt 
+    createdAt, 
+    indicators = []
   } = tradeSuggestion;
 
   // Calculate risk-reward ratio
@@ -75,9 +76,15 @@ export const TradeSuggestionCard: React.FC<TradeSuggestionCardProps> = ({
   // Handle NaN values
   const displayConfidence = isNaN(confidence) ? 50 : confidence;
   const displayProbability = isNaN(probability) ? 60 : probability;
+  
+  // Filter indicators to show only most relevant ones
+  const relevantIndicators = indicators.filter(ind => 
+    ind.signal === direction || 
+    (direction === 'neutral' && ind.signal === 'neutral')
+  ).slice(0, 3);
 
   return (
-    <Card className="relative overflow-hidden">
+    <Card className="relative overflow-hidden w-full">
       <div className={`absolute top-0 left-0 w-1 h-full ${
         direction === 'long' ? 'bg-green-500' : 
         direction === 'short' ? 'bg-red-500' : 
@@ -99,56 +106,112 @@ export const TradeSuggestionCard: React.FC<TradeSuggestionCardProps> = ({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          <p className="text-sm text-muted-foreground">{summary}</p>
-          
-          <div className="grid grid-cols-3 gap-3 text-center">
-            <div className="space-y-1">
-              <p className="text-xs text-muted-foreground">Entry</p>
-              <p className="text-base font-mono font-medium">${Math.round(entry)}</p>
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">{summary}</p>
+            
+            <div className="grid grid-cols-3 gap-3 text-center">
+              <div className="p-3 rounded-md border bg-background space-y-1">
+                <p className="text-xs text-muted-foreground">Entry</p>
+                <p className="text-base font-mono font-medium">${Math.round(entry)}</p>
+              </div>
+              <div className="p-3 rounded-md border bg-background space-y-1">
+                <p className="text-xs text-muted-foreground">Stop Loss</p>
+                <p className="text-base font-mono font-medium text-red-500">${Math.round(stopLoss)}</p>
+              </div>
+              <div className="p-3 rounded-md border bg-background space-y-1">
+                <p className="text-xs text-muted-foreground">Take Profit</p>
+                <p className="text-base font-mono font-medium text-green-500">${Math.round(takeProfit)}</p>
+              </div>
             </div>
-            <div className="space-y-1">
-              <p className="text-xs text-muted-foreground">Stop Loss</p>
-              <p className="text-base font-mono font-medium text-red-500">${Math.round(stopLoss)}</p>
+            
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-sm">Confidence</span>
+                <span 
+                  className={`font-medium ${
+                    displayConfidence >= 70 ? 'text-green-500' : 
+                    displayConfidence >= 50 ? 'text-yellow-500' : 
+                    'text-red-500'
+                  }`}
+                >
+                  {displayConfidence}%
+                </span>
+              </div>
+              <Progress 
+                value={displayConfidence}
+                className="h-2"
+              />
             </div>
-            <div className="space-y-1">
-              <p className="text-xs text-muted-foreground">Take Profit</p>
-              <p className="text-base font-mono font-medium text-green-500">${Math.round(takeProfit)}</p>
+            
+            <div className="flex justify-between text-sm">
+              <span>Risk-Reward Ratio</span>
+              <span className="font-medium">1:{riskRewardRatio}</span>
+            </div>
+            
+            <div className="flex justify-between text-sm">
+              <span>Probability</span>
+              <span className="font-medium">{displayProbability}%</span>
             </div>
           </div>
           
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <span className="text-sm">Confidence</span>
-              <span 
-                className={`font-medium ${
-                  displayConfidence >= 70 ? 'text-green-500' : 
-                  displayConfidence >= 50 ? 'text-yellow-500' : 
-                  'text-red-500'
-                }`}
-              >
-                {displayConfidence}%
-              </span>
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <Clock className="h-4 w-4 text-muted-foreground" />
+              <div className="flex items-center justify-between w-full">
+                <span className="text-sm">Timeframe</span>
+                <span className="font-medium capitalize">{timeframe}</span>
+              </div>
             </div>
-            <Progress 
-              value={displayConfidence}
-              className="h-2"
-            />
-          </div>
-          
-          <div className="flex justify-between text-sm">
-            <span>Risk-Reward Ratio</span>
-            <span className="font-medium">1:{riskRewardRatio}</span>
-          </div>
-          
-          <div className="flex justify-between text-sm">
-            <span>Probability</span>
-            <span className="font-medium">{displayProbability}%</span>
-          </div>
-          
-          <div className="flex justify-between text-sm">
-            <span>Timeframe</span>
-            <span className="font-medium capitalize">{timeframe}</span>
+            
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <BarChart4 className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm">Key Indicators</span>
+              </div>
+              
+              {relevantIndicators.length > 0 ? (
+                <div className="space-y-2 mt-2">
+                  {relevantIndicators.map((indicator, idx) => (
+                    <div key={idx} className="flex items-center justify-between p-2 rounded-md border bg-muted/30">
+                      <span className="text-sm font-medium">{indicator.name}</span>
+                      <Badge variant="outline" className={
+                        indicator.signal === 'bullish' ? 'text-green-500 border-green-500/20' :
+                        indicator.signal === 'bearish' ? 'text-red-500 border-red-500/20' :
+                        'text-yellow-500 border-yellow-500/20'
+                      }>
+                        {typeof indicator.value === 'number' 
+                          ? indicator.value.toFixed(2) 
+                          : indicator.value}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-sm text-muted-foreground italic">No indicator data available</div>
+              )}
+            </div>
+            
+            <div className="p-3 rounded-md border bg-primary/5 mt-auto">
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-xs text-muted-foreground">Recommended Trading Mode</span>
+                <Badge variant="outline" className={
+                  timeframe === '15m' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' :
+                  timeframe === '1h' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
+                  'bg-indigo-500/10 text-indigo-500 border-indigo-500/20'
+                }>
+                  {timeframe === '15m' ? 'Scalp' : 
+                   timeframe === '1h' ? 'Day' : 'Night'}
+                </Badge>
+              </div>
+              <div className="text-xs text-muted-foreground">
+                Best suited for {timeframe === '15m' 
+                  ? 'ultra-short term trading (minutes to hours)' 
+                  : timeframe === '1h' 
+                    ? 'intraday trading (several hours)' 
+                    : 'overnight positions (12+ hours)'}
+              </div>
+            </div>
           </div>
         </div>
       </CardContent>

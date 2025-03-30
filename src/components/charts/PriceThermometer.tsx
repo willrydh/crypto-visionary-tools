@@ -1,127 +1,159 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { fetchHighLowData, fetchCurrentPrice } from '../../services/priceDataService';
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from '@/utils/numberUtils';
+import { fetchCurrentPrice, fetchHighLowData } from '@/services/priceDataService';
 
-interface PriceThermometerProps {
-  symbol?: string;
-}
-
-export const PriceThermometer: React.FC<PriceThermometerProps> = ({ symbol = 'BTC/USDT' }) => {
-  const [data, setData] = useState<{
-    weeklyHigh: number;
-    weeklyLow: number;
-    dailyHigh: number;
-    dailyLow: number;
-    currentPrice: number;
-  } | null>(null);
-  
+export const PriceThermometer = () => {
+  const [priceData, setPriceData] = useState({
+    currentPrice: 0,
+    dailyHigh: 0,
+    dailyLow: 0,
+    weeklyHigh: 0,
+    weeklyLow: 0
+  });
   const [isLoading, setIsLoading] = useState(true);
   
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const highLowData = await fetchHighLowData(symbol);
-        const priceData = await fetchCurrentPrice(symbol);
-        setData({ ...highLowData, currentPrice: priceData.price });
-      } catch (error) {
-        console.error('Error fetching high-low data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-
-    // Update every 5 minutes
-    const interval = setInterval(fetchData, 300000);
-    return () => clearInterval(interval);
-  }, [symbol]);
-
+  const loadData = async () => {
+    setIsLoading(true);
+    try {
+      // Fetch current price
+      const currentPriceData = await fetchCurrentPrice('BTC/USDT');
+      
+      // Fetch high/low data
+      const highLowData = await fetchHighLowData('BTC/USDT');
+      
+      setPriceData({
+        currentPrice: currentPriceData.price,
+        dailyHigh: highLowData.dailyHigh,
+        dailyLow: highLowData.dailyLow,
+        weeklyHigh: highLowData.weeklyHigh,
+        weeklyLow: highLowData.weeklyLow
+      });
+    } catch (error) {
+      console.error('Error loading price thermometer data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   
-  if (!data || isLoading) {
+  useEffect(() => {
+    loadData();
+    
+    const intervalId = setInterval(loadData, 60000);
+    return () => clearInterval(intervalId);
+  }, []);
+  
+  // Calculate where current price is in the range
+  const getDailyPercentage = () => {
+    const { currentPrice, dailyHigh, dailyLow } = priceData;
+    if (dailyHigh === dailyLow) return 50;
+    return ((currentPrice - dailyLow) / (dailyHigh - dailyLow)) * 100;
+  };
+  
+  const getWeeklyPercentage = () => {
+    const { currentPrice, weeklyHigh, weeklyLow } = priceData;
+    if (weeklyHigh === weeklyLow) return 50;
+    return ((currentPrice - weeklyLow) / (weeklyHigh - weeklyLow)) * 100;
+  };
+  
+  const getThermometerColor = (percentage: number) => {
+    if (percentage > 75) return "bg-green-500";
+    if (percentage > 50) return "bg-blue-500";
+    if (percentage > 25) return "bg-amber-500";
+    return "bg-red-500";
+  };
+  
+  if (isLoading) {
     return (
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-lg">Price Range</CardTitle>
         </CardHeader>
-        <CardContent className="flex justify-center items-center h-48">
-          <div className="animate-pulse flex flex-col items-center w-full">
-            <div className="h-40 w-8 bg-muted rounded-full"></div>
+        <CardContent>
+          <div className="h-[200px] flex items-center justify-center">
+            <div className="animate-pulse bg-muted h-full w-full rounded-md" />
           </div>
         </CardContent>
       </Card>
     );
   }
   
-  const { weeklyHigh, weeklyLow, dailyHigh, dailyLow, currentPrice } = data;
-  
-  // Calculate position percentages for visualization
-  const weeklyRange = weeklyHigh - weeklyLow;
-  const currentPricePosition = ((currentPrice - weeklyLow) / weeklyRange) * 100;
-  const dailyHighPosition = ((dailyHigh - weeklyLow) / weeklyRange) * 100;
-  const dailyLowPosition = ((dailyLow - weeklyLow) / weeklyRange) * 100;
+  const dailyPercentage = getDailyPercentage();
+  const weeklyPercentage = getWeeklyPercentage();
   
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg">Price Range</CardTitle>
+        <div className="flex justify-between items-center">
+          <CardTitle className="text-lg">Price Range</CardTitle>
+          <Badge variant="outline">BTC/USDT</Badge>
+        </div>
       </CardHeader>
       <CardContent>
-        <div className="flex justify-center">
-          <div className="flex flex-col items-center">
-            {/* Thermometer visualization */}
-            <div className="relative w-16 h-[220px] bg-gradient-to-b from-green-100 to-red-100 rounded-full overflow-hidden border">
-              {/* Weekly high marker */}
-              <div className="absolute top-0 w-full flex justify-center">
-                <div className="text-xs font-medium mb-1">{formatCurrency(weeklyHigh)}</div>
-              </div>
-              
-              {/* Weekly low marker */}
-              <div className="absolute bottom-0 w-full flex justify-center">
-                <div className="text-xs font-medium mt-1">{formatCurrency(weeklyLow)}</div>
-              </div>
-              
-              {/* Current price indicator */}
+        <div className="space-y-6">
+          <div className="text-center">
+            <div className="text-xl font-bold">
+              {formatCurrency(priceData.currentPrice)}
+            </div>
+            <div className="text-sm text-muted-foreground">Current Price</div>
+          </div>
+          
+          <div className="space-y-1">
+            <div className="flex justify-between text-sm mb-1">
+              <span>Daily Range</span>
+              <span>{formatCurrency(priceData.dailyLow)} - {formatCurrency(priceData.dailyHigh)}</span>
+            </div>
+            <div className="h-3 bg-muted rounded-full relative overflow-hidden">
               <div 
-                className="absolute w-full h-1 bg-primary flex items-center justify-end"
-                style={{ bottom: `${currentPricePosition}%` }}
-              >
-                <div className="h-4 w-4 rounded-full bg-primary border-2 border-white -mr-2 shadow-lg" />
-                <div className="absolute right-6 bg-muted px-2 py-1 rounded text-xs">
-                  {formatCurrency(currentPrice)}
-                </div>
-              </div>
-              
-              {/* Daily high indicator */}
+                className={`h-full ${getThermometerColor(dailyPercentage)} rounded-full transition-all duration-500 ease-in-out`}
+                style={{ width: `${Math.min(Math.max(dailyPercentage, 0), 100)}%` }}
+              />
               <div 
-                className="absolute w-full border-t border-dashed border-gray-500"
-                style={{ bottom: `${dailyHighPosition}%` }}
-              >
-                <div className="absolute -right-14 text-xs text-muted-foreground">
-                  Day H
-                </div>
-              </div>
-              
-              {/* Daily low indicator */}
+                className="w-3 h-3 bg-white border-2 border-primary rounded-full absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 shadow-md"
+                style={{ left: `${Math.min(Math.max(dailyPercentage, 0), 100)}%` }}
+              />
+            </div>
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>Low</span>
+              <span>High</span>
+            </div>
+          </div>
+          
+          <div className="space-y-1">
+            <div className="flex justify-between text-sm mb-1">
+              <span>Weekly Range</span>
+              <span>{formatCurrency(priceData.weeklyLow)} - {formatCurrency(priceData.weeklyHigh)}</span>
+            </div>
+            <div className="h-3 bg-muted rounded-full relative overflow-hidden">
               <div 
-                className="absolute w-full border-t border-dashed border-gray-500"
-                style={{ bottom: `${dailyLowPosition}%` }}
-              >
-                <div className="absolute -right-14 text-xs text-muted-foreground">
-                  Day L
-                </div>
+                className={`h-full ${getThermometerColor(weeklyPercentage)} rounded-full transition-all duration-500 ease-in-out`}
+                style={{ width: `${Math.min(Math.max(weeklyPercentage, 0), 100)}%` }}
+              />
+              <div 
+                className="w-3 h-3 bg-white border-2 border-primary rounded-full absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 shadow-md"
+                style={{ left: `${Math.min(Math.max(weeklyPercentage, 0), 100)}%` }}
+              />
+            </div>
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>Low</span>
+              <span>High</span>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div className="text-center p-2 rounded-md border">
+              <div className="text-xs text-muted-foreground">Daily Volatility</div>
+              <div className="font-medium">
+                {((priceData.dailyHigh - priceData.dailyLow) / priceData.dailyLow * 100).toFixed(2)}%
               </div>
             </div>
-            
-            {/* Labels and info */}
-            <div className="mt-4 text-xs text-center text-muted-foreground">
-              <p>Weekly Range</p>
-              <div className="flex gap-1 justify-center mt-1">
-                <Badge className="bg-green-100 text-green-800">W</Badge>
-                <Badge className="bg-red-100 text-red-800">D</Badge>
+            <div className="text-center p-2 rounded-md border">
+              <div className="text-xs text-muted-foreground">Weekly Volatility</div>
+              <div className="font-medium">
+                {((priceData.weeklyHigh - priceData.weeklyLow) / priceData.weeklyLow * 100).toFixed(2)}%
               </div>
             </div>
           </div>
@@ -130,10 +162,3 @@ export const PriceThermometer: React.FC<PriceThermometerProps> = ({ symbol = 'BT
     </Card>
   );
 };
-
-// Badge component for labels
-const Badge = ({ children, className }: { children: React.ReactNode; className?: string }) => (
-  <span className={`px-1.5 py-0.5 rounded-full text-xs font-semibold ${className}`}>
-    {children}
-  </span>
-);

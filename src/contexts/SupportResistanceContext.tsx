@@ -1,35 +1,27 @@
 
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
-import { fetchSupportResistanceLevels } from '@/services/priceAnalysisService';
-import { useTimeframe } from '@/hooks/useTimeframe';
+import React, { createContext, useState, useCallback, ReactNode } from 'react';
 
 export interface PriceLevel {
   price: number;
   type: 'support' | 'resistance';
-  strength: 'weak' | 'medium' | 'strong';
+  strength: 'weak' | 'strong';
   timeframe: string;
-  source: 'pivot' | 'swing' | 'volume' | 'historical';
-  description?: string;
 }
 
 export interface MarketStructure {
-  trend: 'uptrend' | 'downtrend' | 'range';
+  type: 'uptrend' | 'downtrend' | 'range' | 'accumulation' | 'distribution';
   description: string;
-  hh?: number; // Higher high
-  lh?: number; // Lower high
-  hl?: number; // Higher low
-  ll?: number; // Lower low
-  timeframe: string;
+  confidence: number;
 }
 
 interface SupportResistanceContextType {
   levels: PriceLevel[];
-  marketStructure: MarketStructure | null;
-  structure: MarketStructure | null; // Alias for marketStructure to maintain compatibility
+  structure: MarketStructure | null;
   isLoading: boolean;
+  error: string | null;
+  lastUpdated: string | null;
+  fetchLevels: (symbol: string) => Promise<void>;
   updateLevels: (symbol: string) => Promise<void>;
-  fetchLevels: (symbol: string) => Promise<void>; // Alias for updateLevels to maintain compatibility
-  lastUpdated: Date | null;
 }
 
 export const SupportResistanceContext = createContext<SupportResistanceContextType | undefined>(undefined);
@@ -39,45 +31,138 @@ interface SupportResistanceProviderProps {
 }
 
 export const SupportResistanceProvider: React.FC<SupportResistanceProviderProps> = ({ children }) => {
-  const { currentTimeframe } = useTimeframe();
   const [levels, setLevels] = useState<PriceLevel[]>([]);
-  const [marketStructure, setMarketStructure] = useState<MarketStructure | null>(null);
+  const [structure, setStructure] = useState<MarketStructure | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-
-  const updateLevels = async (symbol: string) => {
+  const [error, setError] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+  
+  // Function to generate realistic support and resistance levels
+  const generateRealisticLevels = (currentPrice: number): PriceLevel[] => {
+    const levels: PriceLevel[] = [];
+    const volatility = currentPrice * 0.01; // 1% volatility for level spacing
+    
+    // Generate resistance levels (above current price)
+    const resistanceLevels = [
+      {
+        price: currentPrice + (volatility * 1.5),
+        type: 'resistance' as const,
+        strength: 'weak' as const,
+        timeframe: '1h'
+      },
+      {
+        price: currentPrice + (volatility * 3),
+        type: 'resistance' as const,
+        strength: 'strong' as const,
+        timeframe: '4h'
+      },
+      {
+        price: currentPrice + (volatility * 5),
+        type: 'resistance' as const,
+        strength: 'weak' as const,
+        timeframe: '1d'
+      }
+    ];
+    
+    // Generate support levels (below current price)
+    const supportLevels = [
+      {
+        price: currentPrice - (volatility * 1.5),
+        type: 'support' as const,
+        strength: 'weak' as const,
+        timeframe: '1h'
+      },
+      {
+        price: currentPrice - (volatility * 3),
+        type: 'support' as const,
+        strength: 'strong' as const,
+        timeframe: '4h'
+      },
+      {
+        price: currentPrice - (volatility * 5),
+        type: 'support' as const,
+        strength: 'weak' as const,
+        timeframe: '1d'
+      }
+    ];
+    
+    return [...resistanceLevels, ...supportLevels].sort((a, b) => b.price - a.price);
+  };
+  
+  // Function to determine market structure
+  const determineMarketStructure = (price: number): MarketStructure => {
+    // In a real app, this would analyze price data
+    // For demo, we'll simulate based on the current price
+    const priceLastDigit = Math.floor(price) % 10;
+    
+    if (priceLastDigit >= 7) {
+      return {
+        type: 'uptrend',
+        description: 'Strong Uptrend',
+        confidence: 80
+      };
+    } else if (priceLastDigit >= 5) {
+      return {
+        type: 'range',
+        description: 'Consolidation Range',
+        confidence: 65
+      };
+    } else if (priceLastDigit >= 2) {
+      return {
+        type: 'downtrend',
+        description: 'Bearish Downtrend',
+        confidence: 72
+      };
+    } else {
+      return {
+        type: 'accumulation',
+        description: 'Accumulation Phase',
+        confidence: 60
+      };
+    }
+  };
+  
+  // Fetch support and resistance levels
+  const fetchLevels = useCallback(async (symbol: string) => {
     setIsLoading(true);
+    setError(null);
+    
     try {
-      const { levels, structure } = await fetchSupportResistanceLevels(symbol, currentTimeframe);
-      setLevels(levels);
-      setMarketStructure(structure);
-      setLastUpdated(new Date());
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // In a real app, this would call an API
+      // For demo, we'll generate random levels
+      const currentPrice = 68000 + (Math.random() * 1000);
+      const generatedLevels = generateRealisticLevels(currentPrice);
+      const marketStructure = determineMarketStructure(currentPrice);
+      
+      setLevels(generatedLevels);
+      setStructure(marketStructure);
+      setLastUpdated(new Date().toISOString());
     } catch (error) {
       console.error('Error fetching support/resistance levels:', error);
+      setError('Failed to load support and resistance levels. Please try again.');
     } finally {
       setIsLoading(false);
     }
-  };
-
-  // Update when timeframe changes
-  useEffect(() => {
-    if (lastUpdated) {
-      updateLevels('BTC/USDT');
-    }
-  }, [currentTimeframe]);
-
+  }, []);
+  
+  // Update existing levels (refresh)
+  const updateLevels = useCallback(async (symbol: string) => {
+    return fetchLevels(symbol);
+  }, [fetchLevels]);
+  
   return (
-    <SupportResistanceContext.Provider 
-      value={{ 
-        levels, 
-        marketStructure,
-        structure: marketStructure, // Add structure as an alias to marketStructure
-        isLoading, 
-        updateLevels, 
-        fetchLevels: updateLevels, // Add fetchLevels as an alias to updateLevels
-        lastUpdated 
-      }}
-    >
+    <SupportResistanceContext.Provider value={{
+      levels,
+      structure,
+      isLoading,
+      error,
+      lastUpdated,
+      fetchLevels,
+      updateLevels
+    }}>
       {children}
     </SupportResistanceContext.Provider>
   );

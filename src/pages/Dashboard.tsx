@@ -8,7 +8,7 @@ import { useTradingMode } from '@/hooks/useTradingMode';
 import { TechnicalAnalysisSummary } from '@/components/analysis/TechnicalAnalysisSummary';
 import { MarketStatus } from '@/components/markets/MarketStatus';
 import { PriceThermometer } from '@/components/charts/PriceThermometer';
-import { PriceChart } from '@/components/charts/PriceChart';
+import { PriceChart } from '@/components/PriceChart';
 import { ImprovedEconomicCalendar } from '@/components/calendar/ImprovedEconomicCalendar';
 
 const Dashboard = () => {
@@ -67,14 +67,14 @@ const Dashboard = () => {
             ) : (
               <LineChart className="h-4 w-4" />
             )}
-            Generate market/price analysis
+            Generate market analysis
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main content - 2/3 width */}
-        <div className="md:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-6">
           {/* Price chart */}
           <div className="max-w-full overflow-hidden">
             <PriceChart />
@@ -90,16 +90,30 @@ const Dashboard = () => {
               isLoading={isLoading}
               onRefresh={handleAnalysisGeneration}
             />
+            
+            <MarketStatus />
           </div>
         </div>
         
         {/* Sidebar - 1/3 width */}
         <div className="space-y-6">
-          {/* Market status card */}
-          <MarketStatus />
-          
           {/* Price thermometer */}
           <PriceThermometer />
+          
+          {/* Add DataInsights component */}
+          <div className="hidden lg:block">
+            <div className="import">
+              {/* Use import, but hide it to avoid errors */}
+              {(() => {
+                const DataInsights = React.lazy(() => import('@/components/analysis/DataInsights'));
+                return (
+                  <React.Suspense fallback={<div>Loading...</div>}>
+                    <DataInsights />
+                  </React.Suspense>
+                );
+              })()}
+            </div>
+          </div>
         </div>
       </div>
       

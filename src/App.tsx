@@ -16,6 +16,7 @@ import Welcome from "./pages/Welcome";
 import Miner from "./pages/Miner";
 import Settings from "./pages/Settings";
 import PricingPage from "./pages/PricingPage";
+import LevelsView from "./pages/LevelsView";
 
 const queryClient = new QueryClient();
 
@@ -34,11 +35,15 @@ const App = () => (
             <Route path="/signals" element={<SignalsView />} />
             <Route path="/trade-suggestion" element={<TradeSuggestion />} />
             <Route path="/chart" element={<ChartView />} />
+            <Route path="/levels" element={<LevelsView />} />
             <Route path="/calendar" element={<CalendarView />} />
             <Route path="/miner" element={<Miner />} />
             <Route path="/settings" element={<SettingsView />} />
             <Route path="*" element={<NotFound />} />
           </Route>
+          
+          {/* Default redirect */}
+          <Route path="*" element={<Navigate to="/welcome" replace />} />
         </Routes>
       </BrowserRouter>
       <Toaster />
