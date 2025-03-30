@@ -11,7 +11,18 @@ import {
 } from "@/components/ui/tooltip";
 
 export const TradingModeSelector = () => {
-  const { tradingMode, setTradingMode, getDescription } = useTradingMode();
+  let tradingMode = 'day';
+  let setTradingMode = (mode: any) => console.log('Trading mode not available:', mode);
+  let getDescription = () => '';
+  
+  try {
+    const tradingModeContext = useTradingMode();
+    tradingMode = tradingModeContext.tradingMode;
+    setTradingMode = tradingModeContext.setTradingMode;
+    getDescription = tradingModeContext.getDescription;
+  } catch (error) {
+    console.log('Trading mode context not available');
+  }
   
   const getModeIcon = (mode: string) => {
     switch (mode) {

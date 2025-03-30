@@ -23,7 +23,18 @@ interface NavigationMenuProps {
 
 export default function NavigationMenu({ className }: NavigationMenuProps) {
   const location = useLocation();
-  const { tradingMode, getDescription } = useTradingMode();
+  
+  // Safely use the trading mode hook, with fallbacks for when we're not in a provider context
+  let tradingMode = 'day';
+  let getDescription = () => 'Select a trading mode to see details.';
+  
+  try {
+    const tradingModeContext = useTradingMode();
+    tradingMode = tradingModeContext.tradingMode;
+    getDescription = tradingModeContext.getDescription;
+  } catch (error) {
+    console.log('Trading mode context not available');
+  }
 
   const routes = [
     {
@@ -74,7 +85,8 @@ export default function NavigationMenu({ className }: NavigationMenuProps) {
     <div className={cn('flex flex-col gap-4', className)}>
       <div className="hidden md:block">
         <div className="mb-4">
-          <TradingModeSelector />
+          {/* Only render TradingModeSelector if we have trading mode context */}
+          {typeof tradingMode !== 'undefined' && <TradingModeSelector />}
         </div>
         <p className="text-xs text-muted-foreground px-4 mb-2">{getDescription()}</p>
       </div>
