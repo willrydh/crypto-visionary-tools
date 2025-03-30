@@ -7,6 +7,7 @@ import { TrendingUp, TrendingDown, AlertCircle, Target, Clock, BarChart4 } from 
 import { Progress } from "@/components/ui/progress";
 import { formatCurrency } from '@/utils/numberUtils';
 import { formatTimeUntil } from '@/utils/dateUtils';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Define interface locally to ensure it has all required properties
 interface TradeSuggestion {
@@ -31,6 +32,8 @@ export const TradeSuggestionCard: React.FC<TradeSuggestionCardProps> = ({
   tradeSuggestion, 
   isLoading 
 }) => {
+  const isMobile = useIsMobile();
+  
   if (!tradeSuggestion) {
     return (
       <Card className="w-full">
@@ -106,22 +109,22 @@ export const TradeSuggestionCard: React.FC<TradeSuggestionCardProps> = ({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">{summary}</p>
             
-            <div className="grid grid-cols-3 gap-3 text-center">
-              <div className="p-3 rounded-md border bg-background space-y-1">
+            <div className="grid grid-cols-3 gap-2 md:gap-3 text-center">
+              <div className="p-2 md:p-3 rounded-md border bg-background space-y-1">
                 <p className="text-xs text-muted-foreground">Entry</p>
-                <p className="text-base font-mono font-medium">${Math.round(entry)}</p>
+                <p className="text-sm md:text-base font-mono font-medium">${Math.round(entry)}</p>
               </div>
-              <div className="p-3 rounded-md border bg-background space-y-1">
+              <div className="p-2 md:p-3 rounded-md border bg-background space-y-1">
                 <p className="text-xs text-muted-foreground">Stop Loss</p>
-                <p className="text-base font-mono font-medium text-red-500">${Math.round(stopLoss)}</p>
+                <p className="text-sm md:text-base font-mono font-medium text-red-500">${Math.round(stopLoss)}</p>
               </div>
-              <div className="p-3 rounded-md border bg-background space-y-1">
+              <div className="p-2 md:p-3 rounded-md border bg-background space-y-1">
                 <p className="text-xs text-muted-foreground">Take Profit</p>
-                <p className="text-base font-mono font-medium text-green-500">${Math.round(takeProfit)}</p>
+                <p className="text-sm md:text-base font-mono font-medium text-green-500">${Math.round(takeProfit)}</p>
               </div>
             </div>
             
@@ -215,14 +218,15 @@ export const TradeSuggestionCard: React.FC<TradeSuggestionCardProps> = ({
           </div>
         </div>
       </CardContent>
-      <CardFooter className="border-t pt-4 flex justify-between items-center">
-        <p className="text-xs text-muted-foreground">
+      <CardFooter className="border-t pt-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+        <p className="text-xs text-muted-foreground order-2 sm:order-1">
           Created {createdAt ? formatTimeUntil(createdAt) : 'recently'}
         </p>
         <Button 
           variant="outline" 
           size="sm" 
           onClick={() => window.location.href = '/chart'}
+          className="w-full sm:w-auto order-1 sm:order-2"
         >
           <Target className="h-4 w-4 mr-2" />
           View Chart

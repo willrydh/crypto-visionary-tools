@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useNavigate } from 'react-router-dom';
 
 const PricingPage = () => {
-  const [billingCycle, setBillingCycle] = React.useState<'monthly' | 'yearly'>('monthly');
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
   const navigate = useNavigate();
 
   const pricingPlans = [
@@ -81,18 +81,17 @@ const PricingPage = () => {
   ];
 
   const handleSignUp = (plan: string) => {
-    // For now just navigate to the dashboard
-    navigate('/');
-    console.log(`Selected plan: ${plan}, Billing cycle: ${billingCycle}`);
+    // Navigate to the payment page with the selected plan and billing cycle
+    navigate(`/payment?plan=${encodeURIComponent(plan)}&cycle=${billingCycle}`);
   };
 
   return (
-    <div className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <div className="text-center mb-12">
-        <h1 className="text-3xl font-extrabold sm:text-4xl lg:text-5xl tracking-tight">
+    <div className="py-8 md:py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <div className="text-center mb-8 md:mb-12">
+        <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight mb-2">
           Choose the Perfect Plan for Your Trading Journey
         </h1>
-        <p className="mt-4 text-xl text-muted-foreground max-w-3xl mx-auto">
+        <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto">
           ProfitPilot AI offers cutting-edge tools for traders at every level.
           Subscribe today and elevate your trading strategies.
         </p>
@@ -102,7 +101,7 @@ const PricingPage = () => {
         <Tabs 
           value={billingCycle} 
           onValueChange={(value) => setBillingCycle(value as 'monthly' | 'yearly')}
-          className="w-[400px]"
+          className="w-full max-w-[400px]"
         >
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="monthly">Monthly</TabsTrigger>
@@ -116,7 +115,7 @@ const PricingPage = () => {
         </Tabs>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
         {pricingPlans.map((plan) => (
           <Card 
             key={plan.name} 
@@ -135,7 +134,7 @@ const PricingPage = () => {
             </CardHeader>
             <CardContent className="flex-1">
               <div className="mt-2 mb-6">
-                <span className="text-4xl font-bold">
+                <span className="text-3xl md:text-4xl font-bold">
                   ${plan.price[billingCycle]}
                 </span>
                 {plan.price[billingCycle] > 0 && (
@@ -148,9 +147,9 @@ const PricingPage = () => {
                 {plan.features.map((feature, index) => (
                   <li key={index} className="flex items-center">
                     {feature.included ? (
-                      <Check className="h-4 w-4 mr-2 text-green-500" />
+                      <Check className="h-4 w-4 mr-2 text-green-500 flex-shrink-0" />
                     ) : (
-                      <X className="h-4 w-4 mr-2 text-gray-300" />
+                      <X className="h-4 w-4 mr-2 text-gray-300 flex-shrink-0" />
                     )}
                     <span className={!feature.included ? "text-muted-foreground" : ""}>
                       {feature.name}
@@ -173,29 +172,29 @@ const PricingPage = () => {
       </div>
 
       <div className="mt-16 text-center">
-        <h2 className="text-2xl font-bold mb-4">Frequently Asked Questions</h2>
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto text-left">
-          <div>
-            <h3 className="text-lg font-semibold mb-2">Can I cancel my subscription?</h3>
-            <p className="text-muted-foreground">
+        <h2 className="text-xl md:text-2xl font-bold mb-4">Frequently Asked Questions</h2>
+        <div className="grid md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto text-left">
+          <div className="p-4 md:p-6 rounded-lg border border-border">
+            <h3 className="text-base md:text-lg font-semibold mb-2">Can I cancel my subscription?</h3>
+            <p className="text-sm md:text-base text-muted-foreground">
               Yes, you can cancel your subscription anytime. If you cancel, you'll continue to have access until the end of your billing period.
             </p>
           </div>
-          <div>
-            <h3 className="text-lg font-semibold mb-2">How does the free trial work?</h3>
-            <p className="text-muted-foreground">
+          <div className="p-4 md:p-6 rounded-lg border border-border">
+            <h3 className="text-base md:text-lg font-semibold mb-2">How does the free trial work?</h3>
+            <p className="text-sm md:text-base text-muted-foreground">
               The free trial gives you 30 days of access to our basic features. No credit card required to start.
             </p>
           </div>
-          <div>
-            <h3 className="text-lg font-semibold mb-2">What payment methods do you accept?</h3>
-            <p className="text-muted-foreground">
+          <div className="p-4 md:p-6 rounded-lg border border-border">
+            <h3 className="text-base md:text-lg font-semibold mb-2">What payment methods do you accept?</h3>
+            <p className="text-sm md:text-base text-muted-foreground">
               We accept all major credit cards and cryptocurrencies including Bitcoin, Ethereum, and USDT.
             </p>
           </div>
-          <div>
-            <h3 className="text-lg font-semibold mb-2">Are the signals financial advice?</h3>
-            <p className="text-muted-foreground">
+          <div className="p-4 md:p-6 rounded-lg border border-border">
+            <h3 className="text-base md:text-lg font-semibold mb-2">Are the signals financial advice?</h3>
+            <p className="text-sm md:text-base text-muted-foreground">
               No, ProfitPilot AI provides algorithmic trading signals based on technical analysis, not financial advice. Always do your own research.
             </p>
           </div>

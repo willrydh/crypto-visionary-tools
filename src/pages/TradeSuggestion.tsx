@@ -9,6 +9,7 @@ import { generateTradeSuggestion } from '@/services/analysisService';
 import { useToast } from '@/hooks/use-toast';
 import DataInsights from '@/components/analysis/DataInsights';
 import { logTradingSignal } from '@/services/dataLoggingService';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 // Define our own complete type that includes all properties we need
 interface TradeSuggestionType {
@@ -30,6 +31,14 @@ const TradeSuggestion = () => {
   const [suggestion, setSuggestion] = useState<TradeSuggestionType | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedSymbol, setSelectedSymbol] = useState<string>("BTCUSDT");
+  
+  // Available symbols
+  const availableSymbols = [
+    { value: "BTCUSDT", label: "Bitcoin (BTC/USDT)" },
+    { value: "ETHUSDT", label: "Ethereum (ETH/USDT)" },
+    { value: "SOLUSDT", label: "Solana (SOL/USDT)" },
+    { value: "BNBUSDT", label: "Binance Coin (BNB/USDT)" },
+  ];
   
   // Get trade suggestion based on current mode
   const getTradeSuggestion = async () => {
@@ -98,14 +107,34 @@ const TradeSuggestion = () => {
           </p>
         </div>
         
-        <div className="flex gap-2 items-center">
-          <div className="md:hidden">
+        <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center w-full sm:w-auto">
+          <div className="w-full sm:w-auto">
+            <Select
+              value={selectedSymbol}
+              onValueChange={(value) => setSelectedSymbol(value)}
+            >
+              <SelectTrigger className="w-full sm:w-[200px]">
+                <SelectValue placeholder="Select symbol" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableSymbols.map((symbol) => (
+                  <SelectItem key={symbol.value} value={symbol.value}>
+                    {symbol.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div className="md:hidden w-full">
             <TradingModeSelector />
           </div>
+          
           <Button
             onClick={getTradeSuggestion}
             disabled={isLoading}
             variant="outline"
+            className="w-full sm:w-auto"
           >
             {isLoading ? (
               <RefreshCw className="h-4 w-4 animate-spin mr-2" />
@@ -117,12 +146,12 @@ const TradeSuggestion = () => {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
           {suggestion ? (
             <TradeSuggestionCard tradeSuggestion={suggestion} isLoading={isLoading} />
           ) : (
-            <div className="flex items-center justify-center h-[400px]">
+            <div className="flex items-center justify-center h-[400px] rounded-lg border border-border bg-card">
               <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
             </div>
           )}
