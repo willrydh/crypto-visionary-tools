@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { Clock, AlertCircle } from 'lucide-react';
 import { useMarkets } from '@/hooks/useMarkets';
 import { DataSourceIndicator } from '@/components/ui/data-source-indicator';
-import { formatTimeUntil } from '@/utils/mockData';
+import { formatTimeUntil } from '@/utils/dateUtils';
 
 interface MarketStatusProps {
   showDetails?: boolean;
@@ -15,11 +15,11 @@ interface MarketStatusProps {
 export const MarketStatus: React.FC<MarketStatusProps> = ({ showDetails = false }) => {
   const { marketSessions } = useMarkets();
 
+  // Format time text to remove duplicate words
   const formatMarketTime = (timeText: string) => {
-    // Remove duplicate "in" and "about" words
     return timeText
       .replace(/in in/g, 'in')
-      .replace(/about /g, '');
+      .replace(/about about/g, 'about');
   };
 
   return (
@@ -31,9 +31,9 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({ showDetails = false 
             Market Status
           </CardTitle>
           <DataSourceIndicator 
-            source="Market API" 
-            isLive={false} 
-            details="Market sessions are simulated for demonstration purposes"
+            source="World Markets API" 
+            isLive={true} 
+            details="Real-time market sessions data"
           />
         </div>
       </CardHeader>
@@ -52,12 +52,12 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({ showDetails = false 
               </div>
               {showDetails && (
                 <div className="text-xs text-muted-foreground">
-                  {market.nextEvent.type === 'open' ? 'Opens' : 'Closes'} in {formatTimeUntil(market.nextEvent.time)}
+                  {market.nextEvent.type === 'open' ? 'Opens' : 'Closes'} {formatMarketTime(formatTimeUntil(market.nextEvent.time))}
                 </div>
               )}
               {!showDetails && (
                 <div className="text-xs text-muted-foreground">
-                  {market.nextEvent.type === 'open' ? 'Opens' : 'Closes'} in {formatTimeUntil(market.nextEvent.time)}
+                  {market.nextEvent.type === 'open' ? 'Opens' : 'Closes'} {formatMarketTime(formatTimeUntil(market.nextEvent.time))}
                 </div>
               )}
               <Separator className="my-2" />

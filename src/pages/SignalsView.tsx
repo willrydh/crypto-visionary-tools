@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { PriceChart } from '@/components/charts/PriceChart';
+import { PriceChart } from '@/components/PriceChart';
 import { TechnicalAnalysisSummary } from '@/components/analysis/TechnicalAnalysisSummary';
 import { TradeSuggestionCard } from '@/components/analysis/TradeSuggestionCard';
 import { SupportResistanceLevels } from '@/components/support-resistance/SupportResistanceLevels';
@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import PriceRangeIndicator from '@/components/charts/PriceRangeIndicator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { DataSourceIndicator } from '@/components/ui/data-source-indicator';
+import CryptoBubbles from '@/components/crypto/CryptoBubbles';
 
 const SignalsView = () => {
   const { toast } = useToast();
@@ -132,30 +133,7 @@ const SignalsView = () => {
           </TabsContent>
           
           <TabsContent value="bubbles" className="pt-4">
-            <div className="p-6 border rounded-md h-[500px] bg-muted/20 flex flex-col items-center justify-center">
-              <div className="text-2xl font-bold mb-4">Crypto Market Overview</div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-                {['BTC', 'ETH', 'XRP', 'SOL', 'DOGE', 'WLD', 'LTC', 'SUI'].map((symbol, i) => (
-                  <div key={i} 
-                       className="rounded-full flex items-center justify-center animate-pulse transition-all duration-500 ease-in-out" 
-                       style={{ 
-                         width: 40 + Math.random() * 80 + 'px',
-                         height: 40 + Math.random() * 80 + 'px',
-                         backgroundColor: `hsla(${i * 45}, 70%, 80%, 0.7)`,
-                         transform: `scale(${0.8 + Math.random() * 0.4})`,
-                         animationDuration: `${2 + Math.random() * 3}s`
-                       }}>
-                    <span className="font-bold">{symbol}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-6 text-sm flex items-center">
-                <DataSourceIndicator 
-                  source="Crypto Bubbles API" 
-                  isLive={false} 
-                />
-              </div>
-            </div>
+            <CryptoBubbles />
           </TabsContent>
         </Tabs>
         
