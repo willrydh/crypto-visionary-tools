@@ -8,7 +8,7 @@ import { useTradingMode } from '@/hooks/useTradingMode';
 import { TechnicalAnalysisSummary } from '@/components/analysis/TechnicalAnalysisSummary';
 import { MarketStatus } from '@/components/markets/MarketStatus';
 import { PriceThermometer } from '@/components/charts/PriceThermometer';
-import PriceChart from '@/components/PriceChart';
+import { PriceChart } from '@/components/charts/PriceChart';
 import { ImprovedEconomicCalendar } from '@/components/calendar/ImprovedEconomicCalendar';
 
 const Dashboard = () => {
@@ -77,7 +77,7 @@ const Dashboard = () => {
         <div className="lg:col-span-2 space-y-6">
           {/* Price chart */}
           <div className="max-w-full overflow-hidden">
-            <PriceChart />
+            <PriceChart symbol="BTC/USDT" coinId="bitcoin" />
           </div>
           
           {/* Analysis cards - 2 columns on larger screens */}

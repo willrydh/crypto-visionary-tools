@@ -11,6 +11,16 @@ const TopHeader = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   
+  const handleNotifications = () => {
+    // Navigate to notifications page
+    navigate('/notifications');
+    
+    toast({
+      title: "Notifications",
+      description: "Viewing your latest notifications",
+    });
+  };
+  
   const handleLogout = () => {
     // In a real app, this would clear authentication tokens
     localStorage.removeItem('user');
@@ -44,11 +54,9 @@ const TopHeader = () => {
         <Button 
           variant="ghost" 
           size="icon"
-          asChild
+          onClick={handleNotifications}
         >
-          <Link to="/notifications">
-            <Bell className="h-5 w-5" />
-          </Link>
+          <Bell className="h-5 w-5" />
         </Button>
         
         <Button variant="ghost" size="icon" asChild>

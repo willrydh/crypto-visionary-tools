@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
@@ -9,6 +10,7 @@ import {
   Radar
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import Logo from '@/assets/logo.svg';
 
 // Navigation items for the sidebar
 const navItems = [
@@ -25,9 +27,7 @@ const MainNavigation: React.FC = () => {
     <div className="hidden md:flex h-screen w-64 flex-col fixed left-0 top-0 bottom-0 border-r border-border bg-background z-30">
       <div className="p-6">
         <div className="flex items-center space-x-2">
-          <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-            <span className="text-primary-foreground font-bold">P</span>
-          </div>
+          <img src={Logo} alt="ProfitPilot AI" className="h-8 w-8" />
           <div className="flex flex-col">
             <span className="font-bold text-lg">ProfitPilot AI</span>
             <span className="text-xs text-muted-foreground">v1.0.0</span>
