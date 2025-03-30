@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { PriceChart } from '@/components/charts/PriceChart';
 import { TechnicalAnalysisSummary } from '@/components/analysis/TechnicalAnalysisSummary';
@@ -8,7 +7,7 @@ import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';
 import { useSupportResistance } from '@/hooks/useSupportResistance';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from '@/components/ui/button';
-import { LineChart, RefreshCw, Bitcoin, Ethereum } from 'lucide-react';
+import { LineChart, RefreshCw, Bitcoin, CircleDollarSign } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import PriceRangeIndicator from '@/components/charts/PriceRangeIndicator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -35,7 +34,6 @@ const SignalsView = () => {
     weeklyLow: 80200
   });
 
-  // Initialize data on component mount
   useEffect(() => {
     if (indicators.length === 0) {
       generateAnalysis('BTC/USDT');
@@ -43,9 +41,7 @@ const SignalsView = () => {
     
     fetchLevels('BTC/USDT');
     
-    // Update price info periodically (this would typically come from a real API)
     const interval = setInterval(() => {
-      // Simulate small price changes for demo purposes
       setPriceInfo(prev => ({
         ...prev,
         currentPrice: prev.currentPrice + (Math.random() * 200 - 100)
@@ -111,7 +107,6 @@ const SignalsView = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main content - chart and analysis */}
         <div className="lg:col-span-3 space-y-6">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList>

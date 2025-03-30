@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Bitcoin, Ethereum } from 'lucide-react';
+import { Bitcoin, CircleDollarSign } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type SupportedCoin = 'BTC' | 'ETH' | 'XRP' | 'SOL' | 'DOGE' | 'WLD' | 'LTC' | 'SUI';
@@ -38,7 +38,7 @@ const CryptoCoinIcon: React.FC<CryptoCoinIconProps> = ({
       case 'BTC':
         return <Bitcoin className={cn(sizeMap[size], colorMap[coin], className)} />;
       case 'ETH':
-        return <Ethereum className={cn(sizeMap[size], colorMap[coin], className)} />;
+        return <CircleDollarSign className={cn(sizeMap[size], colorMap[coin], className)} />;
       default:
         return (
           <div className={cn(

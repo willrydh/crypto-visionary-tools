@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -25,14 +24,19 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 interface PriceChartProps {
   symbol?: string;
   coinId?: string;
+  showLevels?: boolean;
+  levels?: any[];
+  excludeTimeframes?: string[];
 }
 
 const PriceChart: React.FC<PriceChartProps> = ({
   symbol = 'BTC/USDT',
-  coinId = 'bitcoin'
+  coinId = 'bitcoin',
+  showLevels = false,
+  levels = [],
+  excludeTimeframes = []
 }) => {
   const [chartData, setChartData] = useState<any[]>([]);
-  // Update the currentPrice state to match the returned object structure from fetchCurrentPrice
   const [currentPrice, setCurrentPrice] = useState<{
     price: number;
     change24h: number;
@@ -52,7 +56,6 @@ const PriceChart: React.FC<PriceChartProps> = ({
     setConnectionStatus('connecting');
     try {
       const candleData = await fetchHistoricalPrices(symbol, timeframe as any, days);
-      // Sort data by timestamp to ensure chronological order (oldest to newest)
       const sortedData = [...candleData].sort((a, b) => a.timestamp - b.timestamp);
       
       const data = sortedData.map(candle => ({
@@ -235,7 +238,6 @@ const PriceChart: React.FC<PriceChartProps> = ({
             <div className="flex items-center gap-2">
               <h3 className="font-medium">{symbol} Price Chart</h3>
               
-              {/* Data source and connection status */}
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="text-xs flex items-center gap-1">
                   <span>Bybit API</span>

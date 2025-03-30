@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   Bell,
@@ -10,7 +9,7 @@ import {
   Filter,
   Search,
   Bitcoin,
-  Ethereum
+  CircleDollarSign
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -37,9 +36,13 @@ import {
   formatTimeUntil
 } from '@/utils/mockData';
 
+interface ExtendedNotification extends Notification {
+  symbol?: string;
+}
+
 const NotificationsPage = () => {
   const { toast } = useToast();
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifications, setNotifications] = useState<ExtendedNotification[]>([]);
   const [marketSessions, setMarketSessions] = useState(getMockMarketSessions());
   const [alertsEnabled, setAlertsEnabled] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -47,9 +50,8 @@ const NotificationsPage = () => {
   const [filterType, setFilterType] = useState<string>('all');
 
   useEffect(() => {
-    setNotifications(getMockNotifications());
+    setNotifications(getMockNotifications() as ExtendedNotification[]);
     
-    // Refresh market sessions every minute
     const interval = setInterval(() => {
       setMarketSessions(getMockMarketSessions());
     }, 60000);
@@ -57,13 +59,11 @@ const NotificationsPage = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Handler for notification refresh
   const handleRefresh = () => {
     setIsLoading(true);
     
-    // Simulate API call delay
     setTimeout(() => {
-      setNotifications(getMockNotifications());
+      setNotifications(getMockNotifications() as ExtendedNotification[]);
       setIsLoading(false);
       
       toast({
@@ -127,7 +127,6 @@ const NotificationsPage = () => {
     }
   };
 
-  // Filter notifications based on search query and type filter
   const filteredNotifications = notifications.filter(notification => {
     const matchesSearch = notification.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           notification.message.toLowerCase().includes(searchQuery.toLowerCase());

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { 
@@ -9,7 +8,7 @@ import {
   Webhook,
   Radar,
   Bitcoin,
-  Ethereum
+  CircleDollarSign
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Logo from '@/assets/logo.svg';

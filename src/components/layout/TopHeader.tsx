@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Bell, Settings, LogOut, Bitcoin, Ethereum } from 'lucide-react';
+import { Bell, Settings, LogOut, Bitcoin, CircleDollarSign } from 'lucide-react';
 import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
 import { useToast } from '@/hooks/use-toast';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
