@@ -44,12 +44,14 @@ interface PriceChartProps {
   symbol?: string;
   showLevels?: boolean;
   levels?: PriceLevel[];
+  coinId?: string;
 }
 
 export const PriceChart: React.FC<PriceChartProps> = ({ 
   symbol = 'BTC/USDT',
   showLevels = false,
-  levels = []
+  levels = [],
+  coinId = 'bitcoin'
 }) => {
   const { currentTimeframe, setCurrentTimeframe } = useTimeframe();
   const [chartData, setChartData] = useState<PriceCandle[]>([]);
