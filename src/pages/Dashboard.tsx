@@ -77,7 +77,7 @@ const Dashboard = () => {
         <div className="lg:col-span-2 space-y-6">
           {/* Price chart */}
           <div className="max-w-full overflow-hidden">
-            <PriceChart symbol="BTC/USDT" coinId="bitcoin" />
+           <PriceChart symbol="BTC/USDT" coinId="bitcoin" excludeTimeframes={['15m', '30m']} />
           </div>
           
           {/* Analysis cards - 2 columns on larger screens */}
