@@ -94,114 +94,116 @@ const PricingPage = () => {
   };
 
   return (
-    <MainLayout>
-      <div className="container mx-auto space-y-12 py-8">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold mb-4">Choose the Perfect Plan</h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Select the right plan for your trading needs, from free trials to professional setups with API access.
-          </p>
-          
-          <div className="flex justify-center mb-8 mt-8">
-            <Tabs 
-              value={billingCycle} 
-              onValueChange={(value) => setBillingCycle(value as 'monthly' | 'yearly')}
-              className="w-[400px]"
-            >
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="monthly">Monthly</TabsTrigger>
-                <TabsTrigger value="yearly">
-                  Yearly
-                  <Badge variant="secondary" className="ml-2 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
-                    Save 25%
-                  </Badge>
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-          </div>
-        </div>
-        
-        <div className="grid md:grid-cols-3 gap-8">
-          {pricingPlans.map((plan) => (
-            <Card 
-              key={plan.name} 
-              className={`flex flex-col ${plan.popular ? 'border-primary shadow-lg ring-2 ring-primary' : ''}`}
-            >
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                  <CardTitle>{plan.name}</CardTitle>
-                  {plan.badge && (
-                    <Badge variant={plan.popular ? "default" : "outline"}>
-                      {plan.badge}
+    <div className="min-h-screen flex w-full">
+      <MainLayout>
+        <div className="container mx-auto space-y-12 py-8">
+          <div className="text-center">
+            <h1 className="text-3xl font-bold mb-4">Choose the Perfect Plan</h1>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Select the right plan for your trading needs, from free trials to professional setups with API access.
+            </p>
+            
+            <div className="flex justify-center mb-8 mt-8">
+              <Tabs 
+                value={billingCycle} 
+                onValueChange={(value) => setBillingCycle(value as 'monthly' | 'yearly')}
+                className="w-[400px]"
+              >
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="monthly">Monthly</TabsTrigger>
+                  <TabsTrigger value="yearly">
+                    Yearly
+                    <Badge variant="secondary" className="ml-2 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
+                      Save 25%
                     </Badge>
-                  )}
-                </div>
-                <CardDescription>{plan.description}</CardDescription>
-              </CardHeader>
-              <CardContent className="flex-1">
-                <div className="mt-2 mb-6">
-                  <span className="text-4xl font-bold">
-                    ${plan.price[billingCycle]}
-                  </span>
-                  {plan.price[billingCycle] > 0 && (
-                    <span className="text-muted-foreground ml-2">
-                      /{billingCycle === 'monthly' ? 'month' : 'year'}
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {pricingPlans.map((plan) => (
+              <Card 
+                key={plan.name} 
+                className={`flex flex-col ${plan.popular ? 'border-primary shadow-lg ring-2 ring-primary' : ''}`}
+              >
+                <CardHeader>
+                  <div className="flex justify-between items-center">
+                    <CardTitle>{plan.name}</CardTitle>
+                    {plan.badge && (
+                      <Badge variant={plan.popular ? "default" : "outline"}>
+                        {plan.badge}
+                      </Badge>
+                    )}
+                  </div>
+                  <CardDescription>{plan.description}</CardDescription>
+                </CardHeader>
+                <CardContent className="flex-1">
+                  <div className="mt-2 mb-6">
+                    <span className="text-4xl font-bold">
+                      ${plan.price[billingCycle]}
                     </span>
-                  )}
-                </div>
-                <ul className="space-y-3">
-                  {plan.features.map((feature, index) => (
-                    <li key={index} className="flex items-center">
-                      {feature.included ? (
-                        <CheckCircle className="h-4 w-4 mr-2 text-green-500" />
-                      ) : (
-                        <X className="h-4 w-4 mr-2 text-gray-300" />
-                      )}
-                      <span className={!feature.included ? "text-muted-foreground" : ""}>
-                        {feature.name}
+                    {plan.price[billingCycle] > 0 && (
+                      <span className="text-muted-foreground ml-2">
+                        /{billingCycle === 'monthly' ? 'month' : 'year'}
                       </span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-              <CardFooter>
-                <Button 
-                  className="w-full" 
-                  onClick={() => handleCTAClick(plan.name)}
-                  variant={plan.popular ? "default" : "outline"}
-                >
-                  {plan.cta}
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
-        
-        <div className="max-w-2xl mx-auto bg-card/50 p-6 rounded-lg border border-border">
-          <h2 className="text-xl font-bold mb-4">Frequently Asked Questions</h2>
-          <div className="space-y-4">
-            <div>
-              <h3 className="font-medium mb-1">Can I cancel my subscription?</h3>
-              <p className="text-sm text-muted-foreground">
-                Yes, you can cancel your subscription anytime. If you cancel, you'll continue to have access until the end of your billing period.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-medium mb-1">Do you offer refunds?</h3>
-              <p className="text-sm text-muted-foreground">
-                We offer a 14-day money-back guarantee on all paid plans.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-medium mb-1">What payment methods do you accept?</h3>
-              <p className="text-sm text-muted-foreground">
-                We accept all major credit cards and cryptocurrencies including Bitcoin, Ethereum, and USDT.
-              </p>
+                    )}
+                  </div>
+                  <ul className="space-y-3">
+                    {plan.features.map((feature, index) => (
+                      <li key={index} className="flex items-center">
+                        {feature.included ? (
+                          <CheckCircle className="h-4 w-4 mr-2 text-green-500" />
+                        ) : (
+                          <X className="h-4 w-4 mr-2 text-gray-300" />
+                        )}
+                        <span className={!feature.included ? "text-muted-foreground" : ""}>
+                          {feature.name}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+                <CardFooter>
+                  <Button 
+                    className="w-full" 
+                    onClick={() => handleCTAClick(plan.name)}
+                    variant={plan.popular ? "default" : "outline"}
+                  >
+                    {plan.cta}
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+          
+          <div className="max-w-2xl mx-auto bg-card/50 p-6 rounded-lg border border-border">
+            <h2 className="text-xl font-bold mb-4">Frequently Asked Questions</h2>
+            <div className="space-y-4">
+              <div>
+                <h3 className="font-medium mb-1">Can I cancel my subscription?</h3>
+                <p className="text-sm text-muted-foreground">
+                  Yes, you can cancel your subscription anytime. If you cancel, you'll continue to have access until the end of your billing period.
+                </p>
+              </div>
+              <div>
+                <h3 className="font-medium mb-1">Do you offer refunds?</h3>
+                <p className="text-sm text-muted-foreground">
+                  We offer a 14-day money-back guarantee on all paid plans.
+                </p>
+              </div>
+              <div>
+                <h3 className="font-medium mb-1">What payment methods do you accept?</h3>
+                <p className="text-sm text-muted-foreground">
+                  We accept all major credit cards and cryptocurrencies including Bitcoin, Ethereum, and USDT.
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </MainLayout>
+      </MainLayout>
+    </div>
   );
 };
 
