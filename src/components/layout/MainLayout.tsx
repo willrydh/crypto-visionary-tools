@@ -20,7 +20,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
               <img src={Logo} alt="ProfitPilot AI" className="h-8 w-8" />
               <div className="flex flex-col">
                 <span className="font-bold text-lg">ProfitPilot AI</span>
-                <span className="text-xs text-muted-foreground">Profits on Autopilot</span>
               </div>
             </Link>
           </SidebarHeader>

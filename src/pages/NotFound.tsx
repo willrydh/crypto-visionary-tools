@@ -17,25 +17,25 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center max-w-md mx-auto p-6">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+      <div className="text-center max-w-md mx-auto p-4 sm:p-6">
         <img src={Logo} alt="ProfitPilot AI" className="h-16 w-16 mx-auto mb-6" />
         
-        <div className="mb-8">
-          <h1 className="text-5xl font-bold mb-2">404</h1>
-          <h2 className="text-2xl font-semibold text-primary mb-4">Market Not Found</h2>
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-4xl sm:text-5xl font-bold mb-2">404</h1>
+          <h2 className="text-xl sm:text-2xl font-semibold text-primary mb-3 sm:mb-4">Market Not Found</h2>
         </div>
         
-        <p className="text-lg text-muted-foreground mb-6">
+        <p className="text-base sm:text-lg text-muted-foreground mb-6">
           Looks like you're trading in uncharted territory. This page doesn't exist or has been liquidated.
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-          <Button onClick={() => navigate('/')} className="gap-2">
+        <div className="flex flex-col sm:flex-row gap-3 justify-center mb-6 sm:mb-8">
+          <Button onClick={() => navigate('/')} className="gap-2 w-full sm:w-auto">
             <Home className="h-4 w-4" />
             Return to Dashboard
           </Button>
-          <Button variant="outline" onClick={() => navigate('/chart')} className="gap-2">
+          <Button variant="outline" onClick={() => navigate('/chart')} className="gap-2 w-full sm:w-auto">
             <BarChart className="h-4 w-4" />
             View Charts
           </Button>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { fetchEconomicEvents, EconomicEvent } from '@/services/calendarService';
 import { formatDate, formatTimeUntil } from '@/utils/dateUtils';
+import { DataSourceIndicator } from '@/components/ui/data-source-indicator';
 
 interface ImprovedEconomicCalendarProps {
   compact?: boolean;
@@ -36,7 +36,6 @@ export const ImprovedEconomicCalendar: React.FC<ImprovedEconomicCalendarProps> =
     setError(null);
     
     try {
-      // Get date ranges
       const today = new Date();
       const tomorrow = new Date(today);
       tomorrow.setDate(tomorrow.getDate() + 1);
@@ -50,17 +49,14 @@ export const ImprovedEconomicCalendar: React.FC<ImprovedEconomicCalendarProps> =
       
       const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999);
       
-      // Fetch events for different periods
       const todayEvents = await fetchEconomicEvents(today, today);
       const tomorrowEvents = await fetchEconomicEvents(tomorrow, endOfTomorrow);
       const weekEvents = await fetchEconomicEvents(today, endOfWeek);
       const monthEvents = await fetchEconomicEvents(today, endOfMonth);
       
-      // If no real events, use mock data
       const useMockData = todayEvents.length === 0 && tomorrowEvents.length === 0 && weekEvents.length === 0;
       
       if (useMockData) {
-        // Create mock events
         const mockEvents = generateMockEvents();
         
         setEvents({
@@ -80,7 +76,6 @@ export const ImprovedEconomicCalendar: React.FC<ImprovedEconomicCalendarProps> =
     } catch (error) {
       console.error('Error fetching economic events:', error);
       
-      // Create mock events for fallback
       const mockEvents = generateMockEvents();
       
       setEvents({
@@ -96,7 +91,6 @@ export const ImprovedEconomicCalendar: React.FC<ImprovedEconomicCalendarProps> =
     }
   };
   
-  // Helper functions for date checks
   const isToday = (date: Date) => {
     const today = new Date();
     return date.getDate() === today.getDate() && 
@@ -120,12 +114,10 @@ export const ImprovedEconomicCalendar: React.FC<ImprovedEconomicCalendarProps> =
     return date >= today && date <= endOfWeek;
   };
   
-  // Generate mock economic events
   const generateMockEvents = (): EconomicEvent[] => {
     const today = new Date();
     const mockEvents: EconomicEvent[] = [];
     
-    // Today's events
     mockEvents.push({
       id: '1',
       title: 'FOMC Minutes',
@@ -152,7 +144,6 @@ export const ImprovedEconomicCalendar: React.FC<ImprovedEconomicCalendarProps> =
       type: 'retail_sales'
     });
     
-    // Tomorrow's events
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     
@@ -182,7 +173,6 @@ export const ImprovedEconomicCalendar: React.FC<ImprovedEconomicCalendarProps> =
       type: 'unemployment'
     });
     
-    // This week's events
     const thisWeek = new Date();
     thisWeek.setDate(thisWeek.getDate() + 3);
     
@@ -212,7 +202,6 @@ export const ImprovedEconomicCalendar: React.FC<ImprovedEconomicCalendarProps> =
       type: 'nfp'
     });
     
-    // Later this month
     const laterThisMonth = new Date();
     laterThisMonth.setDate(laterThisMonth.getDate() + 10);
     
@@ -245,16 +234,13 @@ export const ImprovedEconomicCalendar: React.FC<ImprovedEconomicCalendarProps> =
     return mockEvents;
   };
   
-  // Load events on component mount
   useEffect(() => {
     fetchEvents();
     
-    // Refresh every hour
     const interval = setInterval(fetchEvents, 3600000);
     return () => clearInterval(interval);
   }, []);
   
-  // Get impact color
   const getImpactColor = (impact: 'low' | 'medium' | 'high'): string => {
     switch (impact) {
       case 'high':
@@ -356,15 +342,22 @@ export const ImprovedEconomicCalendar: React.FC<ImprovedEconomicCalendarProps> =
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg">Economic Calendar</CardTitle>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-8 w-8 p-0" 
-            onClick={fetchEvents}
-            disabled={isLoading}
-          >
-            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-          </Button>
+          <div className="flex items-center gap-2">
+            <DataSourceIndicator 
+              source="Forex Factory" 
+              isLive={false}
+              details="Economic events are simulated based on common Forex Factory data patterns" 
+            />
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-8 w-8 p-0" 
+              onClick={fetchEvents}
+              disabled={isLoading}
+            >
+              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+            </Button>
+          </div>
         </div>
       </CardHeader>
       

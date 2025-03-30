@@ -27,8 +27,9 @@ const CalendarView = () => {
         
         <div className="flex items-center space-x-2 mt-2 md:mt-0">
           <DataSourceIndicator 
-            source="Market API & Economic Calendar" 
-            isLive={false} 
+            source="Forex Factory & Market API" 
+            isLive={false}
+            details="Data is simulated for demonstration purposes" 
           />
         </div>
       </div>

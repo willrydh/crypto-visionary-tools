@@ -64,7 +64,12 @@ export const CryptoSelector: React.FC<CryptoSelectorProps> = ({
       </Select>
       
       {showDataSource && (
-        <DataSourceIndicator source="Bybit API" isLive={true} placement="right" />
+        <DataSourceIndicator 
+          source="Bybit API" 
+          isLive={true} 
+          placement="right"
+          details="Real-time cryptocurrency data from Bybit" 
+        />
       )}
     </div>
   );

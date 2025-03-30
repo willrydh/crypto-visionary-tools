@@ -8,13 +8,15 @@ interface DataSourceIndicatorProps {
   isLive: boolean;
   className?: string;
   placement?: 'top' | 'bottom' | 'left' | 'right';
+  details?: string;
 }
 
 export const DataSourceIndicator: React.FC<DataSourceIndicatorProps> = ({
   source,
   isLive,
   className,
-  placement = 'top'
+  placement = 'top',
+  details
 }) => {
   return (
     <TooltipProvider>
@@ -41,6 +43,7 @@ export const DataSourceIndicator: React.FC<DataSourceIndicatorProps> = ({
               />
               <span>{isLive ? 'Live data' : 'Mockup data'}</span>
             </div>
+            {details && <p className="mt-1 text-muted-foreground">{details}</p>}
           </div>
         </TooltipContent>
       </Tooltip>

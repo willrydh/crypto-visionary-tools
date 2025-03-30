@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +15,13 @@ interface MarketStatusProps {
 export const MarketStatus: React.FC<MarketStatusProps> = ({ showDetails = false }) => {
   const { marketSessions } = useMarkets();
 
+  const formatMarketTime = (timeText: string) => {
+    // Remove duplicate "in" and "about" words
+    return timeText
+      .replace(/in in/g, 'in')
+      .replace(/about /g, '');
+  };
+
   return (
     <Card>
       <CardHeader className="pb-2">
@@ -22,7 +30,11 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({ showDetails = false 
             <Clock className="h-5 w-5" />
             Market Status
           </CardTitle>
-          <DataSourceIndicator source="Market API" isLive={false} />
+          <DataSourceIndicator 
+            source="Market API" 
+            isLive={false} 
+            details="Market sessions are simulated for demonstration purposes"
+          />
         </div>
       </CardHeader>
       <CardContent>

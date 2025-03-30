@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -25,6 +24,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { formatDate } from '@/utils/dateUtils';
 import { fetchEconomicEvents, EconomicEvent, getAvailableCountries, getAvailableEventTypes } from '@/services/calendarService';
+import { DataSourceIndicator } from '@/components/ui/data-source-indicator';
 
 interface EconomicCalendarProps {
   compact?: boolean;
@@ -44,18 +44,15 @@ export const EconomicCalendar: React.FC<EconomicCalendarProps> = ({ compact = fa
     types: []
   });
   
-  // Available filter options
   const countries = getAvailableCountries();
   const eventTypes = getAvailableEventTypes();
   
-  // Fetch events when date or filters change
   useEffect(() => {
     if (!selectedDate) return;
     
     const loadEvents = async () => {
       setIsLoading(true);
       try {
-        // When fetching events, include the full day
         const startDate = new Date(selectedDate);
         startDate.setHours(0, 0, 0, 0);
         
@@ -74,7 +71,6 @@ export const EconomicCalendar: React.FC<EconomicCalendarProps> = ({ compact = fa
     loadEvents();
   }, [selectedDate, filters]);
   
-  // Get impact badge style
   const getImpactBadge = (impact: 'low' | 'medium' | 'high') => {
     switch(impact) {
       case 'high':
@@ -88,7 +84,6 @@ export const EconomicCalendar: React.FC<EconomicCalendarProps> = ({ compact = fa
     }
   };
   
-  // Toggle a country filter
   const toggleCountryFilter = (country: string) => {
     setFilters(prev => ({
       ...prev,
@@ -98,7 +93,6 @@ export const EconomicCalendar: React.FC<EconomicCalendarProps> = ({ compact = fa
     }));
   };
   
-  // Toggle an impact filter
   const toggleImpactFilter = (impact: 'low' | 'medium' | 'high') => {
     setFilters(prev => ({
       ...prev,
@@ -108,7 +102,6 @@ export const EconomicCalendar: React.FC<EconomicCalendarProps> = ({ compact = fa
     }));
   };
   
-  // Toggle an event type filter
   const toggleTypeFilter = (type: string) => {
     setFilters(prev => ({
       ...prev,
@@ -118,7 +111,6 @@ export const EconomicCalendar: React.FC<EconomicCalendarProps> = ({ compact = fa
     }));
   };
   
-  // Reset all filters
   const resetFilters = () => {
     setFilters({
       countries: [],
@@ -132,7 +124,12 @@ export const EconomicCalendar: React.FC<EconomicCalendarProps> = ({ compact = fa
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg">Economic Calendar</CardTitle>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
+            <DataSourceIndicator 
+              source="Forex Factory" 
+              isLive={false}
+              details="Economic events are simulated based on common Forex Factory data patterns" 
+            />
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="outline" size="sm">
@@ -262,7 +259,6 @@ export const EconomicCalendar: React.FC<EconomicCalendarProps> = ({ compact = fa
                 size="sm"
                 className="mt-4"
                 onClick={() => {
-                  // Try another date
                   const tomorrow = new Date();
                   tomorrow.setDate(tomorrow.getDate() + 1);
                   setSelectedDate(tomorrow);

@@ -1,5 +1,6 @@
 
 // Economic Calendar Service
+// Data simulated based on Forex Factory patterns
 
 export interface EconomicEvent {
   id: string;
@@ -25,7 +26,7 @@ export const fetchEconomicEvents = async (
     types?: string[];
   }
 ): Promise<EconomicEvent[]> => {
-  // This would be an API call to a service like ForexFactory in production
+  // This would be an API call to Forex Factory in production
   // For development, we'll generate mock events
   
   // Simulate API delay
@@ -142,7 +143,8 @@ const generateMockEvent = (date: Date): EconomicEvent => {
     previous,
     actual,
     description: `${country} ${eventType.title} release for ${eventDate.toLocaleString('default', { month: 'long' })}`,
-    type: eventType.type
+    type: eventType.type,
+    source: "Forex Factory (simulated)"
   };
 };
 
