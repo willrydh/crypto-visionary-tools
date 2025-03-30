@@ -15,9 +15,6 @@ import {
   Tooltip,
   ResponsiveContainer,
   ReferenceLine,
-  BarChart,
-  Bar,
-  Cell,
   Line
 } from 'recharts';
 import { Button } from "@/components/ui/button";
@@ -53,7 +50,6 @@ const PriceChart: React.FC<PriceChartProps> = ({
   const [timeframe, setTimeframe] = useState<string>('1d');
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string>("");
-  const [chartType, setChartType] = useState<'line' | 'candle'>('line');
   const [showMA200, setShowMA200] = useState<boolean>(true);
   const [connectionStatus, setConnectionStatus] = useState<'connected' | 'disconnected' | 'connecting'>('connecting');
 
@@ -81,19 +77,15 @@ const PriceChart: React.FC<PriceChartProps> = ({
       setChartData(data);
       
       // Process data for chart display
-      if (chartType === 'line') {
-        const lineData = data.map(item => ({
-          timestamp: item.timestamp,
-          price: item.price,
-          time: item.time
-        }));
-        
-        // Apply MA 200
-        const dataWithMA200 = applySMA(lineData, 200);
-        setProcessedData(dataWithMA200);
-      } else {
-        setProcessedData(data);
-      }
+      const lineData = data.map(item => ({
+        timestamp: item.timestamp,
+        price: item.price,
+        time: item.time
+      }));
+      
+      // Apply MA 200
+      const dataWithMA200 = applySMA(lineData, 200);
+      setProcessedData(dataWithMA200);
       
       setLastUpdated(new Date().toLocaleString());
       setConnectionStatus('connected');
@@ -127,26 +119,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
       clearInterval(chartInterval);
       clearInterval(priceInterval);
     };
-  }, [timeframe, symbol, chartType]);
-
-  useEffect(() => {
-    // Update processed data when chart type changes
-    if (chartData.length > 0) {
-      if (chartType === 'line') {
-        const lineData = chartData.map(item => ({
-          timestamp: item.timestamp,
-          price: item.price,
-          time: item.time
-        }));
-        
-        // Apply MA 200
-        const dataWithMA200 = applySMA(lineData, 200);
-        setProcessedData(dataWithMA200);
-      } else {
-        setProcessedData(chartData);
-      }
-    }
-  }, [chartType, chartData, showMA200]);
+  }, [timeframe, symbol]);
 
   const formatXAxis = (timestamp: string) => {
     const date = new Date(timestamp);
@@ -154,10 +127,6 @@ const PriceChart: React.FC<PriceChartProps> = ({
       return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
     return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
-  };
-
-  const toggleChartType = () => {
-    setChartType(chartType === 'line' ? 'candle' : 'line');
   };
 
   const toggleMA200 = () => {
@@ -222,76 +191,6 @@ const PriceChart: React.FC<PriceChartProps> = ({
     );
   };
 
-  const renderCandleChart = () => {
-    return (
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart
-          data={processedData}
-          margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
-        >
-          <XAxis
-            dataKey="time"
-            tickFormatter={formatXAxis}
-            tickCount={5}
-            minTickGap={20}
-            tick={{ fontSize: 10 }}
-          />
-          <YAxis
-            domain={['auto', 'auto']}
-            tick={{ fontSize: 10 }}
-            tickFormatter={(value) => formatCurrency(value)}
-            width={60}
-          />
-          <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
-          <Tooltip
-            labelFormatter={(value) => `${value}`}
-            formatter={(value, name) => {
-              if (name === 'volume') return [value, 'Volume'];
-              return [formatCurrency(value as number), typeof name === 'string' ? name.charAt(0).toUpperCase() + name.slice(1) : name];
-            }}
-          />
-          <Bar
-            dataKey="high"
-            fill="#8884d8"
-            isAnimationActive={false}
-            name="High"
-            hide={true}
-          />
-          <Bar
-            dataKey="low"
-            fill="#8884d8"
-            isAnimationActive={false}
-            name="Low"
-            hide={true}
-          />
-          <Bar
-            dataKey={(data) => data.high - data.low}
-            name="Range"
-            fill="transparent"
-            stroke="#888"
-            isAnimationActive={false}
-          >
-            {chartData.map((entry, index) => (
-              <Cell key={`cell-${index}`} strokeWidth={1} stroke={entry.color} />
-            ))}
-          </Bar>
-          <Bar
-            dataKey={(data) => Math.abs(data.close - data.open)}
-            name="Body"
-            isAnimationActive={false}
-          >
-            {chartData.map((entry, index) => (
-              <Cell 
-                key={`body-${index}`} 
-                fill={entry.color} 
-              />
-            ))}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
-    );
-  };
-
   return (
     <Card className="rounded-lg border bg-card text-card-foreground shadow-sm">
       <CardContent className="p-4">
@@ -346,14 +245,6 @@ const PriceChart: React.FC<PriceChartProps> = ({
                 <TabsTrigger value="90d" className="text-xs px-2 h-6">3M</TabsTrigger>
               </TabsList>
             </Tabs>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="h-7 px-2" 
-              onClick={toggleChartType}
-            >
-              {chartType === 'line' ? 'Candle' : 'Line'}
-            </Button>
             <Button 
               variant="outline" 
               size="icon" 
@@ -424,7 +315,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
           </div>
         ) : (
           <div className="h-64">
-            {chartType === 'line' ? renderLineChart() : renderCandleChart()}
+            {renderLineChart()}
           </div>
         )}
         

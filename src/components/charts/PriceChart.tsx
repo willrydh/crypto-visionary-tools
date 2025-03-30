@@ -2,14 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { 
   ArrowDown,
   ArrowUp,
   RefreshCw,
   AlertTriangle,
-  LineChart,
-  CandlestickChart,
   Info
 } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
@@ -29,11 +26,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  LineChart as RechartsLineChart,
   Line,
-  BarChart,
-  Bar,
-  ComposedChart,
   ReferenceLine
 } from 'recharts';
 import { 
@@ -70,7 +63,6 @@ export const PriceChart: React.FC<PriceChartProps> = ({
   } | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [chartType, setChartType] = useState<'line' | 'candle'>('line');
   const [showMA200, setShowMA200] = useState<boolean>(true);
   const [dataStatus, setDataStatus] = useState<{
     source: string;
@@ -123,25 +115,18 @@ export const PriceChart: React.FC<PriceChartProps> = ({
   useEffect(() => {
     if (chartData.length > 0) {
       // Prepare data for chart display
-      if (chartType === 'line') {
-        const lineData = [...chartData]
-          .sort((a, b) => a.timestamp - b.timestamp)
-          .map(candle => ({
-            timestamp: candle.timestamp,
-            price: candle.close
-          }));
-        
-        // Apply MA 200 calculation to line data
-        const dataWithMA200 = applySMA(lineData, 200);
-        setProcessedData(dataWithMA200);
-      } else {
-        const candleData = [...chartData]
-          .sort((a, b) => a.timestamp - b.timestamp)
-          .map(getCandlestickData);
-        setProcessedData(candleData);
-      }
+      const lineData = [...chartData]
+        .sort((a, b) => a.timestamp - b.timestamp)
+        .map(candle => ({
+          timestamp: candle.timestamp,
+          price: candle.close
+        }));
+      
+      // Apply MA 200 calculation to line data
+      const dataWithMA200 = applySMA(lineData, 200);
+      setProcessedData(dataWithMA200);
     }
-  }, [chartData, chartType, showMA200]);
+  }, [chartData, showMA200]);
   
   const formatXAxis = (timestamp: number) => {
     return formatChartTime(timestamp, currentTimeframe);
@@ -155,17 +140,6 @@ export const PriceChart: React.FC<PriceChartProps> = ({
     setCurrentTimeframe(timeframe as Timeframe);
   };
   
-  const getCandlestickData = (candle: PriceCandle) => {
-    return {
-      ...candle,
-      color: candle.close > candle.open ? "rgba(0, 255, 0, 0.7)" : "rgba(255, 0, 0, 0.7)",
-      openToClose: candle.close - candle.open,
-      openToCloseY: Math.min(candle.open, candle.close),
-      highToLow: candle.high - candle.low,
-      highToLowY: candle.low
-    };
-  };
-
   const toggleMA200 = () => {
     setShowMA200(!showMA200);
   };
@@ -239,14 +213,6 @@ export const PriceChart: React.FC<PriceChartProps> = ({
               <Switch id="ma200" checked={showMA200} onCheckedChange={toggleMA200} />
               <Label htmlFor="ma200" className="text-xs">MA 200</Label>
             </div>
-            <ToggleGroup type="single" value={chartType} onValueChange={(value) => value && setChartType(value as 'line' | 'candle')}>
-              <ToggleGroupItem value="line" aria-label="Line chart">
-                <LineChart className="h-4 w-4" />
-              </ToggleGroupItem>
-              <ToggleGroupItem value="candle" aria-label="Candlestick chart">
-                <CandlestickChart className="h-4 w-4" />
-              </ToggleGroupItem>
-            </ToggleGroup>
             
             <Button 
               variant="outline" 
@@ -294,132 +260,72 @@ export const PriceChart: React.FC<PriceChartProps> = ({
         ) : (
           <div className="h-[300px] p-4">
             <ResponsiveContainer width="100%" height="100%">
-              {chartType === 'line' ? (
-                <AreaChart
-                  data={processedData}
-                  margin={{ top: 5, right: 5, left: 5, bottom: 5 }}
-                >
-                  <defs>
-                    <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.2} />
-                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <XAxis 
-                    dataKey="timestamp" 
-                    tickFormatter={formatXAxis} 
-                    minTickGap={30}
-                    tick={{ fontSize: 10 }}
+              <AreaChart
+                data={processedData}
+                margin={{ top: 5, right: 5, left: 5, bottom: 5 }}
+              >
+                <defs>
+                  <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.2} />
+                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <XAxis 
+                  dataKey="timestamp" 
+                  tickFormatter={formatXAxis} 
+                  minTickGap={30}
+                  tick={{ fontSize: 10 }}
+                />
+                <YAxis 
+                  domain={['auto', 'auto']} 
+                  tick={{ fontSize: 10 }}
+                  tickFormatter={tooltipFormatter}
+                  width={60}
+                />
+                <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="3 3" opacity={0.1} />
+                <Tooltip 
+                  labelFormatter={(label) => formatXAxis(label as number)}
+                  formatter={(value, name) => {
+                    if (name === 'sma') return [formatCurrency(value as number), 'MA 200'];
+                    return [formatCurrency(value as number), name === 'price' ? 'Price' : name];
+                  }}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="price" 
+                  stroke="hsl(var(--primary))" 
+                  fill="url(#colorPrice)" 
+                  isAnimationActive={false}
+                />
+                
+                {showMA200 && (
+                  <Line
+                    type="monotone"
+                    dataKey="sma"
+                    stroke="#ff0000"
+                    strokeWidth={2}
+                    dot={false}
+                    isAnimationActive={false}
+                    name="MA 200"
                   />
-                  <YAxis 
-                    domain={['auto', 'auto']} 
-                    tick={{ fontSize: 10 }}
-                    tickFormatter={tooltipFormatter}
-                    width={60}
-                  />
-                  <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="3 3" opacity={0.1} />
-                  <Tooltip 
-                    labelFormatter={(label) => formatXAxis(label as number)}
-                    formatter={(value, name) => {
-                      if (name === 'sma') return [formatCurrency(value as number), 'MA 200'];
-                      return [formatCurrency(value as number), name === 'price' ? 'Price' : name];
+                )}
+                
+                {showLevels && levels.map((level, idx) => (
+                  <ReferenceLine 
+                    key={idx}
+                    y={level.price}
+                    stroke={level.type === 'support' ? "rgba(0, 255, 0, 0.5)" : "rgba(255, 0, 0, 0.5)"}
+                    strokeDasharray={level.strength === 'strong' ? "0" : "5 5"}
+                    strokeWidth={level.strength === 'strong' ? 2 : 1}
+                    label={{ 
+                      value: `${level.type} (${level.price.toFixed(1)})`, 
+                      position: 'insideBottomRight',
+                      fill: level.type === 'support' ? "rgba(0, 255, 0, 0.8)" : "rgba(255, 0, 0, 0.8)",
+                      fontSize: 10
                     }}
                   />
-                  <Area 
-                    type="monotone" 
-                    dataKey="price" 
-                    stroke="hsl(var(--primary))" 
-                    fill="url(#colorPrice)" 
-                    isAnimationActive={false}
-                  />
-                  
-                  {showMA200 && (
-                    <Line
-                      type="monotone"
-                      dataKey="sma"
-                      stroke="#ff0000"
-                      strokeWidth={2}
-                      dot={false}
-                      isAnimationActive={false}
-                      name="MA 200"
-                    />
-                  )}
-                  
-                  {showLevels && levels.map((level, idx) => (
-                    <ReferenceLine 
-                      key={idx}
-                      y={level.price}
-                      stroke={level.type === 'support' ? "rgba(0, 255, 0, 0.5)" : "rgba(255, 0, 0, 0.5)"}
-                      strokeDasharray={level.strength === 'strong' ? "0" : "5 5"}
-                      strokeWidth={level.strength === 'strong' ? 2 : 1}
-                      label={{ 
-                        value: `${level.type} (${level.price.toFixed(1)})`, 
-                        position: 'insideBottomRight',
-                        fill: level.type === 'support' ? "rgba(0, 255, 0, 0.8)" : "rgba(255, 0, 0, 0.8)",
-                        fontSize: 10
-                      }}
-                    />
-                  ))}
-                </AreaChart>
-              ) : (
-                <ComposedChart
-                  data={processedData}
-                  margin={{ top: 5, right: 5, left: 5, bottom: 5 }}
-                >
-                  <XAxis 
-                    dataKey="timestamp" 
-                    tickFormatter={formatXAxis} 
-                    minTickGap={30}
-                    tick={{ fontSize: 10 }}
-                  />
-                  <YAxis 
-                    domain={['auto', 'auto']} 
-                    tick={{ fontSize: 10 }}
-                    tickFormatter={tooltipFormatter}
-                    width={60}
-                  />
-                  <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="3 3" opacity={0.1} />
-                  <Tooltip 
-                    labelFormatter={(label) => formatXAxis(label as number)}
-                    formatter={tooltipFormatter}
-                  />
-                  
-                  <Bar 
-                    dataKey="highToLow"
-                    fill="transparent"
-                    stroke="#000"
-                    barSize={5}
-                    yAxisId={0}
-                    stackId="stack"
-                    isAnimationActive={false}
-                  />
-                  
-                  <Bar 
-                    dataKey="openToClose"
-                    fill="currentColor"
-                    stroke="currentColor"
-                    barSize={15}
-                    yAxisId={0}
-                    isAnimationActive={false}
-                  />
-                  
-                  {showLevels && levels.map((level, idx) => (
-                    <ReferenceLine 
-                      key={idx}
-                      y={level.price}
-                      stroke={level.type === 'support' ? "rgba(0, 255, 0, 0.5)" : "rgba(255, 0, 0, 0.5)"}
-                      strokeDasharray={level.strength === 'strong' ? "0" : "5 5"}
-                      strokeWidth={level.strength === 'strong' ? 2 : 1}
-                      label={{ 
-                        value: `${level.type} (${level.price.toFixed(1)})`, 
-                        position: 'insideBottomRight',
-                        fill: level.type === 'support' ? "rgba(0, 255, 0, 0.8)" : "rgba(255, 0, 0, 0.8)",
-                        fontSize: 10
-                      }}
-                    />
-                  ))}
-                </ComposedChart>
-              )}
+                ))}
+              </AreaChart>
             </ResponsiveContainer>
           </div>
         )}

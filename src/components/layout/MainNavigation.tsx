@@ -29,9 +29,9 @@ const MainNavigation: React.FC = () => {
     <div className="hidden md:flex h-screen w-64 flex-col fixed left-0 top-0 bottom-0 border-r border-border bg-background z-30">
       <div className="p-6">
         <Link to="/" className="flex items-center space-x-2">
-          <img src={Logo} alt="ProfitPilot AI" className="h-8 w-8" />
+          <img src={Logo} alt="ProfitPilot" className="h-8 w-8" />
           <div className="flex flex-col">
-            <span className="font-bold text-lg">ProfitPilot AI</span>
+            <span className="font-bold text-lg">ProfitPilot</span>
             <span className="text-xs text-muted-foreground">Profits on Autopilot</span>
           </div>
         </Link>
@@ -61,7 +61,7 @@ const MainNavigation: React.FC = () => {
       
       <div className="p-4 border-t border-border">
         <div className="text-xs text-muted-foreground text-center">
-          © 2025 ProfitPilot AI by Zentra LLC
+          © 2025 ProfitPilot by Zentra LLC
         </div>
       </div>
     </div>

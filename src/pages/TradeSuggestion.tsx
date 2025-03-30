@@ -7,9 +7,8 @@ import { PriceChart } from '@/components/charts/PriceChart';
 import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
-import { RefreshCw, Wallet } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import CoinInfo from '@/components/crypto/CoinInfo';
-import InitiateTrade from '@/components/trading/InitiateTrade';
 
 const TradeSuggestion = () => {
   const { toast } = useToast();
@@ -83,56 +82,44 @@ const TradeSuggestion = () => {
         change24h={2.1}
       />
       
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main content - 2/3 width */}
-        <div className="lg:col-span-2 space-y-6">
-          <PriceChart symbol="BTC/USDT" />
-          
-          <div className="grid grid-cols-1 gap-6">
-            <EnhancedTechnicalAnalysis 
-              currentBias={currentBias}
-              indicators={indicators}
-              confidenceScore={confidenceScore}
-              lastUpdated={lastUpdated}
-              isLoading={isLoading}
-              onRefresh={handleRefresh}
-            />
-            
-            <TradeSuggestionCard 
-              tradeSuggestion={tradeSuggestion} 
-              isLoading={isLoading} 
-            />
-          </div>
-        </div>
+      <div className="grid grid-cols-1 gap-6">
+        <PriceChart symbol="BTC/USDT" />
         
-        {/* Sidebar - 1/3 width */}
-        <div className="space-y-6">
-          <InitiateTrade 
-            currentPrice={currentPrice}
-            tradeSuggestion={tradeSuggestion}
-            coinSymbol="BTC/USDT"
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <EnhancedTechnicalAnalysis 
+            currentBias={currentBias}
+            indicators={indicators}
+            confidenceScore={confidenceScore}
+            lastUpdated={lastUpdated}
+            isLoading={isLoading}
+            onRefresh={handleRefresh}
           />
           
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Trading Education</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="text-sm space-y-2">
-                <p className="text-muted-foreground">
-                  Recommendations for successful trading:
-                </p>
-                <ul className="list-disc pl-5 space-y-1">
-                  <li>Always use stop losses to manage risk</li>
-                  <li>Never risk more than 1-2% of your portfolio per trade</li>
-                  <li>Confirm signals across multiple timeframes</li>
-                  <li>Consider fundamental factors alongside technical analysis</li>
-                  <li>Track your trades and learn from outcomes</li>
-                </ul>
-              </div>
-            </CardContent>
-          </Card>
+          <TradeSuggestionCard 
+            tradeSuggestion={tradeSuggestion} 
+            isLoading={isLoading} 
+          />
         </div>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Trading Education</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="text-sm space-y-2">
+              <p className="text-muted-foreground">
+                Recommendations for successful trading:
+              </p>
+              <ul className="list-disc pl-5 space-y-1">
+                <li>Always use stop losses to manage risk</li>
+                <li>Never risk more than 1-2% of your portfolio per trade</li>
+                <li>Confirm signals across multiple timeframes</li>
+                <li>Consider fundamental factors alongside technical analysis</li>
+                <li>Track your trades and learn from outcomes</li>
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
