@@ -17,8 +17,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         <Sidebar collapsible="icon" className="border-r border-border">
           <SidebarHeader className="p-4">
             <Link to="/" className="flex items-center space-x-2">
-              <img src={Logo} alt="ProfitPilot AI" className="h-8 w-8" />
-              <span className="font-bold text-lg">ProfitPilot AI</span>
+              <img src={Logo} alt="ProfitPilot" className="h-8 w-8" />
+              <span className="font-bold text-lg">ProfitPilot</span>
             </Link>
           </SidebarHeader>
           <SidebarContent>
@@ -26,7 +26,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           </SidebarContent>
           <SidebarFooter className="p-4">
             <div className="text-xs text-muted-foreground text-center">
-              © 2025 ProfitPilot AI by Zentra LLC
+              © 2025 ProfitPilot by Zentra LLC
             </div>
           </SidebarFooter>
         </Sidebar>

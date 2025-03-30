@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -226,11 +225,9 @@ export const PriceChart: React.FC<PriceChartProps> = ({
         </div>
         
         <Tabs value={currentTimeframe} onValueChange={handleTimeframeChange} className="w-full">
-          <TabsList className="w-full grid grid-cols-8">
+          <TabsList className="w-full grid grid-cols-6">
             <TabsTrigger value="1m" className="text-xs">1m</TabsTrigger>
             <TabsTrigger value="5m" className="text-xs">5m</TabsTrigger>
-            <TabsTrigger value="15m" className="text-xs">15m</TabsTrigger>
-            <TabsTrigger value="30m" className="text-xs">30m</TabsTrigger>
             <TabsTrigger value="1h" className="text-xs">1h</TabsTrigger>
             <TabsTrigger value="4h" className="text-xs">4h</TabsTrigger>
             <TabsTrigger value="1d" className="text-xs">1d</TabsTrigger>

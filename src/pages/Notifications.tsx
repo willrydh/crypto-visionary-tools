@@ -1,369 +1,211 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Bell,
-  Info,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  RefreshCw,
-  Filter,
-  Search,
-  Bitcoin,
-  CircleDollarSign
-} from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useToast } from '@/hooks/use-toast';
-import { DataSourceIndicator } from '@/components/ui/data-source-indicator';
-import CryptoCoinIcon from '@/components/crypto/CryptoCoinIcon';
-import { 
-  getMockNotifications, 
-  getMockMarketSessions,
-  Notification,
-  formatTimeUntil
-} from '@/utils/mockData';
 
-interface ExtendedNotification extends Notification {
-  symbol?: string;
+import React, { useState } from 'react';
+import { 
+  Card, 
+  CardContent, 
+  CardHeader, 
+  CardTitle, 
+  CardDescription 
+} from "@/components/ui/card";
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { 
+  NotificationMedicalCross, 
+  Bell, 
+  ArrowDown, 
+  ArrowUp, 
+  AlertCircle, 
+  Clock, 
+  CheckCircle2,
+  RefreshCw 
+} from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+
+interface Notification {
+  id: string;
+  title: string;
+  description: string;
+  time: string;
+  type: 'price' | 'alert' | 'system';
+  read: boolean;
+  icon?: React.ReactNode;
 }
 
-const NotificationsPage = () => {
-  const { toast } = useToast();
-  const [notifications, setNotifications] = useState<ExtendedNotification[]>([]);
-  const [marketSessions, setMarketSessions] = useState(getMockMarketSessions());
-  const [alertsEnabled, setAlertsEnabled] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filterType, setFilterType] = useState<string>('all');
+const mockNotifications: Notification[] = [
+  {
+    id: '1',
+    title: 'BTC Price Alert',
+    description: 'Bitcoin exceeded your price target of $60,000',
+    time: '10 minutes ago',
+    type: 'price',
+    read: false,
+    icon: <ArrowUp className="h-5 w-5 text-green-500" />
+  },
+  {
+    id: '2',
+    title: 'ETH Price Drop',
+    description: 'Ethereum dropped below $2,800, your configured support level',
+    time: '1 hour ago',
+    type: 'price',
+    read: false,
+    icon: <ArrowDown className="h-5 w-5 text-red-500" />
+  },
+  {
+    id: '3',
+    title: 'System Maintenance',
+    description: 'Scheduled maintenance completed successfully',
+    time: '5 hours ago',
+    type: 'system',
+    read: true,
+    icon: <CheckCircle2 className="h-5 w-5 text-blue-500" />
+  },
+  {
+    id: '4',
+    title: 'Trading Opportunity',
+    description: 'Technical indicators suggest a buying opportunity for SOL',
+    time: '1 day ago',
+    type: 'alert',
+    read: true,
+    icon: <AlertCircle className="h-5 w-5 text-yellow-500" />
+  },
+  {
+    id: '5',
+    title: 'Market Analysis Ready',
+    description: 'Your requested market analysis has been completed',
+    time: '2 days ago',
+    type: 'system',
+    read: true,
+    icon: <CheckCircle2 className="h-5 w-5 text-blue-500" />
+  }
+];
 
-  useEffect(() => {
-    setNotifications(getMockNotifications() as ExtendedNotification[]);
-    
-    const interval = setInterval(() => {
-      setMarketSessions(getMockMarketSessions());
-    }, 60000);
-    
-    return () => clearInterval(interval);
-  }, []);
-
+const Notifications = () => {
+  const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
+  const [activeTab, setActiveTab] = useState<string>('all');
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+  
+  const unreadCount = notifications.filter(n => !n.read).length;
+  
+  const handleMarkAllAsRead = () => {
+    setNotifications(notifications.map(n => ({ ...n, read: true })));
+  };
+  
+  const handleMarkAsRead = (id: string) => {
+    setNotifications(notifications.map(n => 
+      n.id === id ? { ...n, read: true } : n
+    ));
+  };
+  
   const handleRefresh = () => {
-    setIsLoading(true);
-    
+    setIsRefreshing(true);
     setTimeout(() => {
-      setNotifications(getMockNotifications() as ExtendedNotification[]);
-      setIsLoading(false);
-      
-      toast({
-        title: "Notifications Refreshed",
-        description: "Your notifications have been updated.",
-      });
+      setIsRefreshing(false);
     }, 1000);
   };
-
-  const markAllAsRead = () => {
-    setNotifications(
-      notifications.map(notification => ({
-        ...notification,
-        read: true
-      }))
-    );
-    
-    toast({
-      title: "Marked as Read",
-      description: "All notifications have been marked as read.",
-    });
-  };
-
-  const toggleAlerts = (checked: boolean) => {
-    setAlertsEnabled(checked);
-    
-    toast({
-      title: checked ? "Alerts Enabled" : "Alerts Disabled",
-      description: checked ? "You will now receive trading alerts." : "You will no longer receive trading alerts.",
-    });
-  };
-
-  const getNotificationIcon = (type: string) => {
-    switch (type) {
-      case 'info':
-        return <Info className="h-5 w-5 text-blue-500" />;
-      case 'alert':
-        return <Bell className="h-5 w-5 text-yellow-500" />;
-      case 'success':
-        return <CheckCircle className="h-5 w-5 text-green-500" />;
-      case 'warning':
-        return <AlertTriangle className="h-5 w-5 text-orange-500" />;
-      default:
-        return <Info className="h-5 w-5" />;
-    }
-  };
-
-  const formatNotificationTime = (date: Date) => {
-    const now = new Date();
-    const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
-    
-    if (diffInHours < 1) {
-      const minutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
-      return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
-    } else if (diffInHours < 24) {
-      const hours = Math.floor(diffInHours);
-      return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
-    } else {
-      const days = Math.floor(diffInHours / 24);
-      return `${days} day${days !== 1 ? 's' : ''} ago`;
-    }
-  };
-
+  
   const filteredNotifications = notifications.filter(notification => {
-    const matchesSearch = notification.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          notification.message.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesFilter = filterType === 'all' || notification.type === filterType;
-    
-    return matchesSearch && matchesFilter;
+    if (activeTab === 'all') return true;
+    if (activeTab === 'unread') return !notification.read;
+    return notification.type === activeTab;
   });
-
-  const unreadCount = notifications.filter(n => !n.read).length;
-
+  
   return (
-    <div className="space-y-6 animate-fade-in">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="space-y-6 mt-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-bold">Notifications</h1>
           <p className="text-muted-foreground">
-            Trading alerts and market updates
+            Stay updated with alerts, price movements, and system updates
           </p>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex gap-2">
           <Button 
             variant="outline" 
-            size="sm"
-            onClick={handleRefresh}
-            disabled={isLoading}
+            onClick={handleMarkAllAsRead}
+            disabled={unreadCount === 0}
           >
-            <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-            Refresh
+            Mark all as read
           </Button>
-          
-          {unreadCount > 0 && (
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={markAllAsRead}
-            >
-              Mark all as read
-            </Button>
-          )}
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="alerts"
-              checked={alertsEnabled}
-              onCheckedChange={toggleAlerts}
-            />
-            <Label htmlFor="alerts">Alert me</Label>
-          </div>
+          <Button 
+            variant="outline" 
+            size="icon" 
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+          >
+            <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+          </Button>
         </div>
       </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          <Card>
-            <CardHeader className="space-y-2">
-              <div className="flex justify-between items-center">
-                <CardTitle className="flex items-center gap-2">
-                  <Bell className="h-5 w-5" />
-                  Activity Log
-                  {unreadCount > 0 && (
-                    <Badge className="bg-primary ml-2">{unreadCount} new</Badge>
-                  )}
-                </CardTitle>
-                <DataSourceIndicator 
-                  source="Trading System" 
-                  isLive={false} 
-                />
-              </div>
-              
-              <div className="flex flex-col sm:flex-row gap-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search notifications..."
-                    className="pl-8"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
-                <Select
-                  value={filterType}
-                  onValueChange={setFilterType}
-                >
-                  <SelectTrigger className="w-full sm:w-[180px]">
-                    <SelectValue placeholder="Filter by type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All types</SelectItem>
-                    <SelectItem value="info">Information</SelectItem>
-                    <SelectItem value="alert">Alerts</SelectItem>
-                    <SelectItem value="success">Success</SelectItem>
-                    <SelectItem value="warning">Warnings</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <AnimatePresence initial={false}>
-                {filteredNotifications.length > 0 ? (
-                  <motion.div 
-                    layout 
-                    className="space-y-4"
-                  >
-                    {filteredNotifications.map((notification) => (
-                      <motion.div
-                        key={notification.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, height: 0 }}
-                        layout
-                        className={`p-4 border rounded-lg flex ${!notification.read ? 'bg-accent/20' : ''}`}
-                      >
-                        <div className="mr-4 mt-1">
-                          {getNotificationIcon(notification.type)}
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex justify-between items-start">
-                            <h3 className="font-medium flex items-center gap-2">
-                              {notification.symbol && (
-                                <CryptoCoinIcon 
-                                  coin={notification.symbol as any || 'BTC'} 
-                                  size="sm"
-                                />
-                              )}
-                              {notification.title}
-                            </h3>
-                            <span className="text-xs text-muted-foreground">
-                              {formatNotificationTime(notification.timestamp)}
-                            </span>
-                          </div>
-                          <p className="text-sm mt-1 text-muted-foreground">
-                            {notification.message}
-                          </p>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </motion.div>
-                ) : (
-                  <div className="text-center py-12">
-                    <Bell className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-medium mb-2">No notifications found</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {searchQuery || filterType !== 'all' 
-                        ? 'Try adjusting your filters'
-                        : 'Trading alerts and market updates will appear here'}
-                    </p>
-                  </div>
-                )}
-              </AnimatePresence>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Clock className="h-5 w-5" />
-                Market Sessions
+      
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Bell className="h-5 w-5" />
+                Activity & Notifications
               </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {marketSessions.map((session) => (
-                  <div key={session.name} className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <span className="font-medium">{session.name}</span>
-                      <Badge 
-                        variant={session.status === "open" ? "default" : "outline"}
-                        className={session.status === "open" ? "bg-bullish" : ""}
-                      >
-                        {session.status.toUpperCase()}
-                      </Badge>
+              <CardDescription>
+                {unreadCount} unread notifications
+              </CardDescription>
+            </div>
+          </div>
+          <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="grid grid-cols-4">
+              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="price">Price</TabsTrigger>
+              <TabsTrigger value="alert">Alerts</TabsTrigger>
+              <TabsTrigger value="unread">Unread</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {filteredNotifications.length === 0 ? (
+              <div className="py-8 text-center text-muted-foreground">
+                <Bell className="h-12 w-12 mx-auto mb-3 opacity-20" />
+                <h3 className="text-lg font-medium">No notifications</h3>
+                <p className="text-sm">You're all caught up!</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {filteredNotifications.map((notification) => (
+                  <div 
+                    key={notification.id} 
+                    className={`p-3 rounded-lg ${notification.read ? 'bg-card' : 'bg-muted'} border hover:bg-accent/5 transition-colors`}
+                    onClick={() => handleMarkAsRead(notification.id)}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="mt-0.5">
+                        {notification.icon || <AlertCircle className="h-5 w-5 text-yellow-500" />}
+                      </div>
+                      <div className="flex-1 space-y-1">
+                        <div className="flex items-center justify-between">
+                          <div className="font-medium">{notification.title}</div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-muted-foreground">{notification.time}</span>
+                            {!notification.read && (
+                              <Badge variant="secondary" className="px-1.5 py-0 text-xs bg-primary text-primary-foreground">
+                                New
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          {notification.description}
+                        </p>
+                      </div>
                     </div>
-                    <div className="text-xs text-muted-foreground">
-                      {session.nextEvent.type.charAt(0).toUpperCase() + session.nextEvent.type.slice(1)}{" "}
-                      in {formatTimeUntil(session.nextEvent.time)}
-                    </div>
-                    <Separator className="my-2" />
                   </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Notification Settings</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label htmlFor="trade-alerts">Trade Alerts</Label>
-                  <p className="text-xs text-muted-foreground">
-                    Receive notifications about new trading opportunities
-                  </p>
-                </div>
-                <Switch id="trade-alerts" checked={alertsEnabled} onCheckedChange={toggleAlerts} />
-              </div>
-              
-              <Separator />
-              
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label htmlFor="market-sessions">Market Sessions</Label>
-                  <p className="text-xs text-muted-foreground">
-                    Alerts for market sessions opening and closing
-                  </p>
-                </div>
-                <Switch id="market-sessions" defaultChecked />
-              </div>
-              
-              <Separator />
-              
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label htmlFor="price-alerts">Price Alerts</Label>
-                  <p className="text-xs text-muted-foreground">
-                    Get notified about significant price movements
-                  </p>
-                </div>
-                <Switch id="price-alerts" defaultChecked />
-              </div>
-              
-              <div className="mt-6 p-3 bg-card/50 rounded-lg border border-border text-center">
-                <DataSourceIndicator 
-                  source="Bybit API" 
-                  isLive={true} 
-                  className="justify-center"
-                />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
 
-export default NotificationsPage;
+export default Notifications;

@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Bell, Settings, LogOut, Bitcoin, CircleDollarSign } from 'lucide-react';
+import { Bell, Settings, LogOut } from 'lucide-react';
 import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
 import { useToast } from '@/hooks/use-toast';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -39,9 +39,9 @@ const TopHeader = () => {
     <header className="fixed top-0 left-0 right-0 z-30 h-14 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex items-center px-4 md:px-6 md:ml-64">
       <div className="flex items-center gap-2 md:hidden">
         <Link to="/" className="flex items-center gap-2">
-          <img src={Logo} alt="ProfitPilot AI" className="h-8 w-8" />
+          <img src={Logo} alt="ProfitPilot" className="h-8 w-8" />
           <div className="font-semibold">
-            ProfitPilot AI
+            ProfitPilot
           </div>
         </Link>
       </div>

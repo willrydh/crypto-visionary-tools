@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { Outlet } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,6 +14,13 @@ import MobileNavigation from './MobileNavigation';
 import MainNavigation from './MainNavigation';
 
 const RootLayout: React.FC = () => {
+  const location = useLocation();
+
+  // Scroll to top when location changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   return (
     <TooltipProvider>
       <TimeframeProvider>
@@ -25,7 +32,7 @@ const RootLayout: React.FC = () => {
                   <MainNavigation />
                   <div className="md:ml-64">
                     <TopHeader />
-                    <main className="flex-1 overflow-auto pb-16 md:pb-0 px-4 md:px-6 lg:px-8 pt-14">
+                    <main className="flex-1 overflow-auto pb-16 md:pb-0 px-4 md:px-6 lg:px-8 pt-20">
                       <Outlet />
                     </main>
                     <MobileNavigation />
