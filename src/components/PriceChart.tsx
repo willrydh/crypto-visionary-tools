@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -25,7 +26,13 @@ const PriceChart: React.FC<PriceChartProps> = ({
   coinId = 'bitcoin'
 }) => {
   const [chartData, setChartData] = useState<any[]>([]);
-  const [currentPrice, setCurrentPrice] = useState<number | null>(null);
+  // Update the currentPrice state to match the returned object structure from fetchCurrentPrice
+  const [currentPrice, setCurrentPrice] = useState<{
+    price: number;
+    change24h: number;
+    volume24h: number;
+    timestamp: number;
+  } | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [timeframe, setTimeframe] = useState<string>('1d');
   const [error, setError] = useState<string | null>(null);
@@ -90,7 +97,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
           <div>
             <h3 className="font-medium">{symbol} Price Chart</h3>
             <div className="text-xl font-bold">
-              {currentPrice !== null ? formatCurrency(currentPrice) : 'Loading...'}
+              {currentPrice !== null ? formatCurrency(currentPrice.price) : 'Loading...'}
             </div>
           </div>
 
