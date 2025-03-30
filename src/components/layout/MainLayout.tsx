@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from "@/components/ui/sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import NavigationMenu from './NavigationMenu';
@@ -11,6 +11,13 @@ interface MainLayoutProps {
 }
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+  const location = useLocation();
+
+  // Scroll to top when location changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="min-h-screen flex w-full">
@@ -31,7 +38,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           </SidebarFooter>
         </Sidebar>
         <main className="flex-1 overflow-auto">
-          <div className="container mx-auto py-6 px-4">
+          <div className="container mx-auto py-8 px-4">
             {children}
           </div>
         </main>

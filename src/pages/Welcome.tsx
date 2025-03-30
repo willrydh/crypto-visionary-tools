@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   Github,
@@ -16,7 +16,16 @@ import {
   Moon,
   Sun,
   CheckCircle,
-  X
+  X,
+  ExternalLink,
+  HelpCircle,
+  DollarSign,
+  Shield,
+  Zap,
+  BadgePercent,
+  TrendingUp,
+  Clock,
+  Scale
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -28,12 +37,16 @@ import CustomerReviews from '@/components/marketing/CustomerReviews';
 import PlatformsAvailability from '@/components/marketing/PlatformsAvailability';
 import DiscordCommunity from '@/components/marketing/DiscordCommunity';
 import TokenProgress from '@/components/marketing/TokenProgress';
-import { AppShowcase } from '@/components/landing/AppShowcase';
 
 const Welcome = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+  
+  // Scroll to top on component mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   
   // Feature items to display
   const features = [
@@ -154,21 +167,65 @@ const Welcome = () => {
       icon: <Rocket className="h-5 w-5 text-blue-500" />,
       description: "Ultra-short term trading (minutes to hours). Focus on rapid price movements with tight stop-losses.",
       indicators: ["MA20", "MA50", "StochRSI", "MACD", "Volume"],
-      timeframes: ["1m", "5m", "15m", "30m"]
+      timeframes: ["1m", "5m"]
     },
     {
       name: "Day Trading",
       icon: <Sun className="h-5 w-5 text-amber-500" />,
       description: "Short-term trading (hours). Positions opened and closed within the same day, focusing on intraday trends.",
       indicators: ["MA50", "MA100", "MACD", "VWAP", "RSI"],
-      timeframes: ["15m", "1h", "4h"]
+      timeframes: ["1h", "4h"]
     },
     {
       name: "Night Trading",
       icon: <Moon className="h-5 w-5 text-indigo-500" />,
       description: "Medium-term trading (12+ hours). Positions that can be held overnight, focusing on larger price swings.",
       indicators: ["MA100", "MA200", "Bollinger Bands", "RSI", "MACD"],
-      timeframes: ["1h", "4h", "1d"]
+      timeframes: ["4h", "1d"]
+    }
+  ];
+
+  // Extended FAQ sections
+  const extendedFaq = [
+    {
+      question: "How does ProfitPilot compare to other trading platforms?",
+      answer: "ProfitPilot stands apart with its AI-driven analysis that combines multiple technical indicators, economic data, and market sentiment to provide high-confidence trading signals. Unlike platforms that offer generic indicators, we adapt to your trading style and provide actionable insights with specific entry and exit points. Our backtested strategies have shown 65-75% accuracy in trending markets, significantly outperforming standard technical analysis approaches."
+    },
+    {
+      question: "Can I use ProfitPilot alongside my existing trading platform?",
+      answer: "Absolutely! ProfitPilot is designed to complement your existing trading setup. You can use our signals and analysis while executing trades on your preferred platform like Bybit, Binance, or any other exchange. Many of our users keep ProfitPilot open on a separate screen for real-time signals while trading on their usual platform. We also offer API integration with popular exchanges for Pro and Guru users."
+    },
+    {
+      question: "How often are trading signals updated?",
+      answer: "Our system continuously analyzes market conditions and updates signals in real-time. For scalping mode, new signals can appear within minutes as market conditions change. Day trading signals are refreshed hourly, while swing trading signals are updated several times daily. Each signal includes a timestamp so you know exactly when it was generated. Premium users receive instant alerts when high-confidence signals emerge."
+    },
+    {
+      question: "Is ProfitPilot suitable for beginners?",
+      answer: "Yes, ProfitPilot is designed for traders of all experience levels. Beginners benefit from our clear, actionable signals and educational resources that explain the reasoning behind each recommendation. Our confidence scores and risk metrics help new traders make informed decisions without needing deep technical knowledge. However, we always recommend understanding basic trading principles and proper risk management before trading with real capital."
+    },
+    {
+      question: "What cryptocurrencies does ProfitPilot support?",
+      answer: "ProfitPilot analyzes over 50 major cryptocurrencies and trading pairs, with primary focus on BTC, ETH, SOL, BNB, XRP and other high-volume assets. Our Pro and Guru plans provide coverage for 100+ altcoins and emerging tokens. We continuously add support for new cryptocurrencies based on market capitalization, trading volume, and user requests."
+    },
+    {
+      question: "Can I customize the analysis parameters?",
+      answer: "Yes, Pro and Guru subscribers can customize various aspects of their analysis. You can adjust risk tolerance, preferred indicators, timeframes, and create custom alert conditions. The platform remembers your preferences and tailors future signals accordingly. Free users have access to our pre-configured analysis settings, which are optimized based on current market conditions."
+    },
+    {
+      question: "What risk management features does ProfitPilot offer?",
+      answer: "ProfitPilot incorporates sophisticated risk management tools including suggested stop-loss and take-profit levels for every trade signal. Our system calculates optimal position sizes based on your account balance and risk tolerance. We also provide volatility metrics and confidence scores to help you assess potential downside. Pro and Guru users gain access to advanced portfolio analytics that monitor overall exposure and correlation between positions."
+    },
+    {
+      question: "How is the PP Token integrated with the platform?",
+      answer: "The PP Token forms the backbone of our ecosystem, offering numerous benefits to holders. Token holders receive discounts on subscription plans (up to 30% for significant holders), exclusive early access to new features, and participation in governance decisions. The token also powers our staking program, where users can earn additional rewards for providing liquidity. As our platform grows, the utility and demand for PP Token will continue to expand."
+    },
+    {
+      question: "What kind of customer support do you provide?",
+      answer: "All users have access to our comprehensive knowledge base and community forums. Email support is available for all subscription tiers, with expected response times of 24-48 hours for free users. Pro subscribers enjoy priority email support (12-hour response) and chat support during business hours. Guru members receive VIP treatment with 24/7 chat support and dedicated account managers for personalized assistance. Our Discord community also offers peer support and regular Q&A sessions with our trading experts."
+    },
+    {
+      question: "How accurate are the trading signals?",
+      answer: "Our trading signals typically achieve 65-75% accuracy in trending markets and 55-65% in ranging markets. Each signal comes with a confidence score based on multiple confirming indicators and historical performance. High-confidence signals (rated 75%+) have demonstrated over 80% accuracy in our backtesting. We're transparent about our methodology and provide detailed explanations for each signal, allowing you to understand the reasoning and make informed decisions."
     }
   ];
   
@@ -188,6 +245,7 @@ const Welcome = () => {
             <a href="#pricing" className="transition-colors hover:text-foreground/80">Pricing</a>
             <a href="#testimonials" className="transition-colors hover:text-foreground/80">Testimonials</a>
             <a href="#token" className="transition-colors hover:text-foreground/80">PP Token</a>
+            <a href="#faq" className="transition-colors hover:text-foreground/80">FAQ</a>
           </nav>
           
           <div className="flex items-center gap-2 ml-auto">
@@ -202,16 +260,16 @@ const Welcome = () => {
       </header>
       
       {/* Hero Section */}
-      <section className="py-20 px-4 md:px-6 lg:px-8 flex flex-col items-center text-center space-y-8 bg-gradient-to-b from-background to-muted">
+      <section className="py-20 px-4 md:px-6 lg:px-8 flex flex-col items-center text-center space-y-8 bg-gradient-to-b from-background to-background/80">
         <Badge variant="outline" className="mb-4">Version 1.0.0 is now available</Badge>
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold max-w-3xl leading-tight tracking-tighter">
-          Your Trading Assistant for Modern Markets
+          Your AI Trading Assistant for Crypto Markets
         </h1>
         <p className="text-muted-foreground text-lg md:text-xl max-w-2xl">
           ProfitPilot gives you real-time market signals, intelligent trade suggestions, and deep data analysis for crypto trading.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 pt-4">
-          <Button size="lg" onClick={handleGuestAccess}>
+          <Button size="lg" onClick={handleGuestAccess} className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary">
             Try For Free
             <ChevronRight className="ml-2 h-4 w-4" />
           </Button>
@@ -225,9 +283,9 @@ const Welcome = () => {
       <section id="features" className="py-20 px-4 md:px-6 lg:px-8">
         <div className="container mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Powerful Trading Features</h2>
+            <h2 className="text-3xl font-bold mb-4">Advanced Trading Features</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              ProfitPilot brings advanced trading capabilities and real-time market insights to help you make better trading decisions.
+              ProfitPilot brings institutional-grade trading capabilities and real-time market insights to help you make better trading decisions.
             </p>
           </div>
           
@@ -278,9 +336,6 @@ const Welcome = () => {
       
       {/* Platforms Availability Section */}
       <PlatformsAvailability />
-      
-      {/* App Showcase Section */}
-      <AppShowcase />
       
       {/* Trading Modes Section */}
       <section id="trading-modes" className="py-20 px-4 md:px-6 lg:px-8 bg-muted">
@@ -439,6 +494,118 @@ const Welcome = () => {
         </div>
       </section>
       
+      {/* Enhanced FAQ Section */}
+      <section id="faq" className="py-20 px-4 md:px-6 lg:px-8 bg-secondary/50">
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">Frequently Asked Questions</h2>
+            <p className="text-muted-foreground">
+              Find answers to common questions about ProfitPilot's features and capabilities.
+            </p>
+          </div>
+          
+          <div className="space-y-6">
+            {extendedFaq.map((item, index) => (
+              <Card key={index} className="overflow-hidden border-border/60">
+                <CardHeader className="p-5">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-primary/10 p-2 rounded-full">
+                      <HelpCircle className="h-4 w-4 text-primary" />
+                    </div>
+                    <CardTitle className="text-lg font-medium">{item.question}</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent className="px-5 pb-5 pt-0">
+                  <p className="text-muted-foreground">{item.answer}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          
+          <div className="mt-12 text-center">
+            <h3 className="text-xl font-medium mb-4">Still have questions?</h3>
+            <Button variant="outline" onClick={() => window.open("#", "_blank")} className="gap-2">
+              Contact Support
+              <ExternalLink className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </section>
+      
+      {/* Additional Features Grid */}
+      <section className="py-20 px-4 md:px-6 lg:px-8">
+        <div className="container mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">Why Traders Choose ProfitPilot</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Discover the features that give our users the edge in today's volatile crypto markets.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              {
+                title: "Proprietary AI Algorithm",
+                description: "Our advanced algorithm analyzes multiple indicators and market patterns to provide high-confidence signals.",
+                icon: <Sparkles className="h-5 w-5 text-primary" />
+              },
+              {
+                title: "Real-time Market Data",
+                description: "Connect directly to exchange APIs for the most up-to-date price information and market movements.",
+                icon: <LineChart className="h-5 w-5 text-primary" />
+              },
+              {
+                title: "Economic Calendar",
+                description: "Never miss important market events with our comprehensive economic calendar.",
+                icon: <Calendar className="h-5 w-5 text-primary" />
+              },
+              {
+                title: "Risk Management",
+                description: "Get suggested stop-loss and take-profit levels with every trade recommendation.",
+                icon: <Shield className="h-5 w-5 text-primary" />
+              },
+              {
+                title: "Multi-timeframe Analysis",
+                description: "Analyze the market across multiple timeframes to confirm trends and identify optimal entry points.",
+                icon: <Clock className="h-5 w-5 text-primary" />
+              },
+              {
+                title: "Performance Tracking",
+                description: "Monitor your trading performance and improve your strategy with detailed analytics.",
+                icon: <TrendingUp className="h-5 w-5 text-primary" />
+              },
+              {
+                title: "Token Utility",
+                description: "PP Token holders receive exclusive benefits including fee discounts and premium features access.",
+                icon: <DollarSign className="h-5 w-5 text-primary" />
+              },
+              {
+                title: "Fast Execution",
+                description: "Execute trades quickly with our optimized interface designed for speed and efficiency.",
+                icon: <Zap className="h-5 w-5 text-primary" />
+              },
+              {
+                title: "Special Offers",
+                description: "Regular promotions and special offers for both new users and loyal customers.",
+                icon: <BadgePercent className="h-5 w-5 text-primary" />
+              }
+            ].map((feature, index) => (
+              <Card key={index} className="border-border/60 hover:border-primary/50 transition-colors">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-2 rounded-full bg-primary/10">
+                      {feature.icon}
+                    </div>
+                    <h3 className="font-medium text-lg">{feature.title}</h3>
+                  </div>
+                  <p className="text-muted-foreground text-sm">{feature.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+      
       {/* Sign up / Login Section */}
       <section id="signup-section" className="py-20 px-4 md:px-6 lg:px-8 bg-muted">
         <div className="container mx-auto max-w-md text-center">
@@ -484,45 +651,6 @@ const Welcome = () => {
             <p className="text-sm text-muted-foreground pt-4">
               By signing up, you agree to our Terms of Service and Privacy Policy.
             </p>
-          </div>
-        </div>
-      </section>
-      
-      {/* FAQ Section */}
-      <section id="faq" className="py-20 px-4 md:px-6 lg:px-8">
-        <div className="container mx-auto max-w-4xl">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Frequently Asked Questions</h2>
-            <p className="text-muted-foreground">
-              Find answers to the most common questions about ProfitPilot.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 gap-8">
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Can I cancel my subscription?</h3>
-              <p className="text-muted-foreground">
-                Yes, you can cancel your subscription anytime. If you cancel, you'll continue to have access until the end of your billing period.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-2">How does the free trial work?</h3>
-              <p className="text-muted-foreground">
-                The free trial gives you 30 days of access to our basic features. No credit card required to start.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-2">What payment methods do you accept?</h3>
-              <p className="text-muted-foreground">
-                We accept all major credit cards and cryptocurrencies including Bitcoin, Ethereum, and USDT.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Are the signals financial advice?</h3>
-              <p className="text-muted-foreground">
-                No, ProfitPilot provides algorithmic trading signals based on technical analysis, not financial advice. Always do your own research.
-              </p>
-            </div>
           </div>
         </div>
       </section>

@@ -67,12 +67,12 @@ export default {
         bullish: '#22c55e',
         bearish: '#ef4444',
         neutral: '#94a3b8',
-        profit: '#10b981',
-        loss: '#f43f5e',
+        profit: '#22c55e',
+        loss: '#ef4444',
         chart: {
-          bg: '#111827',
-          grid: '#1f2937',
-          line: '#6366f1'
+          bg: '#0c0e14',
+          grid: '#1a1e2b',
+          line: '#4264d5'
         }
 			},
 			borderRadius: {
