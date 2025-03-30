@@ -15,6 +15,7 @@ import NotFound from "./pages/NotFound";
 import Welcome from "./pages/Welcome";
 import Miner from "./pages/Miner";
 import Settings from "./pages/Settings";
+import PricingPage from "./pages/PricingPage";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const App = () => (
         <Routes>
           {/* Public routes */}
           <Route path="/welcome" element={<Welcome />} />
+          <Route path="/pricing" element={<PricingPage />} />
           
           {/* Protected routes */}
           <Route path="/" element={<RootLayout />}>

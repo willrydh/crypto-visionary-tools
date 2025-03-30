@@ -7,6 +7,8 @@ import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
 import { useTradingMode } from '@/hooks/useTradingMode';
 import { generateTradeSuggestion } from '@/services/analysisService';
 import { useToast } from '@/hooks/use-toast';
+import DataInsights from '@/components/analysis/DataInsights';
+import { logTradingSignal } from '@/services/dataLoggingService';
 
 // Define our own complete type that includes all properties we need
 interface TradeSuggestionType {
@@ -27,13 +29,14 @@ const TradeSuggestion = () => {
   const { tradingMode } = useTradingMode();
   const [suggestion, setSuggestion] = useState<TradeSuggestionType | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [selectedSymbol, setSelectedSymbol] = useState<string>("BTCUSDT");
   
   // Get trade suggestion based on current mode
   const getTradeSuggestion = async () => {
     setIsLoading(true);
     try {
-      const tradingStyle = tradingMode === 'scalp' ? 'scalp' : (tradingMode === 'day' ? 'day' : 'swing');
-      const response = await generateTradeSuggestion('BTC/USDT', tradingStyle);
+      const tradingStyle = tradingMode;
+      const response = await generateTradeSuggestion(selectedSymbol, [], tradingStyle, tradingMode);
       
       // Create a complete suggestion object with all required properties
       const suggestionWithData: TradeSuggestionType = {
@@ -44,16 +47,28 @@ const TradeSuggestion = () => {
         probability: response.probability || 50,
         confidence: response.confidence || 50,
         timeframe: response.timeframe || '1h',
-        indicators: [],
+        indicators: response.indicators || [],
         summary: response.summary || response.reasoning || 'Suggestion based on current market conditions',
         createdAt: new Date()
       };
       
       setSuggestion(suggestionWithData);
       
+      // Log the trading signal
+      const triggeredIndicators = suggestionWithData.indicators.map(i => i.name.toLowerCase());
+      logTradingSignal(
+        suggestionWithData.direction,
+        suggestionWithData.entry,
+        suggestionWithData.stopLoss,
+        suggestionWithData.takeProfit,
+        tradingMode,
+        triggeredIndicators,
+        selectedSymbol
+      );
+      
       toast({
         title: "Trade Suggestion Updated",
-        description: `New ${tradingStyle} trading suggestion for BTC/USDT has been generated.`,
+        description: `New ${tradingStyle} trading suggestion for ${selectedSymbol} has been generated.`,
       });
     } catch (error) {
       console.error('Error generating trade suggestion:', error);
@@ -101,14 +116,20 @@ const TradeSuggestion = () => {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 gap-6">
-        {suggestion ? (
-          <TradeSuggestionCard tradeSuggestion={suggestion} isLoading={isLoading} />
-        ) : (
-          <div className="flex items-center justify-center h-[400px]">
-            <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
-          </div>
-        )}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="md:col-span-2">
+          {suggestion ? (
+            <TradeSuggestionCard tradeSuggestion={suggestion} isLoading={isLoading} />
+          ) : (
+            <div className="flex items-center justify-center h-[400px]">
+              <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
+            </div>
+          )}
+        </div>
+        
+        <div>
+          <DataInsights />
+        </div>
       </div>
     </div>
   );

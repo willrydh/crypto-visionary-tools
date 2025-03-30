@@ -26,13 +26,13 @@ const Dashboard = () => {
   // Generate analysis when trading mode changes
   useEffect(() => {
     if (indicators.length === 0) {
-      generateAnalysis('BTC/USDT');
+      generateAnalysis('BTCUSDT');
     }
   }, [tradingMode, indicators.length, generateAnalysis]);
 
   const handleAnalysisGeneration = async () => {
     try {
-      await generateAnalysis('BTC/USDT', true);
+      await generateAnalysis('BTCUSDT', true);
       toast({
         title: "Analysis Complete",
         description: "Technical analysis has been generated successfully.",
@@ -56,21 +56,20 @@ const Dashboard = () => {
             Market overview and trading signals
           </p>
         </div>
-      <div className="w-full">
-  <Button 
-    onClick={handleAnalysisGeneration} 
-    disabled={isLoading} 
-    className="w-full sm:w-auto gap-2"
-  >
-    {isLoading ? (
-      <LineChart className="h-4 w-4 animate-pulse" />
-    ) : (
-      <LineChart className="h-4 w-4" />
-    )}
-    Generate market/price analysis
-  </Button>
-</div>
-
+        <div className="w-full sm:w-auto">
+          <Button 
+            onClick={handleAnalysisGeneration} 
+            disabled={isLoading} 
+            className="w-full sm:w-auto gap-2"
+          >
+            {isLoading ? (
+              <LineChart className="h-4 w-4 animate-pulse" />
+            ) : (
+              <LineChart className="h-4 w-4" />
+            )}
+            Generate market/price analysis
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -91,8 +90,6 @@ const Dashboard = () => {
               isLoading={isLoading}
               onRefresh={handleAnalysisGeneration}
             />
-            
-       
           </div>
         </div>
         
@@ -103,10 +100,12 @@ const Dashboard = () => {
           
           {/* Price thermometer */}
           <PriceThermometer />
-          
-          {/* Economic calendar (improved version) */}
-          <ImprovedEconomicCalendar compact={true} />
         </div>
+      </div>
+      
+      {/* Full-width Economic Calendar */}
+      <div className="col-span-full w-full">
+        <ImprovedEconomicCalendar compact={true} />
       </div>
     </div>
   );

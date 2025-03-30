@@ -1,53 +1,100 @@
 
-import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { 
-  BarChart3, 
-  Zap, 
-  Settings, 
-  Webhook,
+import * as React from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button';
+import {
+  Home,
+  BarChart3,
+  LineChart,
   Calendar,
-  Radar
+  Settings,
+  LayoutDashboard,
+  Lightbulb,
+  Activity,
+  CreditCard
 } from 'lucide-react';
-import { 
-  SidebarGroup, 
-  SidebarGroupContent, 
-  SidebarMenu, 
-  SidebarMenuItem, 
-  SidebarMenuButton 
-} from '@/components/ui/sidebar';
+import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
+import { useTradingMode } from '@/hooks/useTradingMode';
 
-const NavigationMenu: React.FC = () => {
-  const navItems = [
-    { path: '/', label: 'Dashboard', icon: <BarChart3 size={20} /> },
-    { path: '/signals', label: 'Signals', icon: <Radar size={20} /> },
-    { path: '/trade-suggestion', label: 'Trade', icon: <Zap size={20} /> },
-    { path: '/calendar', label: 'Events', icon: <Calendar size={20} /> },
-    { path: '/miner', label: 'Miner', icon: <Webhook size={20} /> },
-    { path: '/settings', label: 'Settings', icon: <Settings size={20} /> },
+interface NavigationMenuProps {
+  className?: string;
+}
+
+export default function NavigationMenu({ className }: NavigationMenuProps) {
+  const location = useLocation();
+  const { tradingMode, getDescription } = useTradingMode();
+
+  const routes = [
+    {
+      href: '/',
+      label: 'Dashboard',
+      icon: <Home className="w-5 h-5" />,
+      variant: 'default',
+    },
+    {
+      href: '/signals',
+      label: 'Signals',
+      icon: <Activity className="w-5 h-5" />,
+      variant: 'ghost',
+    },
+    {
+      href: '/trade-suggestion',
+      label: 'Trade',
+      icon: <Lightbulb className="w-5 h-5" />,
+      variant: 'ghost',
+    },
+    {
+      href: '/chart',
+      label: 'Chart',
+      icon: <LineChart className="w-5 h-5" />,
+      variant: 'ghost',
+    },
+    {
+      href: '/calendar',
+      label: 'Calendar',
+      icon: <Calendar className="w-5 h-5" />,
+      variant: 'ghost',
+    },
+    {
+      href: '/pricing',
+      label: 'Pricing',
+      icon: <CreditCard className="w-5 h-5" />,
+      variant: 'ghost',
+    },
+    {
+      href: '/settings',
+      label: 'Settings',
+      icon: <Settings className="w-5 h-5" />,
+      variant: 'ghost',
+    },
   ];
 
   return (
-    <SidebarGroup>
-      <SidebarGroupContent>
-        <SidebarMenu>
-          {navItems.map((item) => (
-            <SidebarMenuItem key={item.path}>
-              <SidebarMenuButton asChild>
-                <NavLink 
-                  to={item.path}
-                  className={({ isActive }) => isActive ? 'bg-accent/50' : ''}
-                >
-                  {item.icon}
-                  <span>{item.label}</span>
-                </NavLink>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-      </SidebarGroupContent>
-    </SidebarGroup>
+    <div className={cn('flex flex-col gap-4', className)}>
+      <div className="hidden md:block">
+        <div className="mb-4">
+          <TradingModeSelector />
+        </div>
+        <p className="text-xs text-muted-foreground px-4 mb-2">{getDescription()}</p>
+      </div>
+      
+      <nav className="grid gap-1 px-2">
+        {routes.map((route) => (
+          <Link
+            key={route.href}
+            to={route.href}
+            className={cn(
+              buttonVariants({ variant: location.pathname === route.href ? 'default' : 'ghost', size: 'sm' }),
+              'justify-start h-9',
+              location.pathname === route.href && 'bg-accent dark:text-accent-foreground dark:bg-accent'
+            )}
+          >
+            {route.icon}
+            <span className="ml-2">{route.label}</span>
+          </Link>
+        ))}
+      </nav>
+    </div>
   );
-};
-
-export default NavigationMenu;
+}
