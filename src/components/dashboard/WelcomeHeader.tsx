@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Check, AlertTriangle, Info, Zap, Wifi, Database, Globe, server } from 'lucide-react';
+import { Check, AlertTriangle, Info, Zap, Wifi, Database, Globe } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 

@@ -13,7 +13,6 @@ import SettingsView from './pages/SettingsView';
 import LevelsView from './pages/LevelsView';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPasswordConfirm from './pages/ResetPasswordConfirm';
-import MainLayout from './components/layout/MainLayout';
 import RootLayout from './components/layout/RootLayout';
 import './App.css';
 

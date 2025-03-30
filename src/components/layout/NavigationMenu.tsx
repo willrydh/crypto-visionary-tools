@@ -50,7 +50,7 @@ export default function NavigationMenu({ className }: NavigationMenuProps) {
       variant: 'ghost',
     },
     {
-      href: '/trade-suggestion',
+      href: '/trade',
       label: 'Trade',
       icon: <Lightbulb className="w-5 h-5" />,
       variant: 'ghost',
@@ -65,12 +65,6 @@ export default function NavigationMenu({ className }: NavigationMenuProps) {
       href: '/calendar',
       label: 'Calendar',
       icon: <Calendar className="w-5 h-5" />,
-      variant: 'ghost',
-    },
-    {
-      href: '/pricing',
-      label: 'Pricing',
-      icon: <CreditCard className="w-5 h-5" />,
       variant: 'ghost',
     },
     {
