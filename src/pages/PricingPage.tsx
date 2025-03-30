@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -96,14 +95,14 @@ const PricingPage = () => {
   return (
     <div className="min-h-screen flex w-full">
       <MainLayout>
-        <div className="container mx-auto space-y-12 py-8">
+        <div className="container mx-auto space-y-16 py-12">
           <div className="text-center">
-            <h1 className="text-3xl font-bold mb-4">Choose the Perfect Plan</h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
+            <h1 className="text-3xl font-bold mb-6">Choose the Perfect Plan</h1>
+            <p className="text-muted-foreground max-w-2xl mx-auto mb-12">
               Select the right plan for your trading needs, from free trials to professional setups with API access.
             </p>
             
-            <div className="flex justify-center mb-8 mt-8">
+            <div className="flex justify-center mb-12 mt-8">
               <Tabs 
                 value={billingCycle} 
                 onValueChange={(value) => setBillingCycle(value as 'monthly' | 'yearly')}
