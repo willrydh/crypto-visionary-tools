@@ -141,7 +141,7 @@ export const PriceChart: React.FC<PriceChartProps> = ({
         setProcessedData(candleData);
       }
     }
-  }, [chartData, chartType]);
+  }, [chartData, chartType, showMA200]);
   
   const formatXAxis = (timestamp: number) => {
     return formatChartTime(timestamp, currentTimeframe);

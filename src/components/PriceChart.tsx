@@ -146,7 +146,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
         setProcessedData(chartData);
       }
     }
-  }, [chartType, chartData]);
+  }, [chartType, chartData, showMA200]);
 
   const formatXAxis = (timestamp: string) => {
     const date = new Date(timestamp);
