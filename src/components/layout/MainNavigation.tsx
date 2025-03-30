@@ -1,13 +1,15 @@
 
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { 
   BarChart3, 
   Calendar, 
   Settings,
   Zap,
   Webhook,
-  Radar
+  Radar,
+  Bitcoin,
+  Ethereum
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Logo from '@/assets/logo.svg';
@@ -26,13 +28,13 @@ const MainNavigation: React.FC = () => {
   return (
     <div className="hidden md:flex h-screen w-64 flex-col fixed left-0 top-0 bottom-0 border-r border-border bg-background z-30">
       <div className="p-6">
-        <div className="flex items-center space-x-2">
+        <Link to="/" className="flex items-center space-x-2">
           <img src={Logo} alt="ProfitPilot AI" className="h-8 w-8" />
           <div className="flex flex-col">
             <span className="font-bold text-lg">ProfitPilot AI</span>
-            <span className="text-xs text-muted-foreground">v1.0.0</span>
+            <span className="text-xs text-muted-foreground">Profits on Autopilot</span>
           </div>
-        </div>
+        </Link>
       </div>
       
       <div className="flex-1 overflow-auto py-2">

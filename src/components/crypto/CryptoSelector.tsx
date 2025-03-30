@@ -1,0 +1,65 @@
+
+import React from 'react';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import CryptoCoinIcon from './CryptoCoinIcon';
+
+export interface CryptoOption {
+  symbol: string;
+  name: string;
+  pairSymbol: string; // e.g., BTCUSDT
+}
+
+interface CryptoSelectorProps {
+  value: string;
+  onChange: (value: string) => void;
+  className?: string;
+}
+
+const cryptoOptions: CryptoOption[] = [
+  { symbol: 'BTC', name: 'Bitcoin', pairSymbol: 'BTCUSDT' },
+  { symbol: 'ETH', name: 'Ethereum', pairSymbol: 'ETHUSDT' },
+  { symbol: 'XRP', name: 'Ripple', pairSymbol: 'XRPUSDT' },
+  { symbol: 'SOL', name: 'Solana', pairSymbol: 'SOLUSDT' },
+  { symbol: 'DOGE', name: 'Dogecoin', pairSymbol: 'DOGEUSDT' },
+  { symbol: 'WLD', name: 'Worldcoin', pairSymbol: 'WLDUSDT' },
+  { symbol: 'LTC', name: 'Litecoin', pairSymbol: 'LTCUSDT' },
+  { symbol: 'SUI', name: 'Sui', pairSymbol: 'SUIUSDT' },
+];
+
+export const CryptoSelector: React.FC<CryptoSelectorProps> = ({ 
+  value, 
+  onChange,
+  className
+}) => {
+  return (
+    <Select value={value} onValueChange={onChange}>
+      <SelectTrigger className={`w-[180px] ${className}`}>
+        <SelectValue placeholder="Select cryptocurrency" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectLabel>Cryptocurrencies</SelectLabel>
+          {cryptoOptions.map((crypto) => (
+            <SelectItem key={crypto.pairSymbol} value={crypto.pairSymbol}>
+              <div className="flex items-center gap-2">
+                <CryptoCoinIcon coin={crypto.symbol as any} size="sm" />
+                <span>{crypto.name}</span>
+              </div>
+            </SelectItem>
+          ))}
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  );
+};
+
+export default CryptoSelector;
+export { cryptoOptions };

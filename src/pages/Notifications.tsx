@@ -6,7 +6,11 @@ import {
   AlertTriangle,
   CheckCircle,
   Clock,
-  RefreshCw
+  RefreshCw,
+  Filter,
+  Search,
+  Bitcoin,
+  Ethereum
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -14,7 +18,18 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from '@/hooks/use-toast';
+import { DataSourceIndicator } from '@/components/ui/data-source-indicator';
+import CryptoCoinIcon from '@/components/crypto/CryptoCoinIcon';
 import { 
   getMockNotifications, 
   getMockMarketSessions,
@@ -28,6 +43,8 @@ const NotificationsPage = () => {
   const [marketSessions, setMarketSessions] = useState(getMockMarketSessions());
   const [alertsEnabled, setAlertsEnabled] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterType, setFilterType] = useState<string>('all');
 
   useEffect(() => {
     setNotifications(getMockNotifications());
@@ -110,6 +127,16 @@ const NotificationsPage = () => {
     }
   };
 
+  // Filter notifications based on search query and type filter
+  const filteredNotifications = notifications.filter(notification => {
+    const matchesSearch = notification.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          notification.message.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesFilter = filterType === 'all' || notification.type === filterType;
+    
+    return matchesSearch && matchesFilter;
+  });
+
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
@@ -155,48 +182,101 @@ const NotificationsPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           <Card>
-            <CardHeader>
-              <CardTitle className="flex justify-between items-center">
-                <span>Activity Feed</span>
-                {unreadCount > 0 && (
-                  <Badge className="bg-primary">{unreadCount} new</Badge>
-                )}
-              </CardTitle>
+            <CardHeader className="space-y-2">
+              <div className="flex justify-between items-center">
+                <CardTitle className="flex items-center gap-2">
+                  <Bell className="h-5 w-5" />
+                  Activity Log
+                  {unreadCount > 0 && (
+                    <Badge className="bg-primary ml-2">{unreadCount} new</Badge>
+                  )}
+                </CardTitle>
+                <DataSourceIndicator 
+                  source="Trading System" 
+                  isLive={false} 
+                />
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search notifications..."
+                    className="pl-8"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+                <Select
+                  value={filterType}
+                  onValueChange={setFilterType}
+                >
+                  <SelectTrigger className="w-full sm:w-[180px]">
+                    <SelectValue placeholder="Filter by type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All types</SelectItem>
+                    <SelectItem value="info">Information</SelectItem>
+                    <SelectItem value="alert">Alerts</SelectItem>
+                    <SelectItem value="success">Success</SelectItem>
+                    <SelectItem value="warning">Warnings</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </CardHeader>
             <CardContent>
-              {notifications.length > 0 ? (
-                <div className="space-y-4">
-                  {notifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      className={`p-4 border rounded-lg flex ${!notification.read ? 'bg-accent/20' : ''}`}
-                    >
-                      <div className="mr-4 mt-1">
-                        {getNotificationIcon(notification.type)}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex justify-between items-start">
-                          <h3 className="font-medium">{notification.title}</h3>
-                          <span className="text-xs text-muted-foreground">
-                            {formatNotificationTime(notification.timestamp)}
-                          </span>
+              <AnimatePresence initial={false}>
+                {filteredNotifications.length > 0 ? (
+                  <motion.div 
+                    layout 
+                    className="space-y-4"
+                  >
+                    {filteredNotifications.map((notification) => (
+                      <motion.div
+                        key={notification.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, height: 0 }}
+                        layout
+                        className={`p-4 border rounded-lg flex ${!notification.read ? 'bg-accent/20' : ''}`}
+                      >
+                        <div className="mr-4 mt-1">
+                          {getNotificationIcon(notification.type)}
                         </div>
-                        <p className="text-sm mt-1 text-muted-foreground">
-                          {notification.message}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-12">
-                  <Bell className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-medium mb-2">No notifications yet</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Trading alerts and market updates will appear here
-                  </p>
-                </div>
-              )}
+                        <div className="flex-1">
+                          <div className="flex justify-between items-start">
+                            <h3 className="font-medium flex items-center gap-2">
+                              {notification.symbol && (
+                                <CryptoCoinIcon 
+                                  coin={notification.symbol as any || 'BTC'} 
+                                  size="sm"
+                                />
+                              )}
+                              {notification.title}
+                            </h3>
+                            <span className="text-xs text-muted-foreground">
+                              {formatNotificationTime(notification.timestamp)}
+                            </span>
+                          </div>
+                          <p className="text-sm mt-1 text-muted-foreground">
+                            {notification.message}
+                          </p>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                ) : (
+                  <div className="text-center py-12">
+                    <Bell className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                    <h3 className="text-lg font-medium mb-2">No notifications found</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {searchQuery || filterType !== 'all' 
+                        ? 'Try adjusting your filters'
+                        : 'Trading alerts and market updates will appear here'}
+                    </p>
+                  </div>
+                )}
+              </AnimatePresence>
             </CardContent>
           </Card>
         </div>
@@ -224,7 +304,7 @@ const NotificationsPage = () => {
                     </div>
                     <div className="text-xs text-muted-foreground">
                       {session.nextEvent.type.charAt(0).toUpperCase() + session.nextEvent.type.slice(1)}{" "}
-                      {formatTimeUntil(session.nextEvent.time)}
+                      in {formatTimeUntil(session.nextEvent.time)}
                     </div>
                     <Separator className="my-2" />
                   </div>
@@ -273,10 +353,11 @@ const NotificationsPage = () => {
               </div>
               
               <div className="mt-6 p-3 bg-card/50 rounded-lg border border-border text-center">
-                <p className="text-xs text-muted-foreground">
-                  Data source: <span className="font-medium">Bybit API</span>
-                  <span className="inline-block h-2 w-2 rounded-full bg-green-500 ml-2"></span>
-                </p>
+                <DataSourceIndicator 
+                  source="Bybit API" 
+                  isLive={true} 
+                  className="justify-center"
+                />
               </div>
             </CardContent>
           </Card>

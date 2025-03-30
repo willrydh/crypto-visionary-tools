@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
+import { DataSourceIndicator } from '@/components/ui/data-source-indicator';
 
 const ChartView = () => {
   const { toast } = useToast();
@@ -65,13 +66,19 @@ const ChartView = () => {
             )}
             Refresh
           </Button>
+          <div className="hidden md:block">
+            <DataSourceIndicator 
+              source="Bybit API" 
+              isLive={true} 
+            />
+          </div>
         </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="md:col-span-3">
           {/* Full-featured price chart with support/resistance levels */}
-          <PriceChart showLevels={true} levels={levels} />
+          <PriceChart showLevels={true} levels={levels} excludeTimeframes={[]} />
         </div>
         
         <div>

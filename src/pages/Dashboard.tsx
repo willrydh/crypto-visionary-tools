@@ -10,6 +10,7 @@ import { MarketStatus } from '@/components/markets/MarketStatus';
 import { PriceThermometer } from '@/components/charts/PriceThermometer';
 import { PriceChart } from '@/components/charts/PriceChart';
 import { ImprovedEconomicCalendar } from '@/components/calendar/ImprovedEconomicCalendar';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const Dashboard = () => {
   const { toast } = useToast();
@@ -57,18 +58,31 @@ const Dashboard = () => {
           </p>
         </div>
         <div className="w-full sm:w-auto">
-          <Button 
-            onClick={handleAnalysisGeneration} 
-            disabled={isLoading} 
-            className="w-full sm:w-auto gap-2"
-          >
-            {isLoading ? (
-              <LineChart className="h-4 w-4 animate-pulse" />
-            ) : (
-              <LineChart className="h-4 w-4" />
-            )}
-            Generate market analysis
-          </Button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  onClick={handleAnalysisGeneration} 
+                  disabled={isLoading} 
+                  className="w-full sm:w-auto gap-2"
+                >
+                  {isLoading ? (
+                    <LineChart className="h-4 w-4 animate-pulse" />
+                  ) : (
+                    <LineChart className="h-4 w-4" />
+                  )}
+                  Generate market analysis
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Data Source: Bybit API</p>
+                <div className="flex items-center mt-1">
+                  <span className="h-2 w-2 rounded-full bg-green-500 mr-2"></span>
+                  <span className="text-xs">Live data</span>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
 
@@ -77,7 +91,7 @@ const Dashboard = () => {
         <div className="lg:col-span-2 space-y-6">
           {/* Price chart */}
           <div className="max-w-full overflow-hidden">
-           <PriceChart symbol="BTC/USDT" coinId="bitcoin" excludeTimeframes={['15m', '30m']} />
+           <PriceChart symbol="BTC/USDT" excludeTimeframes={[]} />
           </div>
           
           {/* Analysis cards - 2 columns on larger screens */}

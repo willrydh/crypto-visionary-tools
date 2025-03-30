@@ -2,9 +2,10 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Bell, Settings, LogOut } from 'lucide-react';
+import { Bell, Settings, LogOut, Bitcoin, Ethereum } from 'lucide-react';
 import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
 import { useToast } from '@/hooks/use-toast';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import Logo from '@/assets/logo.svg';
 
 const TopHeader = () => {
@@ -41,7 +42,7 @@ const TopHeader = () => {
           <img src={Logo} alt="ProfitPilot AI" className="h-8 w-8" />
           <div className="font-semibold">
             ProfitPilot AI
-            <span className="text-xs text-muted-foreground ml-1">v1.0.0</span>
+            <span className="text-xs text-muted-foreground ml-1">Profits on Autopilot</span>
           </div>
         </Link>
       </div>
@@ -50,20 +51,38 @@ const TopHeader = () => {
         <div className="hidden md:block">
           <TradingModeSelector />
         </div>
+
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={handleNotifications}
+              >
+                <Bell className="h-5 w-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Notifications & Activity Log</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
         
-        <Button 
-          variant="ghost" 
-          size="icon"
-          onClick={handleNotifications}
-        >
-          <Bell className="h-5 w-5" />
-        </Button>
-        
-        <Button variant="ghost" size="icon" asChild>
-          <Link to="/settings">
-            <Settings className="h-5 w-5" />
-          </Link>
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon" asChild>
+                <Link to="/settings">
+                  <Settings className="h-5 w-5" />
+                </Link>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Settings</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
         
         <Button 
           variant="outline" 

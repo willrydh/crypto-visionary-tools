@@ -7,7 +7,8 @@ import {
   Settings,
   Zap,
   Webhook,
-  Radar
+  Radar,
+  Bell
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -17,7 +18,7 @@ const MobileNavigation: React.FC = () => {
     { path: '/signals', label: 'Signals', icon: <Radar size={20} /> },
     { path: '/trade-suggestion', label: 'Trade', icon: <Zap size={20} /> },
     { path: '/calendar', label: 'Events', icon: <Calendar size={20} /> },
-    { path: '/miner', label: 'Miner', icon: <Webhook size={20} /> },
+    { path: '/notifications', label: 'Alerts', icon: <Bell size={20} /> },
     { path: '/settings', label: 'Settings', icon: <Settings size={20} /> },
   ];
 

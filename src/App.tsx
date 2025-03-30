@@ -20,6 +20,7 @@ import PaymentPage from "./pages/PaymentPage";
 import ThankYouPage from "./pages/ThankYouPage";
 import LevelsView from "./pages/LevelsView";
 import Sorry from "./pages/Sorry";
+import Notifications from "./pages/Notifications";
 
 // Add framer-motion
 import { MotionConfig } from 'framer-motion';
@@ -47,6 +48,7 @@ const App = () => (
               <Route path="/chart" element={<ChartView />} />
               <Route path="/levels" element={<LevelsView />} />
               <Route path="/calendar" element={<CalendarView />} />
+              <Route path="/notifications" element={<Notifications />} />
               <Route path="/miner" element={<Miner />} />
               <Route path="/settings" element={<SettingsView />} />
               <Route path="*" element={<NotFound />} />

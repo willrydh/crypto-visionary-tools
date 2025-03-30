@@ -1,111 +1,74 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { ImprovedEconomicCalendar } from '@/components/calendar/ImprovedEconomicCalendar';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { RefreshCw, Calendar as CalendarIcon, Clock } from 'lucide-react';
-import { Button } from "@/components/ui/button";
-import { useToast } from '@/hooks/use-toast';
-import { 
-  getMockMarketSessions,
-  formatTimeUntil
-} from '@/utils/mockData';
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { MarketStatus } from '@/components/markets/MarketStatus';
+import { useMarkets } from '@/hooks/useMarkets';
+import { DataSourceIndicator } from '@/components/ui/data-source-indicator';
+import { Badge } from '@/components/ui/badge';
 
 const CalendarView = () => {
-  const { toast } = useToast();
-  const [marketSessions, setMarketSessions] = React.useState(getMockMarketSessions());
-  const [isRefreshing, setIsRefreshing] = React.useState(false);
-
-  const handleRefresh = () => {
-    setIsRefreshing(true);
-    
-    // Simulate data refresh
-    setTimeout(() => {
-      setMarketSessions(getMockMarketSessions());
-      setIsRefreshing(false);
-      
-      toast({
-        title: "Calendar Refreshed",
-        description: "Economic events and market sessions updated.",
-      });
-    }, 1000);
-  };
-
+  const [activeTab, setActiveTab] = useState('economic');
+  const { marketSessions } = useMarkets();
+  
+  // Calculate which markets are currently open
+  const openMarkets = marketSessions.filter(market => market.status === 'open');
+  
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
         <div>
-          <h1 className="text-2xl font-bold">Economic Events</h1>
+          <h1 className="text-2xl font-bold">Events</h1>
           <p className="text-muted-foreground">
-            Track market-moving economic events and market sessions
+            Economic calendar and market sessions
           </p>
         </div>
         
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="gap-2"
-          onClick={handleRefresh}
-          disabled={isRefreshing}
-        >
-          <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-          <span>Refresh Data</span>
-        </Button>
+        <div className="flex items-center space-x-2 mt-2 md:mt-0">
+          <DataSourceIndicator 
+            source="Market API & Economic Calendar" 
+            isLive={false} 
+          />
+        </div>
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <Card className="w-full">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <CalendarIcon className="h-5 w-5 text-primary" />
-                Economic Calendar
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ImprovedEconomicCalendar compact={false} />
-            </CardContent>
-          </Card>
-        </div>
-
-        <div>
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Clock className="h-5 w-5 text-primary" />
-                Market Sessions
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {marketSessions.map((session) => (
-                  <div key={session.name} className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <span className="font-medium">{session.name}</span>
-                      <Badge 
-                        variant={session.status === "open" ? "default" : "outline"}
-                        className={session.status === "open" ? "bg-bullish" : ""}
-                      >
-                        {session.status.toUpperCase()}
-                      </Badge>
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      {session.nextEvent.type.charAt(0).toUpperCase() + session.nextEvent.type.slice(1)}{" "}
-                      {formatTimeUntil(session.nextEvent.time)}
-                    </div>
-                    <Separator className="my-2" />
-                  </div>
+      {openMarkets.length > 0 && (
+        <Card className="border-primary/20 bg-primary/5">
+          <CardContent className="pt-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <h3 className="font-medium">Currently Open Markets</h3>
+                <p className="text-sm text-muted-foreground">
+                  {openMarkets.length} market{openMarkets.length !== 1 ? 's' : ''} currently trading
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {openMarkets.map(market => (
+                  <Badge key={market.name} variant="outline" className="bg-primary/10">
+                    {market.name}
+                  </Badge>
                 ))}
               </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
       
-      <div className="mt-6 text-xs text-muted-foreground text-center">
-        <p>Data sourced from Bybit API and other public financial data sources. Updated in real-time.</p>
-      </div>
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="grid grid-cols-2">
+          <TabsTrigger value="economic">Economic Calendar</TabsTrigger>
+          <TabsTrigger value="markets">Market Sessions</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="economic" className="pt-6">
+          <ImprovedEconomicCalendar compact={false} />
+        </TabsContent>
+        
+        <TabsContent value="markets" className="pt-6">
+          <MarketStatus showDetails={true} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
