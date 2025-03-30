@@ -5,13 +5,17 @@ export interface PriceLevel {
   price: number;
   type: 'support' | 'resistance';
   strength: 'weak' | 'strong';
-  timeframe: string;
+  timeframe?: string;
+  touchCount?: number;
+  timestamp?: number;
 }
 
 export interface MarketStructure {
-  type: 'uptrend' | 'downtrend' | 'range' | 'accumulation' | 'distribution';
-  description: string;
+  type?: 'uptrend' | 'downtrend' | 'range' | 'accumulation' | 'distribution';
+  description?: string;
   confidence: number;
+  volatility?: 'high' | 'medium' | 'low';
+  trend?: string;
 }
 
 interface SupportResistanceContextType {

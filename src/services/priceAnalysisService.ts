@@ -224,7 +224,8 @@ function filterDuplicateLevels(levels: PriceLevel[]): PriceLevel[] {
       filtered.push(sortedLevels[i]);
     } else {
       // If they're close but current one has higher touch count, replace the previous one
-      if (sortedLevels[i].touchCount > lastLevel.touchCount) {
+      if (sortedLevels[i].touchCount && lastLevel.touchCount && 
+          sortedLevels[i].touchCount > lastLevel.touchCount) {
         filtered.pop();
         filtered.push(sortedLevels[i]);
       }

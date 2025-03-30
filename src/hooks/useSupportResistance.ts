@@ -5,7 +5,7 @@ import { SupportResistanceContext } from '@/contexts/SupportResistanceContext';
 export const useSupportResistance = () => {
   const context = useContext(SupportResistanceContext);
   
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useSupportResistance must be used within a SupportResistanceProvider');
   }
   
