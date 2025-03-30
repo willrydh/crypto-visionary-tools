@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { EnhancedTechnicalAnalysis } from '@/components/analysis/EnhancedTechnicalAnalysis';
+import EnhancedTechnicalAnalysis from '@/components/analysis/EnhancedTechnicalAnalysis';
 import { TradeSuggestionCard } from '@/components/analysis/TradeSuggestionCard';
 import { PriceChart } from '@/components/charts/PriceChart';
 import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';

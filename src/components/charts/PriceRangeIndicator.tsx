@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -13,19 +12,23 @@ import {
 } from "@/components/ui/tooltip";
 
 interface PriceRangeIndicatorProps {
+  title?: string;
   currentPrice: number;
   dailyHigh: number;
   dailyLow: number;
   weeklyHigh: number;
   weeklyLow: number;
+  type?: 'pump' | 'dump';
 }
 
 const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
+  title = 'Price Range',
   currentPrice,
   dailyHigh,
   dailyLow,
   weeklyHigh,
-  weeklyLow
+  weeklyLow,
+  type
 }) => {
   // Calculate percentages for positioning within ranges
   const calculateDailyPercentage = () => {
@@ -79,7 +82,7 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
     <Card>
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center text-lg">
-          Price Range
+          {title}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>

@@ -5,7 +5,7 @@ import { LineChart, Zap } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';
 import { useTradingMode } from '@/hooks/useTradingMode';
-import { EnhancedTechnicalAnalysis } from '@/components/analysis/EnhancedTechnicalAnalysis';
+import EnhancedTechnicalAnalysis from '@/components/analysis/EnhancedTechnicalAnalysis';
 import { MarketStatus } from '@/components/markets/MarketStatus';
 import { PriceThermometer } from '@/components/charts/PriceThermometer';
 import { PriceChart } from '@/components/charts/PriceChart';

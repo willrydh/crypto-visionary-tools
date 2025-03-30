@@ -10,6 +10,7 @@ export interface TechnicalIndicator {
   value: number | string;
   signal: 'bullish' | 'bearish' | 'neutral';
   timeframe: string;
+  category: 'trend' | 'momentum' | 'volume' | 'volatility';
   description?: string;
 }
 
