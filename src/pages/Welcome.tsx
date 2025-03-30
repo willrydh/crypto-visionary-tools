@@ -24,6 +24,11 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Logo from '@/assets/logo.svg';
 import { useToast } from '@/hooks/use-toast';
+import CustomerReviews from '@/components/marketing/CustomerReviews';
+import PlatformsAvailability from '@/components/marketing/PlatformsAvailability';
+import DiscordCommunity from '@/components/marketing/DiscordCommunity';
+import TokenProgress from '@/components/marketing/TokenProgress';
+import { AppShowcase } from '@/components/landing/AppShowcase';
 
 const Welcome = () => {
   const { toast } = useToast();
@@ -48,8 +53,8 @@ const Welcome = () => {
       icon: <BellRing className="h-5 w-5 text-primary" />
     },
     {
-      title: "The Perfect AI Trading Tool",
-      description: "Discover our free version and sign up for ProfitPilot AI Pro",
+      title: "The Perfect Trading Tool",
+      description: "Discover our free version and sign up for ProfitPilot Pro",
       icon: <CandlestickChart className="h-5 w-5 text-primary" />
     }
   ];
@@ -90,7 +95,7 @@ const Welcome = () => {
         { name: 'Technical analysis', included: false },
         { name: 'Economic calendar', included: false },
         { name: 'Advanced signals', included: false },
-        { name: 'AI-powered trading', included: false },
+        { name: 'Trading', included: false },
         { name: 'Premium analytics', included: false },
       ],
       cta: 'Start Free Trial',
@@ -112,7 +117,7 @@ const Welcome = () => {
         { name: 'Full technical analysis suite', included: true },
         { name: 'Economic calendar', included: true },
         { name: 'Advanced signals & alerts', included: true },
-        { name: 'AI-powered trading', included: false },
+        { name: 'Trading', included: false },
         { name: 'Premium analytics', included: false },
       ],
       cta: 'Get Pro',
@@ -134,7 +139,7 @@ const Welcome = () => {
         { name: 'Full technical analysis suite', included: true },
         { name: 'Economic calendar', included: true },
         { name: 'Advanced signals & alerts', included: true },
-        { name: 'AI-powered trading via API', included: true },
+        { name: 'Trading via API', included: true },
         { name: 'Premium analytics & logging', included: true },
       ],
       cta: 'Get Guru',
@@ -174,14 +179,15 @@ const Welcome = () => {
         <div className="container flex h-14 items-center">
           <div className="flex items-center gap-2 mr-4">
             <img src={Logo} alt="Logo" className="h-8 w-8" />
-            <div className="font-bold text-xl">ProfitPilot AI</div>
+            <div className="font-bold text-xl">ProfitPilot</div>
           </div>
           
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium flex-1">
             <a href="#features" className="transition-colors hover:text-foreground/80">Features</a>
             <a href="#trading-modes" className="transition-colors hover:text-foreground/80">Trading Modes</a>
             <a href="#pricing" className="transition-colors hover:text-foreground/80">Pricing</a>
-            <a href="#faq" className="transition-colors hover:text-foreground/80">FAQ</a>
+            <a href="#testimonials" className="transition-colors hover:text-foreground/80">Testimonials</a>
+            <a href="#token" className="transition-colors hover:text-foreground/80">PP Token</a>
           </nav>
           
           <div className="flex items-center gap-2 ml-auto">
@@ -199,10 +205,10 @@ const Welcome = () => {
       <section className="py-20 px-4 md:px-6 lg:px-8 flex flex-col items-center text-center space-y-8 bg-gradient-to-b from-background to-muted">
         <Badge variant="outline" className="mb-4">Version 1.0.0 is now available</Badge>
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold max-w-3xl leading-tight tracking-tighter">
-          Your AI-Powered Trading Assistant for Modern Markets
+          Your Trading Assistant for Modern Markets
         </h1>
         <p className="text-muted-foreground text-lg md:text-xl max-w-2xl">
-          ProfitPilot AI gives you real-time market signals, intelligent trade suggestions, and deep data analysis for crypto trading.
+          ProfitPilot gives you real-time market signals, intelligent trade suggestions, and deep data analysis for crypto trading.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 pt-4">
           <Button size="lg" onClick={handleGuestAccess}>
@@ -221,7 +227,7 @@ const Welcome = () => {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Powerful Trading Features</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              ProfitPilot AI brings advanced trading capabilities and real-time market insights to help you make better trading decisions.
+              ProfitPilot brings advanced trading capabilities and real-time market insights to help you make better trading decisions.
             </p>
           </div>
           
@@ -261,7 +267,7 @@ const Welcome = () => {
             </div>
             <div className="bg-muted rounded-lg p-4 shadow-lg">
               <img 
-                src="https://via.placeholder.com/500x300/1a1a1a/808080?text=Market+Analytics+Dashboard" 
+                src="/lovable-uploads/c838292a-0224-48a0-a205-21fde8947f28.png" 
                 alt="Market Analytics Dashboard" 
                 className="rounded-md w-full"
               />
@@ -270,13 +276,19 @@ const Welcome = () => {
         </div>
       </section>
       
+      {/* Platforms Availability Section */}
+      <PlatformsAvailability />
+      
+      {/* App Showcase Section */}
+      <AppShowcase />
+      
       {/* Trading Modes Section */}
       <section id="trading-modes" className="py-20 px-4 md:px-6 lg:px-8 bg-muted">
         <div className="container mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Three Trading Modes for Any Strategy</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              ProfitPilot AI adapts to your trading style with specialized modes for different trading timeframes and strategies.
+              ProfitPilot adapts to your trading style with specialized modes for different trading timeframes and strategies.
             </p>
           </div>
           
@@ -327,6 +339,19 @@ const Welcome = () => {
           </div>
         </div>
       </section>
+      
+      {/* Testimonials Section */}
+      <section id="testimonials">
+        <CustomerReviews />
+      </section>
+      
+      {/* Token Section */}
+      <section id="token">
+        <TokenProgress />
+      </section>
+      
+      {/* Discord Community Section */}
+      <DiscordCommunity />
       
       {/* Pricing Section */}
       <section id="pricing" className="py-20 px-4 md:px-6 lg:px-8">
@@ -419,9 +444,9 @@ const Welcome = () => {
         <div className="container mx-auto max-w-md text-center">
           <div className="space-y-6">
             <img src={Logo} alt="Logo" className="h-16 w-16 mx-auto" />
-            <h2 className="text-2xl font-bold">Get Started with ProfitPilot AI</h2>
+            <h2 className="text-2xl font-bold">Get Started with ProfitPilot</h2>
             <p className="text-muted-foreground">
-              Sign up now to access real-time trading signals and AI-powered market analysis.
+              Sign up now to access real-time trading signals and market analysis.
             </p>
             
             <div className="space-y-3">
@@ -469,7 +494,7 @@ const Welcome = () => {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Frequently Asked Questions</h2>
             <p className="text-muted-foreground">
-              Find answers to the most common questions about ProfitPilot AI.
+              Find answers to the most common questions about ProfitPilot.
             </p>
           </div>
           
@@ -495,7 +520,7 @@ const Welcome = () => {
             <div>
               <h3 className="text-lg font-semibold mb-2">Are the signals financial advice?</h3>
               <p className="text-muted-foreground">
-                No, ProfitPilot AI provides algorithmic trading signals based on technical analysis, not financial advice. Always do your own research.
+                No, ProfitPilot provides algorithmic trading signals based on technical analysis, not financial advice. Always do your own research.
               </p>
             </div>
           </div>
@@ -543,7 +568,7 @@ const Welcome = () => {
           <div className="mt-12 pt-8 border-t flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center gap-2 mb-4 md:mb-0">
               <img src={Logo} alt="Logo" className="h-8 w-8" />
-              <span className="font-medium">ProfitPilot AI</span>
+              <span className="font-medium">ProfitPilot</span>
             </div>
             <p className="text-sm text-muted-foreground">
               © 2025 Zentra LLC. All rights reserved.
