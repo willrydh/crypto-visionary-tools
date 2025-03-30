@@ -12,6 +12,7 @@ import { PriceChart } from '@/components/charts/PriceChart';
 import { ImprovedEconomicCalendar } from '@/components/calendar/ImprovedEconomicCalendar';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import CoinInfo from '@/components/crypto/CoinInfo';
+import WelcomeHeader from '@/components/dashboard/WelcomeHeader';
 
 const Dashboard = () => {
   const { toast } = useToast();
@@ -51,6 +52,8 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6 animate-fade-in max-w-7xl mx-auto px-4 mt-6">
+      <WelcomeHeader />
+      
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-bold">Dashboard</h1>

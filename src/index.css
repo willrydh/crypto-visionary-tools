@@ -5,22 +5,22 @@
 
 @layer base {
   :root {
-    --background: 222 28% 7%;
+    --background: 223 30% 5%;
     --foreground: 210 40% 98%;
 
-    --card: 224 32% 12%;
+    --card: 224 35% 8%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 224 32% 12%;
+    --popover: 224 35% 8%;
     --popover-foreground: 210 40% 98%;
 
     --primary: 222 76% 54%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 222 30% 16%;
+    --secondary: 222 30% 12%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217 33% 17%;
+    --muted: 217 33% 14%;
     --muted-foreground: 215 20% 65%;
 
     --accent: 222 76% 46%;
@@ -29,20 +29,22 @@
     --destructive: 0 68% 50%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217 33% 14%;
-    --input: 217 33% 14%;
+    --border: 217 33% 12%;
+    --input: 217 33% 12%;
     --ring: 222 76% 46%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 222 50% 9%;
+    --sidebar-background: 222 50% 7%;
     --sidebar-foreground: 210 40% 98%;
     --sidebar-primary: 222 76% 54%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 217 38% 15%;
+    --sidebar-accent: 217 38% 12%;
     --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 215 33% 14%;
+    --sidebar-border: 215 33% 12%;
     --sidebar-ring: 222 76% 54%;
+    
+    --chart-bg: 223 35% 8%;
   }
 }
 
@@ -77,4 +79,3 @@
     scroll-behavior: smooth;
   }
 }
-

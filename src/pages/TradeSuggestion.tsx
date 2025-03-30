@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
 import CoinInfo from '@/components/crypto/CoinInfo';
+import TradingEducation from '@/components/education/TradingEducation';
 
 const TradeSuggestion = () => {
   const { toast } = useToast();
@@ -101,25 +102,7 @@ const TradeSuggestion = () => {
           />
         </div>
         
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Trading Education</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="text-sm space-y-2">
-              <p className="text-muted-foreground">
-                Recommendations for successful trading:
-              </p>
-              <ul className="list-disc pl-5 space-y-1">
-                <li>Always use stop losses to manage risk</li>
-                <li>Never risk more than 1-2% of your portfolio per trade</li>
-                <li>Confirm signals across multiple timeframes</li>
-                <li>Consider fundamental factors alongside technical analysis</li>
-                <li>Track your trades and learn from outcomes</li>
-              </ul>
-            </div>
-          </CardContent>
-        </Card>
+        <TradingEducation />
       </div>
     </div>
   );

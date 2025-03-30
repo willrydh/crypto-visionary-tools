@@ -25,7 +25,8 @@ import {
   BadgePercent,
   TrendingUp,
   Clock,
-  Scale
+  Scale,
+  CalendarDays
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -88,6 +89,11 @@ const Welcome = () => {
       description: "You've accessed the app as a guest",
     });
     navigate('/');
+  };
+
+  // Handle forgot password
+  const handleForgotPassword = () => {
+    navigate('/forgot-password');
   };
 
   // Pricing plans
@@ -226,6 +232,26 @@ const Welcome = () => {
     {
       question: "How accurate are the trading signals?",
       answer: "Our trading signals typically achieve 65-75% accuracy in trending markets and 55-65% in ranging markets. Each signal comes with a confidence score based on multiple confirming indicators and historical performance. High-confidence signals (rated 75%+) have demonstrated over 80% accuracy in our backtesting. We're transparent about our methodology and provide detailed explanations for each signal, allowing you to understand the reasoning and make informed decisions."
+    },
+    {
+      question: "What advanced data analysis features does ProfitPilot provide?",
+      answer: "ProfitPilot leverages powerful AI algorithms to analyze market microstructure, order flow, volume profiles, and whale wallet movements. Our system identifies high-probability trading setups by combining on-chain analytics with technical indicators and market sentiment. Pro users gain access to daily in-depth market reports, correlation heatmaps, and sector rotation analysis. For institutional traders, we offer custom API solutions with tailored analysis parameters and risk models."
+    },
+    {
+      question: "How does ProfitPilot handle volatile market conditions?",
+      answer: "During periods of high volatility, ProfitPilot automatically adjusts its analysis parameters and risk assessment. Our volatility-adaptive algorithms increase confirmation thresholds for signals, suggest wider stop-losses, and may recommend reduced position sizes. The platform provides real-time volatility metrics with historical comparisons so you can make informed decisions. Pro and Guru users receive automated volatility alerts before major market events."
+    },
+    {
+      question: "Can ProfitPilot help with tax reporting for my trades?",
+      answer: "Yes, ProfitPilot Pro and Guru plans include comprehensive trade logging and tax reporting features. The system automatically tracks your trading activity when connected to exchanges via API, categorizes transactions, calculates realized and unrealized gains/losses, and generates customizable reports for tax purposes. Our platform supports various accounting methods (FIFO, LIFO, HIFO) and can export data in formats compatible with popular tax software."
+    },
+    {
+      question: "What educational resources does ProfitPilot offer?",
+      answer: "ProfitPilot provides an extensive library of educational content for traders at all levels. This includes detailed explanations of every signal and indicator, interactive tutorials on trading strategies, weekly market analysis webinars, and a structured learning path from basic to advanced concepts. Pro users gain access to expert strategy workshops, proprietary research reports, and personalized learning recommendations based on your trading history and performance."
+    },
+    {
+      question: "How does the AI-powered system improve over time?",
+      answer: "Our AI system employs advanced machine learning techniques that continuously optimize analysis parameters based on market performance data. The system learns from successful and unsuccessful signals to refine its algorithms, adapts to changing market regimes, and incorporates new data sources as they become available. This self-improving approach ensures that ProfitPilot's effectiveness grows over time, particularly in markets you trade most frequently."
     }
   ];
   
@@ -557,7 +583,7 @@ const Welcome = () => {
               {
                 title: "Economic Calendar",
                 description: "Never miss important market events with our comprehensive economic calendar.",
-                icon: <Calendar className="h-5 w-5 text-primary" />
+                icon: <CalendarDays className="h-5 w-5 text-primary" />
               },
               {
                 title: "Risk Management",
@@ -651,6 +677,14 @@ const Welcome = () => {
             <p className="text-sm text-muted-foreground pt-4">
               By signing up, you agree to our Terms of Service and Privacy Policy.
             </p>
+            
+            <Button 
+              variant="link" 
+              className="text-primary" 
+              onClick={handleForgotPassword}
+            >
+              Forgot password?
+            </Button>
           </div>
         </div>
       </section>
