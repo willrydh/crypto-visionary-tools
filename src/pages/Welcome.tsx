@@ -40,14 +40,30 @@ import DiscordCommunity from '@/components/marketing/DiscordCommunity';
 import TokenProgress from '@/components/marketing/TokenProgress';
 import FAQ from './FAQ';
 
+const backgroundImages = [
+  "/lovable-uploads/c838292a-0224-48a0-a205-21fde8947f28.png",
+  "/lovable-uploads/fc481dcb-6dc5-4724-8938-9fef96e6feaf.png",
+  "/lovable-uploads/83cd3ce3-8a61-4043-aa68-18467165dbc3.png"
+];
+
 const Welcome = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+  const [currentSlide, setCurrentSlide] = useState(0);
   
   // Scroll to top on component mount
   useEffect(() => {
     window.scrollTo(0, 0);
+  }, []);
+  
+  // Auto-rotate background images
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide(prev => (prev + 1) % backgroundImages.length);
+    }, 5000);
+    
+    return () => clearInterval(interval);
   }, []);
   
   // Feature items to display
@@ -288,15 +304,22 @@ const Welcome = () => {
       
       {/* Hero Section with blur effect background */}
       <section className="py-20 px-4 md:px-6 lg:px-8 flex flex-col items-center text-center space-y-8 relative overflow-hidden">
-        <div className="absolute inset-0 w-full h-full">
-          <div className="w-full h-full">
-            <img 
-              src="/lovable-uploads/c838292a-0224-48a0-a205-21fde8947f28.png" 
-              alt="Chart Background" 
-              className="object-cover w-full h-full opacity-30"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-background to-background/80 backdrop-blur-sm"></div>
-          </div>
+        <div className="absolute inset-0 w-full h-full overflow-hidden">
+          {backgroundImages.map((img, index) => (
+            <div
+              key={index}
+              className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ${
+                index === currentSlide ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              <img 
+                src={img} 
+                alt={`Chart Background ${index + 1}`} 
+                className="object-cover w-full h-full"
+              />
+            </div>
+          ))}
+          <div className="absolute inset-0 frost-blur"></div>
         </div>
         
         <div className="relative z-10">
