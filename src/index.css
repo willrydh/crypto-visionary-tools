@@ -160,14 +160,29 @@ body {
 
 /* Adjust spacing for the header with trading modes */
 .has-trade-header {
-  @apply mt-24 md:mt-24;
+  @apply mt-24 md:mt-28;
 }
 
 main {
-  @apply pt-14;
+  @apply pt-16 md:pt-20;
 }
 
 /* Main layout adjustment for trading pages */
 .trading-page main {
-  @apply pt-[5.5rem];
+  @apply pt-28 md:pt-32;
+}
+
+/* Fix spacing between heading and trading mode bar */
+h1, h2 {
+  @apply mt-2 md:mt-4;
+}
+
+/* Add space between sections */
+section + section {
+  @apply mt-8;
+}
+
+/* Improve card spacing */
+.card-container {
+  @apply space-y-6;
 }

@@ -1,25 +1,17 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
   BarChart3, 
   Calendar, 
   Settings,
   Zap,
-  Webhook,
   Radar,
-  Bell,
-  LineChart,
-  ChevronUp,
-  X
+  LineChart
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
 
 const MobileNavigation: React.FC = () => {
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
-  
   const navItems = [
     { path: '/', label: 'Home', icon: <BarChart3 size={20} /> },
     { path: '/signals', label: 'Signals', icon: <Radar size={20} /> },
@@ -30,27 +22,25 @@ const MobileNavigation: React.FC = () => {
   ];
 
   return (
-    <>
-      <div className="fixed bottom-0 left-0 w-full md:hidden bg-background border-t border-border z-50 overflow-x-auto">
-        <nav className="flex justify-between">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              className={({ isActive }) => 
-                cn(
-                  "flex flex-col items-center py-2 px-3 text-xs flex-1",
-                  isActive ? "text-primary" : "text-muted-foreground"
-                )
-              }
-            >
-              {item.icon}
-              <span className="mt-1">{item.label}</span>
-            </NavLink>
-          ))}
-        </nav>
-      </div>
-    </>
+    <div className="fixed bottom-0 left-0 w-full md:hidden bg-background border-t border-border z-50">
+      <nav className="flex justify-between">
+        {navItems.map((item) => (
+          <NavLink
+            key={item.path}
+            to={item.path}
+            className={({ isActive }) => 
+              cn(
+                "flex flex-col items-center py-2 px-3 text-xs flex-1",
+                isActive ? "text-primary" : "text-muted-foreground"
+              )
+            }
+          >
+            {item.icon}
+            <span className="mt-1">{item.label}</span>
+          </NavLink>
+        ))}
+      </nav>
+    </div>
   );
 };
 

@@ -122,7 +122,7 @@ const TopHeader = () => {
       {/* Trading mode selector - show on dashboard, trade-suggestion and signals pages */}
       {showTradingBar && (
         <div className="px-4 md:px-6 md:ml-64 bg-primary/5 border-b border-border/40">
-          <div className="flex items-center justify-between py-2">
+          <div className="flex items-center justify-between py-3">
             <div className="grid grid-cols-3 gap-1 flex-grow max-w-md">
               {/* Scalp Trading Button */}
               <button
