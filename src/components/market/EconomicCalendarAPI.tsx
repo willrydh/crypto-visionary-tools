@@ -216,7 +216,7 @@ const EconomicCalendarAPI = () => {
     <Card className="h-full">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <div>
-          <CardTitle className="text-xl font-bold">Economic Calendar</CardTitle>
+          <CardTitle className="text-xl font-bold">Upcoming Events</CardTitle>
           <CardDescription>
             Upcoming market-moving events
           </CardDescription>

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -123,7 +124,7 @@ export const EconomicCalendar: React.FC<EconomicCalendarProps> = ({ compact = fa
     <Card className="h-full">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
-          <CardTitle className="text-lg">Economic Calendar</CardTitle>
+          <CardTitle className="text-lg">Upcoming Events</CardTitle>
           <div className="flex items-center gap-2">
             <DataSourceIndicator 
               source="Forex Factory" 

@@ -61,7 +61,7 @@ export default function NavigationMenu({ className }: NavigationMenuProps) {
     },
     {
       href: '/calendar',
-      label: 'Calendar',
+      label: 'Events',
       icon: <Calendar className="w-5 h-5" />,
       variant: 'ghost',
     },

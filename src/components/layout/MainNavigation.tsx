@@ -20,7 +20,7 @@ const navItems = [
   { path: '/signals', label: 'Signals', icon: <Radar className="h-5 w-5" /> },
   { path: '/trade', label: 'Trade', icon: <Zap className="h-5 w-5" /> },
   { path: '/chart', label: 'Chart', icon: <LineChart className="h-5 w-5" /> },
-  { path: '/calendar', label: 'Calendar', icon: <Calendar className="h-5 w-5" /> },
+  { path: '/calendar', label: 'Events', icon: <Calendar className="h-5 w-5" /> },
   { path: '/settings', label: 'Settings', icon: <Settings className="h-5 w-5" /> },
 ];
 

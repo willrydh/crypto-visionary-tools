@@ -90,7 +90,7 @@ const MarketDashboard = () => {
           <Tabs defaultValue="fear-greed">
             <TabsList className="w-full">
               <TabsTrigger value="fear-greed" className="flex-1">Fear & Greed</TabsTrigger>
-              <TabsTrigger value="calendar" className="flex-1">Calendar</TabsTrigger>
+              <TabsTrigger value="calendar" className="flex-1">Events</TabsTrigger>
             </TabsList>
             <TabsContent value="fear-greed" className="mt-4">
               <FearGreedIndex key={fearGreedIndexKey} />
