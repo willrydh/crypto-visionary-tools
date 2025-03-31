@@ -11,7 +11,6 @@ import { RefreshCw } from 'lucide-react';
 import CoinInfo from '@/components/crypto/CoinInfo';
 import TradingEducation from '@/components/education/TradingEducation';
 import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
-import InitiateTrade from '@/components/trading/InitiateTrade';
 
 const TradeSuggestion = () => {
   const { toast } = useToast();
@@ -72,14 +71,14 @@ const TradeSuggestion = () => {
           <Button 
             onClick={handleRefresh} 
             disabled={isLoading} 
-            className="gap-2"
+            size="icon"
+            className="h-10 w-10"
           >
             {isLoading ? (
               <RefreshCw className="h-4 w-4 animate-spin" />
             ) : (
               <RefreshCw className="h-4 w-4" />
             )}
-            Refresh
           </Button>
         </div>
       </div>
@@ -109,12 +108,7 @@ const TradeSuggestion = () => {
           />
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <InitiateTrade 
-            currentPrice={currentPrice}
-            tradeSuggestion={tradeSuggestion}
-            coinSymbol="BTC/USDT"
-          />
+        <div>
           <TradingEducation />
         </div>
       </div>

@@ -83,7 +83,7 @@ const Dashboard = () => {
                   ) : (
                     <LineChart className="h-4 w-4" />
                   )}
-                  Generate market analysis
+                  Generate Analysis
                 </Button>
               </TooltipTrigger>
               <TooltipContent>

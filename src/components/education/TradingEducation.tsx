@@ -147,19 +147,20 @@ export const TradingEducation = () => {
           Enhance your trading knowledge with key concepts and strategies
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 overflow-hidden">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="w-full md:w-auto grid grid-cols-1 md:flex md:flex-row sm:grid-cols-2 md:grid-cols-4 gap-2 md:gap-0">
+          <TabsList className="w-full grid grid-cols-2 sm:grid-cols-4 gap-1">
             {educationCategories.map((category) => (
               <TabsTrigger key={category.id} value={category.id} className="flex items-center gap-1.5">
                 {category.icon}
-                {category.label}
+                <span className="hidden sm:inline">{category.label}</span>
+                <span className="sm:hidden">{category.label.split(' ')[0]}</span>
               </TabsTrigger>
             ))}
           </TabsList>
           
           {educationCategories.map((category) => (
-            <TabsContent key={category.id} value={category.id} className="pt-4">
+            <TabsContent key={category.id} value={category.id} className="pt-4 overflow-auto max-h-[60vh] sm:max-h-none">
               <Accordion type="single" collapsible className="w-full">
                 {getActiveContent().map((item, index) => (
                   <AccordionItem key={item.id} value={item.id}>
