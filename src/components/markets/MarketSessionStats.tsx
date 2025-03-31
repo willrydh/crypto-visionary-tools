@@ -6,14 +6,42 @@ import { Bell, Zap, TrendingDown, TrendingUp, ArrowUpRight, Clock } from 'lucide
 
 interface MarketSessionStatsProps {
   title?: string;
+  asianSessionStart?: number;
+  europeanSessionStart?: number;
+  usSessionStart?: number;
 }
 
-const MarketSessionStats = ({ title = "Market Session Impact" }: MarketSessionStatsProps) => {
-  // Sample market session data
+const MarketSessionStats = ({ 
+  title = "Market Session Impact",
+  asianSessionStart,
+  europeanSessionStart,
+  usSessionStart
+}: MarketSessionStatsProps) => {
+  // Sample market session data with adjustable times based on props
+  const getSessionTime = (baseHour: number, offsetHour?: number): string => {
+    if (offsetHour === undefined) return `${baseHour}:00 AM ET`;
+    const adjustedHour = baseHour + offsetHour;
+    const hour = adjustedHour % 12 === 0 ? 12 : adjustedHour % 12;
+    const amPm = adjustedHour < 12 || adjustedHour === 24 ? 'AM' : 'PM';
+    return `${hour}:00 ${amPm} ET`;
+  };
+
+  // Default times that will be adjusted if props are provided
+  const nyseOpenHour = 9;
+  const londonCloseHour = 11;
+  const nyseCloseHour = 16;
+  const tokyoOpenHour = 19;
+
+  // Applying adjustments if provided
+  const adjustedNyseOpen = getSessionTime(nyseOpenHour, usSessionStart);
+  const adjustedLondonClose = getSessionTime(londonCloseHour, europeanSessionStart);
+  const adjustedNyseClose = getSessionTime(nyseCloseHour, usSessionStart);
+  const adjustedTokyoOpen = getSessionTime(tokyoOpenHour, asianSessionStart);
+
   const marketSessions = [
     {
       name: "NYSE Open",
-      time: "9:30 AM ET",
+      time: adjustedNyseOpen,
       impact: "High",
       volatility: 85,
       pumpFrequency: 62,
@@ -22,7 +50,7 @@ const MarketSessionStats = ({ title = "Market Session Impact" }: MarketSessionSt
     },
     {
       name: "London Close",
-      time: "11:30 AM ET",
+      time: adjustedLondonClose,
       impact: "Medium",
       volatility: 65,
       pumpFrequency: 51,
@@ -31,7 +59,7 @@ const MarketSessionStats = ({ title = "Market Session Impact" }: MarketSessionSt
     },
     {
       name: "NYSE Close",
-      time: "4:00 PM ET",
+      time: adjustedNyseClose,
       impact: "High",
       volatility: 78,
       pumpFrequency: 45,
@@ -40,7 +68,7 @@ const MarketSessionStats = ({ title = "Market Session Impact" }: MarketSessionSt
     },
     {
       name: "Tokyo Open",
-      time: "7:00 PM ET",
+      time: adjustedTokyoOpen,
       impact: "Medium",
       volatility: 58,
       pumpFrequency: 53,
