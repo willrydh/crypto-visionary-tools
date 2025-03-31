@@ -2,7 +2,7 @@
 import React from 'react';
 import { useTradingMode } from '@/hooks/useTradingMode';
 import { Button } from '@/components/ui/button';
-import { Rocket, Sun, Moon } from 'lucide-react';
+import { Sun, Moon } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -26,8 +26,6 @@ export const TradingModeSelector = () => {
   
   const getModeIcon = (mode: string) => {
     switch (mode) {
-      case 'scalp':
-        return <Rocket className="h-4 w-4" />;
       case 'day':
         return <Sun className="h-4 w-4" />;
       case 'night':
@@ -40,8 +38,6 @@ export const TradingModeSelector = () => {
   const getModeColor = (mode: string) => {
     if (mode === tradingMode) {
       switch (mode) {
-        case 'scalp':
-          return 'bg-blue-500 hover:bg-blue-600 text-white';
         case 'day':
           return 'bg-amber-500 hover:bg-amber-600 text-white';
         case 'night':
@@ -56,28 +52,6 @@ export const TradingModeSelector = () => {
   return (
     <TooltipProvider>
       <div className="flex items-center gap-2 bg-card/50 backdrop-blur rounded-full p-1 border">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setTradingMode('scalp')}
-              className={`rounded-full px-3 ${getModeColor('scalp')}`}
-            >
-              <Rocket className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">Scalp</span>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <div className="space-y-1 max-w-xs">
-              <p className="font-medium">Scalping Mode</p>
-              <p className="text-xs text-muted-foreground">
-                Ultra-short term trading (minutes to hours). Focus on rapid price movements.
-              </p>
-            </div>
-          </TooltipContent>
-        </Tooltip>
-        
         <Tooltip>
           <TooltipTrigger asChild>
             <Button

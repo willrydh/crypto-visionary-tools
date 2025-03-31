@@ -1,7 +1,7 @@
 
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 
-export type TradingMode = 'scalp' | 'day' | 'night';
+export type TradingMode = 'day' | 'night';
 
 interface TradingModeContextType {
   tradingMode: TradingMode;
@@ -24,8 +24,6 @@ export const TradingModeProvider: React.FC<TradingModeProviderProps> = ({ childr
   // Define which timeframes to use for each trading mode
   const getTimeframes = () => {
     switch (tradingMode) {
-      case 'scalp':
-        return ['1m', '5m', '15m', '30m'];
       case 'day':
         return ['15m', '1h', '4h'];
       case 'night':
@@ -38,12 +36,10 @@ export const TradingModeProvider: React.FC<TradingModeProviderProps> = ({ childr
   // Define which indicators to use for each trading mode
   const getIndicators = () => {
     switch (tradingMode) {
-      case 'scalp':
-        return ['ma20', 'ma50', 'stochrsi', 'macd', 'volume'];
       case 'day':
         return ['ma50', 'ma100', 'macd', 'vwap', 'volume', 'rsi'];
       case 'night':
-        return ['ma100', 'ma200', 'bbands', 'rsi', 'macd', 'volume'];
+        return ['ma100', 'bbands', 'rsi', 'macd', 'volume'];
       default:
         return ['ma50', 'macd', 'rsi', 'volume'];
     }
@@ -52,8 +48,6 @@ export const TradingModeProvider: React.FC<TradingModeProviderProps> = ({ childr
   // Get trading mode description
   const getDescription = () => {
     switch (tradingMode) {
-      case 'scalp':
-        return 'Ultra-short term trading (minutes to hours). Focus on rapid price movements with tight stop-losses and quick profit-taking. Ideal for high volatility periods.';
       case 'day':
         return 'Short-term trading (hours). Positions opened and closed within the same day, focusing on intraday trends and market movements. Balanced risk approach.';
       case 'night':
@@ -66,13 +60,6 @@ export const TradingModeProvider: React.FC<TradingModeProviderProps> = ({ childr
   // Get volatility events relevant to each trading mode
   const getVolatilityEvents = () => {
     switch (tradingMode) {
-      case 'scalp':
-        return [
-          'NYSE Market Open (9:30 AM ET)',
-          'NYSE Market Close (4:00 PM ET)',
-          'Major Economic Announcements',
-          'Sudden Volume Spikes'
-        ];
       case 'day':
         return [
           'NYSE Market Open (9:30 AM ET)',
@@ -95,7 +82,7 @@ export const TradingModeProvider: React.FC<TradingModeProviderProps> = ({ childr
   // Storage effect to remember user's preferred trading mode
   useEffect(() => {
     const storedMode = localStorage.getItem('tradingMode') as TradingMode;
-    if (storedMode) {
+    if (storedMode && (storedMode === 'day' || storedMode === 'night')) {
       setTradingMode(storedMode);
     }
   }, []);
