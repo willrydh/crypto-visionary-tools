@@ -21,6 +21,10 @@ const RootLayout: React.FC = () => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
+  // Check if current route is trading related for additional spacing
+  const isTradePage = location.pathname === '/trade-suggestion' || 
+                       location.pathname === '/trade';
+
   return (
     <TooltipProvider>
       <TimeframeProvider>
@@ -32,7 +36,7 @@ const RootLayout: React.FC = () => {
                   <MainNavigation />
                   <div className="md:ml-64">
                     <TopHeader />
-                    <main className="flex-1 overflow-auto pb-16 md:pb-0 px-4 md:px-6 lg:px-8 pt-28 md:pt-32">
+                    <main className={`flex-1 overflow-auto pb-16 md:pb-0 px-4 md:px-6 lg:px-8 pt-28 md:pt-32 ${isTradePage ? 'pt-30 md:pt-36' : ''}`}>
                       <Outlet />
                     </main>
                     <MobileNavigation />

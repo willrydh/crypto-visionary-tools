@@ -174,15 +174,29 @@ main {
 
 /* Fix spacing between heading and trading mode bar */
 h1, h2 {
-  @apply mt-2 md:mt-4;
+  @apply mt-4 md:mt-6;  /* Increased from mt-2/mt-4 to mt-4/mt-6 */
 }
 
 /* Add space between sections */
 section + section {
-  @apply mt-8;
+  @apply mt-10;  /* Increased from mt-8 to mt-10 */
 }
 
 /* Improve card spacing */
 .card-container {
-  @apply space-y-6;
+  @apply space-y-8;  /* Increased from space-y-6 to space-y-8 */
+}
+
+/* Additional spacing for trade pages */
+.trade-page-container {
+  @apply space-y-8;
+}
+
+.trade-page-section {
+  @apply mt-8;
+}
+
+/* Improve alert spacing */
+.alert {
+  @apply my-6;
 }
