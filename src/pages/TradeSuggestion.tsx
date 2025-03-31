@@ -64,7 +64,7 @@ const TradeSuggestion = () => {
   
   return (
     <PullToRefresh onRefresh={handleRefresh}>
-      <div className="space-y-8"> {/* Increased from space-y-6 to space-y-8 */}
+      <div className="space-y-6">
         <TradePageHeader 
           isLoading={isLoading} 
           onRefresh={handleRefresh} 
@@ -76,12 +76,12 @@ const TradeSuggestion = () => {
           change24h={2.1}
         />
         
-        <div className="space-y-8"> {/* Increased from space-y-6 to space-y-8 */}
+        <div className="space-y-6">
           <div className="w-full overflow-hidden rounded-lg border border-border">
             <PriceChart symbol="BTC/USDT" />
           </div>
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8"> {/* Increased from gap-6 to gap-8 */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <EnhancedTechnicalAnalysis 
               currentBias={currentBias}
               indicators={indicators}
@@ -97,7 +97,7 @@ const TradeSuggestion = () => {
             />
           </div>
           
-          <div className="mt-10"> {/* Added extra mt-10 for more spacing before TradingEducation */}
+          <div className="mt-8">
             <TradingEducation />
           </div>
         </div>

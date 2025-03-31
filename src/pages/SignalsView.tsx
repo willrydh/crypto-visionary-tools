@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { PriceChart } from '@/components/charts/PriceChart';
 import EnhancedTechnicalAnalysis from '@/components/analysis/EnhancedTechnicalAnalysis';
@@ -60,7 +59,6 @@ const SignalsView = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Refresh when trading mode changes
   useEffect(() => {
     generateAnalysis('BTC/USDT', true);
     fetchLevels('BTC/USDT');
@@ -85,16 +83,12 @@ const SignalsView = () => {
     }
   };
 
-  // Get timeframes based on trading mode
   const timeframes = getTimeframes();
   
-  // Get indicators based on trading mode
   const modeIndicators = getIndicators();
   
-  // Get market volatility events based on trading mode
   const volatilityEvents = getVolatilityEvents();
 
-  // Get trading-mode specific color
   const getModeColor = () => {
     switch(tradingMode) {
       case 'scalp': return 'text-blue-500';
@@ -105,7 +99,7 @@ const SignalsView = () => {
   };
 
   return (
-    <div className="space-y-6 mt-6">
+    <div className="space-y-6">
       <TradePageHeader isLoading={isLoading} onRefresh={handleRefresh} />
 
       <CoinInfo 
@@ -147,7 +141,6 @@ const SignalsView = () => {
               onRefresh={handleRefresh}
             />
             
-            {/* Mode-specific indicators */}
             <div className="mt-6 bg-card rounded-lg border p-4">
               <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
                 <span className={getModeColor()}>
@@ -188,7 +181,6 @@ const SignalsView = () => {
               isLoading={isLoading} 
             />
             
-            {/* Trading Mode Volatility Events */}
             <div className="bg-card rounded-lg border p-4">
               <h3 className="text-lg font-medium mb-3">Market Volatility Events</h3>
               <p className="text-sm text-muted-foreground mb-3">
@@ -208,7 +200,6 @@ const SignalsView = () => {
         
         <MarketSessionStats 
           title="Market Session Impact Analysis" 
-          // Adjust market session times (-1 hour for Sweden timezone)
           asianSessionStart={7} // 8 PM - 1 hour
           europeanSessionStart={2} // 3 AM - 1 hour
           usSessionStart={8} // 9 AM - 1 hour
