@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +17,7 @@ interface EnhancedTechnicalAnalysisProps {
   lastUpdated: Date | null;
   isLoading: boolean;
   onRefresh: () => void;
+  title?: string;
 }
 
 const EnhancedTechnicalAnalysis: React.FC<EnhancedTechnicalAnalysisProps> = ({
@@ -26,23 +26,21 @@ const EnhancedTechnicalAnalysis: React.FC<EnhancedTechnicalAnalysisProps> = ({
   confidenceScore,
   lastUpdated,
   isLoading,
-  onRefresh
+  onRefresh,
+  title = "Enhanced Technical Analysis"
 }) => {
   const { tradingMode } = useTradingMode();
   const [activeTab, setActiveTab] = useState<string>('summary');
   
-  // Count signals by type
   const bullishCount = indicators.filter(i => i.signal === 'bullish').length;
   const bearishCount = indicators.filter(i => i.signal === 'bearish').length;
   const neutralCount = indicators.filter(i => i.signal === 'neutral').length;
   
-  // Group indicators by category
   const trendIndicators = indicators.filter(i => i.category === 'trend');
   const momentumIndicators = indicators.filter(i => i.category === 'momentum');
   const volumeIndicators = indicators.filter(i => i.category === 'volume');
   const volatilityIndicators = indicators.filter(i => i.category === 'volatility');
   
-  // Get advanced analysis based on trading mode and bias
   const getAdvancedAnalysis = () => {
     const modeName = 'Night Trading';
     
@@ -87,7 +85,6 @@ const EnhancedTechnicalAnalysis: React.FC<EnhancedTechnicalAnalysisProps> = ({
   
   const analysis = getAdvancedAnalysis();
   
-  // Get color based on bias
   const getBiasColor = (bias: MarketBias) => {
     switch(bias) {
       case 'bullish':
@@ -101,7 +98,6 @@ const EnhancedTechnicalAnalysis: React.FC<EnhancedTechnicalAnalysisProps> = ({
     }
   };
   
-  // Indicator categories
   const categories = [
     { id: 'trend', name: 'Trend', icon: <LineChart className="h-4 w-4" /> },
     { id: 'momentum', name: 'Momentum', icon: <Activity className="h-4 w-4" /> },
@@ -109,7 +105,6 @@ const EnhancedTechnicalAnalysis: React.FC<EnhancedTechnicalAnalysisProps> = ({
     { id: 'volatility', name: 'Volatility', icon: <Activity className="h-4 w-4" /> }
   ];
   
-  // Get status text based on confidence score
   const getConfidenceStatus = (score: number) => {
     if (score >= 80) return 'Very High';
     if (score >= 65) return 'High';
@@ -118,14 +113,13 @@ const EnhancedTechnicalAnalysis: React.FC<EnhancedTechnicalAnalysisProps> = ({
     return 'Very Low';
   };
   
-  // Ensure confidence score has a valid value or use a fallback
   const displayConfidence = isNaN(confidenceScore) ? 50 : confidenceScore;
   
   return (
     <Card>
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
-          <CardTitle className="text-lg">Enhanced Technical Analysis</CardTitle>
+          <CardTitle className="text-lg">{title}</CardTitle>
           <Badge className={getBiasColor(currentBias)} variant="secondary">
             {currentBias === 'bullish' ? (
               <TrendingUp className="h-3.5 w-3.5 mr-1" />

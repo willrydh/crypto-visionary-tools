@@ -12,10 +12,12 @@ import { DataSourceIndicator } from '@/components/ui/data-source-indicator';
 
 interface ImprovedEconomicCalendarProps {
   compact?: boolean;
+  title?: string; // Added title as an optional prop
 }
 
 export const ImprovedEconomicCalendar: React.FC<ImprovedEconomicCalendarProps> = ({ 
-  compact = false 
+  compact = false,
+  title = "Upcoming Events" // Default value
 }) => {
   const [selectedPeriod, setSelectedPeriod] = useState<'today' | 'tomorrow' | 'week' | 'month'>('today');
   const [events, setEvents] = useState<{
@@ -342,7 +344,7 @@ export const ImprovedEconomicCalendar: React.FC<ImprovedEconomicCalendarProps> =
     <Card className="h-full">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
-          <CardTitle className="text-lg">Upcoming Events</CardTitle>
+          <CardTitle className="text-lg">{title}</CardTitle>
           <div className="flex items-center gap-2">
             <DataSourceIndicator 
               source="Forex Factory" 
