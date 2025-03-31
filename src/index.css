@@ -1,26 +1,25 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 222 35% 4%;
+    --background: 222 35% 7%;
     --foreground: 210 40% 98%;
 
-    --card: 223 40% 6%;
+    --card: 223 40% 9%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 223 40% 6%;
+    --popover: 223 40% 9%;
     --popover-foreground: 210 40% 98%;
 
     --primary: 222 76% 54%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 222 35% 10%;
+    --secondary: 222 35% 13%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217 37% 12%;
+    --muted: 217 37% 15%;
     --muted-foreground: 215 25% 65%;
 
     --accent: 222 76% 46%;
@@ -29,8 +28,8 @@
     --destructive: 0 68% 50%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217 37% 10%;
-    --input: 217 37% 10%;
+    --border: 217 37% 12%;
+    --input: 217 37% 12%;
     --ring: 222 76% 46%;
 
     --radius: 0.5rem;
@@ -44,7 +43,7 @@
     --sidebar-border: 215 37% 10%;
     --sidebar-ring: 222 76% 54%;
     
-    --chart-bg: 222 45% 5%;
+    --chart-bg: 222 45% 6%;
   }
 }
 
@@ -138,15 +137,15 @@ body {
 }
 
 .error-container {
-  @apply bg-destructive/10 text-destructive border border-destructive/30 rounded-md p-3 my-2;
+  @apply bg-destructive/5 text-destructive border border-destructive/20 rounded-md p-3 my-2;
 }
 
 .success-container {
-  @apply bg-green-500/10 text-green-500 border border-green-500/30 rounded-md p-3 my-2;
+  @apply bg-green-500/5 text-green-500 border border-green-500/20 rounded-md p-3 my-2;
 }
 
 .warning-container {
-  @apply bg-yellow-500/10 text-yellow-500 border border-yellow-500/30 rounded-md p-3 my-2;
+  @apply bg-yellow-500/5 text-yellow-500 border border-yellow-500/20 rounded-md p-3 my-2;
 }
 
 /* Add responsive fixes for the TradingEducation component */
@@ -157,4 +156,3 @@ body {
 .trading-education-tab {
   @apply flex items-center justify-center p-2 rounded-md text-sm md:text-base;
 }
-

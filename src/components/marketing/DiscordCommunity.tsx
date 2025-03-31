@@ -2,6 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Code } from 'lucide-react';
 
 export const DiscordCommunity = () => {
   return (
@@ -36,23 +37,18 @@ export const DiscordCommunity = () => {
             </div>
             
             <div className="flex items-center justify-center">
-              <div className="bg-white p-4 rounded-lg shadow-lg">
-                <div className="aspect-square w-48 h-48 bg-[#5865F2] flex items-center justify-center text-white">
-                  {/* This is a placeholder for a QR code - in a real app, you'd use an actual QR code image */}
-                  <div className="text-center">
-                    <div className="mb-2 font-bold">ProfitPilotAI</div>
-                    <div className="border-2 border-white w-32 h-32 mx-auto grid grid-cols-4 grid-rows-4 p-2">
-                      {/* Simplified QR code pattern */}
-                      {Array(16).fill(0).map((_, i) => (
-                        <div 
-                          key={i} 
-                          className={`${Math.random() > 0.5 ? 'bg-white' : 'bg-transparent'}`}
-                        ></div>
-                      ))}
-                    </div>
-                  </div>
+              <div className="bg-gray-900/60 p-5 rounded-lg border border-[#5865F2]/30 shadow-lg font-mono w-full max-w-xs">
+                <div className="flex items-center gap-2 border-b border-[#5865F2]/30 pb-3 mb-4">
+                  <Code className="h-5 w-5 text-[#5865F2]" />
+                  <span className="text-[#5865F2] font-semibold">Discord Invite</span>
                 </div>
-                <div className="text-center text-xs mt-2 text-gray-500">Scan to join ProfitPilotAI</div>
+                <div className="text-center space-y-3">
+                  <p className="text-white/90 font-bold">ProfitPilotAI</p>
+                  <code className="text-sm bg-black/30 py-2 px-3 rounded block text-green-400 overflow-x-auto">
+                    discord.gg/ProfitPilotAI
+                  </code>
+                  <p className="text-xs text-gray-400">Join our trading community</p>
+                </div>
               </div>
             </div>
           </CardContent>
