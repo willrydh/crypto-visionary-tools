@@ -6,8 +6,6 @@ import { TradeSuggestionCard } from '@/components/analysis/TradeSuggestionCard';
 import { PriceChart } from '@/components/charts/PriceChart';
 import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';
 import { useToast } from '@/hooks/use-toast';
-import { Button } from '@/components/ui/button';
-import { RefreshCw } from 'lucide-react';
 import CoinInfo from '@/components/crypto/CoinInfo';
 import TradingEducation from '@/components/education/TradingEducation';
 import { TradePageHeader } from '@/components/trading/TradePageHeader';
