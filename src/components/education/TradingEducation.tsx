@@ -4,9 +4,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BookOpen, GraduationCap, LineChart, AlertTriangle, Zap, TrendingUp } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { cn } from '@/lib/utils';
 
 export const TradingEducation = () => {
   const [activeTab, setActiveTab] = useState('patterns');
+  const isMobile = useIsMobile();
   
   const educationCategories = [
     { id: 'patterns', label: 'Chart Patterns', icon: <LineChart className="h-4 w-4" /> },
@@ -138,20 +141,27 @@ export const TradingEducation = () => {
 
   return (
     <Card className="bg-card/70 border-border/60 mb-10">
-      <CardHeader>
+      <CardHeader className="pb-2 md:pb-4">
         <div className="flex items-center gap-2">
           <BookOpen className="h-5 w-5 text-primary" />
-          <CardTitle>Trading Education</CardTitle>
+          <CardTitle className="text-xl">Trading Education</CardTitle>
         </div>
-        <CardDescription>
+        <CardDescription className="text-sm md:text-base">
           Enhance your trading knowledge with key concepts and strategies
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4 overflow-hidden">
+      <CardContent className="space-y-4 p-3 md:p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="w-full grid grid-cols-2 sm:grid-cols-4 gap-1">
             {educationCategories.map((category) => (
-              <TabsTrigger key={category.id} value={category.id} className="flex items-center gap-1.5">
+              <TabsTrigger 
+                key={category.id} 
+                value={category.id} 
+                className={cn(
+                  "flex items-center justify-center gap-1.5 py-1.5",
+                  activeTab === category.id ? "bg-primary text-white" : ""
+                )}
+              >
                 {category.icon}
                 <span className="hidden sm:inline">{category.label}</span>
                 <span className="sm:hidden">{category.label.split(' ')[0]}</span>
@@ -160,28 +170,37 @@ export const TradingEducation = () => {
           </TabsList>
           
           {educationCategories.map((category) => (
-            <TabsContent key={category.id} value={category.id} className="pt-4 overflow-auto max-h-[60vh] sm:max-h-none">
-              <Accordion type="single" collapsible className="w-full">
+            <TabsContent 
+              key={category.id} 
+              value={category.id} 
+              className="pt-4 overflow-auto max-h-[60vh] sm:max-h-none"
+            >
+              <Accordion 
+                type="single" 
+                collapsible 
+                className="w-full"
+                defaultValue={getActiveContent()[0]?.id}
+              >
                 {getActiveContent().map((item, index) => (
-                  <AccordionItem key={item.id} value={item.id}>
-                    <AccordionTrigger className="text-left">
-                      {item.title}
+                  <AccordionItem key={item.id} value={item.id} className="border-b border-border/40 py-1">
+                    <AccordionTrigger className="text-left py-3 px-1 md:px-2 hover:no-underline">
+                      <span className="text-base md:text-lg font-medium">{item.title}</span>
                     </AccordionTrigger>
-                    <AccordionContent className="space-y-4 text-sm">
-                      <p>{item.description}</p>
+                    <AccordionContent className="space-y-3 text-sm md:text-base px-1 md:px-2">
+                      <p className="text-muted-foreground">{item.description}</p>
                       
                       <div className="bg-primary/5 border border-primary/10 rounded-md p-3">
                         <div className="flex items-center gap-1.5 text-primary font-medium mb-1">
                           <Zap className="h-4 w-4" />
-                          Pro Tips
+                          <span className="text-sm md:text-base">Pro Tips</span>
                         </div>
                         <p className="text-sm">{item.tips}</p>
                       </div>
                       
-                      <div className="bg-orange-500/5 border border-orange-500/10 rounded-md p-3">
+                      <div className="bg-orange-500/5 border border-orange-500/10 rounded-md p-3 mb-2">
                         <div className="flex items-center gap-1.5 text-orange-500 font-medium mb-1">
                           <AlertTriangle className="h-4 w-4" />
-                          Watch Out
+                          <span className="text-sm md:text-base">Watch Out</span>
                         </div>
                         <p className="text-sm">{item.warning}</p>
                       </div>

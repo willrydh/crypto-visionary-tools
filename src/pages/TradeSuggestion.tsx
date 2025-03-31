@@ -65,14 +65,14 @@ const TradeSuggestion = () => {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="w-72">
+          <div className="w-full md:w-72">
             <TradingModeSelector />
           </div>
           <Button 
             onClick={handleRefresh} 
             disabled={isLoading} 
             size="icon"
-            className="h-10 w-10"
+            className="h-10 w-10 flex-shrink-0"
           >
             {isLoading ? (
               <RefreshCw className="h-4 w-4 animate-spin" />
@@ -89,8 +89,10 @@ const TradeSuggestion = () => {
         change24h={2.1}
       />
       
-      <div className="grid grid-cols-1 gap-6">
-        <PriceChart symbol="BTC/USDT" />
+      <div className="space-y-6">
+        <div className="w-full overflow-hidden rounded-lg border border-border">
+          <PriceChart symbol="BTC/USDT" />
+        </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <EnhancedTechnicalAnalysis 
