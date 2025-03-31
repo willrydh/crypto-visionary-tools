@@ -62,12 +62,12 @@ const WelcomeHeader = () => {
 
   return (
     <div className="w-full bg-card rounded-lg border border-border p-6 mb-6 relative overflow-hidden">
-      {/* Chart Background with Opacity */}
-      <div className="absolute inset-0 w-full h-full">
+      {/* Chart Background - More visible and dynamic */}
+      <div className="absolute inset-0 w-full h-full flex items-center justify-end">
         <img 
           src="/lovable-uploads/c838292a-0224-48a0-a205-21fde8947f28.png" 
           alt="Chart Background" 
-          className="w-full h-full opacity-20 object-contain"
+          className="h-full opacity-25 object-cover object-right"
         />
       </div>
       
