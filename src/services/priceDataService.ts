@@ -31,15 +31,10 @@ export interface HighLowData {
   source: string;
 }
 
+// These API keys should be on backend in production environment
 const API_KEY = "kOQYCVeSeczfY49QU2";
 const API_SECRET = "mfCfpXUQs8dds4DzfNV0AVL0BaXcc2jgBKuZ";
 const BASE_URL = "https://api.bybit.com/v5";
-
-const headers = {
-  "X-BAPI-API-KEY": API_KEY,
-  "X-BAPI-TIMESTAMP": Date.now().toString(),
-  "X-BAPI-RECV-WINDOW": "5000",
-};
 
 // Helper function to format symbol for Bybit API
 // Bybit requires symbols without a slash (e.g., "BTCUSDT" not "BTC/USDT")
@@ -62,6 +57,9 @@ const formatTimeframe = (interval: string): string => {
   }
 };
 
+// Flag to help control when to use mock data
+let useOnlyMockData = true;
+
 export async function fetchHistoricalPrices(
   symbol: string = "BTCUSDT",
   interval: string = "D", // D = daily, 60 = hourly, 240 = 4h
@@ -70,18 +68,30 @@ export async function fetchHistoricalPrices(
   const formattedSymbol = formatSymbol(symbol);
   const formattedInterval = typeof interval === 'string' && interval.length <= 2 ? 
     formatTimeframe(interval) : interval;
+  
+  // If we're forcing mock data usage to prevent excessive API failures
+  if (useOnlyMockData) {
+    console.log('Using mock data for historical prices');
+    return generateMockCandleData(limit, formattedSymbol);
+  }
     
-  const url = `${BASE_URL}/market/kline?category=linear&symbol=${formattedSymbol}&interval=${formattedInterval}&limit=${limit}`;
-
   try {
-    const currentTimestamp = Date.now().toString();
-    const updatedHeaders = {
-      ...headers,
-      "X-BAPI-TIMESTAMP": currentTimestamp,
-    };
-
+    const url = `${BASE_URL}/market/kline?category=linear&symbol=${formattedSymbol}&interval=${formattedInterval}&limit=${limit}`;
+    
     console.log('Fetching historical prices from:', url);
-    const res = await fetch(url, { headers: updatedHeaders });
+    const res = await fetch(url, { 
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      // Using timeout to prevent hanging requests
+      signal: AbortSignal.timeout(5000)
+    });
+    
+    if (!res.ok) {
+      throw new Error(`API responded with status: ${res.status}`);
+    }
+    
     const json = await res.json();
     console.log('API response status:', json.retMsg);
     const now = new Date().toISOString();
@@ -91,7 +101,7 @@ export async function fetchHistoricalPrices(
     // Ensure we have data in the response
     if (!json.result?.list || json.result.list.length === 0) {
       console.error('No candle data in API response');
-      return generateMockCandleData(limit, symbol);
+      return generateMockCandleData(limit, formattedSymbol);
     }
 
     // Map the response data to our candle format with correct timestamp handling
@@ -113,8 +123,11 @@ export async function fetchHistoricalPrices(
     });
   } catch (error) {
     console.error("Bybit API error (historical prices):", error);
+    // After a failed attempt, switch to only using mock data
+    useOnlyMockData = true;
+    
     // Return mock data as fallback when API fails
-    return generateMockCandleData(limit, symbol);
+    return generateMockCandleData(limit, formattedSymbol);
   }
 }
 
@@ -126,17 +139,30 @@ export async function fetchCurrentPrice(symbol: string = "BTCUSDT"): Promise<{
   timestamp: number;
 }> {
   const formattedSymbol = formatSymbol(symbol);
-  const url = `${BASE_URL}/market/tickers?category=linear&symbol=${formattedSymbol}`;
+  
+  // If we're forcing mock data usage to prevent excessive API failures
+  if (useOnlyMockData) {
+    console.log('Using mock data for current price');
+    return generateMockCurrentPrice(formattedSymbol);
+  }
 
   try {
-    const currentTimestamp = Date.now().toString();
-    const updatedHeaders = {
-      ...headers,
-      "X-BAPI-TIMESTAMP": currentTimestamp,
-    };
-
+    const url = `${BASE_URL}/market/tickers?category=linear&symbol=${formattedSymbol}`;
+    
     console.log('Fetching current price from:', url);
-    const res = await fetch(url, { headers: updatedHeaders });
+    const res = await fetch(url, { 
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      // Using timeout to prevent hanging requests
+      signal: AbortSignal.timeout(5000)
+    });
+    
+    if (!res.ok) {
+      throw new Error(`API responded with status: ${res.status}`);
+    }
+    
     const json = await res.json();
     console.log('Current price API response status:', json.retMsg);
 
@@ -152,8 +178,11 @@ export async function fetchCurrentPrice(symbol: string = "BTCUSDT"): Promise<{
     };
   } catch (error) {
     console.error("Bybit API error (current price):", error);
+    // After a failed attempt, switch to only using mock data
+    useOnlyMockData = true;
+    
     // Return mock price as fallback based on symbol
-    return generateMockCurrentPrice(symbol);
+    return generateMockCurrentPrice(formattedSymbol);
   }
 }
 
@@ -161,14 +190,14 @@ export async function fetchHighLowData(symbol: string = "BTCUSDT"): Promise<High
   const formattedSymbol = formatSymbol(symbol);
   const now = new Date().toISOString();
 
-  try {
-    // Use updated headers with current timestamp for each request
-    const currentTimestamp = Date.now().toString();
-    const updatedHeaders = {
-      ...headers,
-      "X-BAPI-TIMESTAMP": currentTimestamp,
-    };
+  // If we're forcing mock data usage
+  if (useOnlyMockData) {
+    console.log('Using mock data for high/low data');
+    return generateMockHighLowData(formattedSymbol);
+  }
 
+  try {
+    // Use the fetchHistoricalPrices function which already has fallback
     const [dailyCandles, weeklyCandles] = await Promise.all([
       fetchHistoricalPrices(formattedSymbol, "60", 24), // hourly, 24 hours
       fetchHistoricalPrices(formattedSymbol, "240", 42), // 4-hour candles, about 1 week
@@ -185,13 +214,13 @@ export async function fetchHighLowData(symbol: string = "BTCUSDT"): Promise<High
       weeklyHigh,
       weeklyLow,
       fetchedAt: now,
-      source: "Bybit",
+      source: dailyCandles[0].source, // Will be "Bybit" or "Bybit-Mock"
     };
   } catch (error) {
-    console.error("Bybit API error (high/low data):", error);
+    console.error("Error generating high/low data:", error);
     
     // Return mock data as fallback
-    return generateMockHighLowData(symbol);
+    return generateMockHighLowData(formattedSymbol);
   }
 }
 

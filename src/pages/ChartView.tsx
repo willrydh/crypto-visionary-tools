@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSupportResistance } from '@/hooks/useSupportResistance';
 import PriceChart from '@/components/charts/PriceChart';
 import { IndicatorBreakdown } from '@/components/analysis/IndicatorBreakdown';
@@ -19,23 +19,73 @@ const ChartView = () => {
   const { indicators, isLoading, generateAnalysis } = useTechnicalAnalysis();
   const { levels, updateLevels } = useSupportResistance();
   const { selectedCrypto } = useCrypto();
+  const [currentPrice, setCurrentPrice] = useState<number>(0);
+  const [priceChange, setPriceChange] = useState<number>(0);
   
   useEffect(() => {
     if (indicators.length === 0) {
       generateAnalysis(selectedCrypto.pairSymbol);
     }
     updateLevels(selectedCrypto.pairSymbol);
+    
+    // Fetch current price
+    const fetchPrice = async () => {
+      try {
+        const priceData = await fetchCurrentPrice(selectedCrypto.pairSymbol.replace('/', ''));
+        if (priceData) {
+          setCurrentPrice(priceData.price);
+          setPriceChange(priceData.change24h);
+        }
+      } catch (error) {
+        console.error('Error fetching price:', error);
+      }
+    };
+    
+    fetchPrice();
+    
+    const priceInterval = setInterval(fetchPrice, 30000);
+    
+    return () => {
+      clearInterval(priceInterval);
+    };
   }, []);
   
   useEffect(() => {
     generateAnalysis(selectedCrypto.pairSymbol);
     updateLevels(selectedCrypto.pairSymbol);
+    
+    // Fetch current price when crypto changes
+    const fetchPrice = async () => {
+      try {
+        const priceData = await fetchCurrentPrice(selectedCrypto.pairSymbol.replace('/', ''));
+        if (priceData) {
+          setCurrentPrice(priceData.price);
+          setPriceChange(priceData.change24h);
+        }
+      } catch (error) {
+        console.error('Error fetching price:', error);
+      }
+    };
+    
+    fetchPrice();
   }, [selectedCrypto]);
   
   const handleRefresh = async () => {
     try {
       await generateAnalysis(selectedCrypto.pairSymbol, true);
       await updateLevels(selectedCrypto.pairSymbol);
+      
+      // Refresh price
+      try {
+        const priceData = await fetchCurrentPrice(selectedCrypto.pairSymbol.replace('/', ''));
+        if (priceData) {
+          setCurrentPrice(priceData.price);
+          setPriceChange(priceData.change24h);
+        }
+      } catch (error) {
+        console.error('Error refreshing price:', error);
+      }
+      
       toast({
         title: "Chart Updated",
         description: "Chart data and indicators have been refreshed.",
@@ -98,24 +148,10 @@ const ChartView = () => {
         
         {/* Coin info underneath */}
         <CoinInfo 
-          symbol={`${selectedCrypto.symbol}/USDT`}
+          symbol={selectedCrypto.pairSymbol}
           name={selectedCrypto.name}
-          price={selectedCrypto.symbol === 'BTC' ? 68648 : 
-                 selectedCrypto.symbol === 'ETH' ? 3452 : 
-                 selectedCrypto.symbol === 'SOL' ? 172 :
-                 selectedCrypto.symbol === 'XRP' ? 0.55 :
-                 selectedCrypto.symbol === 'DOGE' ? 0.16 :
-                 selectedCrypto.symbol === 'WLD' ? 7.50 :
-                 selectedCrypto.symbol === 'LTC' ? 83 :
-                 selectedCrypto.symbol === 'SUI' ? 1.25 : 0}
-          change24h={selectedCrypto.symbol === 'BTC' ? 1.77 : 
-                    selectedCrypto.symbol === 'ETH' ? 2.3 : 
-                    selectedCrypto.symbol === 'SOL' ? 3.2 :
-                    selectedCrypto.symbol === 'XRP' ? -0.8 :
-                    selectedCrypto.symbol === 'DOGE' ? 1.2 :
-                    selectedCrypto.symbol === 'WLD' ? 4.5 :
-                    selectedCrypto.symbol === 'LTC' ? 0.9 :
-                    selectedCrypto.symbol === 'SUI' ? 2.1 : 0}
+          price={currentPrice}
+          change24h={priceChange}
           description={selectedCrypto.description}
         />
       </div>
@@ -123,7 +159,7 @@ const ChartView = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="md:col-span-3">
           <PriceChart 
-            symbol={`${selectedCrypto.symbol}/USDT`}
+            symbol={selectedCrypto.pairSymbol}
             showLevels={true} 
             levels={levels} 
           />

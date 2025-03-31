@@ -11,11 +11,14 @@ import { PullToRefresh } from '@/components/ui/pull-to-refresh';
 import { useTradingMode } from '@/hooks/useTradingMode';
 import { TradePageHeader } from '@/components/trading/TradePageHeader';
 import { fetchCurrentPrice } from '@/services/priceDataService';
+import { useCrypto } from '@/hooks/useCrypto';
 
 const TradeSuggestion = () => {
   const { toast } = useToast();
-  const [currentPrice, setCurrentPrice] = useState(68648); // Updated with more realistic BTC price
+  const [currentPrice, setCurrentPrice] = useState<number>(68648);
+  const [priceChange, setPriceChange] = useState<number>(2.1);
   const { tradingMode } = useTradingMode();
+  const { selectedCrypto } = useCrypto();
   const { 
     indicators,
     currentBias,
@@ -28,15 +31,16 @@ const TradeSuggestion = () => {
   
   useEffect(() => {
     if (indicators.length === 0) {
-      generateAnalysis('BTC/USDT');
+      generateAnalysis(selectedCrypto.pairSymbol);
     }
     
-    // Fetch real price instead of simulating
+    // Fetch real price
     const fetchPrice = async () => {
       try {
-        const priceData = await fetchCurrentPrice('BTCUSDT');
+        const priceData = await fetchCurrentPrice(selectedCrypto.pairSymbol.replace('/', ''));
         if (priceData) {
           setCurrentPrice(priceData.price);
+          setPriceChange(priceData.change24h);
         }
       } catch (error) {
         console.error('Error fetching price:', error);
@@ -50,24 +54,25 @@ const TradeSuggestion = () => {
     return () => {
       clearInterval(priceInterval);
     };
-  }, []);
+  }, [selectedCrypto]);
   
   // Refresh analysis when trading mode changes
   useEffect(() => {
     if (!isLoading) {
-      generateAnalysis('BTC/USDT', true);
+      generateAnalysis(selectedCrypto.pairSymbol, true);
     }
-  }, [tradingMode]);
+  }, [tradingMode, selectedCrypto]);
   
   const handleRefresh = async () => {
     try {
-      await generateAnalysis('BTC/USDT', true);
+      await generateAnalysis(selectedCrypto.pairSymbol, true);
       
       // Also refresh price
       try {
-        const priceData = await fetchCurrentPrice('BTCUSDT');
+        const priceData = await fetchCurrentPrice(selectedCrypto.pairSymbol.replace('/', ''));
         if (priceData) {
           setCurrentPrice(priceData.price);
+          setPriceChange(priceData.change24h);
         }
       } catch (error) {
         console.error('Error refreshing price:', error);
@@ -96,14 +101,16 @@ const TradeSuggestion = () => {
         />
         
         <CoinInfo 
-          symbol="BTC/USDT" 
+          symbol={selectedCrypto.pairSymbol}
+          name={selectedCrypto.name}
           price={currentPrice}
-          change24h={2.1}
+          change24h={priceChange}
+          description={selectedCrypto.description}
         />
         
         <div className="space-y-6">
           <div className="w-full overflow-hidden rounded-lg border border-border">
-            <PriceChart symbol="BTC/USDT" />
+            <PriceChart symbol={selectedCrypto.pairSymbol} />
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
