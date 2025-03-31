@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import DataStatusIndicator from '@/components/dashboard/DataStatusIndicator';
-import { InfoCircle, RefreshCw } from 'lucide-react';
+import { Info, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
@@ -93,7 +93,7 @@ const FearGreedIndex = () => {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <InfoCircle className="h-4 w-4" />
+                      <Info className="h-4 w-4" />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent align="end">
