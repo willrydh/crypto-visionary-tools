@@ -13,7 +13,6 @@ import {
   Lightbulb,
   Activity,
 } from 'lucide-react';
-import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
 import { useTradingMode } from '@/hooks/useTradingMode';
 
 interface NavigationMenuProps {
@@ -77,10 +76,6 @@ export default function NavigationMenu({ className }: NavigationMenuProps) {
   return (
     <div className={cn('flex flex-col gap-4', className)}>
       <div className="hidden md:block">
-        <div className="mb-4">
-          {/* Only render TradingModeSelector if we have trading mode context */}
-          {typeof tradingMode !== 'undefined' && <TradingModeSelector />}
-        </div>
         <p className="text-xs text-muted-foreground px-4 mb-2">{getDescription()}</p>
       </div>
       

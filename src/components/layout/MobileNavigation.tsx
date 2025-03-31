@@ -14,7 +14,6 @@ import {
   X
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 
@@ -49,23 +48,6 @@ const MobileNavigation: React.FC = () => {
               <span className="mt-1">{item.label}</span>
             </NavLink>
           ))}
-          
-          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-            <SheetTrigger asChild>
-              <button className="flex flex-col items-center py-2 px-3 text-xs flex-1 text-muted-foreground">
-                <ChevronUp size={20} />
-                <span className="mt-1">More</span>
-              </button>
-            </SheetTrigger>
-            <SheetContent side="bottom" className="h-72">
-              <SheetHeader className="text-left mb-4">
-                <SheetTitle>Trading Mode</SheetTitle>
-              </SheetHeader>
-              <div className="px-1">
-                <TradingModeSelector />
-              </div>
-            </SheetContent>
-          </Sheet>
         </nav>
       </div>
     </>

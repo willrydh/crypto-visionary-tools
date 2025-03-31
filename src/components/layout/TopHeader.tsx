@@ -3,7 +3,6 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Bell, Settings, LogOut } from 'lucide-react';
-import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
 import { useToast } from '@/hooks/use-toast';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import Logo from '@/assets/logo.svg';
@@ -47,10 +46,6 @@ const TopHeader = () => {
       </div>
       
       <div className="ml-auto flex items-center gap-2">
-        <div className="hidden md:block">
-          <TradingModeSelector />
-        </div>
-
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
