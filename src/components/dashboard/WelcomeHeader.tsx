@@ -60,36 +60,46 @@ const WelcomeHeader = () => {
   };
 
   return (
-    <div className="w-full bg-card rounded-lg border border-border p-6 mb-6">
-      <h2 className="text-2xl font-bold mb-2">Welcome back, {randomName}</h2>
-      <p className="text-muted-foreground mb-6">
-        Your AI-powered trading companion - gain the edge with real-time signals and deep market analysis
-      </p>
+    <div className="w-full bg-card rounded-lg border border-border p-6 mb-6 relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-1/3 h-full opacity-10 pointer-events-none">
+        <img 
+          src="/lovable-uploads/fc481dcb-6dc5-4724-8938-9fef96e6feaf.png" 
+          alt="Chart Background" 
+          className="object-cover h-full w-full"
+        />
+      </div>
       
-      <div className="border-t border-border pt-4">
-        <h3 className="text-lg font-medium mb-4">System Status</h3>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {systemServices.map((service, index) => (
-            <TooltipProvider key={service.name}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      {service.icon}
-                      <span className="text-sm">{service.name}</span>
+      <div className="relative z-10">
+        <h2 className="text-2xl font-bold mb-2">Welcome back, {randomName}</h2>
+        <p className="text-muted-foreground mb-6">
+          Your AI-powered trading companion - gain the edge with real-time signals and deep market analysis
+        </p>
+        
+        <div className="border-t border-border pt-4">
+          <h3 className="text-lg font-medium mb-4">System Status</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {systemServices.map((service, index) => (
+              <TooltipProvider key={service.name}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        {service.icon}
+                        <span className="text-sm">{service.name}</span>
+                      </div>
+                      <Badge variant="outline" className={`${getStatusColor(latencies[index])} ml-auto`}>
+                        {latencies[index]}ms
+                      </Badge>
                     </div>
-                    <Badge variant="outline" className={`${getStatusColor(latencies[index])} ml-auto`}>
-                      {latencies[index]}ms
-                    </Badge>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{service.name} status: {service.status}</p>
-                  <p className="text-xs">Current latency: {latencies[index]}ms</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          ))}
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{service.name} status: {service.status}</p>
+                    <p className="text-xs">Current latency: {latencies[index]}ms</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ))}
+          </div>
         </div>
       </div>
     </div>

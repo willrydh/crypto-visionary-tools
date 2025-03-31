@@ -17,6 +17,7 @@ export interface CryptoOption {
   symbol: string;
   name: string;
   pairSymbol: string; // e.g., BTCUSDT
+  description?: string; // Added description field
 }
 
 interface CryptoSelectorProps {
@@ -26,14 +27,54 @@ interface CryptoSelectorProps {
 }
 
 export const cryptoOptions: CryptoOption[] = [
-  { symbol: 'BTC', name: 'Bitcoin', pairSymbol: 'BTCUSDT' },
-  { symbol: 'ETH', name: 'Ethereum', pairSymbol: 'ETHUSDT' },
-  { symbol: 'XRP', name: 'Ripple', pairSymbol: 'XRPUSDT' },
-  { symbol: 'SOL', name: 'Solana', pairSymbol: 'SOLUSDT' },
-  { symbol: 'DOGE', name: 'Dogecoin', pairSymbol: 'DOGEUSDT' },
-  { symbol: 'WLD', name: 'Worldcoin', pairSymbol: 'WLDUSDT' },
-  { symbol: 'LTC', name: 'Litecoin', pairSymbol: 'LTCUSDT' },
-  { symbol: 'SUI', name: 'Sui', pairSymbol: 'SUIUSDT' },
+  { 
+    symbol: 'BTC', 
+    name: 'Bitcoin', 
+    pairSymbol: 'BTCUSDT',
+    description: 'The first and largest cryptocurrency by market capitalization, created in 2009 by Satoshi Nakamoto.'
+  },
+  { 
+    symbol: 'ETH', 
+    name: 'Ethereum', 
+    pairSymbol: 'ETHUSDT',
+    description: 'A decentralized platform that enables smart contracts and dApps, founded by Vitalik Buterin.'
+  },
+  { 
+    symbol: 'XRP', 
+    name: 'Ripple', 
+    pairSymbol: 'XRPUSDT',
+    description: 'Digital payment protocol designed for fast and low-cost international transactions.'
+  },
+  { 
+    symbol: 'SOL', 
+    name: 'Solana', 
+    pairSymbol: 'SOLUSDT',
+    description: 'High-performance blockchain supporting smart contracts with extremely fast transaction speeds.'
+  },
+  { 
+    symbol: 'DOGE', 
+    name: 'Dogecoin', 
+    pairSymbol: 'DOGEUSDT',
+    description: 'Created as a joke in 2013, now a popular cryptocurrency with a devoted community.'
+  },
+  { 
+    symbol: 'WLD', 
+    name: 'Worldcoin', 
+    pairSymbol: 'WLDUSDT',
+    description: 'A cryptocurrency project focused on digital identity verification and universal basic income.'
+  },
+  { 
+    symbol: 'LTC', 
+    name: 'Litecoin', 
+    pairSymbol: 'LTCUSDT',
+    description: 'Created as a "lighter" version of Bitcoin with faster transaction confirmations.'
+  },
+  { 
+    symbol: 'SUI', 
+    name: 'Sui', 
+    pairSymbol: 'SUIUSDT',
+    description: 'Layer-1 blockchain designed for high throughput and low latency transactions.'
+  },
 ];
 
 export const CryptoSelector: React.FC<CryptoSelectorProps> = ({ 

@@ -88,9 +88,11 @@ const ChartView = () => {
       </div>
       
       <div className="flex flex-col gap-4">
-        {/* Currency Selector first, above the coin info */}
-        <div className="flex justify-end">
-          <CryptoSelector showDataSource={true} />
+        {/* Currency Selector first, in a centered box */}
+        <div className="flex justify-center mb-2">
+          <div className="bg-card/60 p-4 rounded-lg border border-border w-auto inline-flex">
+            <CryptoSelector showDataSource={true} />
+          </div>
         </div>
         
         {/* Coin info underneath */}
@@ -99,6 +101,7 @@ const ChartView = () => {
           name={selectedCrypto.name}
           price={selectedCrypto.symbol === 'BTC' ? 82500 : selectedCrypto.symbol === 'ETH' ? 3450 : 0}
           change24h={selectedCrypto.symbol === 'BTC' ? 1.8 : selectedCrypto.symbol === 'ETH' ? 2.3 : 0}
+          description={cryptoOptions.find(c => c.symbol === selectedCrypto.symbol)?.description}
         />
       </div>
       

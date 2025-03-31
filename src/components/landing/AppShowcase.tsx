@@ -23,7 +23,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ title, description, icon, ima
         <p className="text-muted-foreground mb-4">{description}</p>
       </div>
       {imageSrc && (
-        <div className="h-48 overflow-hidden border-t">
+        <div className="h-60 overflow-hidden border-t">
           <img 
             src={imageSrc} 
             alt={title} 
@@ -50,29 +50,51 @@ export const AppShowcase = () => {
           title="Market Analysis"
           description="Advanced technical analysis with support & resistance detection and trend identification."
           icon={<TrendingUp className="h-6 w-6 text-primary" />}
-          imageSrc="/lovable-uploads/48c6cc62-c64b-4795-bbfc-c7a769f5e5a4.png"
+          imageSrc="/lovable-uploads/0bbcaaf7-41ab-41c2-a81f-15c52b4d6202.png"
         />
         
         <FeatureCard
           title="Trade Signals"
           description="Smart trade suggestions based on current market conditions and volatility patterns."
           icon={<Rocket className="h-6 w-6 text-primary" />}
-          imageSrc="/lovable-uploads/fe008bc7-d3c5-4253-b3af-f6c27dc380de.png"
+          imageSrc="/lovable-uploads/cbf4d840-cd1b-4a3f-ab13-dce9b7f9bb53.png"
         />
         
         <FeatureCard
           title="Real-time Charts"
           description="Professional-grade charts with multiple timeframes and indicator overlays."
           icon={<LineChart className="h-6 w-6 text-primary" />}
-          imageSrc="/lovable-uploads/c838292a-0224-48a0-a205-21fde8947f28.png"
+          imageSrc="/lovable-uploads/4a0c6ea8-49f6-4dd0-8216-6e0085aec938.png"
         />
         
         <FeatureCard
           title="Economic Calendar"
           description="Never miss important market events with our comprehensive economic calendar."
           icon={<Calendar className="h-6 w-6 text-primary" />}
-          imageSrc="/lovable-uploads/e25d9411-37d3-4134-96fc-a94cf1f200c6.png"
+          imageSrc="/lovable-uploads/83cd3ce3-8a61-4043-aa68-18467165dbc3.png"
         />
+      </div>
+      
+      <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8">
+        <Card className="bg-card/50 backdrop-blur overflow-hidden">
+          <CardContent className="p-0">
+            <img 
+              src="/lovable-uploads/cd165e0d-4678-4599-8125-3439bc1496cc.png" 
+              alt="Advanced Charts" 
+              className="w-full h-auto"
+            />
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-card/50 backdrop-blur overflow-hidden">
+          <CardContent className="p-0">
+            <img 
+              src="/lovable-uploads/b26d8332-d911-4cd0-92d8-9d88267f181e.png" 
+              alt="Mobile Trading" 
+              className="w-full h-auto"
+            />
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
