@@ -12,6 +12,7 @@ import MarketDashboard from './pages/MarketDashboard';
 import NotFound from './pages/NotFound';
 import Welcome from './pages/Welcome';
 import TradeSuggestion from './pages/TradeSuggestion';
+import LevelsView from './pages/LevelsView';
 import { MarketsProvider } from './contexts/MarketsContext';
 import { TechnicalAnalysisProvider } from './contexts/TechnicalAnalysisContext';
 import { TimeframeProvider } from './contexts/TimeframeContext';
@@ -45,6 +46,7 @@ function App() {
                     <Routes>
                       <Route path="/" element={<RootLayout />}>
                         <Route index element={<Dashboard />} />
+                        <Route path="dashboard" element={<Dashboard />} />
                         <Route path="signals" element={<SignalsView />} />
                         <Route path="chart" element={<ChartView />} />
                         <Route path="calendar" element={<CalendarView />} />
@@ -52,6 +54,7 @@ function App() {
                         <Route path="settings" element={<SettingsView />} />
                         <Route path="welcome" element={<Welcome />} />
                         <Route path="market-dashboard" element={<MarketDashboard />} />
+                        <Route path="levels" element={<LevelsView />} />
                         <Route path="*" element={<NotFound />} />
                       </Route>
                     </Routes>
