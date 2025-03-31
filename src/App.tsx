@@ -14,6 +14,7 @@ import LevelsView from './pages/LevelsView';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPasswordConfirm from './pages/ResetPasswordConfirm';
 import FAQ from './pages/FAQ';
+import MarketDashboard from './pages/MarketDashboard';
 import RootLayout from './components/layout/RootLayout';
 import MarketAlerts from './components/markets/MarketAlerts';
 import { Toaster } from './components/ui/toaster';
@@ -50,6 +51,7 @@ function App() {
             <Route path="/calendar" element={<CalendarView />} />
             <Route path="/settings" element={<SettingsView />} />
             <Route path="/levels" element={<LevelsView />} />
+            <Route path="/market-dashboard" element={<MarketDashboard />} />
           </Route>
           
           <Route path="*" element={<NotFound />} />

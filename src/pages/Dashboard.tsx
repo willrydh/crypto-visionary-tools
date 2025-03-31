@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
-import { LineChart, Zap } from 'lucide-react';
+import { LineChart, Zap, BarChartHorizontal } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';
 import { useTradingMode } from '@/hooks/useTradingMode';
@@ -13,6 +13,8 @@ import { ImprovedEconomicCalendar } from '@/components/calendar/ImprovedEconomic
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import CoinInfo from '@/components/crypto/CoinInfo';
 import WelcomeHeader from '@/components/dashboard/WelcomeHeader';
+import { Link } from 'react-router-dom';
+import { Card } from '@/components/ui/card';
 
 const Dashboard = () => {
   const { toast } = useToast();
@@ -61,14 +63,20 @@ const Dashboard = () => {
             Market overview and trading signals
           </p>
         </div>
-        <div className="w-full sm:w-auto">
+        <div className="flex gap-2">
+          <Link to="/market-dashboard">
+            <Button variant="outline" className="gap-2">
+              <BarChartHorizontal className="h-4 w-4" />
+              Market Dashboard
+            </Button>
+          </Link>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button 
                   onClick={handleAnalysisGeneration} 
                   disabled={isLoading} 
-                  className="w-full sm:w-auto gap-2"
+                  className="gap-2"
                 >
                   {isLoading ? (
                     <LineChart className="h-4 w-4 animate-pulse" />

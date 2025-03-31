@@ -5,10 +5,11 @@ import { PriceChart } from '@/components/charts/PriceChart';
 import { IndicatorBreakdown } from '@/components/analysis/IndicatorBreakdown';
 import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';
 import { Button } from '@/components/ui/button';
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, BarChartHorizontal } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { DataSourceIndicator } from '@/components/ui/data-source-indicator';
 import CoinInfo from '@/components/crypto/CoinInfo';
+import { Link } from 'react-router-dom';
 
 const ChartView = () => {
   const { toast } = useToast();
@@ -51,6 +52,12 @@ const ChartView = () => {
         </div>
         
         <div className="flex gap-2 items-center">
+          <Link to="/market-dashboard">
+            <Button variant="outline" className="gap-2">
+              <BarChartHorizontal className="h-4 w-4" />
+              Market Dashboard
+            </Button>
+          </Link>
           <Button 
             onClick={handleRefresh} 
             disabled={isLoading} 
