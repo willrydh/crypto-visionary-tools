@@ -45,8 +45,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         </Sidebar>
         <div className="flex-1 flex flex-col">
           <TopHeader />
-          <main className="flex-1 overflow-auto">
-            <div className="container mx-auto py-8 px-4">
+          <main className="flex-1 overflow-auto pt-28 md:pt-32"> {/* Adjusted padding-top to account for the trading mode bar */}
+            <div className="container mx-auto py-4 px-4">
               {children}
             </div>
           </main>
