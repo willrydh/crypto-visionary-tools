@@ -44,6 +44,7 @@ function App() {
                 <SupportResistanceProvider>
                   <CryptoProvider>
                     <Routes>
+                      <Route path="/welcome" element={<Welcome />} />
                       <Route path="/" element={<RootLayout />}>
                         <Route index element={<Dashboard />} />
                         <Route path="dashboard" element={<Dashboard />} />
@@ -52,7 +53,6 @@ function App() {
                         <Route path="calendar" element={<CalendarView />} />
                         <Route path="trade" element={<TradeSuggestion />} />
                         <Route path="settings" element={<SettingsView />} />
-                        <Route path="welcome" element={<Welcome />} />
                         <Route path="market-dashboard" element={<MarketDashboard />} />
                         <Route path="levels" element={<LevelsView />} />
                         <Route path="*" element={<NotFound />} />
