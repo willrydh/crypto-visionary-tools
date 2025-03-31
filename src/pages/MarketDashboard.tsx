@@ -15,7 +15,7 @@ const MarketDashboard = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [fearGreedIndexKey, setFearGreedIndexKey] = useState(0);
   const [economicCalendarKey, setEconomicCalendarKey] = useState(0);
-  const [alertMessage, setAlertMessage] = useState<{title: string, message: string, type: 'default' | 'destructive'} | null>(null);
+  const [showMockupData, setShowMockupData] = useState(true); // Default to showing mockup data
 
   const handleRefreshAll = async () => {
     setIsRefreshing(true);
@@ -41,23 +41,9 @@ const MarketDashboard = () => {
     });
   };
 
-  const dismissAlert = () => {
-    setAlertMessage(null);
-  };
-
   return (
     <PullToRefresh onRefresh={handleRefreshAll}>
       <div className="space-y-6 animate-fade-in">
-        {alertMessage && (
-          <Alert variant={alertMessage.type} className="mb-4">
-            <AlertTitle className="text-lg">{alertMessage.title}</AlertTitle>
-            <AlertDescription className="text-sm">{alertMessage.message}</AlertDescription>
-            <Button variant="ghost" size="sm" onClick={dismissAlert} className="absolute top-2 right-2">
-              ✕
-            </Button>
-          </Alert>
-        )}
-
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
             <h1 className="text-2xl font-bold">Market Forecast</h1>
@@ -78,10 +64,10 @@ const MarketDashboard = () => {
 
         <div className="grid grid-cols-1 gap-6">
           <div>
-            <FearGreedIndex key={fearGreedIndexKey} />
+            <FearGreedIndex key={fearGreedIndexKey} fallbackToMockData={showMockupData} hideErrors={true} />
           </div>
           <div>
-            <EconomicCalendarAPI key={economicCalendarKey} />
+            <EconomicCalendarAPI key={economicCalendarKey} fallbackToMockData={showMockupData} hideErrors={true} />
           </div>
         </div>
 
@@ -93,10 +79,10 @@ const MarketDashboard = () => {
               <TabsTrigger value="calendar" className="flex-1">Events</TabsTrigger>
             </TabsList>
             <TabsContent value="fear-greed" className="mt-4">
-              <FearGreedIndex key={fearGreedIndexKey} />
+              <FearGreedIndex key={fearGreedIndexKey} fallbackToMockData={showMockupData} hideErrors={true} />
             </TabsContent>
             <TabsContent value="calendar" className="mt-4">
-              <EconomicCalendarAPI key={economicCalendarKey} />
+              <EconomicCalendarAPI key={economicCalendarKey} fallbackToMockData={showMockupData} hideErrors={true} />
             </TabsContent>
           </Tabs>
         </div>

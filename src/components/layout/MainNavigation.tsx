@@ -6,20 +6,18 @@ import {
   Calendar, 
   Settings,
   Zap,
-  Webhook,
   Radar,
-  Bitcoin,
   LineChart
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Logo from '@/assets/logo.svg';
+import CollapsibleNavMenu from './CollapsibleNavMenu';
 
 // Navigation items for the sidebar
 const navItems = [
   { path: '/', label: 'Dashboard', icon: <BarChart3 className="h-5 w-5" /> },
   { path: '/signals', label: 'Signals', icon: <Radar className="h-5 w-5" /> },
   { path: '/trade', label: 'Trade', icon: <Zap className="h-5 w-5" /> },
-  { path: '/chart', label: 'Chart', icon: <LineChart className="h-5 w-5" /> },
   { path: '/calendar', label: 'Events', icon: <Calendar className="h-5 w-5" /> },
   { path: '/settings', label: 'Settings', icon: <Settings className="h-5 w-5" /> },
 ];
@@ -57,6 +55,10 @@ const MainNavigation: React.FC = () => {
             </NavLink>
           ))}
         </nav>
+        
+        <div className="mt-4 px-3">
+          <CollapsibleNavMenu />
+        </div>
       </div>
       
       <div className="p-4 border-t border-border">
