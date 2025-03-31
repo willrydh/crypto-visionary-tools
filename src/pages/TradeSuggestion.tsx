@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import EnhancedTechnicalAnalysis from '@/components/analysis/EnhancedTechnicalAnalysis';
 import { TradeSuggestionCard } from '@/components/analysis/TradeSuggestionCard';
-import { PriceChart } from '@/components/charts/PriceChart';
+import PriceChart from '@/components/charts/PriceChart';
 import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';
 import { useToast } from '@/hooks/use-toast';
 import CoinInfo from '@/components/crypto/CoinInfo';

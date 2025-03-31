@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { LineChart } from 'lucide-react';
@@ -7,7 +8,7 @@ import { useTradingMode } from '@/hooks/useTradingMode';
 import EnhancedTechnicalAnalysis from '@/components/analysis/EnhancedTechnicalAnalysis';
 import { MarketStatus } from '@/components/markets/MarketStatus';
 import { PriceThermometer } from '@/components/charts/PriceThermometer';
-import { PriceChart } from '@/components/charts/PriceChart';
+import PriceChart from '@/components/charts/PriceChart';
 import { ImprovedEconomicCalendar } from '@/components/calendar/ImprovedEconomicCalendar';
 import CoinInfo from '@/components/crypto/CoinInfo';
 import WelcomeHeader from '@/components/dashboard/WelcomeHeader';
