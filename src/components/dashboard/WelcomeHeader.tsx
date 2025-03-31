@@ -32,12 +32,6 @@ const systemServices = [
   }
 ];
 
-const backgroundImages = [
-  "/lovable-uploads/c838292a-0224-48a0-a205-21fde8947f28.png",
-  "/lovable-uploads/fc481dcb-6dc5-4724-8938-9fef96e6feaf.png",
-  "/lovable-uploads/83cd3ce3-8a61-4043-aa68-18467165dbc3.png"
-];
-
 const WelcomeHeader = () => {
   const [randomName] = useState(() => {
     const names = ['Trader', 'Captain', 'Professional', 'Champion'];
@@ -45,7 +39,6 @@ const WelcomeHeader = () => {
   });
 
   const [latencies, setLatencies] = useState(systemServices.map(service => service.latency));
-  const [currentSlide, setCurrentSlide] = useState(0);
 
   // Simulate changing latencies
   useEffect(() => {
@@ -61,15 +54,6 @@ const WelcomeHeader = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Auto-rotate background images
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide(prev => (prev + 1) % backgroundImages.length);
-    }, 5000);
-    
-    return () => clearInterval(interval);
-  }, []);
-
   const getStatusColor = (latency: number) => {
     if (latency < 100) return 'text-green-500';
     if (latency < 150) return 'text-amber-500';
@@ -78,23 +62,16 @@ const WelcomeHeader = () => {
 
   return (
     <div className="w-full bg-card rounded-lg border border-border p-6 mb-6 relative overflow-hidden">
-      {/* Background Slider with Blur Effect */}
-      <div className="absolute inset-0 w-full h-full overflow-hidden">
-        {backgroundImages.map((img, index) => (
-          <div
-            key={index}
-            className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ${
-              index === currentSlide ? 'opacity-100' : 'opacity-0'
-            }`}
-          >
-            <img 
-              src={img} 
-              alt={`Chart Background ${index + 1}`} 
-              className="object-cover w-full h-full"
-            />
-          </div>
-        ))}
-        <div className="absolute inset-0 backdrop-blur-md bg-card/50"></div>
+      {/* Background with Blur Effect */}
+      <div className="absolute inset-0 w-full h-full">
+        <div className="w-full h-full">
+          <img 
+            src="/lovable-uploads/c838292a-0224-48a0-a205-21fde8947f28.png" 
+            alt="Chart Background" 
+            className="object-cover w-full h-full"
+          />
+          <div className="absolute inset-0 backdrop-blur-md bg-card/50"></div>
+        </div>
       </div>
       
       <div className="relative z-10">
