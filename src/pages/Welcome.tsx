@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
@@ -691,4 +692,42 @@ const Welcome = () => {
             </div>
             <div>
               <h3 className="font-medium mb-4">Company</h3>
-              <ul className="space-y-2 text-
+              <ul className="space-y-2 text-sm">
+                <li><a href="#" className="text-muted-foreground hover:text-foreground">About</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-foreground">Blog</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-foreground">Careers</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-medium mb-4">Legal</h3>
+              <ul className="space-y-2 text-sm">
+                <li><a href="#" className="text-muted-foreground hover:text-foreground">Privacy Policy</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-foreground">Terms of Service</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-foreground">Cookie Policy</a></li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="flex flex-col md:flex-row items-center justify-between mt-12 pt-8 border-t border-border">
+            <div className="flex items-center gap-2">
+              <img src={Logo} alt="Logo" className="h-6 w-6" />
+              <span className="text-sm text-muted-foreground">
+                © {new Date().getFullYear()} ProfitPilot. All rights reserved.
+              </span>
+            </div>
+            <div className="flex gap-4 mt-4 md:mt-0">
+              <Button variant="ghost" size="icon">
+                <ExternalLink className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="icon">
+                <HelpCircle className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default Welcome;
