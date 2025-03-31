@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
@@ -264,7 +265,7 @@ const Welcome = () => {
           alt="Background" 
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-card/90 backdrop-blur-md"></div>
+        <div className="absolute inset-0 bg-background/80 backdrop-blur-md"></div>
       </div>
       
       {/* Content */}
@@ -299,19 +300,28 @@ const Welcome = () => {
         
         {/* Hero Section */}
         <section className="py-20 px-4 md:px-6 lg:px-8 flex flex-col items-center text-center space-y-8">
-          <Badge variant="outline" className="mb-4">Version 1.0.0 is now available</Badge>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold max-w-3xl leading-tight tracking-tighter">
+          <Badge variant="outline" className="mb-4 relative z-10">Version 1.0.0 is now available</Badge>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold max-w-3xl leading-tight tracking-tighter text-gradient relative z-10 drop-shadow-lg">
             Your AI Trading Assistant for Crypto Markets
           </h1>
-          <p className="text-muted-foreground text-lg md:text-xl max-w-2xl">
+          <p className="text-muted-foreground text-lg md:text-xl max-w-2xl relative z-10">
             ProfitPilot gives you real-time market signals, intelligent trade suggestions, and deep data analysis for crypto trading.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 pt-4">
-            <Button size="lg" onClick={handleGuestAccess} className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary">
+          <div className="flex flex-col sm:flex-row gap-4 pt-4 relative z-10">
+            <Button 
+              size="lg" 
+              onClick={handleGuestAccess} 
+              className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg"
+            >
               Try For Free
               <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
-            <Button size="lg" variant="outline" onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}>
+            <Button 
+              size="lg" 
+              variant="outline" 
+              onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+              className="backdrop-blur-sm bg-background/30 border-white/20 hover:bg-white/20"
+            >
               Learn More
             </Button>
           </div>
