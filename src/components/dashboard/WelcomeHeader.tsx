@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Check, AlertTriangle, Info, Zap, Wifi, Database, Globe } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 
 const systemServices = [
   {
@@ -31,6 +32,12 @@ const systemServices = [
   }
 ];
 
+const backgroundImages = [
+  "/lovable-uploads/c838292a-0224-48a0-a205-21fde8947f28.png",
+  "/lovable-uploads/fc481dcb-6dc5-4724-8938-9fef96e6feaf.png",
+  "/lovable-uploads/83cd3ce3-8a61-4043-aa68-18467165dbc3.png"
+];
+
 const WelcomeHeader = () => {
   const [randomName] = useState(() => {
     const names = ['Trader', 'Captain', 'Professional', 'Champion'];
@@ -38,6 +45,7 @@ const WelcomeHeader = () => {
   });
 
   const [latencies, setLatencies] = useState(systemServices.map(service => service.latency));
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   // Simulate changing latencies
   useEffect(() => {
@@ -53,6 +61,15 @@ const WelcomeHeader = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Auto-rotate background images
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide(prev => (prev + 1) % backgroundImages.length);
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
   const getStatusColor = (latency: number) => {
     if (latency < 100) return 'text-green-500';
     if (latency < 150) return 'text-amber-500';
@@ -61,12 +78,24 @@ const WelcomeHeader = () => {
 
   return (
     <div className="w-full bg-card rounded-lg border border-border p-6 mb-6 relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-1/3 h-full opacity-10 pointer-events-none">
-        <img 
-          src="/lovable-uploads/fc481dcb-6dc5-4724-8938-9fef96e6feaf.png" 
-          alt="Chart Background" 
-          className="object-cover h-full w-full"
-        />
+      {/* Background Slider with Blur Effect */}
+      <div className="absolute inset-0 w-full h-full overflow-hidden">
+        <Carousel className="w-full h-full">
+          <CarouselContent className="h-full">
+            {backgroundImages.map((img, index) => (
+              <CarouselItem key={index} className={`h-full ${index === currentSlide ? 'block' : 'hidden'}`}>
+                <div className="w-full h-full">
+                  <img 
+                    src={img} 
+                    alt={`Chart Background ${index + 1}`} 
+                    className="object-cover w-full h-full opacity-30"
+                  />
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
+        <div className="absolute inset-0 backdrop-blur-md bg-card/50"></div>
       </div>
       
       <div className="relative z-10">
