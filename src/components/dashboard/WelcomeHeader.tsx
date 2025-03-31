@@ -62,16 +62,13 @@ const WelcomeHeader = () => {
 
   return (
     <div className="w-full bg-card rounded-lg border border-border p-6 mb-6 relative overflow-hidden">
-      {/* Background with Blur Effect */}
+      {/* Chart Background with Opacity */}
       <div className="absolute inset-0 w-full h-full">
-        <div className="w-full h-full">
-          <img 
-            src="/lovable-uploads/c838292a-0224-48a0-a205-21fde8947f28.png" 
-            alt="Chart Background" 
-            className="object-cover w-full h-full"
-          />
-          <div className="absolute inset-0 backdrop-blur-md bg-card/50"></div>
-        </div>
+        <img 
+          src="/lovable-uploads/c838292a-0224-48a0-a205-21fde8947f28.png" 
+          alt="Chart Background" 
+          className="object-cover w-full h-full opacity-20"
+        />
       </div>
       
       <div className="relative z-10">
