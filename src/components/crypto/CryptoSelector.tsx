@@ -82,4 +82,3 @@ export const CryptoSelector: React.FC<CryptoSelectorProps> = ({
 };
 
 export default CryptoSelector;
-export { cryptoOptions };

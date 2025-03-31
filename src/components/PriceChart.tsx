@@ -27,7 +27,7 @@ interface PriceChartProps {
   excludeTimeframes?: string[];
 }
 
-const PriceChart: React.FC<PriceChartProps> = ({
+export const PriceChart: React.FC<PriceChartProps> = ({
   symbol = 'BTC/USDT',
   coinId = 'bitcoin',
   showLevels = false,

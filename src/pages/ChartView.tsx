@@ -1,7 +1,6 @@
-
 import React, { useEffect } from 'react';
 import { useSupportResistance } from '@/hooks/useSupportResistance';
-import { PriceChart } from '@/components/charts/PriceChart';
+import PriceChart from '@/components/PriceChart';
 import { IndicatorBreakdown } from '@/components/analysis/IndicatorBreakdown';
 import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';
 import { Button } from '@/components/ui/button';
@@ -99,7 +98,6 @@ const ChartView = () => {
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="md:col-span-3">
-          {/* Full-featured price chart with support/resistance levels */}
           <PriceChart 
             symbol={`${selectedCrypto.symbol}/USDT`}
             showLevels={true} 
@@ -108,7 +106,6 @@ const ChartView = () => {
         </div>
         
         <div>
-          {/* Indicator breakdown showing details of all indicators */}
           <IndicatorBreakdown indicators={indicators} />
         </div>
       </div>
