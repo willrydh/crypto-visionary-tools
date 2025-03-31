@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Check, AlertTriangle, Info, Zap, Wifi, Database, Globe } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -61,31 +60,31 @@ const WelcomeHeader = () => {
   };
 
   return (
-    <div className="w-full bg-card rounded-lg border border-border p-6 mb-6 relative overflow-hidden">
-      {/* Chart Background - More visible and dynamic */}
+    <div className="w-full bg-[#1A1F2C] rounded-lg border border-border/40 p-6 mb-6 relative overflow-hidden">
+      {/* Chart Background - Keep as a subtle visual element */}
       <div className="absolute inset-0 w-full h-full flex items-center justify-end">
         <img 
           src="/lovable-uploads/c838292a-0224-48a0-a205-21fde8947f28.png" 
           alt="Chart Background" 
-          className="h-full opacity-25 object-cover object-right"
+          className="h-full opacity-10 object-cover object-right"
         />
       </div>
       
       <div className="relative z-10">
-        <h2 className="text-2xl font-bold mb-2">Welcome back, {randomName}</h2>
-        <p className="text-muted-foreground mb-6">
+        <h2 className="text-2xl font-bold mb-2 text-white">Welcome back, {randomName}</h2>
+        <p className="text-gray-300 mb-6">
           Your AI-powered trading companion - gain the edge with real-time signals and deep market analysis
         </p>
         
-        <div className="border-t border-border pt-4">
-          <h3 className="text-lg font-medium mb-4">System Status</h3>
+        <div className="border-t border-border/40 pt-4">
+          <h3 className="text-lg font-medium mb-4 text-white">System Status</h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {systemServices.map((service, index) => (
               <TooltipProvider key={service.name}>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 text-gray-300">
                         {service.icon}
                         <span className="text-sm">{service.name}</span>
                       </div>
