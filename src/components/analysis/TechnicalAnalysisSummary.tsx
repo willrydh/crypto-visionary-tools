@@ -49,15 +49,29 @@ export const TechnicalAnalysisSummary: React.FC<TechnicalAnalysisSummaryProps> =
   
   // Get description based on trading mode and bias
   const getDescription = () => {
-    const modeName = 'Night Trading';
+    let modeDescription = '';
+    
+    switch(tradingMode) {
+      case 'scalp':
+        modeDescription = 'Scalp Trading (minutes)';
+        break;
+      case 'day':
+        modeDescription = 'Day Trading (1-2 hours)';
+        break;
+      case 'night':
+        modeDescription = 'Night Trading (up to 12 hours)';
+        break;
+      default:
+        modeDescription = 'Trading';
+    }
     
     switch(currentBias) {
       case 'bullish':
-        return `Market shows bullish signals for ${modeName}. ${bullishCount} of ${indicators.length} indicators are positive.`;
+        return `Market shows bullish signals for ${modeDescription}. ${bullishCount} of ${indicators.length} indicators are positive.`;
       case 'bearish':
-        return `Market shows bearish signals for ${modeName}. ${bearishCount} of ${indicators.length} indicators are negative.`;
+        return `Market shows bearish signals for ${modeDescription}. ${bearishCount} of ${indicators.length} indicators are negative.`;
       case 'neutral':
-        return `Market shows mixed signals for ${modeName}. Consider waiting for clearer direction.`;
+        return `Market shows mixed signals for ${modeDescription}. Consider waiting for clearer direction.`;
       default:
         return 'No analysis available.';
     }

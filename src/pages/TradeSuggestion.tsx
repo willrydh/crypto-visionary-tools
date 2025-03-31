@@ -12,10 +12,12 @@ import CoinInfo from '@/components/crypto/CoinInfo';
 import TradingEducation from '@/components/education/TradingEducation';
 import { TradePageHeader } from '@/components/trading/TradePageHeader';
 import { PullToRefresh } from '@/components/ui/pull-to-refresh';
+import { useTradingMode } from '@/hooks/useTradingMode';
 
 const TradeSuggestion = () => {
   const { toast } = useToast();
   const [currentPrice, setCurrentPrice] = useState(82450);
+  const { tradingMode } = useTradingMode();
   const { 
     indicators,
     currentBias,
@@ -39,12 +41,19 @@ const TradeSuggestion = () => {
     return () => clearInterval(interval);
   }, []);
   
+  // Refresh analysis when trading mode changes
+  useEffect(() => {
+    if (!isLoading) {
+      generateAnalysis('BTC/USDT', true);
+    }
+  }, [tradingMode]);
+  
   const handleRefresh = async () => {
     try {
       await generateAnalysis('BTC/USDT', true);
       toast({
         title: "Analysis Updated",
-        description: "Trade suggestions and technical analysis have been refreshed.",
+        description: `Trade suggestions and technical analysis have been refreshed for ${tradingMode} trading.`,
       });
     } catch (error) {
       console.error('Error refreshing analysis:', error);
