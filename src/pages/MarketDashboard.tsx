@@ -4,9 +4,11 @@ import FearGreedIndex from '@/components/market/FearGreedIndex';
 import EconomicCalendarAPI from '@/components/market/EconomicCalendarAPI';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { RefreshCw, ClipboardCheck } from 'lucide-react';
+import { RefreshCw, Cloud, ClipboardCheck } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { PullToRefresh } from '@/components/ui/pull-to-refresh';
+import DataStatusIndicator from '@/components/dashboard/DataStatusIndicator';
 
 const MarketDashboard = () => {
   const { toast } = useToast();
@@ -15,7 +17,7 @@ const MarketDashboard = () => {
   const [economicCalendarKey, setEconomicCalendarKey] = useState(0);
   const [alertMessage, setAlertMessage] = useState<{title: string, message: string, type: 'default' | 'destructive'} | null>(null);
 
-  const handleRefreshAll = () => {
+  const handleRefreshAll = async () => {
     setIsRefreshing(true);
     // Force refresh by changing keys
     setFearGreedIndexKey(prev => prev + 1);
@@ -27,13 +29,16 @@ const MarketDashboard = () => {
     });
     
     // Set a timeout to simulate loading
-    setTimeout(() => {
-      setIsRefreshing(false);
-      toast({
-        title: "Data Refreshed",
-        description: "Market data has been updated successfully.",
-      });
-    }, 1500);
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        setIsRefreshing(false);
+        toast({
+          title: "Data Refreshed",
+          description: "Market data has been updated successfully.",
+        });
+        resolve();
+      }, 1500);
+    });
   };
 
   const dismissAlert = () => {
@@ -41,59 +46,62 @@ const MarketDashboard = () => {
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {alertMessage && (
-        <Alert variant={alertMessage.type} className="mb-4">
-          <AlertTitle className="text-lg">{alertMessage.title}</AlertTitle>
-          <AlertDescription className="text-sm">{alertMessage.message}</AlertDescription>
-          <Button variant="ghost" size="sm" onClick={dismissAlert} className="absolute top-2 right-2">
-            ✕
+    <PullToRefresh onRefresh={handleRefreshAll}>
+      <div className="space-y-6 animate-fade-in">
+        {alertMessage && (
+          <Alert variant={alertMessage.type} className="mb-4">
+            <AlertTitle className="text-lg">{alertMessage.title}</AlertTitle>
+            <AlertDescription className="text-sm">{alertMessage.message}</AlertDescription>
+            <Button variant="ghost" size="sm" onClick={dismissAlert} className="absolute top-2 right-2">
+              ✕
+            </Button>
+          </Alert>
+        )}
+
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+          <div>
+            <h1 className="text-2xl font-bold">Market Forecast</h1>
+            <p className="text-muted-foreground">
+              Real-time market conditions and economic events
+            </p>
+          </div>
+          <Button 
+            onClick={() => handleRefreshAll()}
+            disabled={isRefreshing}
+            variant="outline"
+            className="gap-2 backdrop-blur-sm bg-card/30 border-border/50 hover:bg-primary/10 transition-all duration-200"
+          >
+            <Cloud className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            {isRefreshing ? 'Refreshing...' : 'Update Forecast'}
           </Button>
-        </Alert>
-      )}
-
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-        <div>
-          <h1 className="text-2xl font-bold">Market Forecast</h1>
-          <p className="text-muted-foreground">
-            Real-time market conditions and economic events
-          </p>
         </div>
-        <Button 
-          onClick={handleRefreshAll} 
-          disabled={isRefreshing}
-          className="gap-2"
-        >
-          <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-          {isRefreshing ? 'Refreshing...' : 'Refresh All Data'}
-        </Button>
-      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <FearGreedIndex key={fearGreedIndexKey} />
-        </div>
-        <div>
-          <EconomicCalendarAPI key={economicCalendarKey} />
-        </div>
-      </div>
-
-      {/* Mobile friendly view for small screens */}
-      <div className="md:hidden mt-4">
-        <Tabs defaultValue="fear-greed">
-          <TabsList className="w-full">
-            <TabsTrigger value="fear-greed" className="flex-1">Fear & Greed</TabsTrigger>
-            <TabsTrigger value="calendar" className="flex-1">Calendar</TabsTrigger>
-          </TabsList>
-          <TabsContent value="fear-greed" className="mt-4">
+        <div className="grid grid-cols-1 gap-6">
+          <div>
             <FearGreedIndex key={fearGreedIndexKey} />
-          </TabsContent>
-          <TabsContent value="calendar" className="mt-4">
+          </div>
+          <div>
             <EconomicCalendarAPI key={economicCalendarKey} />
-          </TabsContent>
-        </Tabs>
+          </div>
+        </div>
+
+        {/* Mobile friendly view for small screens */}
+        <div className="md:hidden mt-4">
+          <Tabs defaultValue="fear-greed">
+            <TabsList className="w-full">
+              <TabsTrigger value="fear-greed" className="flex-1">Fear & Greed</TabsTrigger>
+              <TabsTrigger value="calendar" className="flex-1">Calendar</TabsTrigger>
+            </TabsList>
+            <TabsContent value="fear-greed" className="mt-4">
+              <FearGreedIndex key={fearGreedIndexKey} />
+            </TabsContent>
+            <TabsContent value="calendar" className="mt-4">
+              <EconomicCalendarAPI key={economicCalendarKey} />
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
-    </div>
+    </PullToRefresh>
   );
 };
 

@@ -11,6 +11,7 @@ import { RefreshCw } from 'lucide-react';
 import CoinInfo from '@/components/crypto/CoinInfo';
 import TradingEducation from '@/components/education/TradingEducation';
 import { TradePageHeader } from '@/components/trading/TradePageHeader';
+import { PullToRefresh } from '@/components/ui/pull-to-refresh';
 
 const TradeSuggestion = () => {
   const { toast } = useToast();
@@ -56,44 +57,46 @@ const TradeSuggestion = () => {
   };
   
   return (
-    <div className="space-y-6 -mt-6">
-      <TradePageHeader 
-        isLoading={isLoading} 
-        onRefresh={handleRefresh} 
-      />
-      
-      <CoinInfo 
-        symbol="BTC/USDT" 
-        price={currentPrice}
-        change24h={2.1}
-      />
-      
-      <div className="space-y-6">
-        <div className="w-full overflow-hidden rounded-lg border border-border">
-          <PriceChart symbol="BTC/USDT" />
-        </div>
+    <PullToRefresh onRefresh={handleRefresh}>
+      <div className="space-y-6 -mt-6">
+        <TradePageHeader 
+          isLoading={isLoading} 
+          onRefresh={handleRefresh} 
+        />
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <EnhancedTechnicalAnalysis 
-            currentBias={currentBias}
-            indicators={indicators}
-            confidenceScore={confidenceScore}
-            lastUpdated={lastUpdated}
-            isLoading={isLoading}
-            onRefresh={handleRefresh}
-          />
+        <CoinInfo 
+          symbol="BTC/USDT" 
+          price={currentPrice}
+          change24h={2.1}
+        />
+        
+        <div className="space-y-6">
+          <div className="w-full overflow-hidden rounded-lg border border-border">
+            <PriceChart symbol="BTC/USDT" />
+          </div>
           
-          <TradeSuggestionCard 
-            tradeSuggestion={tradeSuggestion} 
-            isLoading={isLoading} 
-          />
-        </div>
-        
-        <div>
-          <TradingEducation />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <EnhancedTechnicalAnalysis 
+              currentBias={currentBias}
+              indicators={indicators}
+              confidenceScore={confidenceScore}
+              lastUpdated={lastUpdated}
+              isLoading={isLoading}
+              onRefresh={handleRefresh}
+            />
+            
+            <TradeSuggestionCard 
+              tradeSuggestion={tradeSuggestion} 
+              isLoading={isLoading} 
+            />
+          </div>
+          
+          <div>
+            <TradingEducation />
+          </div>
         </div>
       </div>
-    </div>
+    </PullToRefresh>
   );
 };
 

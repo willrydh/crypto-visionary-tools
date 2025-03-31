@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, Cloud } from 'lucide-react';
 import { TradingModeSelector } from './TradingModeSelector';
 import { cn } from '@/lib/utils';
 
@@ -24,18 +24,14 @@ export const TradePageHeader = ({ isLoading, onRefresh }: TradePageHeaderProps) 
           <Button 
             onClick={onRefresh} 
             disabled={isLoading} 
-            size="icon"
             variant="outline"
             className={cn(
-              "h-10 w-10 flex-shrink-0 backdrop-blur-sm bg-card/30 border-border/50",
+              "flex-shrink-0 backdrop-blur-sm bg-card/30 border-border/50 gap-2",
               "hover:bg-primary/10 transition-all duration-200"
             )}
           >
-            {isLoading ? (
-              <RefreshCw className="h-4 w-4 animate-spin" />
-            ) : (
-              <RefreshCw className="h-4 w-4" />
-            )}
+            <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
+            <span className="hidden sm:inline">{isLoading ? 'Refreshing...' : 'Update Analysis'}</span>
           </Button>
         </div>
         
