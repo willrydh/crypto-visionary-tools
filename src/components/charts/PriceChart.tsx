@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,7 +17,6 @@ import { formatChartTime } from '@/utils/dateUtils';
 import { useTimeframe } from '@/hooks/useTimeframe';
 import { Timeframe } from '@/contexts/TimeframeContext';
 import { PriceLevel } from '@/contexts/SupportResistanceContext';
-import { applySMA } from '@/utils/chartUtils';
 import {
   AreaChart,
   Area,
@@ -25,7 +25,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Line,
   ReferenceLine
 } from 'recharts';
 import { 
@@ -33,8 +32,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 
 interface PriceChartProps {
   symbol?: string;
@@ -62,7 +59,6 @@ export const PriceChart: React.FC<PriceChartProps> = ({
   } | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [showMA200, setShowMA200] = useState<boolean>(true);
   const [dataStatus, setDataStatus] = useState<{
     source: string;
     lastFetched: Date | null;
@@ -121,11 +117,9 @@ export const PriceChart: React.FC<PriceChartProps> = ({
           price: candle.close
         }));
       
-      // Apply MA 200 calculation to line data
-      const dataWithMA200 = applySMA(lineData, 200);
-      setProcessedData(dataWithMA200);
+      setProcessedData(lineData);
     }
-  }, [chartData, showMA200]);
+  }, [chartData]);
   
   const formatXAxis = (timestamp: number) => {
     return formatChartTime(timestamp, currentTimeframe);
@@ -137,10 +131,6 @@ export const PriceChart: React.FC<PriceChartProps> = ({
   
   const handleTimeframeChange = (timeframe: string) => {
     setCurrentTimeframe(timeframe as Timeframe);
-  };
-  
-  const toggleMA200 = () => {
-    setShowMA200(!showMA200);
   };
 
   useEffect(() => {
@@ -208,11 +198,6 @@ export const PriceChart: React.FC<PriceChartProps> = ({
           </div>
           
           <div className="flex gap-2 items-center">
-            <div className="flex items-center space-x-2 mr-2">
-              <Switch id="ma200" checked={showMA200} onCheckedChange={toggleMA200} />
-              <Label htmlFor="ma200" className="text-xs">MA 200</Label>
-            </div>
-            
             <Button 
               variant="outline" 
               size="icon" 
@@ -283,7 +268,6 @@ export const PriceChart: React.FC<PriceChartProps> = ({
                 <Tooltip 
                   labelFormatter={(label) => formatXAxis(label as number)}
                   formatter={(value, name) => {
-                    if (name === 'sma') return [formatCurrency(value as number), 'MA 200'];
                     return [formatCurrency(value as number), name === 'price' ? 'Price' : name];
                   }}
                 />
@@ -294,18 +278,6 @@ export const PriceChart: React.FC<PriceChartProps> = ({
                   fill="url(#colorPrice)" 
                   isAnimationActive={false}
                 />
-                
-                {showMA200 && (
-                  <Line
-                    type="monotone"
-                    dataKey="sma"
-                    stroke="#ff0000"
-                    strokeWidth={2}
-                    dot={false}
-                    isAnimationActive={false}
-                    name="MA 200"
-                  />
-                )}
                 
                 {showLevels && levels.map((level, idx) => (
                   <ReferenceLine 
