@@ -45,8 +45,8 @@ export const TradePageHeader = ({ isLoading, onRefresh }: TradePageHeaderProps) 
   };
   
   return (
-    <div className="mb-6">
-      <div className="flex items-center justify-between mb-4">
+    <div className="mb-8"> {/* Increased top margin from mb-6 to mb-8 */}
+      <div className="flex items-center justify-between mb-5"> {/* Increased bottom margin from mb-4 to mb-5 */}
         <div className="flex items-center">
           <h1 className="text-2xl font-bold mr-2">Trade Analysis</h1>
           <div className={cn("rounded-full px-2 py-0.5 text-sm font-medium flex items-center gap-1.5", getModeColor())}>
@@ -66,7 +66,7 @@ export const TradePageHeader = ({ isLoading, onRefresh }: TradePageHeaderProps) 
         </Button>
       </div>
       
-      <Alert className="bg-primary/5 border-primary/20 mb-4">
+      <Alert className="bg-primary/5 border-primary/20 mb-6"> {/* Increased bottom margin from mb-4 to mb-6 */}
         <AlertCircle className={cn("h-4 w-4", getModeColor())} />
         <AlertTitle className="font-medium flex items-center gap-1.5">
           <span className={getModeColor()}>{tradingMode.charAt(0).toUpperCase() + tradingMode.slice(1)} Trading</span>

@@ -10,9 +10,15 @@ import { formatTimeUntil } from '@/utils/dateUtils';
 
 interface MarketStatusProps {
   showDetails?: boolean;
+  customTitle?: string;
+  customSource?: string;
 }
 
-export const MarketStatus: React.FC<MarketStatusProps> = ({ showDetails = false }) => {
+export const MarketStatus: React.FC<MarketStatusProps> = ({ 
+  showDetails = false,
+  customTitle,
+  customSource
+}) => {
   const { marketSessions } = useMarkets();
 
   // Format time text to remove duplicate words
@@ -28,10 +34,10 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({ showDetails = false 
         <div className="flex justify-between items-center">
           <CardTitle className="text-xl flex items-center gap-2">
             <Clock className="h-5 w-5" />
-            Market Status
+            {customTitle || "Market Status"}
           </CardTitle>
           <DataSourceIndicator 
-            source="World Markets API" 
+            source={customSource || "World Markets API"} 
             isLive={true} 
             details="Real-time market sessions data"
           />

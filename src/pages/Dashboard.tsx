@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { LineChart } from 'lucide-react';
@@ -31,7 +30,6 @@ const Dashboard = () => {
     generateAnalysis 
   } = useTechnicalAnalysis();
 
-  // Generate analysis when trading mode changes
   useEffect(() => {
     if (indicators.length === 0) {
       generateAnalysis('BTCUSDT');
@@ -55,7 +53,6 @@ const Dashboard = () => {
     }
   };
 
-  // Description based on trading mode
   const getTradingDescription = () => {
     switch (tradingMode) {
       case 'scalp':
@@ -69,9 +66,7 @@ const Dashboard = () => {
     }
   };
 
-  // Get trading forecast details based on trading mode and current bias
   const getTradingForecast = () => {
-    // Base forecast on trading mode and current market bias
     const strategy = {
       scalp: {
         bullish: {
@@ -205,7 +200,7 @@ const Dashboard = () => {
               onRefresh={handleAnalysisGeneration}
             />
             
-            <MarketStatus showDetails={true} />
+            <MarketStatus showDetails={true} customTitle="Smart Money" customSource="World API" />
           </div>
         </div>
         
