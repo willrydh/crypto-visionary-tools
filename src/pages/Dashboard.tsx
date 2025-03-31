@@ -199,6 +199,7 @@ const Dashboard = () => {
               lastUpdated={lastUpdated}
               isLoading={isLoading}
               onRefresh={handleAnalysisGeneration}
+              title="Enhanced TA"
             />
             
             <MarketStatus showDetails={true} customTitle="Smart Money" customSource="World API" />
@@ -224,7 +225,7 @@ const Dashboard = () => {
       </div>
       
       <div className="col-span-full w-full">
-        <ImprovedEconomicCalendar compact={true} />
+        <ImprovedEconomicCalendar compact={true} title="Events" />
       </div>
     </div>
   );

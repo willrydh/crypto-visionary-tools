@@ -10,10 +10,11 @@ import TradingEducation from '@/components/education/TradingEducation';
 import { PullToRefresh } from '@/components/ui/pull-to-refresh';
 import { useTradingMode } from '@/hooks/useTradingMode';
 import { TradePageHeader } from '@/components/trading/TradePageHeader';
+import { fetchCurrentPrice } from '@/services/priceDataService';
 
 const TradeSuggestion = () => {
   const { toast } = useToast();
-  const [currentPrice, setCurrentPrice] = useState(82450);
+  const [currentPrice, setCurrentPrice] = useState(68648); // Updated with more realistic BTC price
   const { tradingMode } = useTradingMode();
   const { 
     indicators,
@@ -30,12 +31,25 @@ const TradeSuggestion = () => {
       generateAnalysis('BTC/USDT');
     }
     
-    // Simulate price updates
-    const interval = setInterval(() => {
-      setCurrentPrice(prev => prev + (Math.random() * 200 - 100));
-    }, 3000);
+    // Fetch real price instead of simulating
+    const fetchPrice = async () => {
+      try {
+        const priceData = await fetchCurrentPrice('BTCUSDT');
+        if (priceData) {
+          setCurrentPrice(priceData.price);
+        }
+      } catch (error) {
+        console.error('Error fetching price:', error);
+      }
+    };
     
-    return () => clearInterval(interval);
+    fetchPrice();
+    
+    const priceInterval = setInterval(fetchPrice, 30000);
+    
+    return () => {
+      clearInterval(priceInterval);
+    };
   }, []);
   
   // Refresh analysis when trading mode changes
@@ -48,6 +62,17 @@ const TradeSuggestion = () => {
   const handleRefresh = async () => {
     try {
       await generateAnalysis('BTC/USDT', true);
+      
+      // Also refresh price
+      try {
+        const priceData = await fetchCurrentPrice('BTCUSDT');
+        if (priceData) {
+          setCurrentPrice(priceData.price);
+        }
+      } catch (error) {
+        console.error('Error refreshing price:', error);
+      }
+      
       toast({
         title: "Analysis Updated",
         description: `Trade suggestions and technical analysis have been refreshed for ${tradingMode} trading.`,
@@ -89,6 +114,7 @@ const TradeSuggestion = () => {
               lastUpdated={lastUpdated}
               isLoading={isLoading}
               onRefresh={handleRefresh}
+              title="Enhanced TA"
             />
             
             <TradeSuggestionCard 

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import PriceChart from '@/components/charts/PriceChart';
 import EnhancedTechnicalAnalysis from '@/components/analysis/EnhancedTechnicalAnalysis';
@@ -39,7 +38,6 @@ const SignalsView = () => {
     generateAnalysis 
   } = useTechnicalAnalysis();
 
-  // Get accurate price data based on selected crypto
   const getCryptoPrice = (symbol: string) => {
     switch(symbol) {
       case 'BTC': return 68648;
@@ -123,7 +121,6 @@ const SignalsView = () => {
     }
   };
 
-  // Get price change for the selected crypto
   const getCryptoChange = (symbol: string) => {
     switch(symbol) {
       case 'BTC': return 1.77;
@@ -143,14 +140,12 @@ const SignalsView = () => {
       <TradePageHeader isLoading={isLoading} onRefresh={handleRefresh} />
 
       <div className="flex flex-col gap-4">
-        {/* Currency Selector first, in a centered box */}
         <div className="flex justify-center mb-2">
           <div className="bg-card/60 p-4 rounded-lg border border-border w-auto inline-flex">
             <CryptoSelector showDataSource={true} label="" />
           </div>
         </div>
         
-        {/* Coin info underneath */}
         <CoinInfo 
           symbol={`${selectedCrypto.symbol}/USDT`}
           name={selectedCrypto.name}
@@ -190,6 +185,7 @@ const SignalsView = () => {
               lastUpdated={lastUpdated}
               isLoading={isLoading}
               onRefresh={handleRefresh}
+              title="Enhanced TA"
             />
             
             <div className="mt-6 bg-card rounded-lg border p-4">
@@ -250,7 +246,7 @@ const SignalsView = () => {
         </div>
         
         <MarketSessionStats 
-          title="Market Session Impact Analysis" 
+          title="Market Impact" 
           asianSessionStart={7} 
           europeanSessionStart={2} 
           usSessionStart={8} 

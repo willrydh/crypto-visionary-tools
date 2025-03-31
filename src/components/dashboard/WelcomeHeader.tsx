@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Check, AlertTriangle, Info, Zap, Wifi, Database, Globe } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -61,15 +62,6 @@ const WelcomeHeader = () => {
 
   return (
     <div className="w-full bg-[#1A1F2C] rounded-lg border border-border/40 p-6 mb-6 relative overflow-hidden">
-      {/* Chart Background - Keep as a subtle visual element */}
-      <div className="absolute inset-0 w-full h-full flex items-center justify-end">
-        <img 
-          src="/lovable-uploads/c838292a-0224-48a0-a205-21fde8947f28.png" 
-          alt="Chart Background" 
-          className="h-full opacity-10 object-cover object-right"
-        />
-      </div>
-      
       <div className="relative z-10">
         <h2 className="text-2xl font-bold mb-2 text-white">Welcome back, {randomName}</h2>
         <p className="text-gray-300 mb-6">
