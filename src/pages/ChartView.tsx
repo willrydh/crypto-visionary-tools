@@ -7,7 +7,6 @@ import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';
 import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
 import { DataSourceIndicator } from '@/components/ui/data-source-indicator';
 import CoinInfo from '@/components/crypto/CoinInfo';
 
@@ -52,9 +51,6 @@ const ChartView = () => {
         </div>
         
         <div className="flex gap-2 items-center">
-          <div className="md:hidden">
-            <TradingModeSelector />
-          </div>
           <Button 
             onClick={handleRefresh} 
             disabled={isLoading} 

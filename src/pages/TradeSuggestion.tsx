@@ -10,6 +10,8 @@ import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
 import CoinInfo from '@/components/crypto/CoinInfo';
 import TradingEducation from '@/components/education/TradingEducation';
+import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
+import InitiateTrade from '@/components/trading/InitiateTrade';
 
 const TradeSuggestion = () => {
   const { toast } = useToast();
@@ -63,18 +65,23 @@ const TradeSuggestion = () => {
             Advanced trade analysis and execution
           </p>
         </div>
-        <Button 
-          onClick={handleRefresh} 
-          disabled={isLoading} 
-          className="gap-2"
-        >
-          {isLoading ? (
-            <RefreshCw className="h-4 w-4 animate-spin" />
-          ) : (
-            <RefreshCw className="h-4 w-4" />
-          )}
-          Refresh Analysis
-        </Button>
+        <div className="flex items-center gap-3">
+          <div className="w-72">
+            <TradingModeSelector />
+          </div>
+          <Button 
+            onClick={handleRefresh} 
+            disabled={isLoading} 
+            className="gap-2"
+          >
+            {isLoading ? (
+              <RefreshCw className="h-4 w-4 animate-spin" />
+            ) : (
+              <RefreshCw className="h-4 w-4" />
+            )}
+            Refresh
+          </Button>
+        </div>
       </div>
       
       <CoinInfo 
@@ -86,7 +93,7 @@ const TradeSuggestion = () => {
       <div className="grid grid-cols-1 gap-6">
         <PriceChart symbol="BTC/USDT" />
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <EnhancedTechnicalAnalysis 
             currentBias={currentBias}
             indicators={indicators}
@@ -102,7 +109,14 @@ const TradeSuggestion = () => {
           />
         </div>
         
-        <TradingEducation />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <InitiateTrade 
+            currentPrice={currentPrice}
+            tradeSuggestion={tradeSuggestion}
+            coinSymbol="BTC/USDT"
+          />
+          <TradingEducation />
+        </div>
       </div>
     </div>
   );
