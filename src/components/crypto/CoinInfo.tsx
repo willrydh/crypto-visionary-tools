@@ -3,6 +3,7 @@ import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { TrendingUp, TrendingDown, Activity, CircleDollarSign, BarChart3 } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
+import CryptoCoinIcon from './CryptoCoinIcon';
 
 interface CoinInfoProps {
   symbol: string;
@@ -26,12 +27,14 @@ const CoinInfo: React.FC<CoinInfoProps> = ({
   description = 'The world\'s first cryptocurrency. A decentralized digital currency without a central bank or administrator.'
 }) => {
   const isPositive = change24h > 0;
+  const coinSymbol = symbol.split('/')[0] as any;
   
   return (
     <Card className="bg-card border-border shadow-sm my-4">
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
+            <CryptoCoinIcon coin={coinSymbol} size="lg" />
             <h3 className="font-bold text-lg">{name}</h3>
             <Badge variant="outline" className="text-xs">{symbol}</Badge>
           </div>
