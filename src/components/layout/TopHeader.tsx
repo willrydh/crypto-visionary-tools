@@ -17,7 +17,11 @@ const TopHeader = () => {
   const { tradingMode, setTradingMode } = useTradingMode();
   const { isLoading, generateAnalysis } = useTechnicalAnalysis();
   
-  const isTradeOrDashboard = location.pathname === '/' || location.pathname === '/trade-suggestion';
+  // Update to include signals page in the list of pages that show trading mode bar
+  const showTradingBar = location.pathname === '/' || 
+                          location.pathname === '/trade-suggestion' || 
+                          location.pathname === '/trade' || 
+                          location.pathname === '/signals';
   
   const handleNotifications = () => {
     // Navigate to notifications page
@@ -75,8 +79,11 @@ const TopHeader = () => {
                   variant="ghost" 
                   size="icon"
                   onClick={handleNotifications}
+                  asChild
                 >
-                  <Bell className="h-5 w-5" />
+                  <Link to="/notifications">
+                    <Bell className="h-5 w-5" />
+                  </Link>
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -112,8 +119,8 @@ const TopHeader = () => {
         </div>
       </div>
       
-      {/* Trading mode selector - only visible on trade-suggestion and dashboard pages */}
-      {isTradeOrDashboard && (
+      {/* Trading mode selector - show on dashboard, trade-suggestion and signals pages */}
+      {showTradingBar && (
         <div className="px-4 md:px-6 md:ml-64 bg-primary/5 border-b border-border/40">
           <div className="flex items-center justify-between py-2">
             <div className="grid grid-cols-3 gap-1 flex-grow max-w-md">
@@ -127,7 +134,12 @@ const TopHeader = () => {
                     : "bg-blue-900/20 text-blue-400 hover:bg-blue-900/30"
                 )}
               >
-                <span className="text-sm font-medium">Scalp</span>
+                <span className="flex items-center text-sm font-medium">
+                  <span className="mr-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                  </span>
+                  Scalp
+                </span>
               </button>
 
               {/* Day Trading Button */}
@@ -140,7 +152,12 @@ const TopHeader = () => {
                     : "bg-amber-900/20 text-amber-400 hover:bg-amber-900/30"
                 )}
               >
-                <span className="text-sm font-medium">Day</span>
+                <span className="flex items-center text-sm font-medium">
+                  <span className="mr-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                  </span>
+                  Day
+                </span>
               </button>
 
               {/* Night Trading Button */}
@@ -153,12 +170,17 @@ const TopHeader = () => {
                     : "bg-indigo-900/20 text-indigo-400 hover:bg-indigo-900/30"
                 )}
               >
-                <span className="text-sm font-medium">Night</span>
+                <span className="flex items-center text-sm font-medium">
+                  <span className="mr-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-moon"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                  </span>
+                  Night
+                </span>
               </button>
             </div>
             
             {/* Refresh button */}
-            {(location.pathname === '/trade-suggestion' || location.pathname === '/') && (
+            {(location.pathname === '/trade-suggestion' || location.pathname === '/trade' || location.pathname === '/' || location.pathname === '/signals') && (
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>

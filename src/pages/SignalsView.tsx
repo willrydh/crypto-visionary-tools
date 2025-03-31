@@ -8,18 +8,23 @@ import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';
 import { useSupportResistance } from '@/hooks/useSupportResistance';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from '@/components/ui/button';
-import { LineChart, RefreshCw, Bitcoin, CircleDollarSign } from 'lucide-react';
+import { LineChart, RefreshCw, Bitcoin, CircleDollarSign, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { DataSourceIndicator } from '@/components/ui/data-source-indicator';
 import CryptoBubbles from '@/components/crypto/CryptoBubbles';
 import CoinInfo from '@/components/crypto/CoinInfo';
 import MarketSessionStats from '@/components/markets/MarketSessionStats';
+import { TradePageHeader } from '@/components/trading/TradePageHeader';
+import { useTradingMode } from '@/hooks/useTradingMode';
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { cn } from '@/lib/utils';
 
 const SignalsView = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<string>('chart');
   const { fetchLevels, levels, structure } = useSupportResistance();
+  const { tradingMode, getTimeframes, getIndicators, getVolatilityEvents } = useTradingMode();
   const { 
     indicators, 
     currentBias, 
@@ -55,6 +60,12 @@ const SignalsView = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Refresh when trading mode changes
+  useEffect(() => {
+    generateAnalysis('BTC/USDT', true);
+    fetchLevels('BTC/USDT');
+  }, [tradingMode]);
+
   const handleRefresh = async () => {
     try {
       await generateAnalysis('BTC/USDT', true);
@@ -74,48 +85,28 @@ const SignalsView = () => {
     }
   };
 
+  // Get timeframes based on trading mode
+  const timeframes = getTimeframes();
+  
+  // Get indicators based on trading mode
+  const modeIndicators = getIndicators();
+  
+  // Get market volatility events based on trading mode
+  const volatilityEvents = getVolatilityEvents();
+
+  // Get trading-mode specific color
+  const getModeColor = () => {
+    switch(tradingMode) {
+      case 'scalp': return 'text-blue-500';
+      case 'day': return 'text-amber-500';
+      case 'night': return 'text-indigo-500';
+      default: return 'text-primary';
+    }
+  };
+
   return (
     <div className="space-y-6 mt-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-        <div>
-          <h1 className="text-2xl font-bold">Signals</h1>
-          <p className="text-muted-foreground">
-            Market analysis, trade signals, and key price levels
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <DataSourceIndicator 
-            source="Bybit API" 
-            isLive={true} 
-            placement="top"
-          />
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button 
-                  onClick={handleRefresh} 
-                  disabled={isLoading} 
-                  className="gap-2"
-                >
-                  {isLoading ? (
-                    <RefreshCw className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <RefreshCw className="h-4 w-4" />
-                  )}
-                  Refresh
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Data Source: Bybit API</p>
-                <div className="flex items-center mt-1">
-                  <span className="h-2 w-2 rounded-full bg-green-500 mr-2"></span>
-                  <span className="text-xs">Live data</span>
-                </div>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-      </div>
+      <TradePageHeader isLoading={isLoading} onRefresh={handleRefresh} />
 
       <CoinInfo 
         symbol="BTC/USDT"
@@ -145,23 +136,83 @@ const SignalsView = () => {
           </TabsContent>
         </Tabs>
         
-        <div className="space-y-6">
-          <EnhancedTechnicalAnalysis 
-            currentBias={currentBias}
-            indicators={indicators}
-            confidenceScore={confidenceScore}
-            lastUpdated={lastUpdated}
-            isLoading={isLoading}
-            onRefresh={handleRefresh}
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <EnhancedTechnicalAnalysis 
+              currentBias={currentBias}
+              indicators={indicators}
+              confidenceScore={confidenceScore}
+              lastUpdated={lastUpdated}
+              isLoading={isLoading}
+              onRefresh={handleRefresh}
+            />
+            
+            {/* Mode-specific indicators */}
+            <div className="mt-6 bg-card rounded-lg border p-4">
+              <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
+                <span className={getModeColor()}>
+                  {tradingMode === 'scalp' && <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>}
+                  {tradingMode === 'day' && <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>}
+                  {tradingMode === 'night' && <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-moon"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>}
+                </span>
+                <span>{tradingMode.charAt(0).toUpperCase() + tradingMode.slice(1)} Trading Indicators</span>
+              </h3>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <h4 className="text-sm font-medium text-muted-foreground mb-1">Timeframes</h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {timeframes.map((tf) => (
+                      <div key={tf} className={`text-xs px-2 py-1 rounded-md bg-${tradingMode === 'scalp' ? 'blue' : tradingMode === 'day' ? 'amber' : 'indigo'}-900/20 font-mono`}>
+                        {tf}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium text-muted-foreground mb-1">Key Indicators</h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {modeIndicators.slice(0, 3).map((ind) => (
+                      <div key={ind} className={`text-xs px-2 py-1 rounded-md bg-${tradingMode === 'scalp' ? 'blue' : tradingMode === 'day' ? 'amber' : 'indigo'}-900/20 font-mono`}>
+                        {ind}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           
-          <TradeSuggestionCard 
-            tradeSuggestion={tradeSuggestion} 
-            isLoading={isLoading} 
-          />
-          
-          <MarketSessionStats title="Market Session Impact Analysis" />
+          <div className="space-y-6">
+            <TradeSuggestionCard 
+              tradeSuggestion={tradeSuggestion} 
+              isLoading={isLoading} 
+            />
+            
+            {/* Trading Mode Volatility Events */}
+            <div className="bg-card rounded-lg border p-4">
+              <h3 className="text-lg font-medium mb-3">Market Volatility Events</h3>
+              <p className="text-sm text-muted-foreground mb-3">
+                Key volatility events to monitor for {tradingMode} trading:
+              </p>
+              <ul className="space-y-2">
+                {volatilityEvents.map((event, index) => (
+                  <li key={index} className="flex items-start gap-2 text-sm">
+                    <AlertCircle className="h-4 w-4 mt-0.5" />
+                    <span>{event}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
+        
+        <MarketSessionStats 
+          title="Market Session Impact Analysis" 
+          // Adjust market session times (-1 hour for Sweden timezone)
+          asianSessionStart={7} // 8 PM - 1 hour
+          europeanSessionStart={2} // 3 AM - 1 hour
+          usSessionStart={8} // 9 AM - 1 hour
+        />
       </div>
     </div>
   );

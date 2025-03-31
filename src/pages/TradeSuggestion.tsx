@@ -9,6 +9,7 @@ import CoinInfo from '@/components/crypto/CoinInfo';
 import TradingEducation from '@/components/education/TradingEducation';
 import { PullToRefresh } from '@/components/ui/pull-to-refresh';
 import { useTradingMode } from '@/hooks/useTradingMode';
+import { TradePageHeader } from '@/components/trading/TradePageHeader';
 
 const TradeSuggestion = () => {
   const { toast } = useToast();
@@ -61,29 +62,13 @@ const TradeSuggestion = () => {
     }
   };
   
-  // Description based on trading mode
-  const getTradingDescription = () => {
-    switch (tradingMode) {
-      case 'scalp':
-        return "Ultra-short term trading analysis optimized for minutes-based positions.";
-      case 'day':
-        return "Short-term trading analysis for positions held within market hours.";
-      case 'night':
-        return "Medium-term trading analysis for positions that can extend overnight.";
-      default:
-        return "Trading analysis and suggestions";
-    }
-  };
-  
   return (
     <PullToRefresh onRefresh={handleRefresh}>
       <div className="space-y-6">
-        <div className="mb-4">
-          <h1 className="text-2xl font-bold">Trade Suggestions</h1>
-          <p className="text-muted-foreground">
-            {getTradingDescription()}
-          </p>
-        </div>
+        <TradePageHeader 
+          isLoading={isLoading} 
+          onRefresh={handleRefresh} 
+        />
         
         <CoinInfo 
           symbol="BTC/USDT" 
