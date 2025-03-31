@@ -1,4 +1,3 @@
-
 // Format a number to a fixed number of decimals
 export const formatDecimals = (value: number, decimals: number = 2): string => {
   return value.toFixed(decimals);
@@ -9,8 +8,8 @@ export const formatCurrency = (value: number, currency: string = 'USD', options?
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: value > 1000 ? 0 : 2,
+    minimumFractionDigits: value < 1 ? 2 : value > 1000 ? 0 : 2,
+    maximumFractionDigits: value < 1 ? 4 : value > 1000 ? 0 : 2,
     ...options
   });
   

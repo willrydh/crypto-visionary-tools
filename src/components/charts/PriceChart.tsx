@@ -127,7 +127,12 @@ const PriceChart: React.FC<PriceChartProps> = ({
   const loadCurrentPrice = async () => {
     try {
       const price = await fetchCurrentPrice(formattedSymbol);
-      setCurrentPrice(price);
+      if (price) {
+        setCurrentPrice(price);
+        console.log('Updated current price:', price.price, 'Change:', price.change24h);
+      } else {
+        console.error('Empty price data returned');
+      }
     } catch (error) {
       console.error('Failed to fetch current price:', error);
     }
@@ -306,6 +311,12 @@ const PriceChart: React.FC<PriceChartProps> = ({
                       <span className="text-muted-foreground">Data Points:</span>
                       <span>{processedData.length}</span>
                     </div>
+                    {currentPrice && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Current Price:</span>
+                        <span>{formatCurrency(currentPrice.price)}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </PopoverContent>
