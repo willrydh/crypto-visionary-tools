@@ -13,6 +13,8 @@ import NotFound from './pages/NotFound';
 import Welcome from './pages/Welcome';
 import TradeSuggestion from './pages/TradeSuggestion';
 import LevelsView from './pages/LevelsView';
+import PricingPage from './pages/PricingPage';
+import PaymentPage from './pages/PaymentPage';
 import { MarketsProvider } from './contexts/MarketsContext';
 import { TechnicalAnalysisProvider } from './contexts/TechnicalAnalysisContext';
 import { TimeframeProvider } from './contexts/TimeframeContext';
@@ -45,6 +47,8 @@ function App() {
                   <CryptoProvider>
                     <Routes>
                       <Route path="/welcome" element={<Welcome />} />
+                      <Route path="/pricing" element={<PricingPage />} />
+                      <Route path="/payment" element={<PaymentPage />} />
                       <Route path="/" element={<RootLayout />}>
                         <Route index element={<Dashboard />} />
                         <Route path="dashboard" element={<Dashboard />} />
