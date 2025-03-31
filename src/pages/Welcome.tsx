@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
@@ -689,4 +690,34 @@ const Welcome = () => {
               <ul className="space-y-2 text-sm">
                 <li><a href="#" className="text-muted-foreground hover:text-foreground">Terms</a></li>
                 <li><a href="#" className="text-muted-foreground hover:text-foreground">Privacy</a></li>
-                <li><a href
+                <li><a href="#" className="text-muted-foreground hover:text-foreground">Cookie Policy</a></li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="border-t border-border mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+            <p className="text-sm text-muted-foreground">
+              &copy; {new Date().getFullYear()} ProfitPilot. All rights reserved.
+            </p>
+            <div className="flex space-x-4 mt-4 md:mt-0">
+              <a href="#" className="text-muted-foreground hover:text-foreground">
+                <span className="sr-only">Twitter</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>
+              </a>
+              <a href="#" className="text-muted-foreground hover:text-foreground">
+                <span className="sr-only">Discord</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5"><circle cx="9" cy="12" r="1"></circle><circle cx="15" cy="12" r="1"></circle><path d="M7.5 7.2c.3-.1.6-.2.8-.2h7.2c.9 0 1.7.3 2.3.8"></path><path d="M3.2 14.8a.4.4 0 0 0 0 .4c1 1.8 2.3 3.1 3.8 4 .6.4 1.5.8 2.2 1 .9.2 1.8.3 2.8.3.5 0 1 0 1.5-.1.7-.1 1.3-.3 1.9-.5a13 13 0 0 0 3.2-2.2"></path><path d="M17.8 14.5c-.3.3-.7.6-1 .8-.6.4-1.3.6-2 .8"></path><path d="M5 8.2a15.5 15.5 0 0 0-1.8 5.5c-.1.5-.1 1.1-.1 1.6 0 1.5.5 2.9 1.3 4"></path><path d="M17.9 17.2a2 2 0 0 1-.3 1.7c-.3.3-.7.5-1.2.5-1 0-1.7-.6-1.7-.6l-2.5 1.7a3.4 3.4 0 0 0 2.8 1c.9 0 1.8-.4 2.5-1a3.8 3.8 0 0 0 1.3-3v-5"></path></svg>
+              </a>
+              <a href="#" className="text-muted-foreground hover:text-foreground">
+                <span className="sr-only">GitHub</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default Welcome;
