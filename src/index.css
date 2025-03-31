@@ -80,4 +80,8 @@
   .text-gradient {
     @apply bg-gradient-to-b from-white via-white/90 to-white/80 bg-clip-text text-transparent;
   }
+  
+  .welcome-gradient {
+    @apply bg-gradient-to-b from-slate-800 to-slate-900;
+  }
 }
