@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { SupportResistanceLevels } from '@/components/support-resistance/SupportResistanceLevels';
-import PriceChart from '@/components/PriceChart';
+import PriceChart from '@/components/charts/PriceChart';
 import { useSupportResistance } from '@/hooks/useSupportResistance';
 
 const LevelsView = () => {

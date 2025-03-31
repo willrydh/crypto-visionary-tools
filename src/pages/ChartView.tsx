@@ -1,6 +1,7 @@
+
 import React, { useEffect } from 'react';
 import { useSupportResistance } from '@/hooks/useSupportResistance';
-import PriceChart from '@/components/PriceChart';
+import PriceChart from '@/components/charts/PriceChart';
 import { IndicatorBreakdown } from '@/components/analysis/IndicatorBreakdown';
 import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';
 import { Button } from '@/components/ui/button';
