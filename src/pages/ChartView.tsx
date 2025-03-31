@@ -87,14 +87,19 @@ const ChartView = () => {
         </div>
       </div>
       
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col gap-4">
+        {/* Currency Selector first, above the coin info */}
+        <div className="flex justify-end">
+          <CryptoSelector showDataSource={true} />
+        </div>
+        
+        {/* Coin info underneath */}
         <CoinInfo 
           symbol={`${selectedCrypto.symbol}/USDT`}
           name={selectedCrypto.name}
           price={selectedCrypto.symbol === 'BTC' ? 82500 : selectedCrypto.symbol === 'ETH' ? 3450 : 0}
           change24h={selectedCrypto.symbol === 'BTC' ? 1.8 : selectedCrypto.symbol === 'ETH' ? 2.3 : 0}
         />
-        <CryptoSelector showDataSource={true} />
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

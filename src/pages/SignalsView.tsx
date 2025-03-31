@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import PriceChart from '@/components/charts/PriceChart';
 import EnhancedTechnicalAnalysis from '@/components/analysis/EnhancedTechnicalAnalysis';
@@ -105,14 +104,17 @@ const SignalsView = () => {
     <div className="space-y-6">
       <TradePageHeader isLoading={isLoading} onRefresh={handleRefresh} />
 
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col gap-4">
+        <div className="flex justify-end">
+          <CryptoSelector showDataSource={true} />
+        </div>
+        
         <CoinInfo 
           symbol={`${selectedCrypto.symbol}/USDT`}
           name={selectedCrypto.name}
           price={priceInfo.currentPrice}
           change24h={1.8}
         />
-        <CryptoSelector showDataSource={true} />
       </div>
 
       <div className="space-y-6">

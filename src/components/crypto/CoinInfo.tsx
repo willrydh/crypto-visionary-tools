@@ -16,6 +16,18 @@ interface CoinInfoProps {
   description?: string;
 }
 
+// Crypto descriptions for different coins
+const cryptoDescriptions: Record<string, string> = {
+  BTC: "The world's first cryptocurrency. A decentralized digital currency without a central bank or administrator.",
+  ETH: "A decentralized, open-source blockchain with smart contract functionality. Powers the Ethereum ecosystem and NFTs.",
+  XRP: "Digital payment protocol and cryptocurrency that enables fast, low-cost international money transfers.",
+  SOL: "High-performance blockchain supporting smart contracts and decentralized applications with fast transaction speeds.",
+  DOGE: "Originally created as a joke, now a popular meme cryptocurrency with a devoted community.",
+  WLD: "The utility token for Worldcoin, a project aiming to create a global identity and financial network.",
+  LTC: "Peer-to-peer cryptocurrency created as a fork of Bitcoin, known for faster transaction confirmation times.",
+  SUI: "Native token of the Sui blockchain, designed for high throughput and low latency applications."
+};
+
 const CoinInfo: React.FC<CoinInfoProps> = ({
   symbol,
   name = 'Bitcoin',
@@ -24,13 +36,17 @@ const CoinInfo: React.FC<CoinInfoProps> = ({
   marketCap = 1.6e12,
   volume24h = 24.5e9,
   rank = 1,
-  description = 'The world\'s first cryptocurrency. A decentralized digital currency without a central bank or administrator.'
+  description
 }) => {
   const isPositive = change24h > 0;
   const coinSymbol = symbol.split('/')[0] as any;
   
+  // Use provided description or fallback to our predefined descriptions
+  const coinDescription = description || cryptoDescriptions[coinSymbol] || 
+    "A digital cryptocurrency traded on various exchanges.";
+  
   return (
-    <Card className="bg-card border-border shadow-sm my-4">
+    <Card className="bg-card border-border shadow-sm">
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
@@ -44,7 +60,7 @@ const CoinInfo: React.FC<CoinInfoProps> = ({
           </Badge>
         </div>
         
-        <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{description}</p>
+        <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{coinDescription}</p>
         
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm">
           <div className="flex items-center gap-1.5">
