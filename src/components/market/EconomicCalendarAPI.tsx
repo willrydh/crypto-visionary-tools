@@ -66,6 +66,96 @@ const formatDate = (dateString: string) => {
   }
 };
 
+// Fallback mock data for when the API is unavailable
+const generateMockEvents = (): EconomicEvent[] => {
+  return [
+    {
+      date: new Date().toISOString(),
+      country: 'United States',
+      category: 'Employment',
+      event: 'Non-Farm Payrolls',
+      reference: 'MAR',
+      source: 'Bureau of Labor Statistics',
+      actual: '236K',
+      previous: '311K',
+      forecast: '230K',
+      importance: 3
+    },
+    {
+      date: new Date(Date.now() + 1000 * 60 * 60 * 3).toISOString(),
+      country: 'Euro Area',
+      category: 'Inflation',
+      event: 'Consumer Price Index (YoY)',
+      reference: 'MAR',
+      source: 'Eurostat',
+      actual: '',
+      previous: '8.5%',
+      forecast: '8.1%',
+      importance: 3
+    },
+    {
+      date: new Date(Date.now() + 1000 * 60 * 60 * 5).toISOString(),
+      country: 'United Kingdom',
+      category: 'Interest Rate Decision',
+      event: 'BoE Interest Rate Decision',
+      reference: 'APR',
+      source: 'Bank of England',
+      actual: '',
+      previous: '4.25%',
+      forecast: '4.25%',
+      importance: 3
+    },
+    {
+      date: new Date(Date.now() + 1000 * 60 * 60 * 8).toISOString(),
+      country: 'Japan',
+      category: 'Economic Activity',
+      event: 'Industrial Production MoM',
+      reference: 'FEB',
+      source: 'METI',
+      actual: '',
+      previous: '4.3%',
+      forecast: '2.7%',
+      importance: 2
+    },
+    {
+      date: new Date(Date.now() + 1000 * 60 * 60 * 12).toISOString(),
+      country: 'Australia',
+      category: 'Employment',
+      event: 'Unemployment Rate',
+      reference: 'MAR',
+      source: 'Australian Bureau of Statistics',
+      actual: '',
+      previous: '3.5%',
+      forecast: '3.6%',
+      importance: 2
+    },
+    {
+      date: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
+      country: 'China',
+      category: 'Trade',
+      event: 'Trade Balance',
+      reference: 'MAR',
+      source: 'General Administration of Customs',
+      actual: '',
+      previous: '$116.88B',
+      forecast: '$90.0B',
+      importance: 2
+    },
+    {
+      date: new Date(Date.now() + 1000 * 60 * 60 * 36).toISOString(),
+      country: 'Canada',
+      category: 'Housing',
+      event: 'Housing Starts',
+      reference: 'MAR',
+      source: 'Canada Mortgage and Housing Corporation',
+      actual: '',
+      previous: '244.0K',
+      forecast: '240.0K',
+      importance: 1
+    }
+  ];
+};
+
 const EconomicCalendarAPI = () => {
   const [events, setEvents] = useState<EconomicEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -78,7 +168,7 @@ const EconomicCalendarAPI = () => {
     setIsError(false);
     
     try {
-      const url = 'https://tradingeconomics.p.rapidapi.com/calendar/country/all';
+      const url = 'https://tradingeconomics.p.rapidapi.com/calendar';
       const options = {
         method: 'GET',
         headers: {
@@ -110,20 +200,29 @@ const EconomicCalendarAPI = () => {
           .slice(0, 10);
           
         setEvents(sortedEvents);
+        setIsLoading(false);
+        
+        toast({
+          title: 'Success',
+          description: 'Economic calendar data updated successfully',
+        });
       } else {
         throw new Error('Invalid response format');
       }
-      
-      setIsLoading(false);
     } catch (error) {
       console.error('Error fetching economic calendar:', error);
       setIsError(true);
       setErrorMessage(error instanceof Error ? error.message : 'Failed to fetch economic calendar');
+      
+      // Use mock data as fallback
+      const mockEvents = generateMockEvents();
+      setEvents(mockEvents);
+      
       setIsLoading(false);
       
       toast({
         title: 'Error',
-        description: 'Failed to fetch economic calendar data',
+        description: 'Using fallback economic calendar data',
         variant: 'destructive',
       });
     }

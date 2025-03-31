@@ -34,7 +34,11 @@ const FearGreedIndex = () => {
     setIsError(false);
     
     try {
-      const response = await fetch('https://api.alternative.me/fng/');
+      // Using cors-anywhere proxy to avoid CORS issues
+      const proxyUrl = 'https://corsproxy.io/?';
+      const targetUrl = 'https://api.alternative.me/fng/';
+      
+      const response = await fetch(proxyUrl + targetUrl);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -48,15 +52,28 @@ const FearGreedIndex = () => {
       }
       
       setIsLoading(false);
+      
+      toast({
+        title: 'Success',
+        description: 'Fear & Greed data updated successfully',
+      });
     } catch (error) {
       console.error('Error fetching Fear & Greed Index:', error);
       setIsError(true);
       setErrorMessage(error instanceof Error ? error.message : 'Failed to fetch Fear & Greed data');
       setIsLoading(false);
       
+      // If the real API fails, use fallback mock data to demonstrate UI
+      setData({
+        value: "34",
+        value_classification: "Fear",
+        timestamp: `${Math.floor(Date.now() / 1000)}`,
+        time_until_update: "12 hours"
+      });
+      
       toast({
         title: 'Error',
-        description: 'Failed to fetch Fear & Greed data',
+        description: 'Failed to fetch Fear & Greed data. Using fallback data.',
         variant: 'destructive',
       });
     }
