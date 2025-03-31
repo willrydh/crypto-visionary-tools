@@ -64,16 +64,12 @@ const MarketDashboard = () => {
         <div className="grid grid-cols-1 gap-6">
           <div>
             <FearGreedIndex 
-              key={fearGreedIndexKey} 
-              useMockData={true} 
-              hideErrors={true} 
+              key={fearGreedIndexKey}
             />
           </div>
           <div>
             <EconomicCalendarAPI 
               key={economicCalendarKey}
-              useMockData={true}
-              hideErrors={true}
             />
           </div>
         </div>
@@ -87,16 +83,12 @@ const MarketDashboard = () => {
             </TabsList>
             <TabsContent value="fear-greed" className="mt-4">
               <FearGreedIndex 
-                key={fearGreedIndexKey} 
-                useMockData={true} 
-                hideErrors={true} 
+                key={fearGreedIndexKey}
               />
             </TabsContent>
             <TabsContent value="calendar" className="mt-4">
               <EconomicCalendarAPI 
                 key={economicCalendarKey}
-                useMockData={true}
-                hideErrors={true}
               />
             </TabsContent>
           </Tabs>
