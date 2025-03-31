@@ -1,15 +1,23 @@
 
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Bell, Settings, LogOut } from 'lucide-react';
+import { Bell, Settings, LogOut, RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import Logo from '@/assets/logo.svg';
+import { useTradingMode } from '@/hooks/useTradingMode';
+import { cn } from '@/lib/utils';
+import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';
 
 const TopHeader = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { tradingMode, setTradingMode } = useTradingMode();
+  const { isLoading, generateAnalysis } = useTechnicalAnalysis();
+  
+  const isTradeOrDashboard = location.pathname === '/' || location.pathname === '/trade-suggestion';
   
   const handleNotifications = () => {
     // Navigate to notifications page
@@ -33,61 +41,146 @@ const TopHeader = () => {
     // Redirect to welcome page
     navigate('/welcome');
   };
+
+  const handleModeChange = (mode: 'scalp' | 'day' | 'night') => {
+    setTradingMode(mode);
+  };
+
+  const handleRefresh = () => {
+    generateAnalysis('BTC/USDT', true);
+    toast({
+      title: "Analysis Updated",
+      description: "The analysis has been refreshed based on current market data.",
+    });
+  };
   
   return (
-    <header className="fixed top-0 left-0 right-0 z-30 h-14 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex items-center px-4 md:px-6 md:ml-64">
-      <div className="flex items-center gap-2 md:hidden">
-        <Link to="/" className="flex items-center gap-2">
-          <img src={Logo} alt="ProfitPilot" className="h-8 w-8" />
-          <div className="font-semibold">
-            ProfitPilot
-          </div>
-        </Link>
+    <header className="fixed top-0 left-0 right-0 z-30 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/40 flex flex-col">
+      {/* Main header with logo and actions */}
+      <div className="h-14 flex items-center px-4 md:px-6 md:ml-64">
+        <div className="flex items-center gap-2 md:hidden">
+          <Link to="/" className="flex items-center gap-2">
+            <img src={Logo} alt="ProfitPilot" className="h-8 w-8" />
+            <div className="font-semibold">
+              ProfitPilot
+            </div>
+          </Link>
+        </div>
+        
+        <div className="ml-auto flex items-center gap-2">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={handleNotifications}
+                >
+                  <Bell className="h-5 w-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Notifications & Activity Log</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" asChild>
+                  <Link to="/settings">
+                    <Settings className="h-5 w-5" />
+                  </Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Settings</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="ml-2 gap-1"
+            onClick={handleLogout}
+          >
+            <LogOut className="h-4 w-4" />
+            <span className="hidden sm:inline">Logout</span>
+          </Button>
+        </div>
       </div>
       
-      <div className="ml-auto flex items-center gap-2">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="icon"
-                onClick={handleNotifications}
+      {/* Trading mode selector - only visible on trade-suggestion and dashboard pages */}
+      {isTradeOrDashboard && (
+        <div className="px-4 md:px-6 md:ml-64 bg-primary/5 border-b border-border/40">
+          <div className="flex items-center justify-between py-2">
+            <div className="grid grid-cols-3 gap-1 flex-grow max-w-md">
+              {/* Scalp Trading Button */}
+              <button
+                onClick={() => handleModeChange('scalp')}
+                className={cn(
+                  "relative flex items-center justify-center rounded-md transition-all duration-200 py-1.5 px-2",
+                  tradingMode === 'scalp' 
+                    ? "bg-blue-600 text-white shadow-md" 
+                    : "bg-blue-900/20 text-blue-400 hover:bg-blue-900/30"
+                )}
               >
-                <Bell className="h-5 w-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Notifications & Activity Log</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" asChild>
-                <Link to="/settings">
-                  <Settings className="h-5 w-5" />
-                </Link>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Settings</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="ml-2 gap-1"
-          onClick={handleLogout}
-        >
-          <LogOut className="h-4 w-4" />
-          <span className="hidden sm:inline">Logout</span>
-        </Button>
-      </div>
+                <span className="text-sm font-medium">Scalp</span>
+              </button>
+
+              {/* Day Trading Button */}
+              <button
+                onClick={() => handleModeChange('day')}
+                className={cn(
+                  "relative flex items-center justify-center rounded-md transition-all duration-200 py-1.5 px-2",
+                  tradingMode === 'day' 
+                    ? "bg-amber-600 text-white shadow-md" 
+                    : "bg-amber-900/20 text-amber-400 hover:bg-amber-900/30"
+                )}
+              >
+                <span className="text-sm font-medium">Day</span>
+              </button>
+
+              {/* Night Trading Button */}
+              <button
+                onClick={() => handleModeChange('night')}
+                className={cn(
+                  "relative flex items-center justify-center rounded-md transition-all duration-200 py-1.5 px-2",
+                  tradingMode === 'night' 
+                    ? "bg-indigo-600 text-white shadow-md" 
+                    : "bg-indigo-900/20 text-indigo-400 hover:bg-indigo-900/30"
+                )}
+              >
+                <span className="text-sm font-medium">Night</span>
+              </button>
+            </div>
+            
+            {/* Refresh button */}
+            {(location.pathname === '/trade-suggestion' || location.pathname === '/') && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="ml-2" 
+                      onClick={handleRefresh}
+                      disabled={isLoading}
+                    >
+                      <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Refresh Analysis</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+          </div>
+        </div>
+      )}
     </header>
   );
 };

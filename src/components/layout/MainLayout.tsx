@@ -1,9 +1,10 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from "@/components/ui/sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import NavigationMenu from './NavigationMenu';
+import TopHeader from './TopHeader';
 import Logo from '@/assets/logo.svg';
 
 interface MainLayoutProps {
@@ -12,15 +13,20 @@ interface MainLayoutProps {
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const location = useLocation();
+  const [isTradingPage, setIsTradingPage] = useState(false);
 
-  // Scroll to top when location changes
   useEffect(() => {
+    // Check if current route is trading related
+    const tradingRoutes = ['/', '/trade-suggestion'];
+    setIsTradingPage(tradingRoutes.includes(location.pathname));
+    
+    // Scroll to top when location changes
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="min-h-screen flex w-full">
+      <div className={`min-h-screen flex w-full ${isTradingPage ? 'trading-page' : ''}`}>
         <Sidebar collapsible="icon" className="border-r border-border">
           <SidebarHeader className="p-4">
             <Link to="/" className="flex items-center space-x-2">
@@ -37,11 +43,14 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             </div>
           </SidebarFooter>
         </Sidebar>
-        <main className="flex-1 overflow-auto">
-          <div className="container mx-auto py-8 px-4">
-            {children}
-          </div>
-        </main>
+        <div className="flex-1 flex flex-col">
+          <TopHeader />
+          <main className="flex-1 overflow-auto">
+            <div className="container mx-auto py-8 px-4">
+              {children}
+            </div>
+          </main>
+        </div>
       </div>
     </SidebarProvider>
   );

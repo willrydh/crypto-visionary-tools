@@ -44,9 +44,9 @@ export const DiscordCommunity = () => {
                 </div>
                 <div className="text-center space-y-3">
                   <p className="text-white/90 font-bold">ProfitPilotAI</p>
-                  <code className="text-sm bg-black/30 py-2 px-3 rounded block text-green-400 overflow-x-auto">
+                  <pre className="text-sm bg-black/40 py-3 px-4 rounded border border-[#5865F2]/20 text-green-400 overflow-x-auto font-mono">
                     discord.gg/ProfitPilotAI
-                  </code>
+                  </pre>
                   <p className="text-xs text-gray-400">Join our trading community</p>
                 </div>
               </div>

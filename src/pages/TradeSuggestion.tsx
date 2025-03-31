@@ -1,6 +1,5 @@
 
 import React, { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import EnhancedTechnicalAnalysis from '@/components/analysis/EnhancedTechnicalAnalysis';
 import { TradeSuggestionCard } from '@/components/analysis/TradeSuggestionCard';
 import { PriceChart } from '@/components/charts/PriceChart';
@@ -8,7 +7,6 @@ import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';
 import { useToast } from '@/hooks/use-toast';
 import CoinInfo from '@/components/crypto/CoinInfo';
 import TradingEducation from '@/components/education/TradingEducation';
-import { TradePageHeader } from '@/components/trading/TradePageHeader';
 import { PullToRefresh } from '@/components/ui/pull-to-refresh';
 import { useTradingMode } from '@/hooks/useTradingMode';
 
@@ -63,13 +61,29 @@ const TradeSuggestion = () => {
     }
   };
   
+  // Description based on trading mode
+  const getTradingDescription = () => {
+    switch (tradingMode) {
+      case 'scalp':
+        return "Ultra-short term trading analysis optimized for minutes-based positions.";
+      case 'day':
+        return "Short-term trading analysis for positions held within market hours.";
+      case 'night':
+        return "Medium-term trading analysis for positions that can extend overnight.";
+      default:
+        return "Trading analysis and suggestions";
+    }
+  };
+  
   return (
     <PullToRefresh onRefresh={handleRefresh}>
-      <div className="space-y-6 -mt-6">
-        <TradePageHeader 
-          isLoading={isLoading} 
-          onRefresh={handleRefresh} 
-        />
+      <div className="space-y-6">
+        <div className="mb-4">
+          <h1 className="text-2xl font-bold">Trade Suggestions</h1>
+          <p className="text-muted-foreground">
+            {getTradingDescription()}
+          </p>
+        </div>
         
         <CoinInfo 
           symbol="BTC/USDT" 
