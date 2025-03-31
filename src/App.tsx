@@ -19,6 +19,7 @@ import RootLayout from './components/layout/RootLayout';
 import MarketAlerts from './components/markets/MarketAlerts';
 import { Toaster } from './components/ui/toaster';
 import './App.css';
+import Notifications from './pages/Notifications';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -52,6 +53,7 @@ function App() {
             <Route path="/settings" element={<SettingsView />} />
             <Route path="/levels" element={<LevelsView />} />
             <Route path="/market-dashboard" element={<MarketDashboard />} />
+            <Route path="/notifications" element={<Notifications />} />
           </Route>
           
           <Route path="*" element={<NotFound />} />

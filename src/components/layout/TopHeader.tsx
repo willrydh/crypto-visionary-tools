@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -17,21 +16,13 @@ const TopHeader = () => {
   const { tradingMode, setTradingMode } = useTradingMode();
   const { isLoading, generateAnalysis } = useTechnicalAnalysis();
   
-  // Update to include signals page in the list of pages that show trading mode bar
+  // Only show trading mode bar on these pages
   const showTradingBar = location.pathname === '/' || 
                           location.pathname === '/trade-suggestion' || 
                           location.pathname === '/trade' || 
-                          location.pathname === '/signals';
-  
-  const handleNotifications = () => {
-    // Navigate to notifications page
-    navigate('/notifications');
-    
-    toast({
-      title: "Notifications",
-      description: "Viewing your latest notifications",
-    });
-  };
+                          location.pathname === '/signals' ||
+                          location.pathname === '/chart' ||
+                          location.pathname === '/calendar';
   
   const handleLogout = () => {
     // In a real app, this would clear authentication tokens
@@ -78,12 +69,9 @@ const TopHeader = () => {
                 <Button 
                   variant="ghost" 
                   size="icon"
-                  onClick={handleNotifications}
-                  asChild
+                  onClick={() => navigate('/notifications')}
                 >
-                  <Link to="/notifications">
-                    <Bell className="h-5 w-5" />
-                  </Link>
+                  <Bell className="h-5 w-5" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -119,7 +107,7 @@ const TopHeader = () => {
         </div>
       </div>
       
-      {/* Trading mode selector - show on dashboard, trade-suggestion and signals pages */}
+      {/* Trading mode selector - show on specific pages */}
       {showTradingBar && (
         <div className="px-4 md:px-6 md:ml-64 bg-primary/5 border-b border-border/40">
           <div className="flex items-center justify-between py-3">

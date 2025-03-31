@@ -15,7 +15,6 @@ const MarketDashboard = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [fearGreedIndexKey, setFearGreedIndexKey] = useState(0);
   const [economicCalendarKey, setEconomicCalendarKey] = useState(0);
-  const [showMockupData, setShowMockupData] = useState(true); // Default to showing mockup data
 
   const handleRefreshAll = async () => {
     setIsRefreshing(true);
@@ -64,10 +63,18 @@ const MarketDashboard = () => {
 
         <div className="grid grid-cols-1 gap-6">
           <div>
-            <FearGreedIndex key={fearGreedIndexKey} fallbackToMockData={showMockupData} hideErrors={true} />
+            <FearGreedIndex 
+              key={fearGreedIndexKey} 
+              useMockData={true} 
+              hideErrors={true} 
+            />
           </div>
           <div>
-            <EconomicCalendarAPI key={economicCalendarKey} fallbackToMockData={showMockupData} hideErrors={true} />
+            <EconomicCalendarAPI 
+              key={economicCalendarKey}
+              useMockData={true}
+              hideErrors={true}
+            />
           </div>
         </div>
 
@@ -79,10 +86,18 @@ const MarketDashboard = () => {
               <TabsTrigger value="calendar" className="flex-1">Events</TabsTrigger>
             </TabsList>
             <TabsContent value="fear-greed" className="mt-4">
-              <FearGreedIndex key={fearGreedIndexKey} fallbackToMockData={showMockupData} hideErrors={true} />
+              <FearGreedIndex 
+                key={fearGreedIndexKey} 
+                useMockData={true} 
+                hideErrors={true} 
+              />
             </TabsContent>
             <TabsContent value="calendar" className="mt-4">
-              <EconomicCalendarAPI key={economicCalendarKey} fallbackToMockData={showMockupData} hideErrors={true} />
+              <EconomicCalendarAPI 
+                key={economicCalendarKey}
+                useMockData={true}
+                hideErrors={true}
+              />
             </TabsContent>
           </Tabs>
         </div>
