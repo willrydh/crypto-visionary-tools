@@ -49,7 +49,7 @@ export const TechnicalAnalysisSummary: React.FC<TechnicalAnalysisSummaryProps> =
   
   // Get description based on trading mode and bias
   const getDescription = () => {
-    const modeName = tradingMode === 'scalp' ? 'Scalping' : tradingMode === 'day' ? 'Day Trading' : 'Swing Trading';
+    const modeName = 'Night Trading';
     
     switch(currentBias) {
       case 'bullish':

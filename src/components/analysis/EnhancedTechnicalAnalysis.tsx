@@ -44,7 +44,7 @@ const EnhancedTechnicalAnalysis: React.FC<EnhancedTechnicalAnalysisProps> = ({
   
   // Get advanced analysis based on trading mode and bias
   const getAdvancedAnalysis = () => {
-    const modeName = tradingMode === 'scalp' ? 'Scalping' : tradingMode === 'day' ? 'Day Trading' : 'Swing Trading';
+    const modeName = 'Night Trading';
     
     const analyses = {
       bullish: {
