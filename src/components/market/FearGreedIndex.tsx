@@ -61,9 +61,8 @@ const FearGreedIndex = () => {
       console.error('Error fetching Fear & Greed Index:', error);
       setIsError(true);
       setErrorMessage(error instanceof Error ? error.message : 'Failed to fetch Fear & Greed data');
-      setIsLoading(false);
       
-      // If the real API fails, use fallback mock data to demonstrate UI
+      // Always use fallback mock data to demonstrate UI when API fails
       setData({
         value: "34",
         value_classification: "Fear",
@@ -71,11 +70,7 @@ const FearGreedIndex = () => {
         time_until_update: "12 hours"
       });
       
-      toast({
-        title: 'Error',
-        description: 'Failed to fetch Fear & Greed data. Using fallback data.',
-        variant: 'destructive',
-      });
+      setIsLoading(false);
     }
   };
 
@@ -114,7 +109,7 @@ const FearGreedIndex = () => {
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent align="end">
-                    <p>Last updated: {new Date(parseInt(data.timestamp) * 1000).toLocaleString()}</p>
+                    <p>Last updated: {new Date(parseInt(data.timestamp) * 1000).toLocaleDateString()}</p>
                     <p>Next update: {data.time_until_update}</p>
                   </TooltipContent>
                 </Tooltip>
@@ -137,6 +132,12 @@ const FearGreedIndex = () => {
         ) : !isLoading && (
           <div className="py-8 text-center text-muted-foreground">
             No data available
+          </div>
+        )}
+        
+        {isError && (
+          <div className="mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded-md text-sm text-red-500">
+            Using fallback data due to API connection issues.
           </div>
         )}
         

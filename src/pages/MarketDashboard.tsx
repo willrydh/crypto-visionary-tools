@@ -4,7 +4,7 @@ import FearGreedIndex from '@/components/market/FearGreedIndex';
 import EconomicCalendarAPI from '@/components/market/EconomicCalendarAPI';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, ClipboardCheck } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
@@ -54,9 +54,9 @@ const MarketDashboard = () => {
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold">Market Dashboard</h1>
+          <h1 className="text-2xl font-bold">Market Forecast</h1>
           <p className="text-muted-foreground">
-            Real-time market data and economic indicators
+            Real-time market conditions and economic events
           </p>
         </div>
         <Button 

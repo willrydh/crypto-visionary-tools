@@ -1,7 +1,6 @@
-
 import React, { useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
-import { LineChart, Zap, BarChartHorizontal } from 'lucide-react';
+import { LineChart, Cloud, BarChartHorizontal } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';
 import { useTradingMode } from '@/hooks/useTradingMode';
@@ -66,8 +65,8 @@ const Dashboard = () => {
         <div className="flex gap-2">
           <Link to="/market-dashboard">
             <Button variant="outline" className="gap-2">
-              <BarChartHorizontal className="h-4 w-4" />
-              Market Dashboard
+              <Cloud className="h-4 w-4" />
+              Forecast
             </Button>
           </Link>
           <TooltipProvider>
@@ -105,14 +104,11 @@ const Dashboard = () => {
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main content - 2/3 width */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Price chart */}
           <div className="max-w-full overflow-hidden">
            <PriceChart symbol="BTC/USDT" />
           </div>
           
-          {/* Analysis cards - 2 columns on larger screens */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <EnhancedTechnicalAnalysis 
               currentBias={currentBias}
@@ -127,15 +123,11 @@ const Dashboard = () => {
           </div>
         </div>
         
-        {/* Sidebar - 1/3 width */}
         <div className="space-y-6">
-          {/* Price thermometer */}
           <PriceThermometer />
           
-          {/* Add DataInsights component */}
           <div className="hidden lg:block">
             <div className="import">
-              {/* Use import, but hide it to avoid errors */}
               {(() => {
                 const DataInsights = React.lazy(() => import('@/components/analysis/DataInsights'));
                 return (
@@ -149,7 +141,6 @@ const Dashboard = () => {
         </div>
       </div>
       
-      {/* Full-width Economic Calendar */}
       <div className="col-span-full w-full">
         <ImprovedEconomicCalendar compact={true} />
       </div>

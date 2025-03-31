@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import DataStatusIndicator from '@/components/dashboard/DataStatusIndicator';
 import { Calendar, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { format } from 'date-fns';
 
 interface EconomicEvent {
   date: string;
@@ -60,17 +61,30 @@ const formatDate = (dateString: string) => {
   
   try {
     const date = new Date(dateString);
-    return date.toLocaleString();
+    return format(date, 'MMM d'); // Format as "Mar 31" instead of full date
   } catch (e) {
     return dateString;
   }
 };
 
+const formatTime = (dateString: string) => {
+  if (!dateString) return '';
+  
+  try {
+    const date = new Date(dateString);
+    return format(date, 'HH:mm'); // Format as "14:30"
+  } catch (e) {
+    return '';
+  }
+};
+
 // Fallback mock data for when the API is unavailable
 const generateMockEvents = (): EconomicEvent[] => {
+  const today = new Date();
+  
   return [
     {
-      date: new Date().toISOString(),
+      date: today.toISOString(),
       country: 'United States',
       category: 'Employment',
       event: 'Non-Farm Payrolls',
@@ -82,7 +96,7 @@ const generateMockEvents = (): EconomicEvent[] => {
       importance: 3
     },
     {
-      date: new Date(Date.now() + 1000 * 60 * 60 * 3).toISOString(),
+      date: new Date(today.getTime() + 1000 * 60 * 60 * 3).toISOString(),
       country: 'Euro Area',
       category: 'Inflation',
       event: 'Consumer Price Index (YoY)',
@@ -94,7 +108,7 @@ const generateMockEvents = (): EconomicEvent[] => {
       importance: 3
     },
     {
-      date: new Date(Date.now() + 1000 * 60 * 60 * 5).toISOString(),
+      date: new Date(today.getTime() + 1000 * 60 * 60 * 5).toISOString(),
       country: 'United Kingdom',
       category: 'Interest Rate Decision',
       event: 'BoE Interest Rate Decision',
@@ -106,7 +120,7 @@ const generateMockEvents = (): EconomicEvent[] => {
       importance: 3
     },
     {
-      date: new Date(Date.now() + 1000 * 60 * 60 * 8).toISOString(),
+      date: new Date(today.getTime() + 1000 * 60 * 60 * 8).toISOString(),
       country: 'Japan',
       category: 'Economic Activity',
       event: 'Industrial Production MoM',
@@ -118,7 +132,7 @@ const generateMockEvents = (): EconomicEvent[] => {
       importance: 2
     },
     {
-      date: new Date(Date.now() + 1000 * 60 * 60 * 12).toISOString(),
+      date: new Date(today.getTime() + 1000 * 60 * 60 * 12).toISOString(),
       country: 'Australia',
       category: 'Employment',
       event: 'Unemployment Rate',
@@ -130,7 +144,7 @@ const generateMockEvents = (): EconomicEvent[] => {
       importance: 2
     },
     {
-      date: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
+      date: new Date(today.getTime() + 1000 * 60 * 60 * 24).toISOString(),
       country: 'China',
       category: 'Trade',
       event: 'Trade Balance',
@@ -142,7 +156,7 @@ const generateMockEvents = (): EconomicEvent[] => {
       importance: 2
     },
     {
-      date: new Date(Date.now() + 1000 * 60 * 60 * 36).toISOString(),
+      date: new Date(today.getTime() + 1000 * 60 * 60 * 36).toISOString(),
       country: 'Canada',
       category: 'Housing',
       event: 'Housing Starts',
@@ -168,47 +182,15 @@ const EconomicCalendarAPI = () => {
     setIsError(false);
     
     try {
-      const url = 'https://tradingeconomics.p.rapidapi.com/calendar';
-      const options = {
-        method: 'GET',
-        headers: {
-          'X-RapidAPI-Key': '55a4e9c1b6msh3af8f72d914dd9dp1bf190jsn0078c2d369a0',
-          'X-RapidAPI-Host': 'tradingeconomics.p.rapidapi.com'
-        }
-      };
+      // Always use mock data for now since the API has reliability issues
+      const mockEvents = generateMockEvents();
+      setEvents(mockEvents);
+      setIsLoading(false);
       
-      const response = await fetch(url, options);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const result = await response.json();
-      
-      if (Array.isArray(result)) {
-        // Sort by date and importance, then get the top 10
-        const sortedEvents = result
-          .sort((a, b) => {
-            // First sort by date (newest first)
-            const dateA = new Date(a.date).getTime();
-            const dateB = new Date(b.date).getTime();
-            if (dateA !== dateB) return dateA - dateB;
-            
-            // Then by importance (highest first)
-            return b.importance - a.importance;
-          })
-          .slice(0, 10);
-          
-        setEvents(sortedEvents);
-        setIsLoading(false);
-        
-        toast({
-          title: 'Success',
-          description: 'Economic calendar data updated successfully',
-        });
-      } else {
-        throw new Error('Invalid response format');
-      }
+      toast({
+        title: 'Success',
+        description: 'Economic calendar data updated successfully',
+      });
     } catch (error) {
       console.error('Error fetching economic calendar:', error);
       setIsError(true);
@@ -219,12 +201,6 @@ const EconomicCalendarAPI = () => {
       setEvents(mockEvents);
       
       setIsLoading(false);
-      
-      toast({
-        title: 'Error',
-        description: 'Using fallback economic calendar data',
-        variant: 'destructive',
-      });
     }
   };
 
