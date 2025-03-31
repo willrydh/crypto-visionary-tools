@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -57,7 +58,18 @@ const PriceChart: React.FC<PriceChartProps> = ({
     setError(null);
     setConnectionStatus('connecting');
     try {
-      const candleData = await fetchHistoricalPrices(formattedSymbol, timeframe as any, days);
+      // Convert timeframe to match the expected format
+      const interval = timeframe === '1d' ? 'D' : 
+                      timeframe === '7d' ? 'D' : 
+                      timeframe === '30d' ? 'D' : 'D';
+                      
+      const candleData = await fetchHistoricalPrices(formattedSymbol, interval, days);
+      console.log('Fetched candle data:', candleData);
+      
+      if (!candleData || candleData.length === 0) {
+        throw new Error('No data returned from API');
+      }
+      
       const sortedData = [...candleData].sort((a, b) => a.timestamp - b.timestamp);
       
       const data = sortedData.map(candle => ({
@@ -82,6 +94,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
         time: item.time
       }));
       
+      console.log('Processed chart data:', lineData);
       setProcessedData(lineData);
       
       setLastUpdated(new Date().toLocaleString());
@@ -127,6 +140,15 @@ const PriceChart: React.FC<PriceChartProps> = ({
   };
 
   const renderLineChart = () => {
+    if (!processedData || processedData.length === 0) {
+      return (
+        <div className="h-full flex items-center justify-center">
+          <AlertTriangle className="h-8 w-8 text-yellow-500 mr-2" />
+          <p>No chart data available</p>
+        </div>
+      );
+    }
+    
     return (
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
@@ -261,6 +283,10 @@ const PriceChart: React.FC<PriceChartProps> = ({
                          connectionStatus === 'connecting' ? 'Connecting' : 
                          'Disconnected'}
                       </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Data Points:</span>
+                      <span>{processedData.length}</span>
                     </div>
                   </div>
                 </div>

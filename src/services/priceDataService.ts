@@ -80,12 +80,21 @@ export async function fetchHistoricalPrices(
       "X-BAPI-TIMESTAMP": currentTimestamp,
     };
 
+    console.log('Fetching historical prices from:', url);
     const res = await fetch(url, { headers: updatedHeaders });
     const json = await res.json();
+    console.log('API response:', json);
     const now = new Date().toISOString();
 
     if (json.retMsg !== "OK") throw new Error(json.retMsg);
 
+    // Ensure we have data in the response
+    if (!json.result?.list || json.result.list.length === 0) {
+      console.error('No candle data in API response');
+      return generateMockCandleData(limit, symbol);
+    }
+
+    // Map the response data to our candle format
     return json.result.list.map((candle: any[]) => ({
       timestamp: parseInt(candle[0]),
       open: parseFloat(candle[1]),
@@ -120,10 +129,14 @@ export async function fetchCurrentPrice(symbol: string = "BTCUSDT"): Promise<{
       "X-BAPI-TIMESTAMP": currentTimestamp,
     };
 
+    console.log('Fetching current price from:', url);
     const res = await fetch(url, { headers: updatedHeaders });
     const json = await res.json();
+    console.log('Current price API response:', json);
 
-    if (json.retMsg !== "OK") throw new Error(json.retMsg);
+    if (json.retMsg !== "OK" || !json.result?.list?.[0]) {
+      throw new Error(json.retMsg || 'Invalid response format');
+    }
 
     return {
       price: parseFloat(json.result.list[0].lastPrice),
@@ -202,7 +215,8 @@ function generateMockCandleData(count: number, symbol: string = "BTCUSDT"): Pric
       fetchedAt: new Date().toISOString()
     });
   }
-
+  
+  console.log('Generated mock data:', result.length, 'data points');
   return result.reverse(); // Most recent first
 }
 
