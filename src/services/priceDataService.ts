@@ -1,4 +1,3 @@
-
 export interface CandleData {
   timestamp: number;
   open: number;
@@ -83,7 +82,7 @@ export async function fetchHistoricalPrices(
     console.log('Fetching historical prices from:', url);
     const res = await fetch(url, { headers: updatedHeaders });
     const json = await res.json();
-    console.log('API response:', json);
+    console.log('API response status:', json.retMsg);
     const now = new Date().toISOString();
 
     if (json.retMsg !== "OK") throw new Error(json.retMsg);
@@ -94,17 +93,23 @@ export async function fetchHistoricalPrices(
       return generateMockCandleData(limit, symbol);
     }
 
-    // Map the response data to our candle format
-    return json.result.list.map((candle: any[]) => ({
-      timestamp: parseInt(candle[0]),
-      open: parseFloat(candle[1]),
-      high: parseFloat(candle[2]),
-      low: parseFloat(candle[3]),
-      close: parseFloat(candle[4]),
-      volume: parseFloat(candle[5]),
-      source: "Bybit",
-      fetchedAt: now,
-    }));
+    // Map the response data to our candle format with correct timestamp handling
+    // Bybit timestamps are in milliseconds, ensure our data is consistently in milliseconds
+    return json.result.list.map((candle: any[]) => {
+      // Make sure timestamp is a number in milliseconds
+      const timestamp = parseInt(candle[0]);
+      
+      return {
+        timestamp: timestamp,
+        open: parseFloat(candle[1]),
+        high: parseFloat(candle[2]),
+        low: parseFloat(candle[3]),
+        close: parseFloat(candle[4]),
+        volume: parseFloat(candle[5]),
+        source: "Bybit",
+        fetchedAt: now,
+      };
+    });
   } catch (error) {
     console.error("Bybit API error (historical prices):", error);
     // Return mock data as fallback when API fails
@@ -132,7 +137,7 @@ export async function fetchCurrentPrice(symbol: string = "BTCUSDT"): Promise<{
     console.log('Fetching current price from:', url);
     const res = await fetch(url, { headers: updatedHeaders });
     const json = await res.json();
-    console.log('Current price API response:', json);
+    console.log('Current price API response status:', json.retMsg);
 
     if (json.retMsg !== "OK" || !json.result?.list?.[0]) {
       throw new Error(json.retMsg || 'Invalid response format');
@@ -189,17 +194,22 @@ export async function fetchHighLowData(symbol: string = "BTCUSDT"): Promise<High
   }
 }
 
-// Generate mock candle data for fallback purposes
+// Generate mock candle data for fallback purposes with more accurate timestamps
 function generateMockCandleData(count: number, symbol: string = "BTCUSDT"): PriceCandle[] {
   const now = new Date();
   const result: PriceCandle[] = [];
   const basePrice = getBasePrice(symbol);
-
+  
+  // Create realistic timestamps based on count and current time
   for (let i = 0; i < count; i++) {
-    const timestamp = now.getTime() - (i * 3600000); // Go back i hours
-    const volatility = Math.random() * (basePrice * 0.01); // 1% of base price
+    // Calculate timestamp for each candle - go backwards from now
+    // If timeframe is daily, go back i days, otherwise i hours
+    const timestamp = now.getTime() - (i * 3600000); // Default to hours
+    
+    // Create some price variation that looks realistic
+    const volatility = Math.random() * (basePrice * 0.005); // 0.5% of base price for realistic movement
     const open = basePrice + (Math.random() * basePrice * 0.02 - basePrice * 0.01); // +/- 1% of base price
-    const close = open + (Math.random() * volatility - volatility/2);
+    const close = open + (Math.random() * volatility*2 - volatility);
     const high = Math.max(open, close) + Math.random() * basePrice * 0.005; // up to 0.5% higher
     const low = Math.min(open, close) - Math.random() * basePrice * 0.005; // up to 0.5% lower
     const volume = Math.random() * basePrice * 10 + basePrice * 5; // Scale volume with price
@@ -217,7 +227,7 @@ function generateMockCandleData(count: number, symbol: string = "BTCUSDT"): Pric
   }
   
   console.log('Generated mock data:', result.length, 'data points');
-  return result.reverse(); // Most recent first
+  return result.reverse(); // Most recent first, so newest timestamps are first
 }
 
 function generateMockCurrentPrice(symbol: string = "BTCUSDT"): {

@@ -57,19 +57,35 @@ const PriceChart: React.FC<PriceChartProps> = ({
     setIsLoading(true);
     setError(null);
     setConnectionStatus('connecting');
+    
     try {
-      // Convert timeframe to match the expected format
-      const interval = timeframe === '1d' ? 'D' : 
-                      timeframe === '7d' ? 'D' : 
-                      timeframe === '30d' ? 'D' : 'D';
-                      
-      const candleData = await fetchHistoricalPrices(formattedSymbol, interval, days);
-      console.log('Fetched candle data:', candleData);
+      // Convert timeframe to match the expected format for the API
+      let interval;
+      let limit = 100;
+      
+      if (timeframe === '1d') {
+        interval = '60'; // hourly candles for 1 day view
+        limit = 24;
+      } else if (timeframe === '7d') {
+        interval = '240'; // 4-hour candles for 1 week view
+        limit = 42;
+      } else if (timeframe === '30d') {
+        interval = 'D'; // daily candles for 1 month view
+        limit = 30;
+      } else {
+        interval = 'D'; // daily candles for 3 months view
+        limit = 90;
+      }
+      
+      console.log(`Loading chart data: ${formattedSymbol}, interval: ${interval}, limit: ${limit}`);
+      const candleData = await fetchHistoricalPrices(formattedSymbol, interval, limit);
+      console.log('Fetched candle data count:', candleData.length);
       
       if (!candleData || candleData.length === 0) {
         throw new Error('No data returned from API');
       }
       
+      // Sort by timestamp ascending (oldest to newest)
       const sortedData = [...candleData].sort((a, b) => a.timestamp - b.timestamp);
       
       const data = sortedData.map(candle => ({
@@ -94,7 +110,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
         time: item.time
       }));
       
-      console.log('Processed chart data:', lineData);
+      console.log('Processed chart data points:', lineData.length);
       setProcessedData(lineData);
       
       setLastUpdated(new Date().toLocaleString());
@@ -131,7 +147,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
     };
   }, [timeframe, symbol, formattedSymbol]);
 
-  const formatXAxis = (timestamp: string) => {
+  const formatXAxis = (timestamp: number) => {
     const date = new Date(timestamp);
     if (timeframe === '1d') {
       return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -162,11 +178,13 @@ const PriceChart: React.FC<PriceChartProps> = ({
             </linearGradient>
           </defs>
           <XAxis
-            dataKey="time"
+            dataKey="timestamp"
             tickFormatter={formatXAxis}
             tickCount={5}
             minTickGap={20}
             tick={{ fontSize: 10 }}
+            type="number"
+            domain={['dataMin', 'dataMax']}
           />
           <YAxis
             domain={['auto', 'auto']}
@@ -176,7 +194,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
           />
           <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
           <Tooltip
-            labelFormatter={(value) => `${value}`}
+            labelFormatter={(value) => new Date(value).toLocaleString()}
             formatter={(value, name) => {
               return [formatCurrency(value as number), typeof name === 'string' ? name === 'price' ? 'Price' : name.charAt(0).toUpperCase() + name.slice(1) : name];
             }}
