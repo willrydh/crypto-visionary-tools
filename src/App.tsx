@@ -1,33 +1,33 @@
 
 import React from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import Welcome from './pages/Welcome';
-import Dashboard from './pages/Dashboard';
-import NotFound from './pages/NotFound';
-import SignalsView from './pages/SignalsView';
-import TradeSuggestion from './pages/TradeSuggestion';
-import ChartView from './pages/ChartView';
-import CalendarView from './pages/CalendarView';
-import SettingsView from './pages/SettingsView';
-import LevelsView from './pages/LevelsView';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPasswordConfirm from './pages/ResetPasswordConfirm';
-import FAQ from './pages/FAQ';
-import MarketDashboard from './pages/MarketDashboard';
 import RootLayout from './components/layout/RootLayout';
-import MarketAlerts from './components/markets/MarketAlerts';
+import Dashboard from './pages/Dashboard';
+import SignalsView from './pages/SignalsView';
+import ChartView from './pages/ChartView';
+import SettingsView from './pages/SettingsView';
+import CalendarView from './pages/CalendarView';
+import MarketDashboard from './pages/MarketDashboard';
+import NotFound from './pages/NotFound';
+import Welcome from './pages/Welcome';
+import TradeSuggestion from './pages/TradeSuggestion';
+import { MarketsProvider } from './contexts/MarketsContext';
+import { TechnicalAnalysisProvider } from './contexts/TechnicalAnalysisContext';
+import { TimeframeProvider } from './contexts/TimeframeContext';
+import { TradingModeProvider } from './contexts/TradingModeContext';
+import { SupportResistanceProvider } from './contexts/SupportResistanceContext';
+import { CryptoProvider } from './contexts/CryptoContext';
 import { Toaster } from './components/ui/toaster';
 import './App.css';
-import Notifications from './pages/Notifications';
 
 // Create a client
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: false,
+      staleTime: 1000 * 60 * 5, // 5 minutes
       retry: 1,
-      staleTime: 5 * 60 * 1000,
+      refetchOnWindowFocus: false,
     },
   },
 });
@@ -35,30 +35,34 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <MarketAlerts />
-        <Toaster />
-        <Routes>
-          <Route path="/welcome" element={<Welcome />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPasswordConfirm />} />
-          <Route path="/faq" element={<FAQ />} />
-          
-          <Route element={<RootLayout />}>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/signals" element={<SignalsView />} />
-            <Route path="/trade" element={<TradeSuggestion />} />
-            <Route path="/chart" element={<ChartView />} />
-            <Route path="/calendar" element={<CalendarView />} />
-            <Route path="/settings" element={<SettingsView />} />
-            <Route path="/levels" element={<LevelsView />} />
-            <Route path="/market-dashboard" element={<MarketDashboard />} />
-            <Route path="/notifications" element={<Notifications />} />
-          </Route>
-          
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <Router>
+        <TimeframeProvider>
+          <TradingModeProvider>
+            <TechnicalAnalysisProvider>
+              <MarketsProvider>
+                <SupportResistanceProvider>
+                  <CryptoProvider>
+                    <Routes>
+                      <Route path="/" element={<RootLayout />}>
+                        <Route index element={<Dashboard />} />
+                        <Route path="signals" element={<SignalsView />} />
+                        <Route path="chart" element={<ChartView />} />
+                        <Route path="calendar" element={<CalendarView />} />
+                        <Route path="trade" element={<TradeSuggestion />} />
+                        <Route path="settings" element={<SettingsView />} />
+                        <Route path="welcome" element={<Welcome />} />
+                        <Route path="market-dashboard" element={<MarketDashboard />} />
+                        <Route path="*" element={<NotFound />} />
+                      </Route>
+                    </Routes>
+                    <Toaster />
+                  </CryptoProvider>
+                </SupportResistanceProvider>
+              </MarketsProvider>
+            </TechnicalAnalysisProvider>
+          </TradingModeProvider>
+        </TimeframeProvider>
+      </Router>
     </QueryClientProvider>
   );
 }

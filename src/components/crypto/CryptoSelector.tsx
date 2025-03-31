@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import CryptoCoinIcon from './CryptoCoinIcon';
 import { DataSourceIndicator } from '@/components/ui/data-source-indicator';
+import { useCrypto } from '@/hooks/useCrypto';
 
 export interface CryptoOption {
   symbol: string;
@@ -19,13 +20,11 @@ export interface CryptoOption {
 }
 
 interface CryptoSelectorProps {
-  value: string;
-  onChange: (value: string) => void;
   className?: string;
   showDataSource?: boolean;
 }
 
-const cryptoOptions: CryptoOption[] = [
+export const cryptoOptions: CryptoOption[] = [
   { symbol: 'BTC', name: 'Bitcoin', pairSymbol: 'BTCUSDT' },
   { symbol: 'ETH', name: 'Ethereum', pairSymbol: 'ETHUSDT' },
   { symbol: 'XRP', name: 'Ripple', pairSymbol: 'XRPUSDT' },
@@ -37,14 +36,21 @@ const cryptoOptions: CryptoOption[] = [
 ];
 
 export const CryptoSelector: React.FC<CryptoSelectorProps> = ({ 
-  value, 
-  onChange,
   className,
   showDataSource = false
 }) => {
+  const { selectedCrypto, setSelectedCrypto } = useCrypto();
+  
+  const handleChange = (value: string) => {
+    const selected = cryptoOptions.find(crypto => crypto.pairSymbol === value);
+    if (selected) {
+      setSelectedCrypto(selected);
+    }
+  };
+
   return (
     <div className="flex items-center gap-2">
-      <Select value={value} onValueChange={onChange}>
+      <Select value={selectedCrypto.pairSymbol} onValueChange={handleChange}>
         <SelectTrigger className={`w-[180px] ${className}`}>
           <SelectValue placeholder="Select cryptocurrency" />
         </SelectTrigger>

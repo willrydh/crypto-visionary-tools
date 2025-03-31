@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { PriceChart } from '@/components/charts/PriceChart';
 import EnhancedTechnicalAnalysis from '@/components/analysis/EnhancedTechnicalAnalysis';
@@ -18,12 +19,16 @@ import { TradePageHeader } from '@/components/trading/TradePageHeader';
 import { useTradingMode } from '@/hooks/useTradingMode';
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { cn } from '@/lib/utils';
+import { useCrypto } from '@/hooks/useCrypto';
+import CryptoSelector from '@/components/crypto/CryptoSelector';
 
 const SignalsView = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<string>('chart');
   const { fetchLevels, levels, structure } = useSupportResistance();
   const { tradingMode, getTimeframes, getIndicators, getVolatilityEvents } = useTradingMode();
+  const { selectedCrypto } = useCrypto();
+  
   const { 
     indicators, 
     currentBias, 
@@ -44,10 +49,10 @@ const SignalsView = () => {
 
   useEffect(() => {
     if (indicators.length === 0) {
-      generateAnalysis('BTC/USDT');
+      generateAnalysis(selectedCrypto.pairSymbol);
     }
     
-    fetchLevels('BTC/USDT');
+    fetchLevels(selectedCrypto.pairSymbol);
     
     const interval = setInterval(() => {
       setPriceInfo(prev => ({
@@ -60,14 +65,14 @@ const SignalsView = () => {
   }, []);
 
   useEffect(() => {
-    generateAnalysis('BTC/USDT', true);
-    fetchLevels('BTC/USDT');
-  }, [tradingMode]);
+    generateAnalysis(selectedCrypto.pairSymbol, true);
+    fetchLevels(selectedCrypto.pairSymbol);
+  }, [tradingMode, selectedCrypto]);
 
   const handleRefresh = async () => {
     try {
-      await generateAnalysis('BTC/USDT', true);
-      await fetchLevels('BTC/USDT');
+      await generateAnalysis(selectedCrypto.pairSymbol, true);
+      await fetchLevels(selectedCrypto.pairSymbol);
       
       toast({
         title: "Data Refreshed",
@@ -84,9 +89,7 @@ const SignalsView = () => {
   };
 
   const timeframes = getTimeframes();
-  
   const modeIndicators = getIndicators();
-  
   const volatilityEvents = getVolatilityEvents();
 
   const getModeColor = () => {
@@ -102,12 +105,15 @@ const SignalsView = () => {
     <div className="space-y-6">
       <TradePageHeader isLoading={isLoading} onRefresh={handleRefresh} />
 
-      <CoinInfo 
-        symbol="BTC/USDT"
-        name="Bitcoin"
-        price={priceInfo.currentPrice}
-        change24h={1.8}
-      />
+      <div className="flex justify-between items-center">
+        <CoinInfo 
+          symbol={`${selectedCrypto.symbol}/USDT`}
+          name={selectedCrypto.name}
+          price={priceInfo.currentPrice}
+          change24h={1.8}
+        />
+        <CryptoSelector showDataSource={true} />
+      </div>
 
       <div className="space-y-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -118,7 +124,7 @@ const SignalsView = () => {
           </TabsList>
           
           <TabsContent value="chart" className="pt-4">
-            <PriceChart symbol="BTC/USDT" />
+            <PriceChart symbol={`${selectedCrypto.symbol}/USDT`} />
           </TabsContent>
           
           <TabsContent value="levels" className="pt-4">
@@ -200,9 +206,9 @@ const SignalsView = () => {
         
         <MarketSessionStats 
           title="Market Session Impact Analysis" 
-          asianSessionStart={7} // 8 PM - 1 hour
-          europeanSessionStart={2} // 3 AM - 1 hour
-          usSessionStart={8} // 9 AM - 1 hour
+          asianSessionStart={7} 
+          europeanSessionStart={2} 
+          usSessionStart={8} 
         />
       </div>
     </div>

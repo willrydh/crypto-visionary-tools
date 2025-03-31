@@ -99,7 +99,7 @@ export async function fetchHistoricalPrices(
   } catch (error) {
     console.error("Bybit API error (historical prices):", error);
     // Return mock data as fallback when API fails
-    return generateMockCandleData(limit);
+    return generateMockCandleData(limit, symbol);
   }
 }
 
@@ -133,13 +133,8 @@ export async function fetchCurrentPrice(symbol: string = "BTCUSDT"): Promise<{
     };
   } catch (error) {
     console.error("Bybit API error (current price):", error);
-    // Return mock price as fallback
-    return {
-      price: 68000 + (Math.random() * 1000 - 500),
-      change24h: (Math.random() * 6) - 3,
-      volume24h: Math.random() * 1000000,
-      timestamp: Date.now()
-    };
+    // Return mock price as fallback based on symbol
+    return generateMockCurrentPrice(symbol);
   }
 }
 
@@ -177,33 +172,24 @@ export async function fetchHighLowData(symbol: string = "BTCUSDT"): Promise<High
     console.error("Bybit API error (high/low data):", error);
     
     // Return mock data as fallback
-    const mockPrice = 68000;
-    
-    return {
-      dailyHigh: mockPrice * 1.02,
-      dailyLow: mockPrice * 0.98,
-      weeklyHigh: mockPrice * 1.05,
-      weeklyLow: mockPrice * 0.95,
-      fetchedAt: now,
-      source: "Bybit-Fallback",
-    };
+    return generateMockHighLowData(symbol);
   }
 }
 
 // Generate mock candle data for fallback purposes
-function generateMockCandleData(count: number): PriceCandle[] {
+function generateMockCandleData(count: number, symbol: string = "BTCUSDT"): PriceCandle[] {
   const now = new Date();
   const result: PriceCandle[] = [];
-  const basePrice = 68000;
+  const basePrice = getBasePrice(symbol);
 
   for (let i = 0; i < count; i++) {
     const timestamp = now.getTime() - (i * 3600000); // Go back i hours
-    const volatility = Math.random() * 500;
-    const open = basePrice + (Math.random() * 1000 - 500);
+    const volatility = Math.random() * (basePrice * 0.01); // 1% of base price
+    const open = basePrice + (Math.random() * basePrice * 0.02 - basePrice * 0.01); // +/- 1% of base price
     const close = open + (Math.random() * volatility - volatility/2);
-    const high = Math.max(open, close) + Math.random() * 200;
-    const low = Math.min(open, close) - Math.random() * 200;
-    const volume = Math.random() * 1000 + 500;
+    const high = Math.max(open, close) + Math.random() * basePrice * 0.005; // up to 0.5% higher
+    const low = Math.min(open, close) - Math.random() * basePrice * 0.005; // up to 0.5% lower
+    const volume = Math.random() * basePrice * 10 + basePrice * 5; // Scale volume with price
 
     result.push({
       timestamp,
@@ -218,4 +204,49 @@ function generateMockCandleData(count: number): PriceCandle[] {
   }
 
   return result.reverse(); // Most recent first
+}
+
+function generateMockCurrentPrice(symbol: string = "BTCUSDT"): {
+  price: number;
+  change24h: number;
+  volume24h: number;
+  timestamp: number;
+} {
+  const basePrice = getBasePrice(symbol);
+  
+  return {
+    price: basePrice + (Math.random() * basePrice * 0.02 - basePrice * 0.01), // +/- 1%
+    change24h: (Math.random() * 6) - 3, // -3% to +3%
+    volume24h: basePrice * 1000 * (Math.random() * 5 + 5), // Scale with price
+    timestamp: Date.now()
+  };
+}
+
+function generateMockHighLowData(symbol: string = "BTCUSDT"): HighLowData {
+  const basePrice = getBasePrice(symbol);
+  const now = new Date().toISOString();
+  
+  return {
+    dailyHigh: basePrice * 1.02, // +2%
+    dailyLow: basePrice * 0.98, // -2%
+    weeklyHigh: basePrice * 1.05, // +5%
+    weeklyLow: basePrice * 0.95, // -5%
+    fetchedAt: now,
+    source: "Bybit-Fallback",
+  };
+}
+
+function getBasePrice(symbol: string): number {
+  // Set realistic base prices for different cryptos
+  if (symbol.includes('BTC')) return 68000;
+  if (symbol.includes('ETH')) return 3500;
+  if (symbol.includes('SOL')) return 170;
+  if (symbol.includes('XRP')) return 0.55;
+  if (symbol.includes('DOGE')) return 0.15;
+  if (symbol.includes('WLD')) return 7.50;
+  if (symbol.includes('LTC')) return 80;
+  if (symbol.includes('SUI')) return 1.20;
+  
+  // Default fallback
+  return 100;
 }

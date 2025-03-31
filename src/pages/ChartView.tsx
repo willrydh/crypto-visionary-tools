@@ -10,23 +10,31 @@ import { useToast } from '@/hooks/use-toast';
 import { DataSourceIndicator } from '@/components/ui/data-source-indicator';
 import CoinInfo from '@/components/crypto/CoinInfo';
 import { Link } from 'react-router-dom';
+import { useCrypto } from '@/hooks/useCrypto';
+import CryptoSelector from '@/components/crypto/CryptoSelector';
 
 const ChartView = () => {
   const { toast } = useToast();
   const { indicators, isLoading, generateAnalysis } = useTechnicalAnalysis();
   const { levels, updateLevels } = useSupportResistance();
+  const { selectedCrypto } = useCrypto();
   
   useEffect(() => {
     if (indicators.length === 0) {
-      generateAnalysis('BTC/USDT');
+      generateAnalysis(selectedCrypto.pairSymbol);
     }
-    updateLevels('BTC/USDT');
+    updateLevels(selectedCrypto.pairSymbol);
   }, []);
+  
+  useEffect(() => {
+    generateAnalysis(selectedCrypto.pairSymbol);
+    updateLevels(selectedCrypto.pairSymbol);
+  }, [selectedCrypto]);
   
   const handleRefresh = async () => {
     try {
-      await generateAnalysis('BTC/USDT', true);
-      await updateLevels('BTC/USDT');
+      await generateAnalysis(selectedCrypto.pairSymbol, true);
+      await updateLevels(selectedCrypto.pairSymbol);
       toast({
         title: "Chart Updated",
         description: "Chart data and indicators have been refreshed.",
@@ -79,16 +87,24 @@ const ChartView = () => {
         </div>
       </div>
       
-      <CoinInfo 
-        symbol="BTC/USDT" 
-        price={82500}
-        change24h={1.8}
-      />
+      <div className="flex justify-between items-center">
+        <CoinInfo 
+          symbol={`${selectedCrypto.symbol}/USDT`}
+          name={selectedCrypto.name}
+          price={selectedCrypto.symbol === 'BTC' ? 82500 : selectedCrypto.symbol === 'ETH' ? 3450 : 0}
+          change24h={selectedCrypto.symbol === 'BTC' ? 1.8 : selectedCrypto.symbol === 'ETH' ? 2.3 : 0}
+        />
+        <CryptoSelector showDataSource={true} />
+      </div>
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="md:col-span-3">
           {/* Full-featured price chart with support/resistance levels */}
-          <PriceChart showLevels={true} levels={levels} />
+          <PriceChart 
+            symbol={`${selectedCrypto.symbol}/USDT`}
+            showLevels={true} 
+            levels={levels} 
+          />
         </div>
         
         <div>
