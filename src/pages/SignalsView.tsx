@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import PriceChart from '@/components/charts/PriceChart';
 import EnhancedTechnicalAnalysis from '@/components/analysis/EnhancedTechnicalAnalysis';
@@ -38,12 +39,27 @@ const SignalsView = () => {
     generateAnalysis 
   } = useTechnicalAnalysis();
 
+  // Get accurate price data based on selected crypto
+  const getCryptoPrice = (symbol: string) => {
+    switch(symbol) {
+      case 'BTC': return 68648;
+      case 'ETH': return 3452;
+      case 'SOL': return 172;
+      case 'XRP': return 0.55;
+      case 'DOGE': return 0.16;
+      case 'WLD': return 7.50;
+      case 'LTC': return 83;
+      case 'SUI': return 1.25;
+      default: return 100;
+    }
+  };
+
   const [priceInfo, setPriceInfo] = useState({
-    currentPrice: 82500,
-    dailyHigh: 83200,
-    dailyLow: 81800,
-    weeklyHigh: 84500,
-    weeklyLow: 80200
+    currentPrice: getCryptoPrice(selectedCrypto.symbol),
+    dailyHigh: getCryptoPrice(selectedCrypto.symbol) * 1.02,
+    dailyLow: getCryptoPrice(selectedCrypto.symbol) * 0.98,
+    weeklyHigh: getCryptoPrice(selectedCrypto.symbol) * 1.05,
+    weeklyLow: getCryptoPrice(selectedCrypto.symbol) * 0.95
   });
 
   useEffect(() => {
@@ -56,7 +72,7 @@ const SignalsView = () => {
     const interval = setInterval(() => {
       setPriceInfo(prev => ({
         ...prev,
-        currentPrice: prev.currentPrice + (Math.random() * 200 - 100)
+        currentPrice: getCryptoPrice(selectedCrypto.symbol) + (Math.random() * getCryptoPrice(selectedCrypto.symbol) * 0.005 - getCryptoPrice(selectedCrypto.symbol) * 0.0025)
       }));
     }, 5000);
     
@@ -66,6 +82,13 @@ const SignalsView = () => {
   useEffect(() => {
     generateAnalysis(selectedCrypto.pairSymbol, true);
     fetchLevels(selectedCrypto.pairSymbol);
+    setPriceInfo({
+      currentPrice: getCryptoPrice(selectedCrypto.symbol),
+      dailyHigh: getCryptoPrice(selectedCrypto.symbol) * 1.02,
+      dailyLow: getCryptoPrice(selectedCrypto.symbol) * 0.98,
+      weeklyHigh: getCryptoPrice(selectedCrypto.symbol) * 1.05,
+      weeklyLow: getCryptoPrice(selectedCrypto.symbol) * 0.95
+    });
   }, [tradingMode, selectedCrypto]);
 
   const handleRefresh = async () => {
@@ -100,20 +123,40 @@ const SignalsView = () => {
     }
   };
 
+  // Get price change for the selected crypto
+  const getCryptoChange = (symbol: string) => {
+    switch(symbol) {
+      case 'BTC': return 1.77;
+      case 'ETH': return 2.3;
+      case 'SOL': return 3.2;
+      case 'XRP': return -0.8;
+      case 'DOGE': return 1.2;
+      case 'WLD': return 4.5;
+      case 'LTC': return 0.9;
+      case 'SUI': return 2.1;
+      default: return 0;
+    }
+  };
+
   return (
     <div className="space-y-6">
       <TradePageHeader isLoading={isLoading} onRefresh={handleRefresh} />
 
       <div className="flex flex-col gap-4">
-        <div className="flex justify-end">
-          <CryptoSelector showDataSource={true} />
+        {/* Currency Selector first, in a centered box */}
+        <div className="flex justify-center mb-2">
+          <div className="bg-card/60 p-4 rounded-lg border border-border w-auto inline-flex">
+            <CryptoSelector showDataSource={true} label="" />
+          </div>
         </div>
         
+        {/* Coin info underneath */}
         <CoinInfo 
           symbol={`${selectedCrypto.symbol}/USDT`}
           name={selectedCrypto.name}
           price={priceInfo.currentPrice}
-          change24h={1.8}
+          change24h={getCryptoChange(selectedCrypto.symbol)}
+          description={selectedCrypto.description}
         />
       </div>
 

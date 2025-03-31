@@ -31,7 +31,7 @@ export const cryptoOptions: CryptoOption[] = [
     symbol: 'BTC', 
     name: 'Bitcoin', 
     pairSymbol: 'BTCUSDT',
-    description: 'The first and largest cryptocurrency by market capitalization, created in 2009 by Satoshi Nakamoto.'
+    description: 'The world\'s first cryptocurrency. A decentralized digital currency without a central bank or administrator.'
   },
   { 
     symbol: 'ETH', 
@@ -80,7 +80,7 @@ export const cryptoOptions: CryptoOption[] = [
 export const CryptoSelector: React.FC<CryptoSelectorProps> = ({ 
   className,
   showDataSource = false,
-  label = "Select cryptocurrency"
+  label = "" // Default to empty string instead of "Select cryptocurrency"
 }) => {
   const { selectedCrypto, setSelectedCrypto } = useCrypto();
   
@@ -93,14 +93,19 @@ export const CryptoSelector: React.FC<CryptoSelectorProps> = ({
 
   return (
     <div className="flex items-center gap-2">
-      {label && <span className="text-sm text-muted-foreground">{label}:</span>}
+      {label && <span className="text-sm text-muted-foreground">{label}</span>}
       <Select value={selectedCrypto.pairSymbol} onValueChange={handleChange}>
         <SelectTrigger className={`w-[180px] ${className}`}>
-          <SelectValue placeholder="Select cryptocurrency" />
+          <SelectValue>
+            <div className="flex items-center gap-2">
+              <CryptoCoinIcon coin={selectedCrypto.symbol as any} size="sm" />
+              <span>{selectedCrypto.name}</span>
+            </div>
+          </SelectValue>
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            <SelectLabel>Cryptocurrencies</SelectLabel>
+            {!label && <SelectLabel>Cryptocurrencies</SelectLabel>}
             {cryptoOptions.map((crypto) => (
               <SelectItem key={crypto.pairSymbol} value={crypto.pairSymbol}>
                 <div className="flex items-center gap-2">

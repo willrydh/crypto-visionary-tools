@@ -12,6 +12,7 @@ import CoinInfo from '@/components/crypto/CoinInfo';
 import { Link } from 'react-router-dom';
 import { useCrypto } from '@/hooks/useCrypto';
 import CryptoSelector from '@/components/crypto/CryptoSelector';
+import { fetchCurrentPrice } from '@/services/priceDataService';
 
 const ChartView = () => {
   const { toast } = useToast();
@@ -88,10 +89,10 @@ const ChartView = () => {
       </div>
       
       <div className="flex flex-col gap-4">
-        {/* Currency Selector first, in a centered box */}
+        {/* Currency Selector first */}
         <div className="flex justify-center mb-2">
           <div className="bg-card/60 p-4 rounded-lg border border-border w-auto inline-flex">
-            <CryptoSelector showDataSource={true} />
+            <CryptoSelector showDataSource={true} label="" />
           </div>
         </div>
         
@@ -99,9 +100,23 @@ const ChartView = () => {
         <CoinInfo 
           symbol={`${selectedCrypto.symbol}/USDT`}
           name={selectedCrypto.name}
-          price={selectedCrypto.symbol === 'BTC' ? 82500 : selectedCrypto.symbol === 'ETH' ? 3450 : 0}
-          change24h={selectedCrypto.symbol === 'BTC' ? 1.8 : selectedCrypto.symbol === 'ETH' ? 2.3 : 0}
-          description={cryptoOptions.find(c => c.symbol === selectedCrypto.symbol)?.description}
+          price={selectedCrypto.symbol === 'BTC' ? 68648 : 
+                 selectedCrypto.symbol === 'ETH' ? 3452 : 
+                 selectedCrypto.symbol === 'SOL' ? 172 :
+                 selectedCrypto.symbol === 'XRP' ? 0.55 :
+                 selectedCrypto.symbol === 'DOGE' ? 0.16 :
+                 selectedCrypto.symbol === 'WLD' ? 7.50 :
+                 selectedCrypto.symbol === 'LTC' ? 83 :
+                 selectedCrypto.symbol === 'SUI' ? 1.25 : 0}
+          change24h={selectedCrypto.symbol === 'BTC' ? 1.77 : 
+                    selectedCrypto.symbol === 'ETH' ? 2.3 : 
+                    selectedCrypto.symbol === 'SOL' ? 3.2 :
+                    selectedCrypto.symbol === 'XRP' ? -0.8 :
+                    selectedCrypto.symbol === 'DOGE' ? 1.2 :
+                    selectedCrypto.symbol === 'WLD' ? 4.5 :
+                    selectedCrypto.symbol === 'LTC' ? 0.9 :
+                    selectedCrypto.symbol === 'SUI' ? 2.1 : 0}
+          description={selectedCrypto.description}
         />
       </div>
       

@@ -1,3 +1,4 @@
+
 export interface CandleData {
   timestamp: number;
   open: number;
@@ -237,10 +238,11 @@ function generateMockCurrentPrice(symbol: string = "BTCUSDT"): {
   timestamp: number;
 } {
   const basePrice = getBasePrice(symbol);
+  const change = symbol.includes('XRP') ? -0.8 : (Math.random() * 6) - 1.5; // default to positive trend except XRP
   
   return {
-    price: basePrice + (Math.random() * basePrice * 0.02 - basePrice * 0.01), // +/- 1%
-    change24h: (Math.random() * 6) - 3, // -3% to +3%
+    price: basePrice + (Math.random() * basePrice * 0.01 - basePrice * 0.005), // +/- 0.5%
+    change24h: change,
     volume24h: basePrice * 1000 * (Math.random() * 5 + 5), // Scale with price
     timestamp: Date.now()
   };
@@ -262,14 +264,14 @@ function generateMockHighLowData(symbol: string = "BTCUSDT"): HighLowData {
 
 function getBasePrice(symbol: string): number {
   // Set realistic base prices for different cryptos
-  if (symbol.includes('BTC')) return 68000;
-  if (symbol.includes('ETH')) return 3500;
-  if (symbol.includes('SOL')) return 170;
+  if (symbol.includes('BTC')) return 68648;
+  if (symbol.includes('ETH')) return 3452;
+  if (symbol.includes('SOL')) return 172;
   if (symbol.includes('XRP')) return 0.55;
-  if (symbol.includes('DOGE')) return 0.15;
+  if (symbol.includes('DOGE')) return 0.16;
   if (symbol.includes('WLD')) return 7.50;
-  if (symbol.includes('LTC')) return 80;
-  if (symbol.includes('SUI')) return 1.20;
+  if (symbol.includes('LTC')) return 83;
+  if (symbol.includes('SUI')) return 1.25;
   
   // Default fallback
   return 100;
