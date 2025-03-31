@@ -13,7 +13,10 @@ import SettingsView from './pages/SettingsView';
 import LevelsView from './pages/LevelsView';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPasswordConfirm from './pages/ResetPasswordConfirm';
+import FAQ from './pages/FAQ';
 import RootLayout from './components/layout/RootLayout';
+import MarketAlerts from './components/markets/MarketAlerts';
+import { Toaster } from './components/ui/toaster';
 import './App.css';
 
 // Create a client
@@ -31,10 +34,13 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
+        <MarketAlerts />
+        <Toaster />
         <Routes>
           <Route path="/welcome" element={<Welcome />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPasswordConfirm />} />
+          <Route path="/faq" element={<FAQ />} />
           
           <Route element={<RootLayout />}>
             <Route path="/" element={<Dashboard />} />

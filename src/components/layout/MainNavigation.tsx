@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Logo from '@/assets/logo.svg';
+import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
 
 // Navigation items for the sidebar
 const navItems = [
@@ -35,6 +36,10 @@ const MainNavigation: React.FC = () => {
             <span className="text-xs text-muted-foreground">Profits on Autopilot</span>
           </div>
         </Link>
+      </div>
+      
+      <div className="px-4 mb-4">
+        <TradingModeSelector />
       </div>
       
       <div className="flex-1 overflow-auto py-2">

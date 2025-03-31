@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
@@ -38,6 +37,7 @@ import CustomerReviews from '@/components/marketing/CustomerReviews';
 import PlatformsAvailability from '@/components/marketing/PlatformsAvailability';
 import DiscordCommunity from '@/components/marketing/DiscordCommunity';
 import TokenProgress from '@/components/marketing/TokenProgress';
+import FAQ from './FAQ';
 
 const Welcome = () => {
   const { toast } = useToast();
@@ -275,7 +275,7 @@ const Welcome = () => {
           </nav>
           
           <div className="flex items-center gap-2 ml-auto">
-            <Button variant="ghost" onClick={() => document.getElementById('login-section')?.scrollIntoView({ behavior: 'smooth' })}>
+            <Button variant="ghost" onClick={() => document.getElementById('signup-section')?.scrollIntoView({ behavior: 'smooth' })}>
               Log In
             </Button>
             <Button onClick={() => document.getElementById('signup-section')?.scrollIntoView({ behavior: 'smooth' })}>
@@ -520,42 +520,9 @@ const Welcome = () => {
         </div>
       </section>
       
-      {/* Enhanced FAQ Section */}
+      {/* FAQ Section - Update with reference to the separate FAQ component */}
       <section id="faq" className="py-20 px-4 md:px-6 lg:px-8 bg-secondary/50">
-        <div className="container mx-auto max-w-4xl">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Frequently Asked Questions</h2>
-            <p className="text-muted-foreground">
-              Find answers to common questions about ProfitPilot's features and capabilities.
-            </p>
-          </div>
-          
-          <div className="space-y-6">
-            {extendedFaq.map((item, index) => (
-              <Card key={index} className="overflow-hidden border-border/60">
-                <CardHeader className="p-5">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-primary/10 p-2 rounded-full">
-                      <HelpCircle className="h-4 w-4 text-primary" />
-                    </div>
-                    <CardTitle className="text-lg font-medium">{item.question}</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent className="px-5 pb-5 pt-0">
-                  <p className="text-muted-foreground">{item.answer}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          
-          <div className="mt-12 text-center">
-            <h3 className="text-xl font-medium mb-4">Still have questions?</h3>
-            <Button variant="outline" onClick={() => window.open("#", "_blank")} className="gap-2">
-              Contact Support
-              <ExternalLink className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
+        <FAQ />
       </section>
       
       {/* Additional Features Grid */}
@@ -722,24 +689,4 @@ const Welcome = () => {
               <ul className="space-y-2 text-sm">
                 <li><a href="#" className="text-muted-foreground hover:text-foreground">Terms</a></li>
                 <li><a href="#" className="text-muted-foreground hover:text-foreground">Privacy</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-foreground">Cookies</a></li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="mt-12 pt-8 border-t flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center gap-2 mb-4 md:mb-0">
-              <img src={Logo} alt="Logo" className="h-8 w-8" />
-              <span className="font-medium">ProfitPilot</span>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              © 2025 Zentra LLC. All rights reserved.
-            </p>
-          </div>
-        </div>
-      </footer>
-    </div>
-  );
-};
-
-export default Welcome;
+                <li><a href
