@@ -54,15 +54,15 @@ export default function NavigationMenu({ className }: NavigationMenuProps) {
       variant: 'ghost',
     },
     {
-      href: '/chart',
-      label: 'Chart',
-      icon: <LineChart className="w-5 h-5" />,
-      variant: 'ghost',
-    },
-    {
       href: '/calendar',
       label: 'Events',
       icon: <Calendar className="w-5 h-5" />,
+      variant: 'ghost',
+    },
+    {
+      href: '/chart',
+      label: 'Chart',
+      icon: <LineChart className="w-5 h-5" />,
       variant: 'ghost',
     },
     {

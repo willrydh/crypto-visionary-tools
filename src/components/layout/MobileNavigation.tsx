@@ -16,8 +16,8 @@ const MobileNavigation: React.FC = () => {
     { path: '/', label: 'Home', icon: <BarChart3 size={20} /> },
     { path: '/signals', label: 'Signals', icon: <Radar size={20} /> },
     { path: '/trade', label: 'Trade', icon: <Zap size={20} /> },
-    { path: '/chart', label: 'Chart', icon: <LineChart size={20} /> },
     { path: '/calendar', label: 'Events', icon: <Calendar size={20} /> },
+    { path: '/chart', label: 'Chart', icon: <LineChart size={20} /> },
     { path: '/settings', label: 'Settings', icon: <Settings size={20} /> }
   ];
 
