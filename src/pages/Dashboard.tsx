@@ -15,6 +15,7 @@ import CoinInfo from '@/components/crypto/CoinInfo';
 import WelcomeHeader from '@/components/dashboard/WelcomeHeader';
 import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 
 const Dashboard = () => {
   const { toast } = useToast();
@@ -65,7 +66,13 @@ const Dashboard = () => {
         </div>
         <div className="flex gap-2">
           <Link to="/market-dashboard">
-            <Button variant="outline" className="gap-2">
+            <Button 
+              variant="outline" 
+              className={cn(
+                "gap-2 backdrop-blur-sm bg-card/30 border-border/50",
+                "hover:bg-primary/10 transition-all duration-200"
+              )}
+            >
               <Cloud className="h-4 w-4" />
               Forecast
             </Button>

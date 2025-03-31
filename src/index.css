@@ -79,3 +79,39 @@
     scroll-behavior: smooth;
   }
 }
+
+@layer components {
+  .glass-card {
+    @apply backdrop-blur-md bg-card/30 border-border/50 shadow-lg;
+  }
+
+  .dashboard-button {
+    @apply transition-all duration-200 shadow-md hover:shadow-lg active:scale-95;
+  }
+
+  .glow-effect {
+    @apply relative;
+  }
+
+  .glow-effect::after {
+    @apply content-[''] absolute -inset-0.5 bg-gradient-to-r from-primary/50 to-indigo-500/50 rounded-xl blur opacity-30 -z-10 transition-opacity duration-200;
+  }
+
+  .glow-effect:hover::after {
+    @apply opacity-50;
+  }
+}
+
+/* Improve scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-muted/30 rounded-full;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-muted rounded-full hover:bg-muted/80 transition-colors;
+}

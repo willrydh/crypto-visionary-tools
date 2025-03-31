@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
 import CoinInfo from '@/components/crypto/CoinInfo';
 import TradingEducation from '@/components/education/TradingEducation';
-import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
+import { TradePageHeader } from '@/components/trading/TradePageHeader';
 
 const TradeSuggestion = () => {
   const { toast } = useToast();
@@ -56,32 +56,11 @@ const TradeSuggestion = () => {
   };
   
   return (
-    <div className="space-y-6 mt-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-        <div>
-          <h1 className="text-2xl font-bold">Trade Suggestions</h1>
-          <p className="text-muted-foreground">
-            Advanced trade analysis and execution
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="w-full md:w-72">
-            <TradingModeSelector />
-          </div>
-          <Button 
-            onClick={handleRefresh} 
-            disabled={isLoading} 
-            size="icon"
-            className="h-10 w-10 flex-shrink-0"
-          >
-            {isLoading ? (
-              <RefreshCw className="h-4 w-4 animate-spin" />
-            ) : (
-              <RefreshCw className="h-4 w-4" />
-            )}
-          </Button>
-        </div>
-      </div>
+    <div className="space-y-6 -mt-6">
+      <TradePageHeader 
+        isLoading={isLoading} 
+        onRefresh={handleRefresh} 
+      />
       
       <CoinInfo 
         symbol="BTC/USDT" 
