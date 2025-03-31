@@ -80,21 +80,20 @@ const WelcomeHeader = () => {
     <div className="w-full bg-card rounded-lg border border-border p-6 mb-6 relative overflow-hidden">
       {/* Background Slider with Blur Effect */}
       <div className="absolute inset-0 w-full h-full overflow-hidden">
-        <Carousel className="w-full h-full">
-          <CarouselContent className="h-full">
-            {backgroundImages.map((img, index) => (
-              <CarouselItem key={index} className={`h-full ${index === currentSlide ? 'block' : 'hidden'}`}>
-                <div className="w-full h-full">
-                  <img 
-                    src={img} 
-                    alt={`Chart Background ${index + 1}`} 
-                    className="object-cover w-full h-full opacity-30"
-                  />
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-        </Carousel>
+        {backgroundImages.map((img, index) => (
+          <div
+            key={index}
+            className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ${
+              index === currentSlide ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
+            <img 
+              src={img} 
+              alt={`Chart Background ${index + 1}`} 
+              className="object-cover w-full h-full"
+            />
+          </div>
+        ))}
         <div className="absolute inset-0 backdrop-blur-md bg-card/50"></div>
       </div>
       

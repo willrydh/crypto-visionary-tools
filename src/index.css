@@ -129,6 +129,11 @@
   .blurred-card-content {
     @apply relative z-10 p-6;
   }
+  
+  /* Frosty blur effect specifically for sliders and image backgrounds */
+  .frost-blur {
+    @apply backdrop-blur-md bg-card/40;
+  }
 }
 
 /* Improve scrollbars */
