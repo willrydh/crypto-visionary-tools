@@ -148,14 +148,16 @@ const Dashboard = () => {
   const forecast = getTradingForecast();
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6 mt-6 animate-fade-in">
       <WelcomeHeader />
       
-      <div className="mb-4">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground">
-          {getTradingDescription()}
-        </p>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+        <div>
+          <h1 className="text-2xl font-bold">Dashboard</h1>
+          <p className="text-muted-foreground">
+            {getTradingDescription()}
+          </p>
+        </div>
       </div>
 
       <CoinInfo 
@@ -198,7 +200,7 @@ const Dashboard = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <div className="max-w-full overflow-hidden rounded-lg border border-border">
+          <div className="w-full overflow-hidden rounded-lg border border-border">
            <PriceChart symbol="BTC/USDT" />
           </div>
           

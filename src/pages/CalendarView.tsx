@@ -16,18 +16,20 @@ const CalendarView = () => {
   const openMarkets = marketSessions.filter(market => market.status === 'open');
   
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Events</h1>
-        <p className="text-muted-foreground">
-          Economic calendar and market sessions
-        </p>
-        <div className="mt-2">
-          <DataSourceIndicator 
-            source="Forex Factory API" 
-            isLive={false}
-            details="Economic data is simulated based on real-world Forex Factory patterns" 
-          />
+    <div className="space-y-6 mt-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+        <div>
+          <h1 className="text-2xl font-bold">Events</h1>
+          <p className="text-muted-foreground">
+            Economic calendar and market sessions
+          </p>
+          <div className="mt-2">
+            <DataSourceIndicator 
+              source="Forex Factory API" 
+              isLive={false}
+              details="Economic data is simulated based on real-world Forex Factory patterns" 
+            />
+          </div>
         </div>
       </div>
       

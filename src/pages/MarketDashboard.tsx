@@ -42,8 +42,8 @@ const MarketDashboard = () => {
 
   return (
     <PullToRefresh onRefresh={handleRefreshAll}>
-      <div className="space-y-6 animate-fade-in">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+      <div className="space-y-6 mt-6 animate-fade-in">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
             <h1 className="text-2xl font-bold">Market Forecast</h1>
             <p className="text-muted-foreground">
@@ -62,12 +62,12 @@ const MarketDashboard = () => {
         </div>
 
         <div className="grid grid-cols-1 gap-6">
-          <div>
+          <div className="w-full overflow-hidden rounded-lg border border-border">
             <FearGreedIndex 
               key={fearGreedIndexKey}
             />
           </div>
-          <div>
+          <div className="w-full overflow-hidden rounded-lg border border-border">
             <EconomicCalendarAPI 
               key={economicCalendarKey}
             />
