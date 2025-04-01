@@ -50,7 +50,18 @@ export const MarketsProvider: React.FC<MarketsProviderProps> = ({ children }) =>
         setDataSource('internal');
       }
       
-      setMarketSessions(sessions);
+      // Ensure all Date objects are properly formatted and actual Date instances
+      const formattedSessions = sessions.map((session: MarketSession) => ({
+        ...session,
+        nextEvent: {
+          ...session.nextEvent,
+          time: session.nextEvent.time instanceof Date 
+            ? session.nextEvent.time 
+            : new Date(session.nextEvent.time)
+        }
+      }));
+      
+      setMarketSessions(formattedSessions);
       setLastUpdated(new Date());
     } catch (error) {
       console.error('Error fetching market sessions:', error);

@@ -1,3 +1,4 @@
+
 import { format, formatDistanceToNow, formatRelative, isToday, isTomorrow, isYesterday } from 'date-fns';
 
 // Format a date for display
@@ -200,12 +201,12 @@ export const getMarketTimeRemaining = (targetTime: Date): string => {
   const now = new Date();
   
   // If the target time is in the past
-  if (targetTime < now) {
+  if (targetTime <= now) {
     return "passed";
   }
   
   const diffMs = targetTime.getTime() - now.getTime();
-  const diffMinutes = Math.round(diffMs / (1000 * 60));
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
   
   // Format based on time remaining
   if (diffMinutes < 60) {

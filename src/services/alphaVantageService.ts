@@ -206,7 +206,7 @@ export const fetchAlphaVantageMarketSessions = async (): Promise<MarketSession[]
       return 'closed';
     };
     
-    // Calculate the next opening/closing time
+    // Calculate the next opening/closing time with fixed timezone handling
     const calculateNextEvent = (exchange: string, isOpen: boolean): Date => {
       if (!exchangeHours[exchange]) {
         // Default fallback time

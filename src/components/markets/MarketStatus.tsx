@@ -41,6 +41,21 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
     return dataSource === 'alpha-vantage' ? 'Alpha Vantage API' : 'World Markets API';
   };
 
+  // Format the countdown time
+  const formatCountdown = (market: any) => {
+    try {
+      if (!market.nextEvent || !market.nextEvent.time) {
+        return 'Unknown';
+      }
+      
+      // Use the getMarketTimeRemaining helper
+      return getMarketTimeRemaining(new Date(market.nextEvent.time));
+    } catch (error) {
+      console.error('Error formatting countdown:', error, market);
+      return 'Error';
+    }
+  };
+
   return (
     <Card className={compact ? "border-border/50" : ""}>
       <CardHeader className={compact ? "pb-2" : "pb-3"}>
@@ -86,7 +101,7 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
                     </div>
                   )}
                   <span>
-                    {market.nextEvent.type === 'open' ? 'Opens' : 'Closes'} {getMarketTimeRemaining(market.nextEvent.time)}
+                    {market.nextEvent.type === 'open' ? 'Opens' : 'Closes'} {formatCountdown(market)}
                   </span>
                 </div>
                 {showDetails && (
