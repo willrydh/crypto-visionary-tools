@@ -10,6 +10,9 @@ interface PriceData {
   change24h: number;
   volume24h: number;
   timestamp: number;
+  hourlyHigh: number;
+  hourlyLow: number;
+  hourlyPricePosition: number;
   dailyHigh: number;
   dailyLow: number;
   weeklyHigh: number;
@@ -61,6 +64,9 @@ export const PriceProvider: React.FC<PriceProviderProps> = ({
         change24h: currentPrice.change24h,
         volume24h: currentPrice.volume24h,
         timestamp: currentPrice.timestamp,
+        hourlyHigh: highLowData.hourlyHigh,
+        hourlyLow: highLowData.hourlyLow,
+        hourlyPricePosition: highLowData.hourlyPricePosition,
         dailyHigh: highLowData.dailyHigh,
         dailyLow: highLowData.dailyLow,
         weeklyHigh: highLowData.weeklyHigh,

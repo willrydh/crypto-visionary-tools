@@ -217,15 +217,25 @@ export const fetchHighLowData = async (symbol: string, period: string = 'daily')
     // Format symbol correctly for API
     const formattedSymbol = symbol.replace('/', '');
     
-    // Fetch daily and weekly high/low data 
+    // Fetch different timeframes data
+    // For hourly, we'll use 5m candles for the last hour (12 candles)
+    const hourlyCandles = await fetchHistoricalPrices(formattedSymbol, '5', 12);
     // For daily, we'll use 1h candles for the last 24 hours
     const dailyCandles = await fetchHistoricalPrices(formattedSymbol, '60', 24);
     // For weekly, we'll use 4h candles for the last 7 days (42 candles)
     const weeklyCandles = await fetchHistoricalPrices(formattedSymbol, '240', 42);
     
-    if (!dailyCandles.length || !weeklyCandles.length) {
+    if (!dailyCandles.length || !weeklyCandles.length || !hourlyCandles.length) {
       throw new Error('No candle data received');
     }
+    
+    // Calculate hourly high/low from 5m candles
+    const hourlyHigh = Math.max(...hourlyCandles.map(c => c.high));
+    const hourlyLow = Math.min(...hourlyCandles.map(c => c.low));
+    
+    // Get the latest 5m candle to determine if we're high or low for the hour
+    const latest5mCandle = hourlyCandles[0];
+    const hourlyPricePosition = ((latest5mCandle.close - hourlyLow) / (hourlyHigh - hourlyLow)) * 100;
     
     // Calculate daily high/low
     const dailyHigh = Math.max(...dailyCandles.map(c => c.high));
@@ -235,13 +245,16 @@ export const fetchHighLowData = async (symbol: string, period: string = 'daily')
     const weeklyHigh = Math.max(...weeklyCandles.map(c => c.high));
     const weeklyLow = Math.min(...weeklyCandles.map(c => c.low));
     
-    console.log(`Calculated ranges for ${symbol}: Daily: ${dailyLow}-${dailyHigh}, Weekly: ${weeklyLow}-${weeklyHigh}`);
+    console.log(`Calculated ranges for ${symbol}: Hourly: ${hourlyLow}-${hourlyHigh}, Daily: ${dailyLow}-${dailyHigh}, Weekly: ${weeklyLow}-${weeklyHigh}`);
     
     return {
       symbol,
       period,
       high: period === 'daily' ? dailyHigh : weeklyHigh,
       low: period === 'daily' ? dailyLow : weeklyLow,
+      hourlyHigh,
+      hourlyLow,
+      hourlyPricePosition,
       dailyHigh,
       dailyLow,
       weeklyHigh,
@@ -273,16 +286,21 @@ const generateMockHighLowData = (symbol: string, period: string = 'daily') => {
   // Get base price or default
   const basePrice = basePrices[symbol.replace('/', '')] || 100;
   
-  // Generate random high/low values for daily and weekly
+  // Generate random high/low values for various timeframes
+  const hourlyVolatility = 0.02; // 2%
   const dailyVolatility = 0.05; // 5%
   const weeklyVolatility = 0.08; // 8%
+  
+  const hourlyHigh = basePrice * (1 + (Math.random() * hourlyVolatility));
+  const hourlyLow = basePrice * (1 - (Math.random() * hourlyVolatility));
+  const hourlyPricePosition = Math.random() * 100; // Random position within hourly range (0-100%)
   
   const dailyHigh = basePrice * (1 + (Math.random() * dailyVolatility));
   const dailyLow = basePrice * (1 - (Math.random() * dailyVolatility));
   const weeklyHigh = basePrice * (1 + (Math.random() * weeklyVolatility));
   const weeklyLow = basePrice * (1 - (Math.random() * weeklyVolatility));
   
-  // Return both daily and weekly high/low data
+  // Return hourly, daily and weekly high/low data
   return {
     symbol,
     period,
@@ -290,6 +308,9 @@ const generateMockHighLowData = (symbol: string, period: string = 'daily') => {
     high: period === 'daily' ? dailyHigh : weeklyHigh,
     low: period === 'daily' ? dailyLow : weeklyLow,
     // New properties to match what PriceThermometer expects
+    hourlyHigh,
+    hourlyLow,
+    hourlyPricePosition,
     dailyHigh,
     dailyLow,
     weeklyHigh,

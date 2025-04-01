@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -42,6 +41,9 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
   // Get current price data or use defaults
   const currentData = priceData[symbol] || {
     price: 0,
+    hourlyHigh: 0,
+    hourlyLow: 0,
+    hourlyPricePosition: 50,
     dailyHigh: 0,
     dailyLow: 0,
     weeklyHigh: 0,
@@ -49,6 +51,21 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
   };
   
   // Calculate percentages for positioning within ranges
+  const calculateHourlyPercentage = () => {
+    // If we have the 5m-derived position, use it directly
+    if (currentData.hourlyPricePosition !== undefined) {
+      return currentData.hourlyPricePosition;
+    }
+    
+    // Otherwise calculate based on current price
+    const { price, hourlyHigh, hourlyLow } = currentData;
+    const range = hourlyHigh - hourlyLow;
+    if (range <= 0) return 50; // Default to middle if range is invalid
+    
+    const position = ((price - hourlyLow) / range) * 100;
+    return Math.min(Math.max(position, 0), 100); // Clamp between 0-100
+  };
+  
   const calculateDailyPercentage = () => {
     const { price, dailyHigh, dailyLow } = currentData;
     const range = dailyHigh - dailyLow;
@@ -67,10 +84,17 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
     return Math.min(Math.max(position, 0), 100); // Clamp between 0-100
   };
   
+  const hourlyPercentage = calculateHourlyPercentage();
   const dailyPercentage = calculateDailyPercentage();
   const weeklyPercentage = calculateWeeklyPercentage();
   
   // Determine if price is in overbought/oversold zones
+  const getHourlyZone = () => {
+    if (hourlyPercentage >= 80) return "overbought";
+    if (hourlyPercentage <= 20) return "oversold";
+    return "neutral";
+  };
+  
   const getDailyZone = () => {
     if (dailyPercentage >= 80) return "overbought";
     if (dailyPercentage <= 20) return "oversold";
@@ -83,6 +107,7 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
     return "neutral";
   };
   
+  const hourlyZone = getHourlyZone();
   const dailyZone = getDailyZone();
   const weeklyZone = getWeeklyZone();
   
@@ -109,16 +134,47 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
                 <Info className="h-4 w-4 ml-2 text-gray-400" />
               </TooltipTrigger>
               <TooltipContent>
-                <p className="text-xs">Shows where current price sits within daily and weekly ranges</p>
+                <p className="text-xs">Shows where current price sits within hourly, daily and weekly ranges</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-4">
         {/* Current Price with Change */}
         <div className="text-center">
           <span className="text-3xl font-bold">{formatCurrency(currentData.price)}</span>
+        </div>
+        
+        {/* Hourly Range */}
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <span className="text-sm font-medium">Hourly Range</span>
+            <Badge variant="outline" className={`border-white/20 ${getZoneColor(hourlyZone)}`}>
+              {hourlyZone.charAt(0).toUpperCase() + hourlyZone.slice(1)}
+            </Badge>
+          </div>
+          
+          <div className="relative pt-1">
+            <div className="flex justify-between text-xs text-gray-400 mb-1">
+              <span>{formatCurrency(currentData.hourlyLow)}</span>
+              <span>{formatCurrency(currentData.hourlyHigh)}</span>
+            </div>
+            
+            <div className="h-2 bg-muted/30 rounded-full">
+              <div 
+                className="absolute w-4 h-4 bg-primary rounded-full -mt-1 transform -translate-x-1/2 transition-all"
+                style={{ left: `${hourlyPercentage}%` }}
+              />
+            </div>
+            
+            {/* Overbought/Oversold Zones */}
+            <div className="flex justify-between mt-1">
+              <div className="w-[20%] h-1 bg-green-500/20 rounded-l-full" />
+              <div className="w-[60%] h-1 bg-muted/20" />
+              <div className="w-[20%] h-1 bg-red-500/20 rounded-r-full" />
+            </div>
+          </div>
         </div>
         
         {/* Daily Range */}

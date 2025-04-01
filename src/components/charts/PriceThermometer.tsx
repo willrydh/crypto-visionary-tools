@@ -32,6 +32,9 @@ export const PriceThermometer = () => {
   // Get current price data or use defaults
   const currentData = priceData[symbol] || {
     currentPrice: 0,
+    hourlyHigh: 0,
+    hourlyLow: 0,
+    hourlyPricePosition: 50,
     dailyHigh: 0,
     dailyLow: 0,
     weeklyHigh: 0,
@@ -40,6 +43,16 @@ export const PriceThermometer = () => {
   };
   
   // Calculate where current price is in the range
+  const getHourlyPercentage = () => {
+    if (currentData.hourlyPricePosition !== undefined) {
+      // Use the 5m data to determine position in hourly range
+      return currentData.hourlyPricePosition;
+    }
+    const { price, hourlyHigh, hourlyLow } = currentData;
+    if (hourlyHigh === hourlyLow) return 50;
+    return ((price - hourlyLow) / (hourlyHigh - hourlyLow)) * 100;
+  };
+  
   const getDailyPercentage = () => {
     const { price, dailyHigh, dailyLow } = currentData;
     if (dailyHigh === dailyLow) return 50;
@@ -74,6 +87,7 @@ export const PriceThermometer = () => {
     );
   }
   
+  const hourlyPercentage = getHourlyPercentage();
   const dailyPercentage = getDailyPercentage();
   const weeklyPercentage = getWeeklyPercentage();
   
@@ -94,6 +108,29 @@ export const PriceThermometer = () => {
             <div className="text-sm text-gray-400">Current Price</div>
           </div>
           
+          {/* Hourly Range */}
+          <div className="space-y-1">
+            <div className="flex justify-between text-sm mb-1">
+              <span>Hourly Range</span>
+              <span>{formatCurrency(currentData.hourlyLow)} - {formatCurrency(currentData.hourlyHigh)}</span>
+            </div>
+            <div className="h-3 bg-muted/30 rounded-full relative overflow-hidden">
+              <div 
+                className={`h-full ${getThermometerColor(hourlyPercentage)} rounded-full transition-all duration-500 ease-in-out`}
+                style={{ width: `${Math.min(Math.max(hourlyPercentage, 0), 100)}%` }}
+              />
+              <div 
+                className="w-3 h-3 bg-white border-2 border-primary rounded-full absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 shadow-md"
+                style={{ left: `${Math.min(Math.max(hourlyPercentage, 0), 100)}%` }}
+              />
+            </div>
+            <div className="flex justify-between text-xs text-gray-400">
+              <span>Low</span>
+              <span>High</span>
+            </div>
+          </div>
+          
+          {/* Daily Range */}
           <div className="space-y-1">
             <div className="flex justify-between text-sm mb-1">
               <span>Daily Range</span>
@@ -115,6 +152,7 @@ export const PriceThermometer = () => {
             </div>
           </div>
           
+          {/* Weekly Range */}
           <div className="space-y-1">
             <div className="flex justify-between text-sm mb-1">
               <span>Weekly Range</span>
@@ -136,16 +174,22 @@ export const PriceThermometer = () => {
             </div>
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-2">
             <div className="text-center p-2 rounded-md border border-border/20 bg-black/20">
-              <div className="text-xs text-gray-400">Daily Volatility</div>
-              <div className="font-medium">
+              <div className="text-xs text-gray-400">Hourly Vol</div>
+              <div className="font-medium text-sm">
+                {((currentData.hourlyHigh - currentData.hourlyLow) / currentData.hourlyLow * 100).toFixed(2)}%
+              </div>
+            </div>
+            <div className="text-center p-2 rounded-md border border-border/20 bg-black/20">
+              <div className="text-xs text-gray-400">Daily Vol</div>
+              <div className="font-medium text-sm">
                 {((currentData.dailyHigh - currentData.dailyLow) / currentData.dailyLow * 100).toFixed(2)}%
               </div>
             </div>
             <div className="text-center p-2 rounded-md border border-border/20 bg-black/20">
-              <div className="text-xs text-gray-400">Weekly Volatility</div>
-              <div className="font-medium">
+              <div className="text-xs text-gray-400">Weekly Vol</div>
+              <div className="font-medium text-sm">
                 {((currentData.weeklyHigh - currentData.weeklyLow) / currentData.weeklyLow * 100).toFixed(2)}%
               </div>
             </div>
