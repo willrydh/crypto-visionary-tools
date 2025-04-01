@@ -27,17 +27,21 @@ export const fetchCurrentPrice = async (symbol: string) => {
   // Apply change to price
   const price = basePrice * (1 + (change / 100));
   
+  const timestamp = Date.now();
+  
   return {
     symbol,
     price,
     change24h: change,
     volume24h: basePrice * 10000000 * (0.5 + Math.random()),
-    lastUpdated: new Date()
+    timestamp, // Using timestamp (number) instead of lastUpdated (Date)
+    lastUpdated: new Date(timestamp) // Keeping lastUpdated for backward compatibility
   };
 };
 
-// Fetch historical candle data for charts
-export const fetchCandleData = async (symbol: string, interval: string, limit: number) => {
+// Fetch historical candle data for charts - renamed from fetchCandleData to fetchHistoricalPrices
+// to match the imports in other files
+export const fetchHistoricalPrices = async (symbol: string, interval: string, limit: number) => {
   console.log(`Loading chart data: ${symbol}, interval: ${interval}, limit: ${limit}`);
   console.log('Using mock data for historical prices');
   
@@ -62,7 +66,10 @@ export const fetchCandleData = async (symbol: string, interval: string, limit: n
   const intervalMs = interval === '1d' ? 86400000 : 
                      interval === '4h' ? 14400000 : 
                      interval === '1h' ? 3600000 : 
-                     interval === '15m' ? 900000 : 60000;
+                     interval === '15m' ? 900000 : 
+                     interval === 'D' ? 86400000 : 
+                     interval === '240' ? 14400000 : 
+                     interval === '60' ? 3600000 : 60000;
   
   const data = [];
   let lastClose = basePrice;
@@ -99,8 +106,8 @@ export const fetchCandleData = async (symbol: string, interval: string, limit: n
 };
 
 // Fetch high/low data for a period
-export const fetchHighLowData = async (symbol: string, period: string) => {
-  console.log('Using mock data for high/low data');
+export const fetchHighLowData = async (symbol: string, period: string = 'daily') => {
+  console.log(`Using mock data for high/low data: ${period}`);
   
   // Base prices for different cryptos
   const basePrices: { [key: string]: number } = {
@@ -114,15 +121,27 @@ export const fetchHighLowData = async (symbol: string, period: string) => {
   // Get base price or default
   const basePrice = basePrices[symbol.replace('/', '')] || 100;
   
-  // Generate random high/low values
-  const high = basePrice * (1 + (Math.random() * 0.05)); // Up to 5% higher
-  const low = basePrice * (1 - (Math.random() * 0.05));  // Up to 5% lower
+  // Generate random high/low values for daily and weekly
+  const dailyVolatility = 0.05; // 5%
+  const weeklyVolatility = 0.08; // 8%
   
+  const dailyHigh = basePrice * (1 + (Math.random() * dailyVolatility));
+  const dailyLow = basePrice * (1 - (Math.random() * dailyVolatility));
+  const weeklyHigh = basePrice * (1 + (Math.random() * weeklyVolatility));
+  const weeklyLow = basePrice * (1 - (Math.random() * weeklyVolatility));
+  
+  // Return both daily and weekly high/low data
   return {
     symbol,
     period,
-    high,
-    low,
+    // For backward compatibility with old code
+    high: period === 'daily' ? dailyHigh : weeklyHigh,
+    low: period === 'daily' ? dailyLow : weeklyLow,
+    // New properties to match what PriceThermometer expects
+    dailyHigh,
+    dailyLow,
+    weeklyHigh,
+    weeklyLow,
     timestamp: new Date()
   };
 };

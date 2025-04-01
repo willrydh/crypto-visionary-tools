@@ -128,7 +128,13 @@ const PriceChart: React.FC<PriceChartProps> = ({
     try {
       const price = await fetchCurrentPrice(formattedSymbol);
       if (price) {
-        setCurrentPrice(price);
+        // Make sure to set the state with an object that matches the expected type
+        setCurrentPrice({
+          price: price.price,
+          change24h: price.change24h,
+          volume24h: price.volume24h,
+          timestamp: price.timestamp // Use timestamp from the API response
+        });
         console.log('Updated current price:', price.price, 'Change:', price.change24h);
       } else {
         console.error('Empty price data returned');

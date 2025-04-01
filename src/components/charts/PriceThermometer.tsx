@@ -20,10 +20,10 @@ export const PriceThermometer = () => {
     setIsLoading(true);
     try {
       // Fetch current price
-      const currentPriceData = await fetchCurrentPrice('BTC/USDT');
+      const currentPriceData = await fetchCurrentPrice('BTCUSDT');
       
-      // Fetch high/low data
-      const highLowData = await fetchHighLowData('BTC/USDT');
+      // Fetch high/low data - now with default 'daily' parameter
+      const highLowData = await fetchHighLowData('BTCUSDT');
       
       setPriceData({
         currentPrice: currentPriceData.price,
