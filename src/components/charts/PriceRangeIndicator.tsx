@@ -30,6 +30,13 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
     if (!priceData[symbol]) {
       loadPriceData(symbol);
     }
+    
+    // Set up interval for updates
+    const intervalId = setInterval(() => {
+      loadPriceData(symbol);
+    }, 60000); // Update every minute
+    
+    return () => clearInterval(intervalId);
   }, [symbol]);
   
   // Get current price data or use defaults
@@ -92,14 +99,14 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
   };
   
   return (
-    <Card>
+    <Card className="bg-[#1A1F2C] border-border/40 text-white">
       <CardHeader className="pb-2">
-        <CardTitle className="flex items-center text-lg">
+        <CardTitle className="flex items-center text-lg text-white">
           {title}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Info className="h-4 w-4 ml-2 text-muted-foreground" />
+                <Info className="h-4 w-4 ml-2 text-gray-400" />
               </TooltipTrigger>
               <TooltipContent>
                 <p className="text-xs">Shows where current price sits within daily and weekly ranges</p>
@@ -111,25 +118,25 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
       <CardContent className="space-y-6">
         {/* Current Price with Change */}
         <div className="text-center">
-          <span className="text-2xl font-bold">{formatCurrency(currentData.price)}</span>
+          <span className="text-3xl font-bold">{formatCurrency(currentData.price)}</span>
         </div>
         
         {/* Daily Range */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium">Daily Range</span>
-            <Badge variant="outline" className={getZoneColor(dailyZone)}>
+            <Badge variant="outline" className={`border-white/20 ${getZoneColor(dailyZone)}`}>
               {dailyZone.charAt(0).toUpperCase() + dailyZone.slice(1)}
             </Badge>
           </div>
           
           <div className="relative pt-1">
-            <div className="flex justify-between text-xs text-muted-foreground mb-1">
+            <div className="flex justify-between text-xs text-gray-400 mb-1">
               <span>{formatCurrency(currentData.dailyLow)}</span>
               <span>{formatCurrency(currentData.dailyHigh)}</span>
             </div>
             
-            <div className="h-2 bg-muted rounded-full">
+            <div className="h-2 bg-muted/30 rounded-full">
               <div 
                 className="absolute w-4 h-4 bg-primary rounded-full -mt-1 transform -translate-x-1/2 transition-all"
                 style={{ left: `${dailyPercentage}%` }}
@@ -139,7 +146,7 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
             {/* Overbought/Oversold Zones */}
             <div className="flex justify-between mt-1">
               <div className="w-[20%] h-1 bg-green-500/20 rounded-l-full" />
-              <div className="w-[60%] h-1 bg-muted" />
+              <div className="w-[60%] h-1 bg-muted/20" />
               <div className="w-[20%] h-1 bg-red-500/20 rounded-r-full" />
             </div>
           </div>
@@ -149,18 +156,18 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium">Weekly Range</span>
-            <Badge variant="outline" className={getZoneColor(weeklyZone)}>
+            <Badge variant="outline" className={`border-white/20 ${getZoneColor(weeklyZone)}`}>
               {weeklyZone.charAt(0).toUpperCase() + weeklyZone.slice(1)}
             </Badge>
           </div>
           
           <div className="relative pt-1">
-            <div className="flex justify-between text-xs text-muted-foreground mb-1">
+            <div className="flex justify-between text-xs text-gray-400 mb-1">
               <span>{formatCurrency(currentData.weeklyLow)}</span>
               <span>{formatCurrency(currentData.weeklyHigh)}</span>
             </div>
             
-            <div className="h-2 bg-muted rounded-full">
+            <div className="h-2 bg-muted/30 rounded-full">
               <div 
                 className="absolute w-4 h-4 bg-primary rounded-full -mt-1 transform -translate-x-1/2 transition-all"
                 style={{ left: `${weeklyPercentage}%` }}
@@ -170,7 +177,7 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
             {/* Overbought/Oversold Zones */}
             <div className="flex justify-between mt-1">
               <div className="w-[20%] h-1 bg-green-500/20 rounded-l-full" />
-              <div className="w-[60%] h-1 bg-muted" />
+              <div className="w-[60%] h-1 bg-muted/20" />
               <div className="w-[20%] h-1 bg-red-500/20 rounded-r-full" />
             </div>
           </div>

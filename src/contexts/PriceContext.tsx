@@ -33,7 +33,7 @@ interface PriceProviderProps {
 
 export const PriceProvider: React.FC<PriceProviderProps> = ({ 
   children, 
-  refreshInterval = 15000 // Changed to 15 seconds for more frequent updates
+  refreshInterval = 15000 // 15 seconds for more frequent updates
 }) => {
   const [priceData, setPriceData] = useState<Record<string, PriceData>>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);

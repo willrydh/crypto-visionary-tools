@@ -24,7 +24,8 @@ export const PriceThermometer = () => {
   useEffect(() => {
     loadData();
     
-    const intervalId = setInterval(loadData, 60000);
+    // Set a shorter interval for more frequent data updates
+    const intervalId = setInterval(loadData, 60000); // Update every minute
     return () => clearInterval(intervalId);
   }, []);
   
@@ -60,7 +61,7 @@ export const PriceThermometer = () => {
   
   if (isLoading || !priceData[symbol]) {
     return (
-      <Card>
+      <Card className="bg-[#1A1F2C] border-border/40 text-white">
         <CardHeader className="pb-2">
           <CardTitle className="text-lg">Price Range</CardTitle>
         </CardHeader>
@@ -77,20 +78,20 @@ export const PriceThermometer = () => {
   const weeklyPercentage = getWeeklyPercentage();
   
   return (
-    <Card>
+    <Card className="bg-[#1A1F2C] border-border/40 text-white">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
-          <CardTitle className="text-lg">Price Range</CardTitle>
-          <Badge variant="outline">BTC/USDT</Badge>
+          <CardTitle className="text-lg text-white">Price Range</CardTitle>
+          <Badge variant="outline" className="text-white border-white/20">BTC/USDT</Badge>
         </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
           <div className="text-center">
-            <div className="text-xl font-bold">
+            <div className="text-3xl font-bold">
               {formatCurrency(currentData.price)}
             </div>
-            <div className="text-sm text-muted-foreground">Current Price</div>
+            <div className="text-sm text-gray-400">Current Price</div>
           </div>
           
           <div className="space-y-1">
@@ -98,7 +99,7 @@ export const PriceThermometer = () => {
               <span>Daily Range</span>
               <span>{formatCurrency(currentData.dailyLow)} - {formatCurrency(currentData.dailyHigh)}</span>
             </div>
-            <div className="h-3 bg-muted rounded-full relative overflow-hidden">
+            <div className="h-3 bg-muted/30 rounded-full relative overflow-hidden">
               <div 
                 className={`h-full ${getThermometerColor(dailyPercentage)} rounded-full transition-all duration-500 ease-in-out`}
                 style={{ width: `${Math.min(Math.max(dailyPercentage, 0), 100)}%` }}
@@ -108,7 +109,7 @@ export const PriceThermometer = () => {
                 style={{ left: `${Math.min(Math.max(dailyPercentage, 0), 100)}%` }}
               />
             </div>
-            <div className="flex justify-between text-xs text-muted-foreground">
+            <div className="flex justify-between text-xs text-gray-400">
               <span>Low</span>
               <span>High</span>
             </div>
@@ -119,7 +120,7 @@ export const PriceThermometer = () => {
               <span>Weekly Range</span>
               <span>{formatCurrency(currentData.weeklyLow)} - {formatCurrency(currentData.weeklyHigh)}</span>
             </div>
-            <div className="h-3 bg-muted rounded-full relative overflow-hidden">
+            <div className="h-3 bg-muted/30 rounded-full relative overflow-hidden">
               <div 
                 className={`h-full ${getThermometerColor(weeklyPercentage)} rounded-full transition-all duration-500 ease-in-out`}
                 style={{ width: `${Math.min(Math.max(weeklyPercentage, 0), 100)}%` }}
@@ -129,21 +130,21 @@ export const PriceThermometer = () => {
                 style={{ left: `${Math.min(Math.max(weeklyPercentage, 0), 100)}%` }}
               />
             </div>
-            <div className="flex justify-between text-xs text-muted-foreground">
+            <div className="flex justify-between text-xs text-gray-400">
               <span>Low</span>
               <span>High</span>
             </div>
           </div>
           
           <div className="grid grid-cols-2 gap-4">
-            <div className="text-center p-2 rounded-md border">
-              <div className="text-xs text-muted-foreground">Daily Volatility</div>
+            <div className="text-center p-2 rounded-md border border-border/20 bg-black/20">
+              <div className="text-xs text-gray-400">Daily Volatility</div>
               <div className="font-medium">
                 {((currentData.dailyHigh - currentData.dailyLow) / currentData.dailyLow * 100).toFixed(2)}%
               </div>
             </div>
-            <div className="text-center p-2 rounded-md border">
-              <div className="text-xs text-muted-foreground">Weekly Volatility</div>
+            <div className="text-center p-2 rounded-md border border-border/20 bg-black/20">
+              <div className="text-xs text-gray-400">Weekly Volatility</div>
               <div className="font-medium">
                 {((currentData.weeklyHigh - currentData.weeklyLow) / currentData.weeklyLow * 100).toFixed(2)}%
               </div>
