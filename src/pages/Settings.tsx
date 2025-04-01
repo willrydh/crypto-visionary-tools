@@ -179,7 +179,7 @@ const SettingsPage = () => {
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-4">
       <div>
         <h1 className="text-2xl font-bold">Settings</h1>
         <p className="text-muted-foreground">
@@ -199,7 +199,7 @@ const SettingsPage = () => {
           </TabsTrigger>
         </TabsList>
         
-        <TabsContent value="settings" className="space-y-6 mt-6">
+        <TabsContent value="settings" className="space-y-4 mt-4">
           <Card>
             <CardHeader>
               <CardTitle>Trading Preferences</CardTitle>
@@ -372,7 +372,7 @@ const SettingsPage = () => {
           </Card>
         </TabsContent>
         
-        <TabsContent value="faq" className="space-y-6 mt-6">
+        <TabsContent value="faq" className="space-y-4 mt-4">
           {faqSections.map((section, sectionIndex) => (
             <Card key={sectionIndex}>
               <CardHeader className="flex flex-row items-center space-y-0 gap-3">

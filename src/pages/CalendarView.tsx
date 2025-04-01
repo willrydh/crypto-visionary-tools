@@ -16,16 +16,13 @@ const CalendarView = () => {
   const openMarkets = marketSessions.filter(market => market.status === 'open');
   
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
-        <div>
-          <h1 className="text-2xl font-bold">Events</h1>
-          <p className="text-muted-foreground">
-            Economic calendar and market sessions
-          </p>
-        </div>
-        
-        <div className="flex items-center space-x-2 mt-2 md:mt-0">
+    <div className="space-y-4">
+      <div>
+        <h1 className="text-2xl font-bold">Events</h1>
+        <p className="text-muted-foreground">
+          Economic calendar and market sessions
+        </p>
+        <div className="mt-2">
           <DataSourceIndicator 
             source="Forex Factory API" 
             isLive={false}
@@ -62,11 +59,11 @@ const CalendarView = () => {
           <TabsTrigger value="markets">Market Sessions</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="economic" className="pt-6">
+        <TabsContent value="economic" className="pt-4">
           <ImprovedEconomicCalendar compact={false} />
         </TabsContent>
         
-        <TabsContent value="markets" className="pt-6">
+        <TabsContent value="markets" className="pt-4">
           <MarketStatus showDetails={true} />
         </TabsContent>
       </Tabs>

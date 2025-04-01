@@ -15,10 +15,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { useToast } from '@/hooks/use-toast';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { QuestionMarkCircle, Settings, DollarSign, Repeat } from 'lucide-react';
 
 const SettingsView = () => {
   const { toast } = useToast();
   const [leverage, setLeverage] = useState<number>(5);
+  const [budget, setBudget] = useState("1000");
+  const [activeTab, setActiveTab] = useState("settings");
   
   const handleSaveSettings = () => {
     toast({
@@ -28,166 +32,94 @@ const SettingsView = () => {
   };
   
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div>
         <h1 className="text-2xl font-bold">Settings</h1>
         <p className="text-muted-foreground">
-          Customize your trading assistant
+          Configure your trading preferences and access help
         </p>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>General Settings</CardTitle>
-            <CardDescription>
-              Configure general application preferences
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="theme">Theme</Label>
-              <Select defaultValue="system">
-                <SelectTrigger id="theme">
-                  <SelectValue placeholder="Select a theme" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="light">Light</SelectItem>
-                  <SelectItem value="dark">Dark</SelectItem>
-                  <SelectItem value="system">System</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="currency">Default Currency</Label>
-              <Select defaultValue="usd">
-                <SelectTrigger id="currency">
-                  <SelectValue placeholder="Select a currency" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="usd">USD</SelectItem>
-                  <SelectItem value="eur">EUR</SelectItem>
-                  <SelectItem value="gbp">GBP</SelectItem>
-                  <SelectItem value="jpy">JPY</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <Label htmlFor="notifications">Enable Notifications</Label>
-              <Switch id="notifications" defaultChecked />
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <Label htmlFor="sound">Sound Alerts</Label>
-              <Switch id="sound" />
-            </div>
-          </CardContent>
-        </Card>
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList>
+          <TabsTrigger value="settings">
+            <Settings className="h-4 w-4 mr-2" />
+            Settings
+          </TabsTrigger>
+          <TabsTrigger value="faq">
+            <QuestionMarkCircle className="h-4 w-4 mr-2" />
+            FAQ
+          </TabsTrigger>
+        </TabsList>
         
-        <Card>
-          <CardHeader>
-            <CardTitle>Trading Preferences</CardTitle>
-            <CardDescription>
-              Customize your trading parameters
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="defaultSymbol">Default Symbol</Label>
-              <Select defaultValue="btcusdt">
-                <SelectTrigger id="defaultSymbol">
-                  <SelectValue placeholder="Select a symbol" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="btcusdt">BTC/USDT</SelectItem>
-                  <SelectItem value="ethusdt">ETH/USDT</SelectItem>
-                  <SelectItem value="solusdt">SOL/USDT</SelectItem>
-                  <SelectItem value="bnbusdt">BNB/USDT</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="defaultTimeframe">Default Timeframe</Label>
-              <Select defaultValue="1h">
-                <SelectTrigger id="defaultTimeframe">
-                  <SelectValue placeholder="Select a timeframe" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="5m">5 minutes</SelectItem>
-                  <SelectItem value="15m">15 minutes</SelectItem>
-                  <SelectItem value="1h">1 hour</SelectItem>
-                  <SelectItem value="4h">4 hours</SelectItem>
-                  <SelectItem value="1d">1 day</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="leverage">Trading Leverage: {leverage}x</Label>
-                <Slider 
-                  id="leverage"
-                  min={1} 
-                  max={100} 
-                  step={1} 
-                  value={[leverage]} 
-                  onValueChange={(value) => setLeverage(value[0])}
-                  className="mt-2"
-                />
-                <p className="text-xs text-muted-foreground mt-1">Set your preferred trading leverage from 1x to 100x</p>
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="riskPercentage">Risk Percentage</Label>
-              <div className="flex items-center gap-2">
-                <Input id="riskPercentage" type="number" defaultValue="1" className="max-w-24" />
-                <span className="text-sm text-muted-foreground">%</span>
-              </div>
-              <p className="text-xs text-muted-foreground">Percentage of account balance to risk per trade</p>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card className="md:col-span-2">
-          <CardHeader>
-            <CardTitle>API Configuration</CardTitle>
-            <CardDescription>
-              Connect to trading platforms and data sources
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-4">
-              <Label>Binance API</Label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <TabsContent value="settings" className="space-y-4 mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Trading Preferences</CardTitle>
+              <CardDescription>
+                Configure your trading parameters and default settings
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="binanceApiKey" className="text-sm">API Key</Label>
-                  <Input id="binanceApiKey" type="password" placeholder="Enter your Binance API key" />
+                  <Label htmlFor="budget" className="flex items-center gap-2">
+                    <DollarSign className="h-4 w-4" />
+                    Trading Budget (USD)
+                  </Label>
+                  <Input
+                    id="budget"
+                    type="number"
+                    value={budget}
+                    onChange={(e) => setBudget(e.target.value)}
+                    placeholder="1000"
+                    min="0"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Amount you're willing to invest in trades
+                  </p>
                 </div>
+                
                 <div className="space-y-2">
-                  <Label htmlFor="binanceApiSecret" className="text-sm">API Secret</Label>
-                  <Input id="binanceApiSecret" type="password" placeholder="Enter your Binance API secret" />
+                  <Label htmlFor="leverage" className="flex items-center gap-2">
+                    <Repeat className="h-4 w-4" />
+                    Default Leverage: {leverage}x
+                  </Label>
+                  <Slider 
+                    id="leverage"
+                    min={1} 
+                    max={50} 
+                    step={1} 
+                    value={[leverage]} 
+                    onValueChange={(value) => setLeverage(value[0])}
+                    className="mt-2"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>1x</span>
+                    <span>25x</span>
+                    <span>50x</span>
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            <Separator />
-            
-            <div className="space-y-4">
-              <Label>TradingView Integration</Label>
-              <div className="space-y-2">
-                <Label htmlFor="tradingViewUsername" className="text-sm">Username</Label>
-                <Input id="tradingViewUsername" placeholder="Enter your TradingView username" />
-              </div>
-            </div>
-            
-            <Button onClick={handleSaveSettings}>Save Settings</Button>
-          </CardContent>
-        </Card>
-      </div>
+              
+              <Button onClick={handleSaveSettings} className="w-full mt-4">Save Settings</Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="faq" className="space-y-4 mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Frequently Asked Questions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                Find answers to common questions about trading and using the platform.
+              </p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

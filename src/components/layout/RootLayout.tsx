@@ -43,23 +43,25 @@ const RootLayout: React.FC = () => {
         <div className={!isPublicPage ? "md:ml-64" : ""}>
           {!isPublicPage && <TopHeader />}
           <main className={!isPublicPage ? 
-                          "flex-1 overflow-auto pb-16 md:pb-0 px-4 md:px-6 lg:px-8 pt-16" : 
+                          "flex-1 overflow-auto pb-16 md:pb-0 pt-14" : 
                           "flex-1 overflow-auto"}>
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/signals" element={<SignalsView />} />
-              <Route path="/trade" element={<TradeSuggestion />} />
-              <Route path="/calendar" element={<CalendarView />} />
-              <Route path="/chart" element={<ChartView />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/welcome" element={<Welcome />} />
-              <Route path="/pricing" element={<PricingPage />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPasswordConfirm />} />
-              <Route path="/thank-you" element={<ThankYouPage />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <div className={!isPublicPage ? "p-4" : ""}>
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/signals" element={<SignalsView />} />
+                <Route path="/trade" element={<TradeSuggestion />} />
+                <Route path="/calendar" element={<CalendarView />} />
+                <Route path="/chart" element={<ChartView />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/welcome" element={<Welcome />} />
+                <Route path="/pricing" element={<PricingPage />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPasswordConfirm />} />
+                <Route path="/thank-you" element={<ThankYouPage />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div>
           </main>
           {!isPublicPage && <MobileNavigation />}
         </div>
