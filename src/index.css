@@ -195,7 +195,7 @@ body {
 
 /* Main layout adjustment for trading pages */
 .trading-page main {
-  @apply pt-16;
+  @apply pt-20;
 }
 
 /* Fix spacing between heading and trading mode bar */
@@ -205,26 +205,26 @@ h1, h2 {
 
 /* Add space between sections */
 section + section {
-  @apply mt-4;
+  @apply mt-6;
 }
 
 /* Improve card spacing */
 .card-container {
-  @apply space-y-4;
+  @apply space-y-6;
 }
 
 /* Additional spacing for trade pages */
 .trade-page-container {
-  @apply space-y-4;
+  @apply space-y-6;
 }
 
 .trade-page-section {
-  @apply mt-4;
+  @apply mt-6;
 }
 
 /* Improve alert spacing */
 .alert {
-  @apply my-3;
+  @apply my-4;
 }
 
 /* Fix for welcome page spacing */
@@ -234,17 +234,17 @@ section + section {
 
 /* Consistent page title spacing */
 .page-title {
-  @apply mt-0 mb-2;
+  @apply mt-0 mb-4;
 }
 
 /* Content properly offset from header */
 main {
-  @apply pt-16; 
+  @apply pt-20; 
 }
 
 /* Mobile-friendly settings */
 @media (max-width: 640px) {
   main {
-    @apply pt-20;
+    @apply pt-24;
   }
 }

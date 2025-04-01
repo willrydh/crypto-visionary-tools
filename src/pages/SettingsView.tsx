@@ -32,7 +32,7 @@ const SettingsView = () => {
   };
   
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Settings</h1>
         <p className="text-muted-foreground">
@@ -52,7 +52,7 @@ const SettingsView = () => {
           </TabsTrigger>
         </TabsList>
         
-        <TabsContent value="settings" className="space-y-4 mt-4">
+        <TabsContent value="settings" className="space-y-6 mt-6">
           <Card>
             <CardHeader>
               <CardTitle>Trading Preferences</CardTitle>
@@ -60,8 +60,8 @@ const SettingsView = () => {
                 Configure your trading parameters and default settings
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-4">
+            <CardContent className="space-y-6">
+              <div className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="budget" className="flex items-center gap-2">
                     <DollarSign className="h-4 w-4" />
@@ -102,12 +102,12 @@ const SettingsView = () => {
                 </div>
               </div>
               
-              <Button onClick={handleSaveSettings} className="w-full mt-4">Save Settings</Button>
+              <Button onClick={handleSaveSettings} className="w-full mt-6">Save Settings</Button>
             </CardContent>
           </Card>
         </TabsContent>
         
-        <TabsContent value="faq" className="space-y-4 mt-4">
+        <TabsContent value="faq" className="space-y-6 mt-6">
           <Card>
             <CardHeader>
               <CardTitle>Frequently Asked Questions</CardTitle>

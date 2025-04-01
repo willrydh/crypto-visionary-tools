@@ -16,7 +16,7 @@ const CalendarView = () => {
   const openMarkets = marketSessions.filter(market => market.status === 'open');
   
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Events</h1>
         <p className="text-muted-foreground">
@@ -59,11 +59,11 @@ const CalendarView = () => {
           <TabsTrigger value="markets">Market Sessions</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="economic" className="pt-4">
+        <TabsContent value="economic" className="pt-6">
           <ImprovedEconomicCalendar compact={false} />
         </TabsContent>
         
-        <TabsContent value="markets" className="pt-4">
+        <TabsContent value="markets" className="pt-6">
           <MarketStatus showDetails={true} />
         </TabsContent>
       </Tabs>
