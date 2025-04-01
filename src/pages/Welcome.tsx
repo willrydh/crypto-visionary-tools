@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
@@ -26,7 +25,10 @@ import {
   TrendingUp,
   Clock,
   Scale,
-  CalendarDays
+  CalendarDays,
+  Bot,
+  Cpu,
+  BrainCircuit
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -66,27 +68,27 @@ const Welcome = () => {
     return () => clearInterval(interval);
   }, []);
   
-  // Feature items to display
+  // Feature items to display - updated for stronger AI emphasis
   const features = [
     {
-      title: "Live Deep Market Analysis",
-      description: "Get real-time market, macro and technical analysis with AI-powered signals",
-      icon: <LineChart className="h-5 w-5 text-primary" />
+      title: "AI-Powered Market Analysis",
+      description: "Our advanced AI continuously analyzes market data from Bybit API in real time for high-precision signals",
+      icon: <BrainCircuit className="h-5 w-5 text-primary" />
     },
     {
-      title: "AI-Powered Trade Signals",
-      description: "Receive smart trade setups based on scalping, daytrading and overnight strategies",
+      title: "Adaptive Trading Signals",
+      description: "AI-generated trade setups that adapt to market conditions across scalping, day trading and swing strategies",
       icon: <ArrowUpRight className="h-5 w-5 text-primary" />
     },
     {
-      title: "Live Economic Events",
-      description: "Stay informed with live and upcoming market-moving events",
+      title: "Real-Time Economic Insights",
+      description: "AI-processed market events with volatility forecasting for maximum trading advantage",
       icon: <BellRing className="h-5 w-5 text-primary" />
     },
     {
-      title: "The Perfect Trading Tool",
-      description: "Discover our free version and sign up for ProfitPilot Pro",
-      icon: <CandlestickChart className="h-5 w-5 text-primary" />
+      title: "Intelligent Trading Assistant",
+      description: "Experience our free AI trading co-pilot or upgrade to ProfitPilot Pro for advanced features",
+      icon: <Bot className="h-5 w-5 text-primary" />
     }
   ];
   
@@ -302,7 +304,7 @@ const Welcome = () => {
         </div>
       </header>
       
-      {/* Hero Section with blur effect background */}
+      {/* Hero Section with blur effect background - enhanced AI messaging */}
       <section className="py-20 px-4 md:px-6 lg:px-8 flex flex-col items-center text-center space-y-8 relative overflow-hidden">
         <div className="absolute inset-0 w-full h-full overflow-hidden">
           {backgroundImages.map((img, index) => (
@@ -323,20 +325,20 @@ const Welcome = () => {
         </div>
         
         <div className="relative z-10">
-          <Badge variant="outline" className="mb-4">Version 1.0.0 is now available</Badge>
+          <Badge variant="outline" className="mb-4 bg-primary/10 border-primary/30">AI-Powered Trading Technology</Badge>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold max-w-3xl leading-tight tracking-tighter">
-            Your AI Trading Assistant for Crypto Markets
+            Your AI Trading Assistant with Live Bybit Integration
           </h1>
           <p className="text-muted-foreground text-lg md:text-xl max-w-2xl">
-            ProfitPilot gives you real-time market signals, intelligent trade suggestions, and deep data analysis for crypto trading.
+            ProfitPilot delivers real-time AI analysis, intelligent trade suggestions, and adaptive signals powered by live Bybit API data.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 pt-4">
             <Button size="lg" onClick={handleGuestAccess} className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary">
-              Try For Free
+              Try AI Trading Now
               <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
             <Button size="lg" variant="outline" onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}>
-              Learn More
+              Explore AI Features
             </Button>
           </div>
         </div>
@@ -346,9 +348,9 @@ const Welcome = () => {
       <section id="features" className="py-20 px-4 md:px-6 lg:px-8">
         <div className="container mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Advanced Trading Features</h2>
+            <h2 className="text-3xl font-bold mb-4">AI-Powered Trading Features</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              ProfitPilot brings institutional-grade trading capabilities and real-time market insights to help you make better trading decisions.
+              ProfitPilot's advanced AI algorithms analyze live market data 24/7 to deliver institutional-grade trading insights and real-time signals.
             </p>
           </div>
           
@@ -368,16 +370,16 @@ const Welcome = () => {
           
           <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div>
-              <h3 className="text-2xl font-bold mb-4">Real-time Market Analytics</h3>
+              <h3 className="text-2xl font-bold mb-4">Real-time AI Market Analytics</h3>
               <p className="text-muted-foreground mb-6">
-                Our platform gives you real-time price charts, technical analysis, and market sentiment indicators to help you understand market movements and make informed decisions.
+                Our AI engine processes live data from Bybit API to deliver real-time price analysis, technical indicators, and market sentiment predictions to help you make informed trading decisions.
               </p>
               <ul className="space-y-2">
                 {[
-                  "Live price tracking from Bybit API",
-                  "Support & resistance level detection",
-                  "Economic calendar for market-moving events",
-                  "NYSE market open/close volatility tracking"
+                  "24/7 AI analysis of live Bybit market data",
+                  "AI-detected support & resistance levels",
+                  "AI-prioritized economic events for volatility prediction",
+                  "Adaptive analysis across multiple timeframes"
                 ].map((item, idx) => (
                   <li key={idx} className="flex items-start">
                     <CheckCircle className="h-5 w-5 mr-2 text-green-500 shrink-0 mt-0.5" />
@@ -389,7 +391,7 @@ const Welcome = () => {
             <div className="bg-muted rounded-lg p-4 shadow-lg">
               <img 
                 src="/lovable-uploads/c838292a-0224-48a0-a205-21fde8947f28.png" 
-                alt="Market Analytics Dashboard" 
+                alt="AI Market Analytics Dashboard" 
                 className="rounded-md w-full"
               />
             </div>
@@ -459,14 +461,10 @@ const Welcome = () => {
       </section>
       
       {/* Testimonials Section */}
-      <section id="testimonials">
-        <CustomerReviews />
-      </section>
+      <CustomerReviews />
       
       {/* Token Section */}
-      <section id="token">
-        <TokenProgress />
-      </section>
+      <TokenProgress />
       
       {/* Discord Community Section */}
       <DiscordCommunity />
@@ -562,61 +560,61 @@ const Welcome = () => {
         <FAQ />
       </section>
       
-      {/* Additional Features Grid */}
+      {/* Additional Features Grid - enhanced AI message */}
       <section className="py-20 px-4 md:px-6 lg:px-8">
         <div className="container mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Why Traders Choose ProfitPilot</h2>
+            <h2 className="text-3xl font-bold mb-4">Why Traders Choose ProfitPilot AI</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Discover the features that give our users the edge in today's volatile crypto markets.
+              Discover the AI-powered features that give our users the edge in today's volatile crypto markets.
             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               {
-                title: "Proprietary AI Algorithm",
-                description: "Our advanced algorithm analyzes multiple indicators and market patterns to provide high-confidence signals.",
-                icon: <Sparkles className="h-5 w-5 text-primary" />
+                title: "Advanced AI Algorithm",
+                description: "Our proprietary AI analyzes multiple indicators and market patterns in real-time for high-confidence signals.",
+                icon: <Cpu className="h-5 w-5 text-primary" />
               },
               {
-                title: "Real-time Market Data",
-                description: "Connect directly to exchange APIs for the most up-to-date price information and market movements.",
+                title: "Live Bybit API Integration",
+                description: "Direct connection to Bybit exchange API for the most current price data and market movements.",
                 icon: <LineChart className="h-5 w-5 text-primary" />
               },
               {
-                title: "Economic Calendar",
-                description: "Never miss important market events with our comprehensive economic calendar.",
+                title: "AI Economic Calendar",
+                description: "AI-prioritized market events with impact forecasting and volatility predictions.",
                 icon: <CalendarDays className="h-5 w-5 text-primary" />
               },
               {
-                title: "Risk Management",
-                description: "Get suggested stop-loss and take-profit levels with every trade recommendation.",
+                title: "AI Risk Management",
+                description: "AI-calculated stop-loss and take-profit levels with every trade recommendation.",
                 icon: <Shield className="h-5 w-5 text-primary" />
               },
               {
-                title: "Multi-timeframe Analysis",
-                description: "Analyze the market across multiple timeframes to confirm trends and identify optimal entry points.",
+                title: "Multi-timeframe AI Analysis",
+                description: "Simultaneous AI market analysis across multiple timeframes to confirm trends and identify optimal entries.",
                 icon: <Clock className="h-5 w-5 text-primary" />
               },
               {
                 title: "Performance Tracking",
-                description: "Monitor your trading performance and improve your strategy with detailed analytics.",
+                description: "AI-powered analytics to monitor your trading performance and suggest improvements.",
                 icon: <TrendingUp className="h-5 w-5 text-primary" />
               },
               {
                 title: "Token Utility",
-                description: "PP Token holders receive exclusive benefits including fee discounts and premium features access.",
+                description: "PP Token holders receive exclusive AI features including prioritized signal delivery.",
                 icon: <DollarSign className="h-5 w-5 text-primary" />
               },
               {
-                title: "Fast Execution",
-                description: "Execute trades quickly with our optimized interface designed for speed and efficiency.",
+                title: "Real-time Execution",
+                description: "Execute AI-recommended trades quickly with our optimized interface designed for rapid action.",
                 icon: <Zap className="h-5 w-5 text-primary" />
               },
               {
-                title: "Special Offers",
-                description: "Regular promotions and special offers for both new users and loyal customers.",
+                title: "Special AI Features",
+                description: "Regular updates with new AI analysis techniques and trading algorithms for subscribers.",
                 icon: <BadgePercent className="h-5 w-5 text-primary" />
               }
             ].map((feature, index) => (
@@ -694,63 +692,4 @@ const Welcome = () => {
       </section>
       
       {/* Footer */}
-      <footer className="py-12 px-4 md:px-6 lg:px-8 bg-background border-t">
-        <div className="container mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="font-medium mb-4">Product</h3>
-              <ul className="space-y-2 text-sm">
-                <li><a href="#features" className="text-muted-foreground hover:text-foreground">Features</a></li>
-                <li><a href="#pricing" className="text-muted-foreground hover:text-foreground">Pricing</a></li>
-                <li><a href="#trading-modes" className="text-muted-foreground hover:text-foreground">Trading Modes</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-medium mb-4">Resources</h3>
-              <ul className="space-y-2 text-sm">
-                <li><a href="#" className="text-muted-foreground hover:text-foreground">Documentation</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-foreground">API</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-foreground">Support</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-medium mb-4">Company</h3>
-              <ul className="space-y-2 text-sm">
-                <li><a href="#" className="text-muted-foreground hover:text-foreground">About</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-foreground">Blog</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-foreground">Careers</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-medium mb-4">Legal</h3>
-              <ul className="space-y-2 text-sm">
-                <li><a href="#" className="text-muted-foreground hover:text-foreground">Privacy Policy</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-foreground">Terms of Service</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-foreground">Cookie Policy</a></li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="flex flex-col md:flex-row items-center justify-between mt-12 pt-8 border-t border-border">
-            <div className="flex items-center gap-2">
-              <img src={Logo} alt="Logo" className="h-6 w-6" />
-              <span className="text-sm text-muted-foreground">
-                © {new Date().getFullYear()} ProfitPilot. All rights reserved.
-              </span>
-            </div>
-            <div className="flex gap-4 mt-4 md:mt-0">
-              <Button variant="ghost" size="icon">
-                <ExternalLink className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="icon">
-                <HelpCircle className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </footer>
-    </div>
-  );
-};
-
-export default Welcome;
+      <footer className="py-12 px-4 md:px-6 lg:px-8 bg-

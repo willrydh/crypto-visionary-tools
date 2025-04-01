@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Check, AlertTriangle, Info, Zap, Wifi, Database, Globe } from 'lucide-react';
+import { Check, AlertTriangle, Info, Zap, Wifi, Database, Globe, BrainCircuit } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
@@ -25,10 +25,10 @@ const systemServices = [
     icon: <Database className="h-4 w-4" />,
   },
   {
-    name: 'Signal Engine',
+    name: 'AI Engine',
     status: 'connected',
     latency: 146,
-    icon: <Zap className="h-4 w-4" />,
+    icon: <BrainCircuit className="h-4 w-4" />,
   }
 ];
 
@@ -63,9 +63,12 @@ const WelcomeHeader = () => {
   return (
     <div className="w-full bg-[#1A1F2C] rounded-lg border border-border/40 p-6 mb-6 relative overflow-hidden">
       <div className="relative z-10">
-        <h2 className="text-2xl font-bold mb-2 text-white">Welcome back, {randomName}</h2>
+        <div className="flex items-center mb-2">
+          <h2 className="text-2xl font-bold text-white">Welcome back, {randomName}</h2>
+          <Badge variant="outline" className="ml-3 bg-primary/10 border-primary/30">AI-Powered Trading</Badge>
+        </div>
         <p className="text-gray-300 mb-6">
-          Your AI-powered trading companion - gain the edge with real-time signals and deep market analysis
+          Your AI trading assistant is analyzing live market data via Bybit API to generate real-time signals and deep market insights
         </p>
         
         <div className="border-t border-border/40 pt-4">
