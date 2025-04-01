@@ -3,7 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Bell, Zap, TrendingDown, TrendingUp, ArrowUpRight, Clock } from 'lucide-react';
-import { formatTimeUntil, getTimeDisplay, getNextOccurrence } from '@/utils/dateUtils';
+import { 
+  formatTimeUntil, 
+  getTimeDisplay, 
+  getNextOccurrence, 
+  getLocalTimeDisplay,
+  adjustHourToLocalTimezone 
+} from '@/utils/dateUtils';
 
 interface MarketSessionStatsProps {
   title?: string;
@@ -35,7 +41,7 @@ const MarketSessionStats = ({
   const [marketSessions, setMarketSessions] = useState([
     {
       name: "NYSE Open",
-      time: getTimeDisplay(marketHours.nyseOpen.hour, marketHours.nyseOpen.minute),
+      time: getLocalTimeDisplay(marketHours.nyseOpen.hour, marketHours.nyseOpen.minute),
       countdown: "Calculating...",
       impact: "High",
       volatility: 85,
@@ -45,7 +51,7 @@ const MarketSessionStats = ({
     },
     {
       name: "London Close",
-      time: getTimeDisplay(marketHours.londonClose.hour, marketHours.londonClose.minute),
+      time: getLocalTimeDisplay(marketHours.londonClose.hour, marketHours.londonClose.minute),
       countdown: "Calculating...",
       impact: "Medium",
       volatility: 65,
@@ -55,7 +61,7 @@ const MarketSessionStats = ({
     },
     {
       name: "NYSE Close",
-      time: getTimeDisplay(marketHours.nyseClose.hour, marketHours.nyseClose.minute),
+      time: getLocalTimeDisplay(marketHours.nyseClose.hour, marketHours.nyseClose.minute),
       countdown: "Calculating...",
       impact: "High",
       volatility: 78,
@@ -65,7 +71,7 @@ const MarketSessionStats = ({
     },
     {
       name: "Tokyo Open",
-      time: getTimeDisplay(marketHours.tokyoOpen.hour, marketHours.tokyoOpen.minute),
+      time: getLocalTimeDisplay(marketHours.tokyoOpen.hour, marketHours.tokyoOpen.minute),
       countdown: "Calculating...",
       impact: "Medium",
       volatility: 58,

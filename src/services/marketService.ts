@@ -1,6 +1,11 @@
 
 import { MarketSession } from '@/contexts/MarketsContext';
-import { formatTimeUntil, getNextOccurrence } from '@/utils/dateUtils';
+import { 
+  formatTimeUntil, 
+  getNextOccurrence, 
+  getTimezoneOffsetHours,
+  getLocalTimeDisplay
+} from '@/utils/dateUtils';
 
 // Fetch market sessions with status based on current time
 export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
@@ -26,14 +31,28 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
   }
   nextMonday.setUTCHours(0, 0, 0, 0);
   
+  // Get the local timezone offset in hours
+  const timezoneOffset = getTimezoneOffsetHours();
+  
   // Define accurate market hours in UTC
-  // Updated with precise opening/closing times
+  // These hours are fixed and correct for UTC time
   const marketHours = {
     tokyo: { open: 0, close: 9 },             // Tokyo: UTC 0:00-9:00
-    london: { open: 8, close: 16.5 },         // London: UTC 8:00-16:30 (Opens 8am UTC)
+    london: { open: 8, close: 16.5 },         // London: UTC 8:00-16:30
     newYork: { open: 13.5, close: 20 },       // New York: UTC 13:30-20:00 (9:30am-4pm EST)
-    frankfurt: { open: 8, close: 16.5 },      // Frankfurt: UTC 8:00-16:30 (Opens 8am UTC)
+    frankfurt: { open: 8, close: 16.5 },      // Frankfurt: UTC 8:00-16:30
     hongKong: { open: 1, close: 8 }           // Hong Kong: UTC 1:00-8:00
+  };
+  
+  // Format market hours for display in local timezone
+  const formatMarketHours = (openUtc: number, closeUtc: number): string => {
+    const openMinutes = Math.floor((openUtc % 1) * 60);
+    const closeMinutes = Math.floor((closeUtc % 1) * 60);
+    
+    const openHour = Math.floor(openUtc);
+    const closeHour = Math.floor(closeUtc);
+    
+    return `${getLocalTimeDisplay(openHour, openMinutes)}-${getLocalTimeDisplay(closeHour, closeMinutes)} (Mon-Fri)`;
   };
   
   // Helper function to calculate next opening or closing time
@@ -96,70 +115,70 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
       status: isWeekend ? 'closed' : 
               (currentTime >= marketHours.tokyo.open && currentTime < marketHours.tokyo.close) ? 'open' : 
               isOpeningSoon(marketHours.tokyo.open) ? 'opening-soon' : 'closed',
-      hours: '00:00-09:00 UTC (Mon-Fri)',
+      hours: formatMarketHours(marketHours.tokyo.open, marketHours.tokyo.close),
       nextEvent: {
         type: isWeekend ? 'open' : 
               (currentTime >= marketHours.tokyo.open && currentTime < marketHours.tokyo.close) ? 'close' : 'open',
         time: calcNextTime(marketHours.tokyo, 
                  (currentTime >= marketHours.tokyo.open && currentTime < marketHours.tokyo.close) ? 'open' : 'closed')
       },
-      timezone: 'UTC'
+      timezone: userTimezone
     },
     {
       name: 'London',
       status: isWeekend ? 'closed' : 
               (currentTime >= marketHours.london.open && currentTime < marketHours.london.close) ? 'open' : 
               isOpeningSoon(marketHours.london.open) ? 'opening-soon' : 'closed',
-      hours: '08:00-16:30 UTC (Mon-Fri)',
+      hours: formatMarketHours(marketHours.london.open, marketHours.london.close),
       nextEvent: {
         type: isWeekend ? 'open' : 
               (currentTime >= marketHours.london.open && currentTime < marketHours.london.close) ? 'close' : 'open',
         time: calcNextTime(marketHours.london, 
                  (currentTime >= marketHours.london.open && currentTime < marketHours.london.close) ? 'open' : 'closed')
       },
-      timezone: 'UTC'
+      timezone: userTimezone
     },
     {
       name: 'New York',
       status: isWeekend ? 'closed' : 
               (currentTime >= marketHours.newYork.open && currentTime < marketHours.newYork.close) ? 'open' : 
               isOpeningSoon(marketHours.newYork.open) ? 'opening-soon' : 'closed',
-      hours: '13:30-20:00 UTC (Mon-Fri)',
+      hours: formatMarketHours(marketHours.newYork.open, marketHours.newYork.close),
       nextEvent: {
         type: isWeekend ? 'open' : 
               (currentTime >= marketHours.newYork.open && currentTime < marketHours.newYork.close) ? 'close' : 'open',
         time: calcNextTime(marketHours.newYork, 
                  (currentTime >= marketHours.newYork.open && currentTime < marketHours.newYork.close) ? 'open' : 'closed')
       },
-      timezone: 'UTC'
+      timezone: userTimezone
     },
     {
       name: 'Frankfurt',
       status: isWeekend ? 'closed' : 
               (currentTime >= marketHours.frankfurt.open && currentTime < marketHours.frankfurt.close) ? 'open' : 
               isOpeningSoon(marketHours.frankfurt.open) ? 'opening-soon' : 'closed',
-      hours: '08:00-16:30 UTC (Mon-Fri)',
+      hours: formatMarketHours(marketHours.frankfurt.open, marketHours.frankfurt.close),
       nextEvent: {
         type: isWeekend ? 'open' : 
               (currentTime >= marketHours.frankfurt.open && currentTime < marketHours.frankfurt.close) ? 'close' : 'open',
         time: calcNextTime(marketHours.frankfurt, 
                  (currentTime >= marketHours.frankfurt.open && currentTime < marketHours.frankfurt.close) ? 'open' : 'closed')
       },
-      timezone: 'UTC'
+      timezone: userTimezone
     },
     {
       name: 'Hong Kong',
       status: isWeekend ? 'closed' : 
               (currentTime >= marketHours.hongKong.open && currentTime < marketHours.hongKong.close) ? 'open' : 
               isOpeningSoon(marketHours.hongKong.open) ? 'opening-soon' : 'closed',
-      hours: '01:00-08:00 UTC (Mon-Fri)',
+      hours: formatMarketHours(marketHours.hongKong.open, marketHours.hongKong.close),
       nextEvent: {
         type: isWeekend ? 'open' : 
               (currentTime >= marketHours.hongKong.open && currentTime < marketHours.hongKong.close) ? 'close' : 'open',
         time: calcNextTime(marketHours.hongKong, 
                  (currentTime >= marketHours.hongKong.open && currentTime < marketHours.hongKong.close) ? 'open' : 'closed')
       },
-      timezone: 'UTC'
+      timezone: userTimezone
     }
   ];
   

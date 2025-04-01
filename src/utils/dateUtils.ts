@@ -1,3 +1,4 @@
+
 import { format, formatDistanceToNow, formatRelative, isToday, isTomorrow, isYesterday } from 'date-fns';
 
 // Format a date for display
@@ -94,12 +95,31 @@ export const formatDateRange = (start: Date, end: Date): string => {
 
 // Convert UTC time to local time
 export const utcToLocal = (date: Date): Date => {
-  return new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+  // This is incorrect - it doubles the timezone offset
+  // Instead, create a new date that represents the same UTC time in local timezone
+  const utcTime = Date.UTC(
+    date.getUTCFullYear(),
+    date.getUTCMonth(),
+    date.getUTCDate(),
+    date.getUTCHours(),
+    date.getUTCMinutes(),
+    date.getUTCSeconds()
+  );
+  return new Date(utcTime);
 };
 
 // Convert local time to UTC
 export const localToUtc = (date: Date): Date => {
-  return new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  return new Date(
+    Date.UTC(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      date.getHours(),
+      date.getMinutes(),
+      date.getSeconds()
+    )
+  );
 };
 
 // Get the current week's start and end dates
@@ -150,4 +170,31 @@ export const getNextOccurrence = (hour: number, minute: number = 0, skipWeekends
   }
   
   return targetDate;
+};
+
+// Get timezone offset hours (positive for east of UTC, negative for west)
+export const getTimezoneOffsetHours = (): number => {
+  // JavaScript's getTimezoneOffset is in minutes and has opposite sign of standard timezone notation
+  return -(new Date().getTimezoneOffset() / 60);
+};
+
+// Adjust UTC hour to user's local timezone
+export const adjustHourToLocalTimezone = (utcHour: number): number => {
+  const offsetHours = getTimezoneOffsetHours();
+  const localHour = (utcHour + offsetHours) % 24;
+  return localHour >= 0 ? localHour : localHour + 24; // Handle negative hours
+};
+
+// Convert a UTC hour:minute to local time display
+export const getLocalTimeDisplay = (utcHour: number, utcMinute: number = 0): string => {
+  const localHour = adjustHourToLocalTimezone(utcHour);
+  return `${localHour.toString().padStart(2, '0')}:${utcMinute.toString().padStart(2, '0')} ${getTimezoneAbbreviation()}`;
+};
+
+// Get the timezone abbreviation
+export const getTimezoneAbbreviation = (): string => {
+  const options: Intl.DateTimeFormatOptions = { timeZoneName: 'short' };
+  const parts = new Intl.DateTimeFormat('en-US', options).formatToParts(new Date());
+  const timeZonePart = parts.find(part => part.type === 'timeZoneName');
+  return timeZonePart?.value || '';
 };
