@@ -64,16 +64,21 @@ const WelcomeHeader = () => {
   return (
     <div className="w-full bg-[#1A1F2C] rounded-lg border border-border/40 p-6 mb-6 relative overflow-hidden">
       <div className="relative z-10">
-        <div className="flex items-center mb-2">
-          <h2 className="text-2xl font-bold text-white">Welcome back, {randomName}</h2>
-          <Badge variant="outline" className="ml-3 bg-primary/10 border-primary/30">AI-Powered Trading</Badge>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4">
+          <div>
+            <h2 className="text-2xl font-bold text-white flex items-center">
+              Welcome back, {randomName}
+              <Badge variant="outline" className="ml-3 bg-primary/10 border-primary/30">AI-Powered Trading</Badge>
+            </h2>
+            <p className="text-gray-300 mt-1">
+              Your AI trading assistant is analyzing live market data via Bybit API to generate real-time signals and deep market insights
+            </p>
+          </div>
         </div>
-        <p className="text-gray-300 mb-6">
-          Your AI trading assistant is analyzing live market data via Bybit API to generate real-time signals and deep market insights
-        </p>
         
-        {/* Add Trading Mode Selector */}
-        <div className="mb-6">
+        {/* Trading Mode Selector - made more prominent */}
+        <div className="mb-6 mt-4">
+          <h3 className="text-lg font-medium mb-3 text-white">Trading Mode</h3>
           <TradingModeSelector />
         </div>
         
