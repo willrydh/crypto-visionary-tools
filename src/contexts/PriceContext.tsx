@@ -2,6 +2,7 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { fetchCurrentPrice, fetchHighLowData } from '@/services/priceDataService';
 import { useCrypto } from '@/hooks/useCrypto';
+import { toast } from "@/components/ui/use-toast";
 
 interface PriceData {
   symbol: string;
@@ -32,11 +33,12 @@ interface PriceProviderProps {
 
 export const PriceProvider: React.FC<PriceProviderProps> = ({ 
   children, 
-  refreshInterval = 30000 
+  refreshInterval = 15000 // Changed to 15 seconds for more frequent updates
 }) => {
   const [priceData, setPriceData] = useState<Record<string, PriceData>>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [error, setError] = useState<Error | null>(null);
 
   // Load price data for a specific symbol
   const loadPriceData = async (symbol: string): Promise<PriceData | undefined> => {
@@ -78,6 +80,15 @@ export const PriceProvider: React.FC<PriceProviderProps> = ({
       return combinedData;
     } catch (error) {
       console.error(`Error loading price data for ${formattedSymbol}:`, error);
+      setError(error as Error);
+      
+      // Show toast notification for errors
+      toast({
+        title: "Error loading price data",
+        description: `Could not load price data for ${symbol}. ${(error as Error).message}`,
+        variant: "destructive",
+      });
+      
       return undefined;
     } finally {
       setIsLoading(false);
@@ -97,6 +108,7 @@ export const PriceProvider: React.FC<PriceProviderProps> = ({
         ]);
       } catch (error) {
         console.error('Error loading initial price data:', error);
+        setError(error as Error);
       } finally {
         setIsLoading(false);
       }
@@ -106,8 +118,11 @@ export const PriceProvider: React.FC<PriceProviderProps> = ({
     
     // Set up refresh interval
     const intervalId = setInterval(() => {
+      console.log("Refreshing price data at interval:", new Date().toISOString());
       Object.keys(priceData).forEach(symbol => {
-        loadPriceData(symbol + '/USDT');
+        // Format symbol correctly for API call
+        const apiSymbol = symbol.includes('/') ? symbol : symbol + '/USDT';
+        loadPriceData(apiSymbol);
       });
     }, refreshInterval);
     
