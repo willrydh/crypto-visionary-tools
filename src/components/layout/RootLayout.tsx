@@ -14,6 +14,12 @@ import CalendarView from '@/pages/CalendarView';
 import ChartView from '@/pages/ChartView';
 import Settings from '@/pages/Settings';
 import NotFound from '@/pages/NotFound';
+import Welcome from '@/pages/Welcome';
+import PricingPage from '@/pages/PricingPage';
+import ForgotPassword from '@/pages/ForgotPassword';
+import ResetPasswordConfirm from '@/pages/ResetPasswordConfirm';
+import ThankYouPage from '@/pages/ThankYouPage';
+import Index from '@/pages/Index';
 
 const RootLayout: React.FC = () => {
   const location = useLocation();
@@ -26,21 +32,55 @@ const RootLayout: React.FC = () => {
   return (
     <TooltipProvider>
       <div className="flex flex-col min-h-screen">
-        <MainNavigation />
-        <div className="md:ml-64">
-          <TopHeader />
-          <main className="flex-1 overflow-auto pb-16 md:pb-0 px-4 md:px-6 lg:px-8 pt-32 md:pt-36">
+        {location.pathname !== '/welcome' && 
+         location.pathname !== '/pricing' && 
+         location.pathname !== '/forgot-password' && 
+         location.pathname !== '/reset-password' && 
+         location.pathname !== '/thank-you' && (
+          <MainNavigation />
+        )}
+        <div className={location.pathname !== '/welcome' && 
+                      location.pathname !== '/pricing' && 
+                      location.pathname !== '/forgot-password' && 
+                      location.pathname !== '/reset-password' && 
+                      location.pathname !== '/thank-you' ? "md:ml-64" : ""}>
+          {location.pathname !== '/welcome' && 
+           location.pathname !== '/pricing' && 
+           location.pathname !== '/forgot-password' && 
+           location.pathname !== '/reset-password' && 
+           location.pathname !== '/thank-you' && (
+            <TopHeader />
+          )}
+          <main className={location.pathname !== '/welcome' && 
+                          location.pathname !== '/pricing' && 
+                          location.pathname !== '/forgot-password' && 
+                          location.pathname !== '/reset-password' && 
+                          location.pathname !== '/thank-you' ? 
+                          "flex-1 overflow-auto pb-16 md:pb-0 px-4 md:px-6 lg:px-8 pt-32 md:pt-36" : 
+                          "flex-1 overflow-auto"}>
             <Routes>
-              <Route path="/" element={<Dashboard />} />
+              <Route path="/" element={<Index />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/signals" element={<SignalsView />} />
               <Route path="/trade" element={<TradeSuggestion />} />
               <Route path="/calendar" element={<CalendarView />} />
               <Route path="/chart" element={<ChartView />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/welcome" element={<Welcome />} />
+              <Route path="/pricing" element={<PricingPage />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPasswordConfirm />} />
+              <Route path="/thank-you" element={<ThankYouPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
-          <MobileNavigation />
+          {location.pathname !== '/welcome' && 
+           location.pathname !== '/pricing' && 
+           location.pathname !== '/forgot-password' && 
+           location.pathname !== '/reset-password' && 
+           location.pathname !== '/thank-you' && (
+            <MobileNavigation />
+          )}
         </div>
         <Toaster />
         <Sonner />
