@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { Check, AlertTriangle, Info, Zap, Wifi, Database, Globe, BrainCircuit } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 
+// Define system services
 const systemServices = [
   {
     name: 'Bybit API',
