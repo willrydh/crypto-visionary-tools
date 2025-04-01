@@ -44,10 +44,12 @@ export const MarketsProvider: React.FC<MarketsProviderProps> = ({ children }) =>
         console.log('Fetching Alpha Vantage market sessions...');
         sessions = await fetchAlphaVantageMarketSessions();
         setDataSource('alpha-vantage');
+        console.log('Successfully fetched Alpha Vantage sessions:', sessions);
       } catch (avError) {
         console.error('Alpha Vantage error, falling back to internal data:', avError);
         sessions = await fetchMarketSessions();
         setDataSource('internal');
+        console.log('Successfully fetched internal sessions:', sessions);
       }
       
       // Ensure all Date objects are properly formatted and actual Date instances
@@ -61,6 +63,7 @@ export const MarketsProvider: React.FC<MarketsProviderProps> = ({ children }) =>
         }
       }));
       
+      console.log('Formatted sessions with proper dates:', formattedSessions);
       setMarketSessions(formattedSessions);
       setLastUpdated(new Date());
     } catch (error) {

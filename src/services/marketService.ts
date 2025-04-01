@@ -103,6 +103,18 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
            (marketOpenTime - currentTime) <= 1;
   };
   
+  // Debug log to help diagnose the issue
+  console.log('Current UTC time:', currentTime.toFixed(2), 
+              'Hour:', hour, 'Minute:', minute, 
+              'Day:', dayOfWeek, 'Weekend:', isWeekend);
+  console.log('Market hours - NYSE open:', marketHours.newYork.open, 'close:', marketHours.newYork.close);
+  
+  // Fix for US markets: Determine status correctly
+  const isNYOpen = !isWeekend && currentTime >= marketHours.newYork.open && currentTime < marketHours.newYork.close;
+  const isNYOpeningSoon = isOpeningSoon(marketHours.newYork.open);
+  
+  console.log('NYSE Market check - isOpen:', isNYOpen, 'isOpeningSoon:', isNYOpeningSoon);
+  
   // Create market sessions with accurate statuses and next event times
   const sessions: MarketSession[] = [
     {
@@ -136,14 +148,13 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
     {
       name: 'New York',
       status: isWeekend ? 'closed' : 
-              (currentTime >= marketHours.newYork.open && currentTime < marketHours.newYork.close) ? 'open' : 
-              isOpeningSoon(marketHours.newYork.open) ? 'opening-soon' : 'closed',
+              isNYOpen ? 'open' : 
+              isNYOpeningSoon ? 'opening-soon' : 'closed',
       hours: formatMarketHours(marketHours.newYork.open, marketHours.newYork.close),
       nextEvent: {
         type: isWeekend ? 'open' : 
-              (currentTime >= marketHours.newYork.open && currentTime < marketHours.newYork.close) ? 'close' : 'open',
-        time: calculateNextEvent(marketHours.newYork, 
-                 (currentTime >= marketHours.newYork.open && currentTime < marketHours.newYork.close))
+              isNYOpen ? 'close' : 'open',
+        time: calculateNextEvent(marketHours.newYork, isNYOpen)
       },
       timezone: userTimezone
     },

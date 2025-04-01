@@ -1,4 +1,3 @@
-
 import { MarketSession } from '@/contexts/MarketsContext';
 import { getMarketTimeRemaining, getPreciseMarketTime } from '@/utils/dateUtils';
 
@@ -160,6 +159,11 @@ export const fetchAlphaVantageMarketSessions = async (): Promise<MarketSession[]
   
   const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   
+  // Debug log to help diagnose the issue
+  console.log('[AlphaVantage] Current UTC time:', currentTime.toFixed(2), 
+              'Hour:', hour, 'Minute:', minute, 
+              'Day:', dayOfWeek, 'Weekend:', isWeekend);
+  
   try {
     // We'll attempt real checks for key markets but limit API calls
     // For an actual production app with higher rate limits, you could check each market
@@ -173,6 +177,7 @@ export const fetchAlphaVantageMarketSessions = async (): Promise<MarketSession[]
       try {
         // Only check NYSE which is a major indicator
         nyseOpen = await isMarketOpen(MARKET_SYMBOLS.nyse);
+        console.log('[AlphaVantage] API check - NYSE open:', nyseOpen);
         
         // Use time-based calculation for other markets to save API calls
         londonOpen = currentTime >= exchangeHours.london.open && 
@@ -181,7 +186,7 @@ export const fetchAlphaVantageMarketSessions = async (): Promise<MarketSession[]
         tokyoOpen = currentTime >= exchangeHours.tokyo.open && 
                     currentTime < exchangeHours.tokyo.close;
       } catch (apiError) {
-        console.error('API check failed, falling back to time-based calculation:', apiError);
+        console.error('[AlphaVantage] API check failed, falling back to time-based calculation:', apiError);
         // Fallback to time-based calculations
         nyseOpen = currentTime >= exchangeHours.nyse.open && 
                    currentTime < exchangeHours.nyse.close;
@@ -194,6 +199,8 @@ export const fetchAlphaVantageMarketSessions = async (): Promise<MarketSession[]
       
       if (isWeekend) return 'closed';
       
+      // Check if the current time is within the market hours
+      // This is critical for proper functioning
       if (currentTime >= exchangeHours[exchange].open && 
           currentTime < exchangeHours[exchange].close) {
         return 'open';
@@ -205,7 +212,7 @@ export const fetchAlphaVantageMarketSessions = async (): Promise<MarketSession[]
       
       return 'closed';
     };
-    
+
     // Calculate the next opening/closing time with fixed timezone handling
     const calculateNextEvent = (exchange: string, isOpen: boolean): Date => {
       if (!exchangeHours[exchange]) {
@@ -237,6 +244,13 @@ export const fetchAlphaVantageMarketSessions = async (): Promise<MarketSession[]
         }
       }
     };
+    
+    // For US markets: Use both API and time-based checks
+    // If the API check returned false but the time suggests it should be open, trust the time
+    if (!nyseOpen && currentTime >= exchangeHours.nyse.open && currentTime < exchangeHours.nyse.close) {
+      console.log('[AlphaVantage] Overriding NYSE status based on time calculation');
+      nyseOpen = true;
+    }
     
     // Create market sessions with current status
     // Focus on key markets that users want to track

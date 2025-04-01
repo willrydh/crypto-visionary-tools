@@ -56,6 +56,9 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
     }
   };
 
+  // Debug logging to help diagnose issues
+  console.log('MarketStatus - Current sessions:', marketSessions);
+
   return (
     <Card className={compact ? "border-border/50" : ""}>
       <CardHeader className={compact ? "pb-2" : "pb-3"}>
