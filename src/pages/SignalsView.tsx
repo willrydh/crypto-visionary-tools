@@ -106,7 +106,7 @@ const SignalsView = () => {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-4">
         <TradePageHeader isLoading={true} onRefresh={handleRefresh} />
         <DataLoadingPlaceholder message="Loading trading signals data..." className="h-[400px]" />
       </div>
@@ -114,10 +114,10 @@ const SignalsView = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <TradePageHeader isLoading={isLoading} onRefresh={handleRefresh} />
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3">
         <div className="w-full">
           <div className="bg-card/60 p-4 rounded-lg border border-border w-full">
             <CryptoSelector showDataSource={true} label="" fullWidth={true} />
@@ -133,7 +133,7 @@ const SignalsView = () => {
         />
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-4">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
             <TabsTrigger value="chart">Price Chart</TabsTrigger>
@@ -141,20 +141,20 @@ const SignalsView = () => {
             <TabsTrigger value="bubbles">Bubbles</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="chart" className="pt-4">
+          <TabsContent value="chart" className="pt-3">
             <PriceChart symbol={`${selectedCrypto.symbol}/USDT`} />
           </TabsContent>
           
-          <TabsContent value="levels" className="pt-4">
+          <TabsContent value="levels" className="pt-3">
             <SupportResistanceLevels />
           </TabsContent>
           
-          <TabsContent value="bubbles" className="pt-4">
+          <TabsContent value="bubbles" className="pt-3">
             <CryptoBubbles />
           </TabsContent>
         </Tabs>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <EnhancedTechnicalAnalysis 
               currentBias={currentBias}
@@ -166,7 +166,7 @@ const SignalsView = () => {
               title="Enhanced TA"
             />
             
-            <div className="mt-6 bg-card rounded-lg border p-4">
+            <div className="mt-4 bg-card rounded-lg border p-4">
               <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
                 <span className={getModeColor()}>
                   {tradingMode === 'scalp' && <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>}
@@ -200,7 +200,7 @@ const SignalsView = () => {
             </div>
           </div>
           
-          <div className="space-y-6">
+          <div className="space-y-4">
             <TradeSuggestionCard 
               tradeSuggestion={tradeSuggestion} 
               isLoading={isLoading} 

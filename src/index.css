@@ -199,41 +199,41 @@ body {
 }
 
 main {
-  @apply pt-16 md:pt-20;
+  @apply pt-14 md:pt-16; /* Reduced from pt-16 md:pt-20 */
 }
 
 /* Main layout adjustment for trading pages */
 .trading-page main {
-  @apply pt-24 md:pt-28;
+  @apply pt-20 md:pt-24; /* Reduced from pt-24 md:pt-28 */
 }
 
 /* Fix spacing between heading and trading mode bar */
 h1, h2 {
-  @apply mt-4 md:mt-6;
+  @apply mt-2 md:mt-3; /* Reduced from mt-4 md:mt-6 */
 }
 
 /* Add space between sections */
 section + section {
-  @apply mt-10;
+  @apply mt-8; /* Reduced from mt-10 */
 }
 
 /* Improve card spacing */
 .card-container {
-  @apply space-y-8;
+  @apply space-y-6; /* Reduced from space-y-8 */
 }
 
 /* Additional spacing for trade pages */
 .trade-page-container {
-  @apply space-y-8;
+  @apply space-y-6; /* Reduced from space-y-8 */
 }
 
 .trade-page-section {
-  @apply mt-8;
+  @apply mt-6; /* Reduced from mt-8 */
 }
 
 /* Improve alert spacing */
 .alert {
-  @apply my-6;
+  @apply my-4; /* Reduced from my-6 */
 }
 
 /* Fix for welcome page spacing */
