@@ -27,13 +27,13 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
   nextMonday.setUTCHours(0, 0, 0, 0);
   
   // Define accurate market hours in UTC
-  // Adjusting market hours to match real-world timings
+  // Updated with more precise opening/closing times
   const marketHours = {
-    tokyo: { open: 0, close: 9 },     // Tokyo: UTC 0:00-9:00 (9pm-6am EST)
-    london: { open: 7, close: 15.5 }, // London: UTC 7:00-15:30 (Opens 9am local UK time, 7am UTC)
-    newYork: { open: 13, close: 20 }, // New York: UTC 13:00-20:00 (9am-4pm EST)
-    frankfurt: { open: 7, close: 15.5 }, // Frankfurt: UTC 7:00-15:30 (Opens 9am local time, 7am UTC)
-    hongKong: { open: 1, close: 8 }   // Hong Kong: UTC 1:00-8:00 (8pm-3am EST)
+    tokyo: { open: 0, close: 9 },             // Tokyo: UTC 0:00-9:00 (9pm-6am EST)
+    london: { open: 7, close: 15.5 },         // London: UTC 7:00-15:30 (Opens 8am local UK time)
+    newYork: { open: 13.5, close: 20 },       // New York: UTC 13:30-20:00 (9:30am-4pm EST)
+    frankfurt: { open: 7, close: 15.5 },      // Frankfurt: UTC 7:00-15:30 (Opens 8am local time)
+    hongKong: { open: 1, close: 8 }           // Hong Kong: UTC 1:00-8:00 (8pm-3am EST)
   };
   
   // Helper function to calculate next opening or closing time
@@ -43,27 +43,39 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
     if (isWeekend) {
       // If weekend, next opening is Monday
       const mondayOpen = new Date(nextMonday);
-      mondayOpen.setUTCHours(market.open, 0, 0, 0);
+      mondayOpen.setUTCHours(Math.floor(market.open), (market.open % 1) * 60, 0, 0);
       return mondayOpen;
     }
     
     if (currentStatus === 'open') {
       // Market is open, next event is closing today
       const closeTime = new Date(now);
-      closeTime.setUTCHours(market.close, currentTime === Math.floor(market.close) ? 30 : 0, 0, 0);
+      const closeHour = Math.floor(market.close);
+      const closeMinute = Math.round((market.close % 1) * 60);
+      closeTime.setUTCHours(closeHour, closeMinute, 0, 0);
+      
+      // If closing time has already passed today, set for tomorrow
+      if (closeTime <= now) {
+        closeTime.setUTCDate(closeTime.getUTCDate() + 1);
+      }
+      
       return closeTime;
     } else {
       // Market is closed
       if (currentTime < market.open) {
         // Will open later today
         const openTime = new Date(now);
-        openTime.setUTCHours(market.open, 0, 0, 0);
+        const openHour = Math.floor(market.open);
+        const openMinute = Math.round((market.open % 1) * 60);
+        openTime.setUTCHours(openHour, openMinute, 0, 0);
         return openTime;
       } else {
         // Will open tomorrow
         const tomorrow = new Date(now);
         tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
-        tomorrow.setUTCHours(market.open, 0, 0, 0);
+        const openHour = Math.floor(market.open);
+        const openMinute = Math.round((market.open % 1) * 60);
+        tomorrow.setUTCHours(openHour, openMinute, 0, 0);
         return tomorrow;
       }
     }
@@ -112,7 +124,7 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
       status: isWeekend ? 'closed' : 
               (currentTime >= marketHours.newYork.open && currentTime < marketHours.newYork.close) ? 'open' : 
               isOpeningSoon(marketHours.newYork.open) ? 'opening-soon' : 'closed',
-      hours: '13:00-20:00 UTC (Mon-Fri)',
+      hours: '13:30-20:00 UTC (Mon-Fri)',
       nextEvent: {
         type: isWeekend ? 'open' : 
               (currentTime >= marketHours.newYork.open && currentTime < marketHours.newYork.close) ? 'close' : 'open',

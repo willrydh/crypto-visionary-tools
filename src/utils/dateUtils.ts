@@ -1,4 +1,3 @@
-
 import { format, formatDistanceToNow, formatRelative, isToday, isTomorrow, isYesterday } from 'date-fns';
 
 // Format a date for display
@@ -14,17 +13,35 @@ export const formatDate = (date: Date): string => {
   }
 };
 
-// Format time until an event
+// Format time until an event with more precision
 export const formatTimeUntil = (date: Date): string => {
   const now = new Date();
-  const diffMinutes = Math.round((date.getTime() - now.getTime()) / (1000 * 60));
+  const diffMs = date.getTime() - now.getTime();
+  const diffMinutes = Math.round(diffMs / (1000 * 60));
   
-  // For times less than 60 minutes away, show minutes
+  // For times less than 60 minutes away, show minutes with more precision
   if (diffMinutes > 0 && diffMinutes < 60) {
-    return `in ${diffMinutes} minute${diffMinutes === 1 ? '' : 's'}`;
+    return `in ${diffMinutes} min`;
   }
   
-  return formatDistanceToNow(date, { addSuffix: true });
+  // For times less than 24 hours, show hours and minutes
+  if (diffMinutes >= 60 && diffMinutes < 24 * 60) {
+    const hours = Math.floor(diffMinutes / 60);
+    const minutes = diffMinutes % 60;
+    if (minutes === 0) {
+      return `in ${hours}h`;
+    }
+    return `in ${hours}h ${minutes}m`;
+  }
+  
+  // For times more than 24 hours, use date-fns but clean up the output
+  const formatted = formatDistanceToNow(date, { addSuffix: true });
+  
+  // Remove redundant words and make it more concise
+  return formatted
+    .replace('about ', '')
+    .replace('in in', 'in')
+    .replace('about about', 'about');
 };
 
 // Format time for charts

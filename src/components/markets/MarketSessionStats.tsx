@@ -1,8 +1,9 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Bell, Zap, TrendingDown, TrendingUp, ArrowUpRight, Clock } from 'lucide-react';
+import { formatTimeUntil } from '@/utils/dateUtils';
 
 interface MarketSessionStatsProps {
   title?: string;
@@ -17,40 +18,80 @@ const MarketSessionStats = ({
   europeanSessionStart,
   usSessionStart
 }: MarketSessionStatsProps) => {
-  // Sample market session data with adjustable times based on props
-  const getSessionTime = (baseHour: number, offsetHour?: number): string => {
-    if (offsetHour === undefined) return `${baseHour}:00 AM ET`;
-    const adjustedHour = baseHour + offsetHour;
-    const hour = adjustedHour % 12 === 0 ? 12 : adjustedHour % 12;
-    const amPm = adjustedHour < 12 || adjustedHour === 24 ? 'AM' : 'PM';
-    return `${hour}:00 ${amPm} ET`;
+  // Market hours in UTC
+  const marketHours = {
+    nyseOpen: { hour: 13, minute: 30 },      // NYSE opens 9:30 AM ET (13:30 UTC)
+    londonClose: { hour: 15, minute: 30 },   // London closes 15:30 UTC
+    nyseClose: { hour: 20, minute: 0 },      // NYSE closes 4:00 PM ET (20:00 UTC)
+    tokyoOpen: { hour: 0, minute: 0 }        // Tokyo opens 0:00 UTC (9:00 AM JST)
   };
 
-  // Default times that will be adjusted if props are provided
-  const nyseOpenHour = 9;
-  const londonCloseHour = 11;
-  const nyseCloseHour = 16;
-  const tokyoOpenHour = 19;
+  // State to hold the countdown timers
+  const [countdowns, setCountdowns] = useState<{[key: string]: string}>({});
+  
+  // Function to get the next occurrence of a specific market event
+  const getNextOccurrence = (hour: number, minute: number): Date => {
+    const now = new Date();
+    const targetTime = new Date(now);
+    targetTime.setUTCHours(hour, minute, 0, 0);
+    
+    // If the target time has already passed today, set it for tomorrow
+    if (targetTime <= now) {
+      targetTime.setUTCDate(targetTime.getUTCDate() + 1);
+    }
+    
+    // If it's weekend (Saturday or Sunday), adjust to next Monday
+    const dayOfWeek = targetTime.getUTCDay();
+    if (dayOfWeek === 0) { // Sunday
+      targetTime.setUTCDate(targetTime.getUTCDate() + 1);
+    } else if (dayOfWeek === 6) { // Saturday
+      targetTime.setUTCDate(targetTime.getUTCDate() + 2);
+    }
+    
+    return targetTime;
+  };
 
-  // Applying adjustments if provided
-  const adjustedNyseOpen = getSessionTime(nyseOpenHour, usSessionStart);
-  const adjustedLondonClose = getSessionTime(londonCloseHour, europeanSessionStart);
-  const adjustedNyseClose = getSessionTime(nyseCloseHour, usSessionStart);
-  const adjustedTokyoOpen = getSessionTime(tokyoOpenHour, asianSessionStart);
+  // Update the countdown every minute
+  useEffect(() => {
+    const updateCountdowns = () => {
+      const nyseOpenTime = getNextOccurrence(marketHours.nyseOpen.hour, marketHours.nyseOpen.minute);
+      const londonCloseTime = getNextOccurrence(marketHours.londonClose.hour, marketHours.londonClose.minute);
+      const nyseCloseTime = getNextOccurrence(marketHours.nyseClose.hour, marketHours.nyseClose.minute);
+      const tokyoOpenTime = getNextOccurrence(marketHours.tokyoOpen.hour, marketHours.tokyoOpen.minute);
+      
+      setCountdowns({
+        nyseOpen: formatTimeUntil(nyseOpenTime),
+        londonClose: formatTimeUntil(londonCloseTime),
+        nyseClose: formatTimeUntil(nyseCloseTime),
+        tokyoOpen: formatTimeUntil(tokyoOpenTime)
+      });
+    };
+    
+    // Initial update
+    updateCountdowns();
+    
+    // Set interval to update every minute
+    const interval = setInterval(updateCountdowns, 60000);
+    
+    return () => clearInterval(interval);
+  }, []);
 
+  // Sample market session data with dynamically calculated countdowns
   const marketSessions = [
     {
       name: "NYSE Open",
-      time: adjustedNyseOpen,
+      time: `${marketHours.nyseOpen.hour}:${marketHours.nyseOpen.minute.toString().padStart(2, '0')} UTC`,
+      countdown: countdowns.nyseOpen || "Calculating...",
       impact: "High",
       volatility: 85,
       pumpFrequency: 62,
       dumpFrequency: 38,
-      status: "active"
+      status: "upcoming"
     },
     {
       name: "London Close",
-      time: adjustedLondonClose,
+      time: `${marketHours.londonClose.hour}:${marketHours.londonClose.minute.toString().padStart(2, '0')} UTC`,
+      countdown: countdowns.londonClose || "Calculating...",
       impact: "Medium",
       volatility: 65,
       pumpFrequency: 51,
@@ -59,7 +100,8 @@ const MarketSessionStats = ({
     },
     {
       name: "NYSE Close",
-      time: adjustedNyseClose,
+      time: `${marketHours.nyseClose.hour}:${marketHours.nyseClose.minute.toString().padStart(2, '0')} UTC`,
+      countdown: countdowns.nyseClose || "Calculating...",
       impact: "High",
       volatility: 78,
       pumpFrequency: 45,
@@ -68,7 +110,8 @@ const MarketSessionStats = ({
     },
     {
       name: "Tokyo Open",
-      time: adjustedTokyoOpen,
+      time: `${marketHours.tokyoOpen.hour}:${marketHours.tokyoOpen.minute.toString().padStart(2, '0')} UTC`,
+      countdown: countdowns.tokyoOpen || "Calculating...",
       impact: "Medium",
       volatility: 58,
       pumpFrequency: 53,
@@ -76,6 +119,55 @@ const MarketSessionStats = ({
       status: "upcoming"
     }
   ];
+
+  // Check if any market is currently live
+  useEffect(() => {
+    const checkLiveMarkets = () => {
+      const now = new Date();
+      const utcHour = now.getUTCHours();
+      const utcMinute = now.getUTCMinutes();
+      const utcDay = now.getUTCDay();
+      
+      // Only check on weekdays (1-5 for Monday-Friday)
+      if (utcDay >= 1 && utcDay <= 5) {
+        // Create updated marketSessions
+        const updatedSessions = [...marketSessions];
+        
+        // NYSE Open (13:30-20:00 UTC)
+        if (utcHour > marketHours.nyseOpen.hour || 
+            (utcHour === marketHours.nyseOpen.hour && utcMinute >= marketHours.nyseOpen.minute)) {
+          if (utcHour < marketHours.nyseClose.hour) {
+            updatedSessions[0].status = "active";
+          }
+        }
+        
+        // London Close (approaching 15:30 UTC)
+        if (utcHour === marketHours.londonClose.hour && 
+            utcMinute >= marketHours.londonClose.minute - 15 && 
+            utcMinute <= marketHours.londonClose.minute + 15) {
+          updatedSessions[1].status = "active";
+        }
+        
+        // NYSE Close (approaching 20:00 UTC)
+        if (utcHour === marketHours.nyseClose.hour && 
+            utcMinute >= marketHours.nyseClose.minute - 15 && 
+            utcMinute <= marketHours.nyseClose.minute + 15) {
+          updatedSessions[2].status = "active";
+        }
+        
+        // Tokyo Open (0:00-9:00 UTC)
+        if (utcHour >= marketHours.tokyoOpen.hour && utcHour < 9) {
+          updatedSessions[3].status = "active";
+        }
+      }
+    };
+    
+    // Check immediately and then every 5 minutes
+    checkLiveMarkets();
+    const interval = setInterval(checkLiveMarkets, 300000);
+    
+    return () => clearInterval(interval);
+  }, []);
 
   // Function to get the impact color
   const getImpactColor = (impact: string) => {
@@ -96,7 +188,7 @@ const MarketSessionStats = ({
     if (status === 'active') {
       return <span className="flex items-center gap-1 text-green-500 text-xs font-medium"><span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Live</span>;
     }
-    return <span className="flex items-center gap-1 text-muted-foreground text-xs"><Clock className="w-3 h-3" /> Upcoming</span>;
+    return <span className="flex items-center gap-1 text-muted-foreground text-xs"><Clock className="w-3 h-3" /> {marketSessions.find(s => s.name === status)?.countdown || "Upcoming"}</span>;
   };
 
   return (
@@ -128,8 +220,11 @@ const MarketSessionStats = ({
                 {getStatusIndicator(session.status)}
               </div>
               
-              <div className="text-sm text-muted-foreground mb-3">
-                {session.time}
+              <div className="text-sm text-muted-foreground mb-3 flex items-center justify-between">
+                <span>{session.time}</span>
+                <span className="font-mono text-xs bg-muted px-2 py-0.5 rounded">
+                  {session.countdown}
+                </span>
               </div>
               
               <div className="grid grid-cols-2 gap-3">
