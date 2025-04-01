@@ -17,7 +17,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
   useEffect(() => {
     // Check if current route is trading related
-    const tradingRoutes = ['/', '/trade-suggestion', '/trade', '/signals'];
+    const tradingRoutes = ['/', '/trade-suggestion', '/trade', '/signals', '/chart', '/calendar'];
     setIsTradingPage(tradingRoutes.includes(location.pathname));
     
     // Scroll to top when location changes
@@ -45,7 +45,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         </Sidebar>
         <div className="flex-1 flex flex-col">
           <TopHeader />
-          <main className="flex-1 overflow-auto pt-32 md:pt-36">
+          <main className="flex-1 overflow-auto pt-28 md:pt-32">
             <div className="container mx-auto py-6 px-4">
               {children}
             </div>

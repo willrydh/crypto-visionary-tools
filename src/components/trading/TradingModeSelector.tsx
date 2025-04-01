@@ -24,7 +24,8 @@ export const TradingModeSelector = ({ displayLabel = true, compact = false }) =>
       gradient: 'from-blue-600/90 to-blue-400/90',
       iconGlow: 'text-blue-500',
       inactive: 'text-blue-500/80 bg-blue-900/20 border-blue-500/20',
-      color: 'text-blue-500'
+      color: 'text-blue-500',
+      activeBg: 'bg-blue-600'
     },
     { 
       id: 'day', 
@@ -35,7 +36,8 @@ export const TradingModeSelector = ({ displayLabel = true, compact = false }) =>
       gradient: 'from-amber-500/90 to-amber-400/90',
       iconGlow: 'text-amber-500',
       inactive: 'text-amber-500/80 bg-amber-900/20 border-amber-500/20',
-      color: 'text-amber-500'
+      color: 'text-amber-500',
+      activeBg: 'bg-amber-600'
     },
     { 
       id: 'night', 
@@ -46,7 +48,8 @@ export const TradingModeSelector = ({ displayLabel = true, compact = false }) =>
       gradient: 'from-indigo-600/90 to-indigo-400/90',
       iconGlow: 'text-indigo-500',
       inactive: 'text-indigo-500/80 bg-indigo-900/20 border-indigo-500/20',
-      color: 'text-indigo-500'
+      color: 'text-indigo-500',
+      activeBg: 'bg-indigo-600'
     }
   ];
 
@@ -64,8 +67,8 @@ export const TradingModeSelector = ({ displayLabel = true, compact = false }) =>
               className={cn(
                 "flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-all",
                 isActive 
-                  ? `bg-${mode.id === 'scalp' ? 'blue' : mode.id === 'day' ? 'amber' : 'indigo'}-600 text-white` 
-                  : `bg-${mode.id === 'scalp' ? 'blue' : mode.id === 'day' ? 'amber' : 'indigo'}-900/20 ${mode.color} hover:bg-${mode.id === 'scalp' ? 'blue' : mode.id === 'day' ? 'amber' : 'indigo'}-900/30`
+                  ? `${mode.activeBg} text-white` 
+                  : `${mode.inactive} hover:bg-${mode.id === 'scalp' ? 'blue' : mode.id === 'day' ? 'amber' : 'indigo'}-900/30`
               )}
             >
               {mode.icon}

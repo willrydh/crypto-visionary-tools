@@ -29,33 +29,20 @@ const RootLayout: React.FC = () => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
+  // Check if on public pages that don't need navigation
+  const isPublicPage = location.pathname === '/welcome' || 
+                       location.pathname === '/pricing' || 
+                       location.pathname === '/forgot-password' || 
+                       location.pathname === '/reset-password' || 
+                       location.pathname === '/thank-you';
+
   return (
     <TooltipProvider>
       <div className="flex flex-col min-h-screen">
-        {location.pathname !== '/welcome' && 
-         location.pathname !== '/pricing' && 
-         location.pathname !== '/forgot-password' && 
-         location.pathname !== '/reset-password' && 
-         location.pathname !== '/thank-you' && (
-          <MainNavigation />
-        )}
-        <div className={location.pathname !== '/welcome' && 
-                      location.pathname !== '/pricing' && 
-                      location.pathname !== '/forgot-password' && 
-                      location.pathname !== '/reset-password' && 
-                      location.pathname !== '/thank-you' ? "md:ml-64" : ""}>
-          {location.pathname !== '/welcome' && 
-           location.pathname !== '/pricing' && 
-           location.pathname !== '/forgot-password' && 
-           location.pathname !== '/reset-password' && 
-           location.pathname !== '/thank-you' && (
-            <TopHeader />
-          )}
-          <main className={location.pathname !== '/welcome' && 
-                          location.pathname !== '/pricing' && 
-                          location.pathname !== '/forgot-password' && 
-                          location.pathname !== '/reset-password' && 
-                          location.pathname !== '/thank-you' ? 
+        {!isPublicPage && <MainNavigation />}
+        <div className={!isPublicPage ? "md:ml-64" : ""}>
+          {!isPublicPage && <TopHeader />}
+          <main className={!isPublicPage ? 
                           "flex-1 overflow-auto pb-16 md:pb-0 px-4 md:px-6 lg:px-8 pt-32 md:pt-36" : 
                           "flex-1 overflow-auto"}>
             <Routes>
@@ -74,13 +61,7 @@ const RootLayout: React.FC = () => {
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
-          {location.pathname !== '/welcome' && 
-           location.pathname !== '/pricing' && 
-           location.pathname !== '/forgot-password' && 
-           location.pathname !== '/reset-password' && 
-           location.pathname !== '/thank-you' && (
-            <MobileNavigation />
-          )}
+          {!isPublicPage && <MobileNavigation />}
         </div>
         <Toaster />
         <Sonner />
