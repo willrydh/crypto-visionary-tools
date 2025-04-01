@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { QuestionMarkCircle, Settings, DollarSign, Repeat } from 'lucide-react';
+import { HelpCircle, Settings, DollarSign, Repeat } from 'lucide-react';
 
 const SettingsView = () => {
   const { toast } = useToast();
@@ -47,7 +47,7 @@ const SettingsView = () => {
             Settings
           </TabsTrigger>
           <TabsTrigger value="faq">
-            <QuestionMarkCircle className="h-4 w-4 mr-2" />
+            <HelpCircle className="h-4 w-4 mr-2" />
             FAQ
           </TabsTrigger>
         </TabsList>
