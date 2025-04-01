@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import EnhancedTechnicalAnalysis from '@/components/analysis/EnhancedTechnicalAnalysis';
 import { TradeSuggestionCard } from '@/components/analysis/TradeSuggestionCard';
@@ -11,6 +12,8 @@ import { useTradingMode } from '@/hooks/useTradingMode';
 import { TradePageHeader } from '@/components/trading/TradePageHeader';
 import { useCrypto } from '@/hooks/useCrypto';
 import { usePrice } from '@/hooks/usePrice';
+import { getModeAlertClass } from '@/components/trading/TradingModeStyles';
+import { cn } from '@/lib/utils';
 
 const TradeSuggestion = () => {
   const { toast } = useToast();
@@ -77,7 +80,7 @@ const TradeSuggestion = () => {
   
   return (
     <PullToRefresh onRefresh={handleRefresh}>
-      <div className="space-y-6">
+      <div className={cn("space-y-6", getModeAlertClass(tradingMode))}>
         <TradePageHeader 
           isLoading={isLoading} 
           onRefresh={handleRefresh} 

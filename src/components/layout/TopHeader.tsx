@@ -10,6 +10,7 @@ import { useTradingMode } from '@/hooks/useTradingMode';
 import { cn } from '@/lib/utils';
 import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';
 import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
+import { getModeHeaderBgClass } from '@/components/trading/TradingModeStyles';
 
 const TopHeader = () => {
   const { toast } = useToast();
@@ -51,7 +52,7 @@ const TopHeader = () => {
   return (
     <header className="fixed top-0 left-0 right-0 z-30 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/40">
       {/* Main header with logo and actions */}
-      <div className="h-16 flex items-center px-4 md:px-6 md:ml-64">
+      <div className="h-16 flex items-center px-6 ml-64">
         <div className="flex items-center gap-2 md:hidden">
           <Link to="/" className="flex items-center gap-2">
             <img src={Logo} alt="ProfitPilot" className="h-8 w-8" />
@@ -108,7 +109,7 @@ const TopHeader = () => {
       
       {/* Trading mode selector - show on specific pages */}
       {showTradingBar && (
-        <div className="px-4 md:px-6 md:ml-64 bg-primary/5 border-b border-border/40">
+        <div className={cn("px-6 ml-64", getModeHeaderBgClass(tradingMode), "border-b border-border/40")}>
           <div className="flex items-center justify-between py-2.5">
             <div className="flex-grow">
               <TradingModeSelector compact={true} displayLabel={false} />

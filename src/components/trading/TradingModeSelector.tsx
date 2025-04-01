@@ -10,7 +10,8 @@ import {
   getModeBgClass, 
   getModeTextClass, 
   getModeBorderClass,
-  getModeGradientClass
+  getModeGradientClass,
+  getModeIconBgClass
 } from './TradingModeStyles';
 
 export const TradingModeSelector = ({ displayLabel = true, compact = false }) => {
@@ -60,13 +61,18 @@ export const TradingModeSelector = ({ displayLabel = true, compact = false }) =>
               key={mode.id}
               onClick={() => handleModeChange(mode.id)}
               className={cn(
-                "flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-all",
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-all shadow-sm",
                 isActive 
                   ? getModeBgClass(mode.id, true) + " text-white" 
                   : getModeBgClass(mode.id, false)
               )}
             >
-              {mode.icon}
+              <span className={cn(
+                "flex items-center justify-center",
+                isActive ? "text-white" : mode.color
+              )}>
+                {mode.icon}
+              </span>
               <span className="text-sm font-medium">{mode.label}</span>
             </button>
           );
@@ -114,12 +120,12 @@ export const TradingModeSelector = ({ displayLabel = true, compact = false }) =>
                     )}
                   >
                     {isActive && (
-                      <div className="absolute inset-0 w-full h-full bg-gradient-to-t from-black/20 to-transparent opacity-80" />
+                      <div className="absolute inset-0 w-full h-full bg-gradient-to-t from-black/20 to-transparent opacity-80 rounded-lg" />
                     )}
                     
                     <div className={cn(
                       "flex items-center justify-center rounded-full p-1.5 mb-1",
-                      isActive ? mode.color : ""
+                      isActive ? "" : getModeIconBgClass(mode.id)
                     )}>
                       <span className={isActive ? "text-white" : ""}>
                         {mode.icon}

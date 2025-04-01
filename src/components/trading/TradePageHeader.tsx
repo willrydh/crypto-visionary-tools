@@ -5,7 +5,7 @@ import { RefreshCw, AlertCircle } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { useTradingMode } from '@/hooks/useTradingMode';
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { getModeTextClass, getModeAlertClass } from './TradingModeStyles';
+import { getModeTextClass, getModeAlertClass, getModeIconBgClass } from './TradingModeStyles';
 
 interface TradePageHeaderProps {
   isLoading: boolean;
@@ -62,7 +62,10 @@ export const TradePageHeader = ({ isLoading, onRefresh }: TradePageHeaderProps) 
         </Button>
       </div>
       
-      <Alert className={cn("border-primary/20 mb-4", getModeAlertClass(tradingMode))}>
+      <Alert className={cn(
+        "border-primary/20 mb-4 shadow-sm", 
+        getModeAlertClass(tradingMode)
+      )}>
         <AlertCircle className={cn("h-4 w-4", getModeColor())} />
         <AlertTitle className="font-medium flex items-center gap-1.5">
           <span className={getModeColor()}>{tradingMode.charAt(0).toUpperCase() + tradingMode.slice(1)} Trading</span>

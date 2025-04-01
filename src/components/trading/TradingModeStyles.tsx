@@ -18,6 +18,9 @@ export interface TradingModeStyle {
   alertBg: string;
   gradientFrom: string;
   gradientTo: string;
+  iconBg: string;
+  lightBg: string;
+  headerBg: string;
 }
 
 // Define reusable trading mode styles
@@ -35,6 +38,9 @@ export const tradingModeStyles: Record<TradingModeType, TradingModeStyle> = {
     alertBg: 'bg-blue-500/5',
     gradientFrom: 'from-blue-600/90',
     gradientTo: 'to-blue-400/90',
+    iconBg: 'bg-blue-500/10',
+    lightBg: 'bg-blue-50 dark:bg-blue-950/30',
+    headerBg: 'bg-blue-500/5',
   },
   day: {
     id: 'day',
@@ -49,6 +55,9 @@ export const tradingModeStyles: Record<TradingModeType, TradingModeStyle> = {
     alertBg: 'bg-amber-500/5',
     gradientFrom: 'from-amber-500/90',
     gradientTo: 'to-amber-400/90',
+    iconBg: 'bg-amber-500/10',
+    lightBg: 'bg-amber-50 dark:bg-amber-950/30',
+    headerBg: 'bg-amber-500/5',
   },
   night: {
     id: 'night',
@@ -63,6 +72,9 @@ export const tradingModeStyles: Record<TradingModeType, TradingModeStyle> = {
     alertBg: 'bg-indigo-500/5',
     gradientFrom: 'from-indigo-600/90',
     gradientTo: 'to-indigo-400/90',
+    iconBg: 'bg-indigo-500/10',
+    lightBg: 'bg-indigo-50 dark:bg-indigo-950/30',
+    headerBg: 'bg-indigo-500/5',
   }
 };
 
@@ -88,6 +100,18 @@ export const getModeBorderClass = (mode: TradingModeType) => {
 
 export const getModeGradientClass = (mode: TradingModeType) => {
   return cn('bg-gradient-to-br', tradingModeStyles[mode].gradientFrom, tradingModeStyles[mode].gradientTo);
+};
+
+export const getModeIconBgClass = (mode: TradingModeType) => {
+  return tradingModeStyles[mode].iconBg;
+};
+
+export const getModeLightBgClass = (mode: TradingModeType) => {
+  return tradingModeStyles[mode].lightBg;
+};
+
+export const getModeHeaderBgClass = (mode: TradingModeType) => {
+  return tradingModeStyles[mode].headerBg;
 };
 
 export default tradingModeStyles;
