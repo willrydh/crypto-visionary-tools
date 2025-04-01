@@ -19,7 +19,7 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
   customTitle,
   customSource
 }) => {
-  const { marketSessions, lastUpdated } = useMarkets();
+  const { marketSessions, lastUpdated, dataSource } = useMarkets();
 
   // Get status badge styling
   const getStatusBadgeStyle = (status: string) => {
@@ -33,6 +33,12 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
     }
   };
 
+  // Determine source label based on data source
+  const getSourceLabel = () => {
+    if (customSource) return customSource;
+    return dataSource === 'alpha-vantage' ? 'Alpha Vantage API' : 'World Markets API';
+  };
+
   return (
     <Card>
       <CardHeader className="pb-2">
@@ -42,7 +48,7 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
             {customTitle || "Market Status"}
           </CardTitle>
           <DataSourceIndicator 
-            source={customSource || "World Markets API"} 
+            source={getSourceLabel()} 
             isLive={true} 
             details="Real-time market sessions data"
           />

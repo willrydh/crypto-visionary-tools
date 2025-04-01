@@ -1,5 +1,7 @@
+
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { fetchMarketSessions } from '@/services/marketService';
+import { fetchAlphaVantageMarketSessions } from '@/services/alphaVantageService';
 
 export interface MarketSession {
   name: string;
@@ -17,6 +19,7 @@ interface MarketsContextType {
   isLoading: boolean;
   updateMarketSessions: () => Promise<void>;
   lastUpdated: Date | null;
+  dataSource: 'alpha-vantage' | 'internal';
 }
 
 export const MarketsContext = createContext<MarketsContextType | undefined>(undefined);
@@ -29,11 +32,22 @@ export const MarketsProvider: React.FC<MarketsProviderProps> = ({ children }) =>
   const [marketSessions, setMarketSessions] = useState<MarketSession[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [dataSource, setDataSource] = useState<'alpha-vantage' | 'internal'>('alpha-vantage');
 
   const updateMarketSessions = async () => {
     setIsLoading(true);
     try {
-      const sessions = await fetchMarketSessions();
+      // Try Alpha Vantage first
+      let sessions;
+      try {
+        sessions = await fetchAlphaVantageMarketSessions();
+        setDataSource('alpha-vantage');
+      } catch (avError) {
+        console.error('Alpha Vantage error, falling back to internal data:', avError);
+        sessions = await fetchMarketSessions();
+        setDataSource('internal');
+      }
+      
       setMarketSessions(sessions);
       setLastUpdated(new Date());
     } catch (error) {
@@ -61,7 +75,8 @@ export const MarketsProvider: React.FC<MarketsProviderProps> = ({ children }) =>
         marketSessions, 
         isLoading, 
         updateMarketSessions, 
-        lastUpdated 
+        lastUpdated,
+        dataSource 
       }}
     >
       {children}
