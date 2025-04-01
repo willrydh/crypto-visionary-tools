@@ -5,6 +5,7 @@ import { RefreshCw, AlertCircle } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { useTradingMode } from '@/hooks/useTradingMode';
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { getModeTextClass, getModeAlertClass } from './TradingModeStyles';
 
 interface TradePageHeaderProps {
   isLoading: boolean;
@@ -16,12 +17,7 @@ export const TradePageHeader = ({ isLoading, onRefresh }: TradePageHeaderProps) 
   
   // Get color scheme based on trading mode
   const getModeColor = () => {
-    switch(tradingMode) {
-      case 'scalp': return 'text-blue-500';
-      case 'day': return 'text-amber-500';
-      case 'night': return 'text-indigo-500';
-      default: return 'text-primary';
-    }
+    return getModeTextClass(tradingMode);
   };
   
   // Get icon based on trading mode
@@ -45,8 +41,8 @@ export const TradePageHeader = ({ isLoading, onRefresh }: TradePageHeaderProps) 
   };
   
   return (
-    <div className="mb-4">
-      <div className="flex items-center justify-between mb-3">
+    <div className="mb-6">
+      <div className="flex items-center justify-between mb-4">
         <div className="flex items-center">
           <h1 className="text-2xl font-bold mr-2">Trade Analysis</h1>
           <div className={cn("rounded-full px-2 py-0.5 text-sm font-medium flex items-center gap-1.5", getModeColor())}>
@@ -66,7 +62,7 @@ export const TradePageHeader = ({ isLoading, onRefresh }: TradePageHeaderProps) 
         </Button>
       </div>
       
-      <Alert className="bg-primary/5 border-primary/20 mb-3">
+      <Alert className={cn("border-primary/20 mb-4", getModeAlertClass(tradingMode))}>
         <AlertCircle className={cn("h-4 w-4", getModeColor())} />
         <AlertTitle className="font-medium flex items-center gap-1.5">
           <span className={getModeColor()}>{tradingMode.charAt(0).toUpperCase() + tradingMode.slice(1)} Trading</span>

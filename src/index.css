@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -195,12 +194,12 @@ body {
 
 /* Main layout adjustment for trading pages */
 .trading-page main {
-  @apply pt-20;
+  @apply pt-24;
 }
 
 /* Fix spacing between heading and trading mode bar */
-h1, h2 {
-  @apply mt-0;
+.heading-with-mode-bar {
+  @apply mb-6;
 }
 
 /* Add space between sections */
@@ -228,8 +227,8 @@ section + section {
 }
 
 /* Fix for welcome page spacing */
-.welcome-page {
-  @apply pt-0 mt-0;
+.welcome-content {
+  @apply py-8;
 }
 
 /* Consistent page title spacing */
@@ -239,12 +238,51 @@ section + section {
 
 /* Content properly offset from header */
 main {
-  @apply pt-20; 
+  @apply pt-24; 
 }
 
 /* Mobile-friendly settings */
 @media (max-width: 640px) {
   main {
-    @apply pt-24;
+    @apply pt-28;
   }
+
+  .page-container {
+    @apply px-4;
+  }
+}
+
+/* Trading mode indicators styling consistency */
+.trading-mode-indicator {
+  @apply flex items-center gap-1.5 px-2 py-1 rounded-md text-sm font-medium;
+}
+
+/* Consistent spacing for all page containers */
+.page-container {
+  @apply space-y-6;
+}
+
+/* Ensure consistent tab content spacing */
+.tabs-content {
+  @apply pt-6;
+}
+
+/* Ensure forms have consistent spacing */
+.form-section {
+  @apply space-y-6;
+}
+
+/* Ensure consistent spacing between components */
+.component-spacing {
+  @apply my-6;
+}
+
+/* Ensure consistent header offset */
+.header-offset {
+  @apply pt-24;
+}
+
+/* Footer spacing */
+.footer-spacing {
+  @apply mt-8;
 }

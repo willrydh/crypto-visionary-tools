@@ -5,51 +5,46 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Zap, Sun, Moon, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { 
+  TradingModeType, 
+  getModeBgClass, 
+  getModeTextClass, 
+  getModeBorderClass,
+  getModeGradientClass
+} from './TradingModeStyles';
 
 export const TradingModeSelector = ({ displayLabel = true, compact = false }) => {
   const { tradingMode, setTradingMode } = useTradingMode();
   const isMobile = useIsMobile();
   
-  const handleModeChange = (mode: 'scalp' | 'day' | 'night') => {
+  const handleModeChange = (mode: TradingModeType) => {
     setTradingMode(mode);
   };
 
   const modeButtons = [
     { 
-      id: 'scalp', 
+      id: 'scalp' as TradingModeType, 
       label: 'Scalp',
       icon: <Zap className="h-5 w-5" />,
       description: 'Ultra-short term trading (minutes). Focuses on small, quick price movements with frequent entries/exits.',
       timeframes: '1m, 5m, 15m',
-      gradient: 'from-blue-600/90 to-blue-400/90',
-      iconGlow: 'text-blue-500',
-      inactive: 'text-blue-500/80 bg-blue-900/20 border-blue-500/20',
-      color: 'text-blue-500',
-      activeBg: 'bg-blue-600'
+      color: getModeTextClass('scalp'),
     },
     { 
-      id: 'day', 
+      id: 'day' as TradingModeType, 
       label: 'Day',
       icon: <Sun className="h-5 w-5" />,
       description: 'Short-term trading (hours). Positions opened and closed within the same trading day, avoiding overnight risk.',
       timeframes: '15m, 1h, 4h',
-      gradient: 'from-amber-500/90 to-amber-400/90',
-      iconGlow: 'text-amber-500',
-      inactive: 'text-amber-500/80 bg-amber-900/20 border-amber-500/20',
-      color: 'text-amber-500',
-      activeBg: 'bg-amber-600'
+      color: getModeTextClass('day'),
     },
     { 
-      id: 'night', 
+      id: 'night' as TradingModeType, 
       label: 'Night',
       icon: <Moon className="h-5 w-5" />,
       description: 'Medium-term trading (12+ hours). Positions that can be held overnight, focusing on larger price swings and trend continuation.',
       timeframes: '1h, 4h, 1d',
-      gradient: 'from-indigo-600/90 to-indigo-400/90',
-      iconGlow: 'text-indigo-500',
-      inactive: 'text-indigo-500/80 bg-indigo-900/20 border-indigo-500/20',
-      color: 'text-indigo-500',
-      activeBg: 'bg-indigo-600'
+      color: getModeTextClass('night'),
     }
   ];
 
@@ -63,12 +58,12 @@ export const TradingModeSelector = ({ displayLabel = true, compact = false }) =>
           return (
             <button
               key={mode.id}
-              onClick={() => handleModeChange(mode.id as 'scalp' | 'day' | 'night')}
+              onClick={() => handleModeChange(mode.id)}
               className={cn(
                 "flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-all",
                 isActive 
-                  ? `${mode.activeBg} text-white` 
-                  : `${mode.inactive} hover:bg-${mode.id === 'scalp' ? 'blue' : mode.id === 'day' ? 'amber' : 'indigo'}-900/30`
+                  ? getModeBgClass(mode.id, true) + " text-white" 
+                  : getModeBgClass(mode.id, false)
               )}
             >
               {mode.icon}
@@ -109,13 +104,13 @@ export const TradingModeSelector = ({ displayLabel = true, compact = false }) =>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <button
-                    onClick={() => handleModeChange(mode.id as 'scalp' | 'day' | 'night')}
+                    onClick={() => handleModeChange(mode.id)}
                     className={cn(
                       "relative flex flex-col items-center justify-center rounded-lg transition-all duration-300",
                       "py-3 px-1 border shadow-md",
                       isActive 
-                        ? `bg-gradient-to-br ${mode.gradient} border-white/10 shadow-lg` 
-                        : `${mode.inactive} hover:bg-card/50`
+                        ? `${getModeGradientClass(mode.id)} border-white/10 shadow-lg` 
+                        : `${getModeBgClass(mode.id, false)} ${getModeBorderClass(mode.id)} hover:bg-card/50`
                     )}
                   >
                     {isActive && (
@@ -124,7 +119,7 @@ export const TradingModeSelector = ({ displayLabel = true, compact = false }) =>
                     
                     <div className={cn(
                       "flex items-center justify-center rounded-full p-1.5 mb-1",
-                      isActive ? mode.iconGlow : ""
+                      isActive ? mode.color : ""
                     )}>
                       <span className={isActive ? "text-white" : ""}>
                         {mode.icon}
