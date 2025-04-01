@@ -1,5 +1,4 @@
-
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import EnhancedTechnicalAnalysis from '@/components/analysis/EnhancedTechnicalAnalysis';
 import { TradeSuggestionCard } from '@/components/analysis/TradeSuggestionCard';
 import PriceChart from '@/components/charts/PriceChart';
@@ -10,15 +9,14 @@ import TradingEducation from '@/components/education/TradingEducation';
 import { PullToRefresh } from '@/components/ui/pull-to-refresh';
 import { useTradingMode } from '@/hooks/useTradingMode';
 import { TradePageHeader } from '@/components/trading/TradePageHeader';
-import { fetchCurrentPrice } from '@/services/priceDataService';
 import { useCrypto } from '@/hooks/useCrypto';
+import { usePrice } from '@/hooks/usePrice';
 
 const TradeSuggestion = () => {
   const { toast } = useToast();
-  const [currentPrice, setCurrentPrice] = useState<number>(68648);
-  const [priceChange, setPriceChange] = useState<number>(2.1);
   const { tradingMode } = useTradingMode();
   const { selectedCrypto } = useCrypto();
+  const { loadPriceData, priceData } = usePrice();
   const { 
     indicators,
     currentBias,
@@ -34,49 +32,34 @@ const TradeSuggestion = () => {
       generateAnalysis(selectedCrypto.pairSymbol);
     }
     
-    // Fetch real price
-    const fetchPrice = async () => {
-      try {
-        const priceData = await fetchCurrentPrice(selectedCrypto.pairSymbol.replace('/', ''));
-        if (priceData) {
-          setCurrentPrice(priceData.price);
-          setPriceChange(priceData.change24h);
-        }
-      } catch (error) {
-        console.error('Error fetching price:', error);
-      }
-    };
-    
-    fetchPrice();
-    
-    const priceInterval = setInterval(fetchPrice, 30000);
-    
-    return () => {
-      clearInterval(priceInterval);
-    };
+    // Load price data for the selected crypto
+    const formattedSymbol = selectedCrypto.pairSymbol.replace('/', '');
+    if (!priceData[formattedSymbol]) {
+      loadPriceData(formattedSymbol);
+    }
   }, [selectedCrypto]);
   
   // Refresh analysis when trading mode changes
   useEffect(() => {
     if (!isLoading) {
       generateAnalysis(selectedCrypto.pairSymbol, true);
+      
+      // Also refresh price data
+      const formattedSymbol = selectedCrypto.pairSymbol.replace('/', '');
+      loadPriceData(formattedSymbol);
     }
   }, [tradingMode, selectedCrypto]);
+  
+  // Get current price data for the selected crypto
+  const formattedSymbol = selectedCrypto.pairSymbol.replace('/', '');
+  const cryptoPriceData = priceData[formattedSymbol] || { price: 68648, change24h: 2.1 };
   
   const handleRefresh = async () => {
     try {
       await generateAnalysis(selectedCrypto.pairSymbol, true);
       
-      // Also refresh price
-      try {
-        const priceData = await fetchCurrentPrice(selectedCrypto.pairSymbol.replace('/', ''));
-        if (priceData) {
-          setCurrentPrice(priceData.price);
-          setPriceChange(priceData.change24h);
-        }
-      } catch (error) {
-        console.error('Error refreshing price:', error);
-      }
+      // Also refresh price data
+      await loadPriceData(formattedSymbol);
       
       toast({
         title: "Analysis Updated",
@@ -103,8 +86,8 @@ const TradeSuggestion = () => {
         <CoinInfo 
           symbol={selectedCrypto.pairSymbol}
           name={selectedCrypto.name}
-          price={currentPrice}
-          change24h={priceChange}
+          price={cryptoPriceData.price}
+          change24h={cryptoPriceData.change24h}
           description={selectedCrypto.description}
         />
         

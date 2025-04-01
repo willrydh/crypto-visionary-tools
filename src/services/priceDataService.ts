@@ -39,8 +39,7 @@ export const fetchCurrentPrice = async (symbol: string) => {
   };
 };
 
-// Fetch historical candle data for charts - renamed from fetchCandleData to fetchHistoricalPrices
-// to match the imports in other files
+// Fetch historical candle data for charts
 export const fetchHistoricalPrices = async (symbol: string, interval: string, limit: number) => {
   console.log(`Loading chart data: ${symbol}, interval: ${interval}, limit: ${limit}`);
   console.log('Using mock data for historical prices');

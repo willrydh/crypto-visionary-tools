@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useSupportResistance } from '@/hooks/useSupportResistance';
 import PriceChart from '@/components/charts/PriceChart';
@@ -12,15 +11,14 @@ import CoinInfo from '@/components/crypto/CoinInfo';
 import { Link } from 'react-router-dom';
 import { useCrypto } from '@/hooks/useCrypto';
 import CryptoSelector from '@/components/crypto/CryptoSelector';
-import { fetchCurrentPrice } from '@/services/priceDataService';
+import { usePrice } from '@/hooks/usePrice';
 
 const ChartView = () => {
   const { toast } = useToast();
   const { indicators, isLoading, generateAnalysis } = useTechnicalAnalysis();
   const { levels, updateLevels } = useSupportResistance();
   const { selectedCrypto } = useCrypto();
-  const [currentPrice, setCurrentPrice] = useState<number>(0);
-  const [priceChange, setPriceChange] = useState<number>(0);
+  const { loadPriceData, priceData } = usePrice();
   
   useEffect(() => {
     if (indicators.length === 0) {
@@ -28,63 +26,33 @@ const ChartView = () => {
     }
     updateLevels(selectedCrypto.pairSymbol);
     
-    // Fetch current price
-    const fetchPrice = async () => {
-      try {
-        const priceData = await fetchCurrentPrice(selectedCrypto.pairSymbol.replace('/', ''));
-        if (priceData) {
-          setCurrentPrice(priceData.price);
-          setPriceChange(priceData.change24h);
-        }
-      } catch (error) {
-        console.error('Error fetching price:', error);
-      }
-    };
-    
-    fetchPrice();
-    
-    const priceInterval = setInterval(fetchPrice, 30000);
-    
-    return () => {
-      clearInterval(priceInterval);
-    };
+    // Load price data for the selected crypto
+    const formattedSymbol = selectedCrypto.pairSymbol.replace('/', '');
+    if (!priceData[formattedSymbol]) {
+      loadPriceData(formattedSymbol);
+    }
   }, []);
   
   useEffect(() => {
     generateAnalysis(selectedCrypto.pairSymbol);
     updateLevels(selectedCrypto.pairSymbol);
     
-    // Fetch current price when crypto changes
-    const fetchPrice = async () => {
-      try {
-        const priceData = await fetchCurrentPrice(selectedCrypto.pairSymbol.replace('/', ''));
-        if (priceData) {
-          setCurrentPrice(priceData.price);
-          setPriceChange(priceData.change24h);
-        }
-      } catch (error) {
-        console.error('Error fetching price:', error);
-      }
-    };
-    
-    fetchPrice();
+    // Load price data when crypto changes
+    const formattedSymbol = selectedCrypto.pairSymbol.replace('/', '');
+    loadPriceData(formattedSymbol);
   }, [selectedCrypto]);
+  
+  // Get current price data for the selected crypto
+  const formattedSymbol = selectedCrypto.pairSymbol.replace('/', '');
+  const cryptoPriceData = priceData[formattedSymbol] || { price: 0, change24h: 0 };
   
   const handleRefresh = async () => {
     try {
       await generateAnalysis(selectedCrypto.pairSymbol, true);
       await updateLevels(selectedCrypto.pairSymbol);
       
-      // Refresh price
-      try {
-        const priceData = await fetchCurrentPrice(selectedCrypto.pairSymbol.replace('/', ''));
-        if (priceData) {
-          setCurrentPrice(priceData.price);
-          setPriceChange(priceData.change24h);
-        }
-      } catch (error) {
-        console.error('Error refreshing price:', error);
-      }
+      // Refresh price data
+      await loadPriceData(formattedSymbol);
       
       toast({
         title: "Chart Updated",
@@ -150,8 +118,8 @@ const ChartView = () => {
         <CoinInfo 
           symbol={selectedCrypto.pairSymbol}
           name={selectedCrypto.name}
-          price={currentPrice}
-          change24h={priceChange}
+          price={cryptoPriceData.price}
+          change24h={cryptoPriceData.change24h}
           description={selectedCrypto.description}
         />
       </div>

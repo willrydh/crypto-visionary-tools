@@ -1,6 +1,6 @@
-import React from 'react';
+
+import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from '@/utils/numberUtils';
 import { ArrowUp, ArrowDown, Info } from 'lucide-react';
@@ -10,40 +10,53 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { usePrice } from '@/hooks/usePrice';
 
 interface PriceRangeIndicatorProps {
   title?: string;
-  currentPrice: number;
-  dailyHigh: number;
-  dailyLow: number;
-  weeklyHigh: number;
-  weeklyLow: number;
+  symbol?: string;
   type?: 'pump' | 'dump';
 }
 
 const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
   title = 'Price Range',
-  currentPrice,
-  dailyHigh,
-  dailyLow,
-  weeklyHigh,
-  weeklyLow,
+  symbol = 'BTCUSDT',
   type
 }) => {
+  const { loadPriceData, priceData } = usePrice();
+  
+  useEffect(() => {
+    // Load price data if not already loaded
+    if (!priceData[symbol]) {
+      loadPriceData(symbol);
+    }
+  }, [symbol]);
+  
+  // Get current price data or use defaults
+  const currentData = priceData[symbol] || {
+    price: 0,
+    dailyHigh: 0,
+    dailyLow: 0,
+    weeklyHigh: 0,
+    weeklyLow: 0
+  };
+  
   // Calculate percentages for positioning within ranges
   const calculateDailyPercentage = () => {
+    const { price, dailyHigh, dailyLow } = currentData;
     const range = dailyHigh - dailyLow;
     if (range <= 0) return 50; // Default to middle if range is invalid
     
-    const position = ((currentPrice - dailyLow) / range) * 100;
+    const position = ((price - dailyLow) / range) * 100;
     return Math.min(Math.max(position, 0), 100); // Clamp between 0-100
   };
   
   const calculateWeeklyPercentage = () => {
+    const { price, weeklyHigh, weeklyLow } = currentData;
     const range = weeklyHigh - weeklyLow;
     if (range <= 0) return 50; // Default to middle if range is invalid
     
-    const position = ((currentPrice - weeklyLow) / range) * 100;
+    const position = ((price - weeklyLow) / range) * 100;
     return Math.min(Math.max(position, 0), 100); // Clamp between 0-100
   };
   
@@ -98,7 +111,7 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
       <CardContent className="space-y-6">
         {/* Current Price with Change */}
         <div className="text-center">
-          <span className="text-2xl font-bold">{formatCurrency(currentPrice)}</span>
+          <span className="text-2xl font-bold">{formatCurrency(currentData.price)}</span>
         </div>
         
         {/* Daily Range */}
@@ -112,8 +125,8 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
           
           <div className="relative pt-1">
             <div className="flex justify-between text-xs text-muted-foreground mb-1">
-              <span>{formatCurrency(dailyLow)}</span>
-              <span>{formatCurrency(dailyHigh)}</span>
+              <span>{formatCurrency(currentData.dailyLow)}</span>
+              <span>{formatCurrency(currentData.dailyHigh)}</span>
             </div>
             
             <div className="h-2 bg-muted rounded-full">
@@ -143,8 +156,8 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
           
           <div className="relative pt-1">
             <div className="flex justify-between text-xs text-muted-foreground mb-1">
-              <span>{formatCurrency(weeklyLow)}</span>
-              <span>{formatCurrency(weeklyHigh)}</span>
+              <span>{formatCurrency(currentData.weeklyLow)}</span>
+              <span>{formatCurrency(currentData.weeklyHigh)}</span>
             </div>
             
             <div className="h-2 bg-muted rounded-full">

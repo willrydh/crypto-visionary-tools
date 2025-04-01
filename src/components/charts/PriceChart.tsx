@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RefreshCw, AlertTriangle, Info, ArrowUp, ArrowDown, CheckCircle } from 'lucide-react';
-import { fetchHistoricalPrices, fetchCurrentPrice } from '@/services/priceDataService';
+import { fetchHistoricalPrices } from '@/services/priceDataService';
 import { formatCurrency } from '@/utils/numberUtils';
 import {
   AreaChart,
@@ -19,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useCrypto } from '@/hooks/useCrypto';
+import { usePrice } from '@/hooks/usePrice';
 
 interface PriceChartProps {
   symbol?: string;
@@ -50,6 +50,8 @@ const PriceChart: React.FC<PriceChartProps> = ({
   const [connectionStatus, setConnectionStatus] = useState<'connected' | 'disconnected' | 'connecting'>('connecting');
   
   const { selectedCrypto } = useCrypto();
+  const { loadPriceData, priceData } = usePrice();
+  
   const actualSymbol = symbol || `${selectedCrypto.symbol}/USDT`;
   const formattedSymbol = actualSymbol.replace('/', '');
   
@@ -124,20 +126,28 @@ const PriceChart: React.FC<PriceChartProps> = ({
     }
   };
 
-  const loadCurrentPrice = async () => {
+  const updateCurrentPrice = async () => {
     try {
-      const price = await fetchCurrentPrice(formattedSymbol);
-      if (price) {
-        // Make sure to set the state with an object that matches the expected type
+      // First check if we already have price data in context
+      if (priceData[formattedSymbol]) {
         setCurrentPrice({
-          price: price.price,
-          change24h: price.change24h,
-          volume24h: price.volume24h,
-          timestamp: price.timestamp // Use timestamp from the API response
+          price: priceData[formattedSymbol].price,
+          change24h: priceData[formattedSymbol].change24h,
+          volume24h: priceData[formattedSymbol].volume24h,
+          timestamp: priceData[formattedSymbol].timestamp
         });
-        console.log('Updated current price:', price.price, 'Change:', price.change24h);
-      } else {
-        console.error('Empty price data returned');
+        return;
+      }
+      
+      // Otherwise, load fresh data
+      const freshData = await loadPriceData(formattedSymbol);
+      if (freshData) {
+        setCurrentPrice({
+          price: freshData.price,
+          change24h: freshData.change24h,
+          volume24h: freshData.volume24h,
+          timestamp: freshData.timestamp
+        });
       }
     } catch (error) {
       console.error('Failed to fetch current price:', error);
@@ -147,16 +157,16 @@ const PriceChart: React.FC<PriceChartProps> = ({
   useEffect(() => {
     const days = timeframe === '1d' ? 1 : timeframe === '7d' ? 7 : timeframe === '30d' ? 30 : 90;
     loadChartData(days);
-    loadCurrentPrice();
+    updateCurrentPrice();
 
     const chartInterval = setInterval(() => loadChartData(days), timeframe === '1d' ? 60000 : 300000);
-    const priceInterval = setInterval(loadCurrentPrice, 30000);
+    const priceInterval = setInterval(updateCurrentPrice, 30000);
 
     return () => {
       clearInterval(chartInterval);
       clearInterval(priceInterval);
     };
-  }, [timeframe, symbol, formattedSymbol]);
+  }, [timeframe, formattedSymbol, priceData]);
 
   const formatXAxis = (timestamp: number) => {
     const date = new Date(timestamp);
@@ -278,7 +288,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
               onClick={() => {
                 const days = timeframe === '1d' ? 1 : timeframe === '7d' ? 7 : timeframe === '30d' ? 30 : 90;
                 loadChartData(days);
-                loadCurrentPrice();
+                updateCurrentPrice();
               }}
             >
               <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />

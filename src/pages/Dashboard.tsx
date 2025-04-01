@@ -17,10 +17,12 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { TrendingUp, TrendingDown, ArrowRight, Zap, Sun, Moon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { usePrice } from '@/hooks/usePrice';
 
 const Dashboard = () => {
   const { toast } = useToast();
   const { tradingMode } = useTradingMode();
+  const { loadPriceData, priceData } = usePrice();
   const { 
     indicators, 
     currentBias, 
@@ -35,11 +37,20 @@ const Dashboard = () => {
     if (indicators.length === 0) {
       generateAnalysis('BTCUSDT');
     }
+    
+    // Load price data for BTC if not already loaded
+    if (!priceData['BTCUSDT']) {
+      loadPriceData('BTCUSDT');
+    }
   }, [tradingMode, indicators.length, generateAnalysis]);
+
+  // Get the latest price data for BTC
+  const btcPriceData = priceData['BTCUSDT'] || { price: 82500, change24h: 2.3 };
 
   const handleAnalysisGeneration = async () => {
     try {
       await generateAnalysis('BTCUSDT', true);
+      await loadPriceData('BTCUSDT'); // Refresh price data too
       toast({
         title: "Analysis Complete",
         description: "Technical analysis has been generated successfully.",
@@ -149,8 +160,8 @@ const Dashboard = () => {
 
       <CoinInfo 
         symbol="BTC/USDT" 
-        price={82500}
-        change24h={2.3}
+        price={btcPriceData.price}
+        change24h={btcPriceData.change24h}
       />
 
       <Alert 

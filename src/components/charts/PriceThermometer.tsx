@@ -1,40 +1,22 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from '@/utils/numberUtils';
-import { fetchCurrentPrice, fetchHighLowData } from '@/services/priceDataService';
+import { usePrice } from '@/hooks/usePrice';
 
 export const PriceThermometer = () => {
-  const [priceData, setPriceData] = useState({
-    currentPrice: 0,
-    dailyHigh: 0,
-    dailyLow: 0,
-    weeklyHigh: 0,
-    weeklyLow: 0
-  });
+  const { loadPriceData, priceData } = usePrice();
   const [isLoading, setIsLoading] = useState(true);
+  const symbol = 'BTCUSDT';
   
   const loadData = async () => {
     setIsLoading(true);
     try {
-      // Fetch current price
-      const currentPriceData = await fetchCurrentPrice('BTCUSDT');
-      
-      // Fetch high/low data - now with default 'daily' parameter
-      const highLowData = await fetchHighLowData('BTCUSDT');
-      
-      setPriceData({
-        currentPrice: currentPriceData.price,
-        dailyHigh: highLowData.dailyHigh,
-        dailyLow: highLowData.dailyLow,
-        weeklyHigh: highLowData.weeklyHigh,
-        weeklyLow: highLowData.weeklyLow
-      });
+      await loadPriceData(symbol);
+      setIsLoading(false);
     } catch (error) {
       console.error('Error loading price thermometer data:', error);
-    } finally {
       setIsLoading(false);
     }
   };
@@ -46,17 +28,27 @@ export const PriceThermometer = () => {
     return () => clearInterval(intervalId);
   }, []);
   
+  // Get current price data or use defaults
+  const currentData = priceData[symbol] || {
+    currentPrice: 0,
+    dailyHigh: 0,
+    dailyLow: 0,
+    weeklyHigh: 0,
+    weeklyLow: 0,
+    price: 0
+  };
+  
   // Calculate where current price is in the range
   const getDailyPercentage = () => {
-    const { currentPrice, dailyHigh, dailyLow } = priceData;
+    const { price, dailyHigh, dailyLow } = currentData;
     if (dailyHigh === dailyLow) return 50;
-    return ((currentPrice - dailyLow) / (dailyHigh - dailyLow)) * 100;
+    return ((price - dailyLow) / (dailyHigh - dailyLow)) * 100;
   };
   
   const getWeeklyPercentage = () => {
-    const { currentPrice, weeklyHigh, weeklyLow } = priceData;
+    const { price, weeklyHigh, weeklyLow } = currentData;
     if (weeklyHigh === weeklyLow) return 50;
-    return ((currentPrice - weeklyLow) / (weeklyHigh - weeklyLow)) * 100;
+    return ((price - weeklyLow) / (weeklyHigh - weeklyLow)) * 100;
   };
   
   const getThermometerColor = (percentage: number) => {
@@ -66,7 +58,7 @@ export const PriceThermometer = () => {
     return "bg-red-500";
   };
   
-  if (isLoading) {
+  if (isLoading || !priceData[symbol]) {
     return (
       <Card>
         <CardHeader className="pb-2">
@@ -96,7 +88,7 @@ export const PriceThermometer = () => {
         <div className="space-y-6">
           <div className="text-center">
             <div className="text-xl font-bold">
-              {formatCurrency(priceData.currentPrice)}
+              {formatCurrency(currentData.price)}
             </div>
             <div className="text-sm text-muted-foreground">Current Price</div>
           </div>
@@ -104,7 +96,7 @@ export const PriceThermometer = () => {
           <div className="space-y-1">
             <div className="flex justify-between text-sm mb-1">
               <span>Daily Range</span>
-              <span>{formatCurrency(priceData.dailyLow)} - {formatCurrency(priceData.dailyHigh)}</span>
+              <span>{formatCurrency(currentData.dailyLow)} - {formatCurrency(currentData.dailyHigh)}</span>
             </div>
             <div className="h-3 bg-muted rounded-full relative overflow-hidden">
               <div 
@@ -125,7 +117,7 @@ export const PriceThermometer = () => {
           <div className="space-y-1">
             <div className="flex justify-between text-sm mb-1">
               <span>Weekly Range</span>
-              <span>{formatCurrency(priceData.weeklyLow)} - {formatCurrency(priceData.weeklyHigh)}</span>
+              <span>{formatCurrency(currentData.weeklyLow)} - {formatCurrency(currentData.weeklyHigh)}</span>
             </div>
             <div className="h-3 bg-muted rounded-full relative overflow-hidden">
               <div 
@@ -147,13 +139,13 @@ export const PriceThermometer = () => {
             <div className="text-center p-2 rounded-md border">
               <div className="text-xs text-muted-foreground">Daily Volatility</div>
               <div className="font-medium">
-                {((priceData.dailyHigh - priceData.dailyLow) / priceData.dailyLow * 100).toFixed(2)}%
+                {((currentData.dailyHigh - currentData.dailyLow) / currentData.dailyLow * 100).toFixed(2)}%
               </div>
             </div>
             <div className="text-center p-2 rounded-md border">
               <div className="text-xs text-muted-foreground">Weekly Volatility</div>
               <div className="font-medium">
-                {((priceData.weeklyHigh - priceData.weeklyLow) / priceData.weeklyLow * 100).toFixed(2)}%
+                {((currentData.weeklyHigh - currentData.weeklyLow) / currentData.weeklyLow * 100).toFixed(2)}%
               </div>
             </div>
           </div>
