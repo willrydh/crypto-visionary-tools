@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';
 import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
 import { getModeHeaderBgClass } from '@/components/trading/TradingModeStyles';
+import { TradingModeType } from '@/components/trading/TradingModeStyles';
 
 const TopHeader = () => {
   const { toast } = useToast();
@@ -18,14 +19,14 @@ const TopHeader = () => {
   const location = useLocation();
   
   // Safely use the trading mode context with fallbacks
-  let tradingMode = 'day';
+  let tradingMode: TradingModeType = 'day';
   let getDescription = () => 'Select a trading mode to see details.';
   let isLoading = false;
-  let generateAnalysis = () => {};
+  let generateAnalysis: (symbol: string, force?: boolean) => Promise<void> = async () => {};
   
   try {
     const tradingModeContext = useTradingMode();
-    tradingMode = tradingModeContext.tradingMode;
+    tradingMode = tradingModeContext.tradingMode as TradingModeType;
     getDescription = tradingModeContext.getDescription;
     
     const analysisContext = useTechnicalAnalysis();
@@ -59,7 +60,9 @@ const TopHeader = () => {
 
   const handleRefresh = () => {
     try {
+      // Call generateAnalysis with the required parameters
       generateAnalysis('BTC/USDT', true);
+      
       toast({
         title: "Analysis Updated",
         description: "The analysis has been refreshed based on current market data.",
