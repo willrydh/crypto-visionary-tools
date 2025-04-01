@@ -1,28 +1,19 @@
-
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Bell, Zap, TrendingDown, TrendingUp, ArrowUpRight, Clock } from 'lucide-react';
 import { 
-  formatTimeUntil, 
-  getTimeDisplay, 
-  getNextOccurrence, 
+  getPreciseMarketTime,
   getLocalTimeDisplay,
-  adjustHourToLocalTimezone 
+  getMarketTimeRemaining
 } from '@/utils/dateUtils';
 
 interface MarketSessionStatsProps {
   title?: string;
-  asianSessionStart?: number;
-  europeanSessionStart?: number;
-  usSessionStart?: number;
 }
 
 const MarketSessionStats = ({ 
   title = "Market Session Impact",
-  asianSessionStart,
-  europeanSessionStart,
-  usSessionStart
 }: MarketSessionStatsProps) => {
   // Market hours in UTC
   const marketHours = {
@@ -84,18 +75,18 @@ const MarketSessionStats = ({
   // Update the countdown every minute
   useEffect(() => {
     const updateCountdowns = () => {
-      // Get next occurrences for each market event
-      const nyseOpenTime = getNextOccurrence(marketHours.nyseOpen.hour, marketHours.nyseOpen.minute);
-      const londonCloseTime = getNextOccurrence(marketHours.londonClose.hour, marketHours.londonClose.minute);
-      const nyseCloseTime = getNextOccurrence(marketHours.nyseClose.hour, marketHours.nyseClose.minute);
-      const tokyoOpenTime = getNextOccurrence(marketHours.tokyoOpen.hour, marketHours.tokyoOpen.minute);
+      // Get next occurrences for each market event with precise timing
+      const nyseOpenTime = getPreciseMarketTime(marketHours.nyseOpen.hour, marketHours.nyseOpen.minute);
+      const londonCloseTime = getPreciseMarketTime(marketHours.londonClose.hour, marketHours.londonClose.minute);
+      const nyseCloseTime = getPreciseMarketTime(marketHours.nyseClose.hour, marketHours.nyseClose.minute);
+      const tokyoOpenTime = getPreciseMarketTime(marketHours.tokyoOpen.hour, marketHours.tokyoOpen.minute);
       
-      // Calculate and format countdowns
+      // Calculate and format countdowns using consistent formatter
       const newCountdowns = {
-        nyseOpen: formatTimeUntil(nyseOpenTime),
-        londonClose: formatTimeUntil(londonCloseTime),
-        nyseClose: formatTimeUntil(nyseCloseTime),
-        tokyoOpen: formatTimeUntil(tokyoOpenTime)
+        nyseOpen: getMarketTimeRemaining(nyseOpenTime),
+        londonClose: getMarketTimeRemaining(londonCloseTime),
+        nyseClose: getMarketTimeRemaining(nyseCloseTime),
+        tokyoOpen: getMarketTimeRemaining(tokyoOpenTime)
       };
       
       setCountdowns(newCountdowns);

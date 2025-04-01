@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { Clock, AlertCircle } from 'lucide-react';
 import { useMarkets } from '@/hooks/useMarkets';
 import { DataSourceIndicator } from '@/components/ui/data-source-indicator';
-import { formatTimeUntil } from '@/utils/dateUtils';
+import { getMarketTimeRemaining } from '@/utils/dateUtils';
 
 interface MarketStatusProps {
   showDetails?: boolean;
@@ -19,14 +19,7 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
   customTitle,
   customSource
 }) => {
-  const { marketSessions } = useMarkets();
-
-  // Format time text to remove duplicate words
-  const formatMarketTime = (timeText: string) => {
-    return timeText
-      .replace(/in in/g, 'in')
-      .replace(/about about/g, 'about');
-  };
+  const { marketSessions, lastUpdated } = useMarkets();
 
   return (
     <Card>
@@ -56,16 +49,9 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
                   {market.status.toUpperCase()}
                 </Badge>
               </div>
-              {showDetails && (
-                <div className="text-xs text-muted-foreground">
-                  {market.nextEvent.type === 'open' ? 'Opens' : 'Closes'} {formatMarketTime(formatTimeUntil(market.nextEvent.time))}
-                </div>
-              )}
-              {!showDetails && (
-                <div className="text-xs text-muted-foreground">
-                  {market.nextEvent.type === 'open' ? 'Opens' : 'Closes'} {formatMarketTime(formatTimeUntil(market.nextEvent.time))}
-                </div>
-              )}
+              <div className="text-xs text-muted-foreground">
+                {market.nextEvent.type === 'open' ? 'Opens' : 'Closes'} {getMarketTimeRemaining(market.nextEvent.time)}
+              </div>
               <Separator className="my-2" />
             </div>
           ))}

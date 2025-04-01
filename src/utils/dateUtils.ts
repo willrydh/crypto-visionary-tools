@@ -20,8 +20,15 @@ export const formatTimeUntil = (date: Date): string => {
   const diffMs = date.getTime() - now.getTime();
   const diffMinutes = Math.round(diffMs / (1000 * 60));
   
+  if (diffMinutes < 0) {
+    // If the event is in the past
+    return formatDistanceToNow(date, { addSuffix: true })
+      .replace('about ', '')
+      .replace('less than a minute ago', 'just now');
+  }
+  
   // For times less than 60 minutes away, show minutes with more precision
-  if (diffMinutes > 0 && diffMinutes < 60) {
+  if (diffMinutes >= 0 && diffMinutes < 60) {
     return `in ${diffMinutes}m`;
   }
   
@@ -49,10 +56,9 @@ export const formatTimeUntil = (date: Date): string => {
     return `in ${days}d ${hours}h`;
   }
   
-  // If the date is in the past, use date-fns but clean up the output
+  // Fallback to date-fns formatting but clean up the output
   const formatted = formatDistanceToNow(date, { addSuffix: true });
   
-  // Remove redundant words and make it more concise
   return formatted
     .replace('about ', '')
     .replace('in in', 'in')
@@ -93,22 +99,13 @@ export const formatDateRange = (start: Date, end: Date): string => {
   }
 };
 
-// Convert UTC time to local time
+// Convert UTC time to local time correctly
 export const utcToLocal = (date: Date): Date => {
-  // This is incorrect - it doubles the timezone offset
-  // Instead, create a new date that represents the same UTC time in local timezone
-  const utcTime = Date.UTC(
-    date.getUTCFullYear(),
-    date.getUTCMonth(),
-    date.getUTCDate(),
-    date.getUTCHours(),
-    date.getUTCMinutes(),
-    date.getUTCSeconds()
-  );
-  return new Date(utcTime);
+  const localDate = new Date(date.toISOString());
+  return localDate;
 };
 
-// Convert local time to UTC
+// Convert local time to UTC correctly
 export const localToUtc = (date: Date): Date => {
   return new Date(
     Date.UTC(
@@ -181,7 +178,7 @@ export const getTimezoneOffsetHours = (): number => {
 // Adjust UTC hour to user's local timezone
 export const adjustHourToLocalTimezone = (utcHour: number): number => {
   const offsetHours = getTimezoneOffsetHours();
-  const localHour = (utcHour + offsetHours) % 24;
+  let localHour = (utcHour + offsetHours) % 24;
   return localHour >= 0 ? localHour : localHour + 24; // Handle negative hours
 };
 
@@ -197,4 +194,59 @@ export const getTimezoneAbbreviation = (): string => {
   const parts = new Intl.DateTimeFormat('en-US', options).formatToParts(new Date());
   const timeZonePart = parts.find(part => part.type === 'timeZoneName');
   return timeZonePart?.value || '';
+};
+
+// Get precise UTC time for market open/close calculations
+export const getPreciseMarketTime = (utcHour: number, utcMinute: number = 0): Date => {
+  const now = new Date();
+  const targetDate = new Date(Date.UTC(
+    now.getUTCFullYear(),
+    now.getUTCMonth(),
+    now.getUTCDate(),
+    utcHour,
+    utcMinute,
+    0,
+    0
+  ));
+  
+  // If the target time has already passed today, set it for tomorrow
+  if (targetDate <= now) {
+    targetDate.setUTCDate(targetDate.getUTCDate() + 1);
+  }
+  
+  // Skip weekends for market times
+  const dayOfWeek = targetDate.getUTCDay();
+  if (dayOfWeek === 0) { // Sunday
+    targetDate.setUTCDate(targetDate.getUTCDate() + 1);
+  } else if (dayOfWeek === 6) { // Saturday
+    targetDate.setUTCDate(targetDate.getUTCDate() + 2);
+  }
+  
+  return targetDate;
+};
+
+// Calculate exact time remaining until market event with consistent formatting
+export const getMarketTimeRemaining = (targetTime: Date): string => {
+  const now = new Date();
+  
+  // If the target time is in the past
+  if (targetTime < now) {
+    return "passed";
+  }
+  
+  const diffMs = targetTime.getTime() - now.getTime();
+  const diffMinutes = Math.round(diffMs / (1000 * 60));
+  
+  // Format based on time remaining
+  if (diffMinutes < 60) {
+    return `in ${diffMinutes}m`;
+  } else if (diffMinutes < 24 * 60) {
+    const hours = Math.floor(diffMinutes / 60);
+    const minutes = diffMinutes % 60;
+    return minutes > 0 ? `in ${hours}h ${minutes}m` : `in ${hours}h`;
+  } else {
+    const days = Math.floor(diffMinutes / (24 * 60));
+    const remainingHours = Math.floor((diffMinutes % (24 * 60)) / 60);
+    return remainingHours > 0 ? `in ${days}d ${remainingHours}h` : `in ${days}d`;
+  }
 };
