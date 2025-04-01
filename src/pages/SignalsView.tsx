@@ -118,9 +118,9 @@ const SignalsView = () => {
       <TradePageHeader isLoading={isLoading} onRefresh={handleRefresh} />
 
       <div className="flex flex-col gap-4">
-        <div className="flex justify-center mb-2">
-          <div className="bg-card/60 p-4 rounded-lg border border-border w-auto inline-flex">
-            <CryptoSelector showDataSource={true} label="" />
+        <div className="w-full">
+          <div className="bg-card/60 p-4 rounded-lg border border-border w-full">
+            <CryptoSelector showDataSource={true} label="" fullWidth={true} />
           </div>
         </div>
         

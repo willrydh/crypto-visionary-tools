@@ -24,6 +24,7 @@ interface CryptoSelectorProps {
   className?: string;
   showDataSource?: boolean;
   label?: string;
+  fullWidth?: boolean;
 }
 
 export const cryptoOptions: CryptoOption[] = [
@@ -80,7 +81,8 @@ export const cryptoOptions: CryptoOption[] = [
 export const CryptoSelector: React.FC<CryptoSelectorProps> = ({ 
   className,
   showDataSource = false,
-  label = "" // Default to empty string instead of "Select cryptocurrency"
+  label = "", // Default to empty string instead of "Select cryptocurrency"
+  fullWidth = false
 }) => {
   const { selectedCrypto, setSelectedCrypto } = useCrypto();
   
@@ -92,10 +94,10 @@ export const CryptoSelector: React.FC<CryptoSelectorProps> = ({
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className={`flex items-center gap-2 ${fullWidth ? 'w-full' : ''}`}>
       {label && <span className="text-sm text-muted-foreground">{label}</span>}
       <Select value={selectedCrypto.pairSymbol} onValueChange={handleChange}>
-        <SelectTrigger className={`w-[180px] ${className}`}>
+        <SelectTrigger className={`${fullWidth ? 'w-full' : 'w-[180px]'} ${className}`}>
           <SelectValue>
             <div className="flex items-center gap-2">
               <CryptoCoinIcon coin={selectedCrypto.symbol as any} size="sm" />

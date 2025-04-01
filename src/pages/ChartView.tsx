@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useSupportResistance } from '@/hooks/useSupportResistance';
 import PriceChart from '@/components/charts/PriceChart';
@@ -107,10 +108,10 @@ const ChartView = () => {
       </div>
       
       <div className="flex flex-col gap-4">
-        {/* Currency Selector first */}
-        <div className="flex justify-center mb-2">
-          <div className="bg-card/60 p-4 rounded-lg border border-border w-auto inline-flex">
-            <CryptoSelector showDataSource={true} label="" />
+        {/* Currency Selector first with full width */}
+        <div className="w-full">
+          <div className="bg-card/60 p-4 rounded-lg border border-border w-full">
+            <CryptoSelector showDataSource={true} label="" fullWidth={true} />
           </div>
         </div>
         
