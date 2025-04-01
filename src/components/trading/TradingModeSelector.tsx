@@ -6,7 +6,7 @@ import { Zap, Sun, Moon, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-export const TradingModeSelector = () => {
+export const TradingModeSelector = ({ displayLabel = true, compact = false }) => {
   const { tradingMode, setTradingMode } = useTradingMode();
   const isMobile = useIsMobile();
   
@@ -24,6 +24,7 @@ export const TradingModeSelector = () => {
       gradient: 'from-blue-600/90 to-blue-400/90',
       iconGlow: 'text-blue-500',
       inactive: 'text-blue-500/80 bg-blue-900/20 border-blue-500/20',
+      color: 'text-blue-500'
     },
     { 
       id: 'day', 
@@ -34,6 +35,7 @@ export const TradingModeSelector = () => {
       gradient: 'from-amber-500/90 to-amber-400/90',
       iconGlow: 'text-amber-500',
       inactive: 'text-amber-500/80 bg-amber-900/20 border-amber-500/20',
+      color: 'text-amber-500'
     },
     { 
       id: 'night', 
@@ -44,26 +46,56 @@ export const TradingModeSelector = () => {
       gradient: 'from-indigo-600/90 to-indigo-400/90',
       iconGlow: 'text-indigo-500',
       inactive: 'text-indigo-500/80 bg-indigo-900/20 border-indigo-500/20',
+      color: 'text-indigo-500'
     }
   ];
 
+  // Compact mode for header
+  if (compact) {
+    return (
+      <div className="flex items-center gap-1.5">
+        {modeButtons.map((mode) => {
+          const isActive = tradingMode === mode.id;
+          
+          return (
+            <button
+              key={mode.id}
+              onClick={() => handleModeChange(mode.id as 'scalp' | 'day' | 'night')}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-all",
+                isActive 
+                  ? `bg-${mode.id === 'scalp' ? 'blue' : mode.id === 'day' ? 'amber' : 'indigo'}-600 text-white` 
+                  : `bg-${mode.id === 'scalp' ? 'blue' : mode.id === 'day' ? 'amber' : 'indigo'}-900/20 ${mode.color} hover:bg-${mode.id === 'scalp' ? 'blue' : mode.id === 'day' ? 'amber' : 'indigo'}-900/30`
+              )}
+            >
+              {mode.icon}
+              <span className="text-sm font-medium">{mode.label}</span>
+            </button>
+          );
+        })}
+      </div>
+    );
+  }
+
   return (
     <div className="relative w-full">
-      <div className="flex items-center gap-1.5 mb-2">
-        <span className="text-sm font-medium flex items-center gap-1.5 text-gray-300">
-          Select Trading Mode
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                <p className="text-xs">Select a trading mode to optimize indicators and suggestions</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </span>
-      </div>
+      {displayLabel && (
+        <div className="flex items-center gap-1.5 mb-2">
+          <span className="text-sm font-medium flex items-center gap-1.5 text-gray-300">
+            Select Trading Mode
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p className="text-xs">Select a trading mode to optimize indicators and suggestions</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </span>
+        </div>
+      )}
       
       <div className="grid grid-cols-3 gap-2">
         {modeButtons.map((mode) => {

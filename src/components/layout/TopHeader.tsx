@@ -1,19 +1,21 @@
+
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Bell, Settings, LogOut, RefreshCw } from 'lucide-react';
+import { Bell, Settings, LogOut, RefreshCw, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import Logo from '@/assets/logo.svg';
 import { useTradingMode } from '@/hooks/useTradingMode';
 import { cn } from '@/lib/utils';
 import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';
+import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
 
 const TopHeader = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
-  const { tradingMode, setTradingMode } = useTradingMode();
+  const { tradingMode, getDescription } = useTradingMode();
   const { isLoading, generateAnalysis } = useTechnicalAnalysis();
   
   // Only show trading mode bar on these pages
@@ -35,10 +37,6 @@ const TopHeader = () => {
     
     // Redirect to welcome page
     navigate('/welcome');
-  };
-
-  const handleModeChange = (mode: 'scalp' | 'day' | 'night') => {
-    setTradingMode(mode);
   };
 
   const handleRefresh = () => {
@@ -111,61 +109,17 @@ const TopHeader = () => {
       {showTradingBar && (
         <div className="px-4 md:px-6 md:ml-64 bg-primary/5 border-b border-border/40">
           <div className="flex items-center justify-between py-3">
-            <div className="grid grid-cols-3 gap-1 flex-grow max-w-md">
-              {/* Scalp Trading Button */}
-              <button
-                onClick={() => handleModeChange('scalp')}
-                className={cn(
-                  "relative flex items-center justify-center rounded-md transition-all duration-200 py-1.5 px-2",
-                  tradingMode === 'scalp' 
-                    ? "bg-blue-600 text-white shadow-md" 
-                    : "bg-blue-900/20 text-blue-400 hover:bg-blue-900/30"
-                )}
-              >
-                <span className="flex items-center text-sm font-medium">
-                  <span className="mr-1.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                  </span>
-                  Scalp
-                </span>
-              </button>
-
-              {/* Day Trading Button */}
-              <button
-                onClick={() => handleModeChange('day')}
-                className={cn(
-                  "relative flex items-center justify-center rounded-md transition-all duration-200 py-1.5 px-2",
-                  tradingMode === 'day' 
-                    ? "bg-amber-600 text-white shadow-md" 
-                    : "bg-amber-900/20 text-amber-400 hover:bg-amber-900/30"
-                )}
-              >
-                <span className="flex items-center text-sm font-medium">
-                  <span className="mr-1.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
-                  </span>
-                  Day
-                </span>
-              </button>
-
-              {/* Night Trading Button */}
-              <button
-                onClick={() => handleModeChange('night')}
-                className={cn(
-                  "relative flex items-center justify-center rounded-md transition-all duration-200 py-1.5 px-2",
-                  tradingMode === 'night' 
-                    ? "bg-indigo-600 text-white shadow-md" 
-                    : "bg-indigo-900/20 text-indigo-400 hover:bg-indigo-900/30"
-                )}
-              >
-                <span className="flex items-center text-sm font-medium">
-                  <span className="mr-1.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-moon"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
-                  </span>
-                  Night
-                </span>
-              </button>
+            <div className="flex-grow">
+              <TradingModeSelector compact={true} displayLabel={false} />
             </div>
+            
+            {/* Display active mode description */}
+            {(location.pathname === '/signals' || location.pathname === '/trade-suggestion' || location.pathname === '/trade') && (
+              <div className="hidden md:flex items-center text-muted-foreground text-xs">
+                <AlertCircle className="h-3.5 w-3.5 mr-1.5" />
+                <span>{tradingMode.charAt(0).toUpperCase() + tradingMode.slice(1)} Mode</span>
+              </div>
+            )}
             
             {/* Refresh button */}
             {(location.pathname === '/trade-suggestion' || location.pathname === '/trade' || location.pathname === '/' || location.pathname === '/signals') && (

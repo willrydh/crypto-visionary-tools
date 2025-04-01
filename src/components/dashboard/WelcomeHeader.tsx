@@ -77,9 +77,7 @@ const WelcomeHeader = () => {
         {/* Trading Mode Section */}
         <div className="mb-6">
           <h3 className="text-lg font-bold mb-2 text-white">Trading Mode</h3>
-          <div className="w-full">
-            <TradingModeSelector />
-          </div>
+          <TradingModeSelector />
         </div>
         
         <div className="border-t border-border/40 pt-4">
