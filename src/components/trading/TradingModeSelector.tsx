@@ -48,10 +48,10 @@ export const TradingModeSelector = () => {
   ];
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <div className="flex items-center gap-1.5 mb-2">
-        <span className="text-sm font-medium flex items-center gap-1.5">
-          Trading Mode
+        <span className="text-sm font-medium flex items-center gap-1.5 text-gray-300">
+          Select Trading Mode
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
