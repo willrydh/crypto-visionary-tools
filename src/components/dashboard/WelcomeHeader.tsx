@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Check, AlertTriangle, Info, Zap, Wifi, Database, Globe, BrainCircuit } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
 
 // Define system services
 const systemServices = [
@@ -70,6 +71,11 @@ const WelcomeHeader = () => {
         <p className="text-gray-300 mb-6">
           Your AI trading assistant is analyzing live market data via Bybit API to generate real-time signals and deep market insights
         </p>
+        
+        {/* Add Trading Mode Selector */}
+        <div className="mb-6">
+          <TradingModeSelector />
+        </div>
         
         <div className="border-t border-border/40 pt-4">
           <h3 className="text-lg font-medium mb-4 text-white">System Status</h3>
