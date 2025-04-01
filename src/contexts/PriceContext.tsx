@@ -1,6 +1,7 @@
 
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { fetchCurrentPrice, fetchHighLowData } from '@/services/priceDataService';
+import { useCrypto } from '@/hooks/useCrypto';
 
 interface PriceData {
   symbol: string;
@@ -34,7 +35,7 @@ export const PriceProvider: React.FC<PriceProviderProps> = ({
   refreshInterval = 30000 
 }) => {
   const [priceData, setPriceData] = useState<Record<string, PriceData>>({});
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   // Load price data for a specific symbol
@@ -82,6 +83,36 @@ export const PriceProvider: React.FC<PriceProviderProps> = ({
       setIsLoading(false);
     }
   };
+
+  // Initial data load
+  useEffect(() => {
+    // Load data for major cryptocurrencies on mount
+    const loadInitialData = async () => {
+      try {
+        setIsLoading(true);
+        await Promise.all([
+          loadPriceData('BTC/USDT'),
+          loadPriceData('ETH/USDT'),
+          loadPriceData('SOL/USDT')
+        ]);
+      } catch (error) {
+        console.error('Error loading initial price data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadInitialData();
+    
+    // Set up refresh interval
+    const intervalId = setInterval(() => {
+      Object.keys(priceData).forEach(symbol => {
+        loadPriceData(symbol + '/USDT');
+      });
+    }, refreshInterval);
+    
+    return () => clearInterval(intervalId);
+  }, [refreshInterval]);
 
   return (
     <PriceContext.Provider

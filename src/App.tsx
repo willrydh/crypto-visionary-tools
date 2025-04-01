@@ -8,6 +8,9 @@ import { CryptoProvider } from './contexts/CryptoContext';
 import { MarketsProvider } from './contexts/MarketsContext';
 import { TradingModeProvider } from './contexts/TradingModeContext';
 import { PriceProvider } from './contexts/PriceContext';
+import { SupportResistanceProvider } from './contexts/SupportResistanceContext';
+import { TechnicalAnalysisProvider } from './contexts/TechnicalAnalysisContext';
+import { TimeframeProvider } from './contexts/TimeframeContext';
 import RootLayout from './components/layout/RootLayout';
 import './App.css';
 
@@ -19,16 +22,22 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="dark" storageKey="ui-theme">
         <Router>
-          <CryptoProvider>
-            <MarketsProvider>
-              <TradingModeProvider>
-                <PriceProvider refreshInterval={30000}>
-                  <RootLayout />
-                  <Toaster />
-                </PriceProvider>
-              </TradingModeProvider>
-            </MarketsProvider>
-          </CryptoProvider>
+          <TimeframeProvider>
+            <CryptoProvider>
+              <MarketsProvider>
+                <TradingModeProvider>
+                  <TechnicalAnalysisProvider>
+                    <SupportResistanceProvider>
+                      <PriceProvider refreshInterval={30000}>
+                        <RootLayout />
+                        <Toaster />
+                      </PriceProvider>
+                    </SupportResistanceProvider>
+                  </TechnicalAnalysisProvider>
+                </TradingModeProvider>
+              </MarketsProvider>
+            </CryptoProvider>
+          </TimeframeProvider>
         </Router>
       </ThemeProvider>
     </QueryClientProvider>

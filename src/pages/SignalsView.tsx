@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import PriceChart from '@/components/charts/PriceChart';
 import EnhancedTechnicalAnalysis from '@/components/analysis/EnhancedTechnicalAnalysis';
@@ -20,6 +21,8 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { cn } from '@/lib/utils';
 import { useCrypto } from '@/hooks/useCrypto';
 import CryptoSelector from '@/components/crypto/CryptoSelector';
+import { usePrice } from '@/hooks/usePrice';
+import { DataLoadingPlaceholder } from '@/components/ui/data-loading-placeholder';
 
 const SignalsView = () => {
   const { toast } = useToast();
@@ -27,38 +30,19 @@ const SignalsView = () => {
   const { fetchLevels, levels, structure } = useSupportResistance();
   const { tradingMode, getTimeframes, getIndicators, getVolatilityEvents } = useTradingMode();
   const { selectedCrypto } = useCrypto();
+  const { priceData, loadPriceData, isLoading: priceIsLoading } = usePrice();
   
   const { 
     indicators, 
     currentBias, 
     tradeSuggestion, 
     confidenceScore, 
-    isLoading, 
+    isLoading: analysisIsLoading, 
     lastUpdated, 
     generateAnalysis 
   } = useTechnicalAnalysis();
 
-  const getCryptoPrice = (symbol: string) => {
-    switch(symbol) {
-      case 'BTC': return 68648;
-      case 'ETH': return 3452;
-      case 'SOL': return 172;
-      case 'XRP': return 0.55;
-      case 'DOGE': return 0.16;
-      case 'WLD': return 7.50;
-      case 'LTC': return 83;
-      case 'SUI': return 1.25;
-      default: return 100;
-    }
-  };
-
-  const [priceInfo, setPriceInfo] = useState({
-    currentPrice: getCryptoPrice(selectedCrypto.symbol),
-    dailyHigh: getCryptoPrice(selectedCrypto.symbol) * 1.02,
-    dailyLow: getCryptoPrice(selectedCrypto.symbol) * 0.98,
-    weeklyHigh: getCryptoPrice(selectedCrypto.symbol) * 1.05,
-    weeklyLow: getCryptoPrice(selectedCrypto.symbol) * 0.95
-  });
+  const isLoading = priceIsLoading || analysisIsLoading;
 
   useEffect(() => {
     if (indicators.length === 0) {
@@ -67,32 +51,24 @@ const SignalsView = () => {
     
     fetchLevels(selectedCrypto.pairSymbol);
     
-    const interval = setInterval(() => {
-      setPriceInfo(prev => ({
-        ...prev,
-        currentPrice: getCryptoPrice(selectedCrypto.symbol) + (Math.random() * getCryptoPrice(selectedCrypto.symbol) * 0.005 - getCryptoPrice(selectedCrypto.symbol) * 0.0025)
-      }));
-    }, 5000);
-    
-    return () => clearInterval(interval);
-  }, []);
+    // Load price data if not already loaded
+    const formattedSymbol = selectedCrypto.pairSymbol.replace('/', '');
+    if (!priceData[formattedSymbol]) {
+      loadPriceData(selectedCrypto.pairSymbol);
+    }
+  }, [selectedCrypto]);
 
   useEffect(() => {
     generateAnalysis(selectedCrypto.pairSymbol, true);
     fetchLevels(selectedCrypto.pairSymbol);
-    setPriceInfo({
-      currentPrice: getCryptoPrice(selectedCrypto.symbol),
-      dailyHigh: getCryptoPrice(selectedCrypto.symbol) * 1.02,
-      dailyLow: getCryptoPrice(selectedCrypto.symbol) * 0.98,
-      weeklyHigh: getCryptoPrice(selectedCrypto.symbol) * 1.05,
-      weeklyLow: getCryptoPrice(selectedCrypto.symbol) * 0.95
-    });
+    loadPriceData(selectedCrypto.pairSymbol);
   }, [tradingMode, selectedCrypto]);
 
   const handleRefresh = async () => {
     try {
       await generateAnalysis(selectedCrypto.pairSymbol, true);
       await fetchLevels(selectedCrypto.pairSymbol);
+      await loadPriceData(selectedCrypto.pairSymbol);
       
       toast({
         title: "Data Refreshed",
@@ -121,19 +97,21 @@ const SignalsView = () => {
     }
   };
 
-  const getCryptoChange = (symbol: string) => {
-    switch(symbol) {
-      case 'BTC': return 1.77;
-      case 'ETH': return 2.3;
-      case 'SOL': return 3.2;
-      case 'XRP': return -0.8;
-      case 'DOGE': return 1.2;
-      case 'WLD': return 4.5;
-      case 'LTC': return 0.9;
-      case 'SUI': return 2.1;
-      default: return 0;
-    }
-  };
+  // Get price data for the selected crypto
+  const formattedSymbol = selectedCrypto.pairSymbol.replace('/', '');
+  const cryptoPriceData = priceData[formattedSymbol];
+  
+  const currentPrice = cryptoPriceData?.price || 0;
+  const change24h = cryptoPriceData?.change24h || 0;
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <TradePageHeader isLoading={true} onRefresh={handleRefresh} />
+        <DataLoadingPlaceholder message="Loading trading signals data..." className="h-[400px]" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -149,8 +127,8 @@ const SignalsView = () => {
         <CoinInfo 
           symbol={`${selectedCrypto.symbol}/USDT`}
           name={selectedCrypto.name}
-          price={priceInfo.currentPrice}
-          change24h={getCryptoChange(selectedCrypto.symbol)}
+          price={currentPrice}
+          change24h={change24h}
           description={selectedCrypto.description}
         />
       </div>
