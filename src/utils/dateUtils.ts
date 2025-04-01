@@ -16,6 +16,14 @@ export const formatDate = (date: Date): string => {
 
 // Format time until an event
 export const formatTimeUntil = (date: Date): string => {
+  const now = new Date();
+  const diffMinutes = Math.round((date.getTime() - now.getTime()) / (1000 * 60));
+  
+  // For times less than 60 minutes away, show minutes
+  if (diffMinutes > 0 && diffMinutes < 60) {
+    return `in ${diffMinutes} minute${diffMinutes === 1 ? '' : 's'}`;
+  }
+  
   return formatDistanceToNow(date, { addSuffix: true });
 };
 
