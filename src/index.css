@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -194,7 +195,7 @@ body {
 
 /* Adjust spacing for the header with trading modes */
 .has-trade-header {
-  @apply mt-24 md:mt-28;
+  @apply mt-20 md:mt-24;
 }
 
 main {
@@ -203,22 +204,22 @@ main {
 
 /* Main layout adjustment for trading pages */
 .trading-page main {
-  @apply pt-28 md:pt-32;
+  @apply pt-24 md:pt-28;
 }
 
 /* Fix spacing between heading and trading mode bar */
 h1, h2 {
-  @apply mt-4 md:mt-6;  /* Increased from mt-2/mt-4 to mt-4/mt-6 */
+  @apply mt-4 md:mt-6;
 }
 
 /* Add space between sections */
 section + section {
-  @apply mt-10;  /* Increased from mt-8 to mt-10 */
+  @apply mt-10;
 }
 
 /* Improve card spacing */
 .card-container {
-  @apply space-y-8;  /* Increased from space-y-6 to space-y-8 */
+  @apply space-y-8;
 }
 
 /* Additional spacing for trade pages */
@@ -233,4 +234,9 @@ section + section {
 /* Improve alert spacing */
 .alert {
   @apply my-6;
+}
+
+/* Fix for welcome page spacing */
+.welcome-page {
+  @apply pt-0 mt-0;
 }

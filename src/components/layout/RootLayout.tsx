@@ -43,10 +43,10 @@ const RootLayout: React.FC = () => {
         <div className={!isPublicPage ? "md:ml-64" : ""}>
           {!isPublicPage && <TopHeader />}
           <main className={!isPublicPage ? 
-                          "flex-1 overflow-auto pb-16 md:pb-0 px-4 md:px-6 lg:px-8 pt-32 md:pt-36" : 
+                          "flex-1 overflow-auto pb-16 md:pb-0 px-4 md:px-6 lg:px-8 pt-24 md:pt-28" : 
                           "flex-1 overflow-auto"}>
             <Routes>
-              <Route path="/" element={<Index />} />
+              <Route path="/" element={<Dashboard />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/signals" element={<SignalsView />} />
               <Route path="/trade" element={<TradeSuggestion />} />

@@ -18,8 +18,9 @@ const TopHeader = () => {
   const { tradingMode, getDescription } = useTradingMode();
   const { isLoading, generateAnalysis } = useTechnicalAnalysis();
   
-  // Only show trading mode bar on these pages
+  // Only show trading mode bar on these pages - use path.startsWith to catch subpages too
   const showTradingBar = location.pathname === '/' || 
+                          location.pathname === '/dashboard' || 
                           location.pathname === '/trade-suggestion' || 
                           location.pathname === '/trade' || 
                           location.pathname === '/signals' ||
@@ -122,7 +123,7 @@ const TopHeader = () => {
             )}
             
             {/* Refresh button */}
-            {(location.pathname === '/trade-suggestion' || location.pathname === '/trade' || location.pathname === '/' || location.pathname === '/signals') && (
+            {(location.pathname === '/trade-suggestion' || location.pathname === '/trade' || location.pathname === '/' || location.pathname === '/dashboard' || location.pathname === '/signals') && (
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
