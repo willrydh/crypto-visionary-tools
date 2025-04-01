@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RefreshCw, AlertTriangle, Info, ArrowUp, ArrowDown, CheckCircle } from 'lucide-react';
 import { fetchHistoricalPrices, fetchCurrentPrice } from '@/services/priceDataService';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency } from '@/utils/numberUtils';
 import {
   AreaChart,
   Area,

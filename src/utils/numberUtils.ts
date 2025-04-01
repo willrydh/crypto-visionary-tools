@@ -1,3 +1,4 @@
+
 // Format a number to a fixed number of decimals
 export const formatDecimals = (value: number, decimals: number = 2): string => {
   return value.toFixed(decimals);
@@ -5,11 +6,17 @@ export const formatDecimals = (value: number, decimals: number = 2): string => {
 
 // Format a number as currency
 export const formatCurrency = (value: number, currency: string = 'USD', options?: Intl.NumberFormatOptions): string => {
+  // Handle possible NaN or invalid values
+  if (isNaN(value) || value === null || value === undefined) {
+    return '$0.00';
+  }
+  
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency,
-    minimumFractionDigits: value < 1 ? 2 : value > 1000 ? 0 : 2,
-    maximumFractionDigits: value < 1 ? 4 : value > 1000 ? 0 : 2,
+    // Use appropriate decimal places based on value magnitude
+    minimumFractionDigits: value < 1 ? 4 : value < 10 ? 2 : 0,
+    maximumFractionDigits: value < 1 ? 6 : value < 10 ? 2 : 2,
     ...options
   });
   

@@ -1,4 +1,3 @@
-
 export interface CandleData {
   timestamp: number;
   open: number;
@@ -58,7 +57,7 @@ const formatTimeframe = (interval: string): string => {
 };
 
 // Flag to help control when to use mock data
-let useOnlyMockData = true;
+let useOnlyMockData = false;
 
 export async function fetchHistoricalPrices(
   symbol: string = "BTCUSDT",
@@ -156,7 +155,7 @@ export async function fetchCurrentPrice(symbol: string = "BTCUSDT"): Promise<{
         'Content-Type': 'application/json'
       },
       // Using timeout to prevent hanging requests
-      signal: AbortSignal.timeout(5000)
+      signal: AbortSignal.timeout(10000) // Increased timeout to 10 seconds
     });
     
     if (!res.ok) {
@@ -170,10 +169,17 @@ export async function fetchCurrentPrice(symbol: string = "BTCUSDT"): Promise<{
       throw new Error(json.retMsg || 'Invalid response format');
     }
 
+    // Parse values with fallbacks for safety
+    const price = parseFloat(json.result.list[0].lastPrice) || 0;
+    const change24h = parseFloat(json.result.list[0].price24hPcnt) * 100 || 0;
+    const volume24h = parseFloat(json.result.list[0].volume24h) || 0;
+
+    console.log(`Successfully fetched current price: ${price}, change: ${change24h}%`);
+    
     return {
-      price: parseFloat(json.result.list[0].lastPrice),
-      change24h: parseFloat(json.result.list[0].price24hPcnt) * 100,
-      volume24h: parseFloat(json.result.list[0].volume24h),
+      price,
+      change24h,
+      volume24h,
       timestamp: Date.now()
     };
   } catch (error) {
@@ -267,10 +273,14 @@ function generateMockCurrentPrice(symbol: string = "BTCUSDT"): {
   timestamp: number;
 } {
   const basePrice = getBasePrice(symbol);
-  const change = symbol.includes('XRP') ? -0.8 : (Math.random() * 6) - 1.5; // default to positive trend except XRP
+  // Generate a more realistic change value between -3% and +3%
+  const change = (Math.random() * 6) - 3;
+  
+  // Generate a more accurate price within 0.5% of the base price
+  const priceFactor = 1 + ((Math.random() * 1) - 0.5) / 100;
   
   return {
-    price: basePrice + (Math.random() * basePrice * 0.01 - basePrice * 0.005), // +/- 0.5%
+    price: basePrice * priceFactor,
     change24h: change,
     volume24h: basePrice * 1000 * (Math.random() * 5 + 5), // Scale with price
     timestamp: Date.now()
@@ -292,15 +302,15 @@ function generateMockHighLowData(symbol: string = "BTCUSDT"): HighLowData {
 }
 
 function getBasePrice(symbol: string): number {
-  // Set realistic base prices for different cryptos
-  if (symbol.includes('BTC')) return 68648;
-  if (symbol.includes('ETH')) return 3452;
-  if (symbol.includes('SOL')) return 172;
-  if (symbol.includes('XRP')) return 0.55;
-  if (symbol.includes('DOGE')) return 0.16;
-  if (symbol.includes('WLD')) return 7.50;
-  if (symbol.includes('LTC')) return 83;
-  if (symbol.includes('SUI')) return 1.25;
+  // Set realistic base prices for different cryptos (updated to more current values)
+  if (symbol.includes('BTC')) return 69500; // Updated to more recent BTC price
+  if (symbol.includes('ETH')) return 3550;
+  if (symbol.includes('SOL')) return 175;
+  if (symbol.includes('XRP')) return 0.57;
+  if (symbol.includes('DOGE')) return 0.17;
+  if (symbol.includes('WLD')) return 7.45;
+  if (symbol.includes('LTC')) return 86;
+  if (symbol.includes('SUI')) return 1.28;
   
   // Default fallback
   return 100;
