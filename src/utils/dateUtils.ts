@@ -21,20 +21,34 @@ export const formatTimeUntil = (date: Date): string => {
   
   // For times less than 60 minutes away, show minutes with more precision
   if (diffMinutes > 0 && diffMinutes < 60) {
-    return `in ${diffMinutes} min`;
+    return `in ${diffMinutes}m`;
   }
   
   // For times less than 24 hours, show hours and minutes
   if (diffMinutes >= 60 && diffMinutes < 24 * 60) {
     const hours = Math.floor(diffMinutes / 60);
     const minutes = diffMinutes % 60;
+    
+    // Format depending on whether we have both hours and minutes or just hours
     if (minutes === 0) {
       return `in ${hours}h`;
     }
     return `in ${hours}h ${minutes}m`;
   }
   
-  // For times more than 24 hours, use date-fns but clean up the output
+  // For times more than 24 hours, show days and hours
+  if (diffMinutes >= 24 * 60) {
+    const days = Math.floor(diffMinutes / (24 * 60));
+    const remainingMinutes = diffMinutes % (24 * 60);
+    const hours = Math.floor(remainingMinutes / 60);
+    
+    if (hours === 0) {
+      return `in ${days}d`;
+    }
+    return `in ${days}d ${hours}h`;
+  }
+  
+  // If the date is in the past, use date-fns but clean up the output
   const formatted = formatDistanceToNow(date, { addSuffix: true });
   
   // Remove redundant words and make it more concise
@@ -100,4 +114,40 @@ export const getCurrentWeekRange = (): { start: Date; end: Date } => {
   end.setHours(23, 59, 59, 999);
   
   return { start, end };
+};
+
+// Get a user-friendly time string that accounts for the specific hour
+export const getTimeDisplay = (hour: number, minute: number = 0): string => {
+  return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} UTC`;
+};
+
+// Create a new UTC date for a specific hour and minute
+export const createUtcDate = (hour: number, minute: number = 0): Date => {
+  const date = new Date();
+  date.setUTCHours(hour, minute, 0, 0);
+  return date;
+};
+
+// Get the next occurrence of a specific time in UTC
+export const getNextOccurrence = (hour: number, minute: number = 0, skipWeekends: boolean = true): Date => {
+  const now = new Date();
+  const targetDate = new Date(now);
+  targetDate.setUTCHours(hour, minute, 0, 0);
+  
+  // If the target time has already passed today, set it for tomorrow
+  if (targetDate <= now) {
+    targetDate.setUTCDate(targetDate.getUTCDate() + 1);
+  }
+  
+  // If skipWeekends is true and the day is a weekend, adjust to the next weekday
+  if (skipWeekends) {
+    const dayOfWeek = targetDate.getUTCDay();
+    if (dayOfWeek === 0) { // Sunday
+      targetDate.setUTCDate(targetDate.getUTCDate() + 1);
+    } else if (dayOfWeek === 6) { // Saturday
+      targetDate.setUTCDate(targetDate.getUTCDate() + 2);
+    }
+  }
+  
+  return targetDate;
 };

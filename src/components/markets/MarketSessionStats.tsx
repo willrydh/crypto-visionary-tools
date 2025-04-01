@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Bell, Zap, TrendingDown, TrendingUp, ArrowUpRight, Clock } from 'lucide-react';
-import { formatTimeUntil } from '@/utils/dateUtils';
+import { formatTimeUntil, getTimeDisplay, getNextOccurrence } from '@/utils/dateUtils';
 
 interface MarketSessionStatsProps {
   title?: string;
@@ -21,50 +21,94 @@ const MarketSessionStats = ({
   // Market hours in UTC
   const marketHours = {
     nyseOpen: { hour: 13, minute: 30 },      // NYSE opens 9:30 AM ET (13:30 UTC)
-    londonClose: { hour: 15, minute: 30 },   // London closes 15:30 UTC
+    londonClose: { hour: 16, minute: 30 },   // London closes 16:30 UTC
     nyseClose: { hour: 20, minute: 0 },      // NYSE closes 4:00 PM ET (20:00 UTC)
     tokyoOpen: { hour: 0, minute: 0 }        // Tokyo opens 0:00 UTC (9:00 AM JST)
   };
 
   // State to hold the countdown timers
   const [countdowns, setCountdowns] = useState<{[key: string]: string}>({});
+  // State to track active market sessions
+  const [activeMarkets, setActiveMarkets] = useState<{[key: string]: boolean}>({});
   
-  // Function to get the next occurrence of a specific market event
-  const getNextOccurrence = (hour: number, minute: number): Date => {
-    const now = new Date();
-    const targetTime = new Date(now);
-    targetTime.setUTCHours(hour, minute, 0, 0);
-    
-    // If the target time has already passed today, set it for tomorrow
-    if (targetTime <= now) {
-      targetTime.setUTCDate(targetTime.getUTCDate() + 1);
+  // Market sessions data
+  const [marketSessions, setMarketSessions] = useState([
+    {
+      name: "NYSE Open",
+      time: getTimeDisplay(marketHours.nyseOpen.hour, marketHours.nyseOpen.minute),
+      countdown: "Calculating...",
+      impact: "High",
+      volatility: 85,
+      pumpFrequency: 62,
+      dumpFrequency: 38,
+      status: "upcoming"
+    },
+    {
+      name: "London Close",
+      time: getTimeDisplay(marketHours.londonClose.hour, marketHours.londonClose.minute),
+      countdown: "Calculating...",
+      impact: "Medium",
+      volatility: 65,
+      pumpFrequency: 51,
+      dumpFrequency: 49,
+      status: "upcoming"
+    },
+    {
+      name: "NYSE Close",
+      time: getTimeDisplay(marketHours.nyseClose.hour, marketHours.nyseClose.minute),
+      countdown: "Calculating...",
+      impact: "High",
+      volatility: 78,
+      pumpFrequency: 45,
+      dumpFrequency: 55,
+      status: "upcoming"
+    },
+    {
+      name: "Tokyo Open",
+      time: getTimeDisplay(marketHours.tokyoOpen.hour, marketHours.tokyoOpen.minute),
+      countdown: "Calculating...",
+      impact: "Medium",
+      volatility: 58,
+      pumpFrequency: 53,
+      dumpFrequency: 47,
+      status: "upcoming"
     }
-    
-    // If it's weekend (Saturday or Sunday), adjust to next Monday
-    const dayOfWeek = targetTime.getUTCDay();
-    if (dayOfWeek === 0) { // Sunday
-      targetTime.setUTCDate(targetTime.getUTCDate() + 1);
-    } else if (dayOfWeek === 6) { // Saturday
-      targetTime.setUTCDate(targetTime.getUTCDate() + 2);
-    }
-    
-    return targetTime;
-  };
+  ]);
 
   // Update the countdown every minute
   useEffect(() => {
     const updateCountdowns = () => {
+      // Get next occurrences for each market event
       const nyseOpenTime = getNextOccurrence(marketHours.nyseOpen.hour, marketHours.nyseOpen.minute);
       const londonCloseTime = getNextOccurrence(marketHours.londonClose.hour, marketHours.londonClose.minute);
       const nyseCloseTime = getNextOccurrence(marketHours.nyseClose.hour, marketHours.nyseClose.minute);
       const tokyoOpenTime = getNextOccurrence(marketHours.tokyoOpen.hour, marketHours.tokyoOpen.minute);
       
-      setCountdowns({
+      // Calculate and format countdowns
+      const newCountdowns = {
         nyseOpen: formatTimeUntil(nyseOpenTime),
         londonClose: formatTimeUntil(londonCloseTime),
         nyseClose: formatTimeUntil(nyseCloseTime),
         tokyoOpen: formatTimeUntil(tokyoOpenTime)
-      });
+      };
+      
+      setCountdowns(newCountdowns);
+      
+      // Update market sessions with new countdowns
+      setMarketSessions(prevSessions => 
+        prevSessions.map(session => {
+          if (session.name === "NYSE Open") {
+            return { ...session, countdown: newCountdowns.nyseOpen };
+          } else if (session.name === "London Close") {
+            return { ...session, countdown: newCountdowns.londonClose };
+          } else if (session.name === "NYSE Close") {
+            return { ...session, countdown: newCountdowns.nyseClose };
+          } else if (session.name === "Tokyo Open") {
+            return { ...session, countdown: newCountdowns.tokyoOpen };
+          }
+          return session;
+        })
+      );
     };
     
     // Initial update
@@ -76,50 +120,6 @@ const MarketSessionStats = ({
     return () => clearInterval(interval);
   }, []);
 
-  // Sample market session data with dynamically calculated countdowns
-  const marketSessions = [
-    {
-      name: "NYSE Open",
-      time: `${marketHours.nyseOpen.hour}:${marketHours.nyseOpen.minute.toString().padStart(2, '0')} UTC`,
-      countdown: countdowns.nyseOpen || "Calculating...",
-      impact: "High",
-      volatility: 85,
-      pumpFrequency: 62,
-      dumpFrequency: 38,
-      status: "upcoming"
-    },
-    {
-      name: "London Close",
-      time: `${marketHours.londonClose.hour}:${marketHours.londonClose.minute.toString().padStart(2, '0')} UTC`,
-      countdown: countdowns.londonClose || "Calculating...",
-      impact: "Medium",
-      volatility: 65,
-      pumpFrequency: 51,
-      dumpFrequency: 49,
-      status: "upcoming"
-    },
-    {
-      name: "NYSE Close",
-      time: `${marketHours.nyseClose.hour}:${marketHours.nyseClose.minute.toString().padStart(2, '0')} UTC`,
-      countdown: countdowns.nyseClose || "Calculating...",
-      impact: "High",
-      volatility: 78,
-      pumpFrequency: 45,
-      dumpFrequency: 55,
-      status: "upcoming"
-    },
-    {
-      name: "Tokyo Open",
-      time: `${marketHours.tokyoOpen.hour}:${marketHours.tokyoOpen.minute.toString().padStart(2, '0')} UTC`,
-      countdown: countdowns.tokyoOpen || "Calculating...",
-      impact: "Medium",
-      volatility: 58,
-      pumpFrequency: 53,
-      dumpFrequency: 47,
-      status: "upcoming"
-    }
-  ];
-
   // Check if any market is currently live
   useEffect(() => {
     const checkLiveMarkets = () => {
@@ -130,35 +130,51 @@ const MarketSessionStats = ({
       
       // Only check on weekdays (1-5 for Monday-Friday)
       if (utcDay >= 1 && utcDay <= 5) {
-        // Create updated marketSessions
-        const updatedSessions = [...marketSessions];
+        // Check NYSE Open (13:30-20:00 UTC)
+        const nyseIsOpen = (utcHour > marketHours.nyseOpen.hour || 
+            (utcHour === marketHours.nyseOpen.hour && utcMinute >= marketHours.nyseOpen.minute)) && 
+            (utcHour < marketHours.nyseClose.hour || 
+            (utcHour === marketHours.nyseClose.hour && utcMinute < marketHours.nyseClose.minute));
         
-        // NYSE Open (13:30-20:00 UTC)
-        if (utcHour > marketHours.nyseOpen.hour || 
-            (utcHour === marketHours.nyseOpen.hour && utcMinute >= marketHours.nyseOpen.minute)) {
-          if (utcHour < marketHours.nyseClose.hour) {
-            updatedSessions[0].status = "active";
-          }
-        }
-        
-        // London Close (approaching 15:30 UTC)
-        if (utcHour === marketHours.londonClose.hour && 
+        // Check London Close approaching (16:30 UTC)
+        const londonClosing = utcHour === marketHours.londonClose.hour && 
             utcMinute >= marketHours.londonClose.minute - 15 && 
-            utcMinute <= marketHours.londonClose.minute + 15) {
-          updatedSessions[1].status = "active";
-        }
+            utcMinute <= marketHours.londonClose.minute + 15;
         
-        // NYSE Close (approaching 20:00 UTC)
-        if (utcHour === marketHours.nyseClose.hour && 
+        // Check NYSE Close approaching (20:00 UTC)
+        const nyseClosing = utcHour === marketHours.nyseClose.hour && 
             utcMinute >= marketHours.nyseClose.minute - 15 && 
-            utcMinute <= marketHours.nyseClose.minute + 15) {
-          updatedSessions[2].status = "active";
-        }
+            utcMinute <= marketHours.nyseClose.minute + 15;
         
-        // Tokyo Open (0:00-9:00 UTC)
-        if (utcHour >= marketHours.tokyoOpen.hour && utcHour < 9) {
-          updatedSessions[3].status = "active";
-        }
+        // Check Tokyo Open (0:00-9:00 UTC)
+        const tokyoIsOpen = utcHour >= marketHours.tokyoOpen.hour && utcHour < 9;
+        
+        // Update active market states
+        const newActiveMarkets = {
+          nyseOpen: nyseIsOpen,
+          londonClose: londonClosing,
+          nyseClose: nyseClosing,
+          tokyoOpen: tokyoIsOpen
+        };
+        
+        setActiveMarkets(newActiveMarkets);
+        
+        // Update market sessions with new status
+        setMarketSessions(prevSessions => 
+          prevSessions.map(session => {
+            if (session.name === "NYSE Open" && nyseIsOpen) {
+              return { ...session, status: "active" };
+            } else if (session.name === "London Close" && londonClosing) {
+              return { ...session, status: "active" };
+            } else if (session.name === "NYSE Close" && nyseClosing) {
+              return { ...session, status: "active" };
+            } else if (session.name === "Tokyo Open" && tokyoIsOpen) {
+              return { ...session, status: "active" };
+            } else {
+              return { ...session, status: "upcoming" };
+            }
+          })
+        );
       }
     };
     
@@ -184,11 +200,16 @@ const MarketSessionStats = ({
   };
 
   // Function to get the status indicator
-  const getStatusIndicator = (status: string) => {
+  const getStatusIndicator = (sessionName: string, status: string) => {
     if (status === 'active') {
       return <span className="flex items-center gap-1 text-green-500 text-xs font-medium"><span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Live</span>;
     }
-    return <span className="flex items-center gap-1 text-muted-foreground text-xs"><Clock className="w-3 h-3" /> {marketSessions.find(s => s.name === status)?.countdown || "Upcoming"}</span>;
+    return (
+      <span className="flex items-center gap-1 text-muted-foreground text-xs">
+        <Clock className="w-3 h-3" /> 
+        {marketSessions.find(s => s.name === sessionName)?.countdown || "Upcoming"}
+      </span>
+    );
   };
 
   return (
@@ -217,7 +238,7 @@ const MarketSessionStats = ({
                     {session.impact}
                   </Badge>
                 </div>
-                {getStatusIndicator(session.status)}
+                {getStatusIndicator(session.name, session.status)}
               </div>
               
               <div className="text-sm text-muted-foreground mb-3 flex items-center justify-between">

@@ -1,6 +1,6 @@
 
 import { MarketSession } from '@/contexts/MarketsContext';
-import { formatTimeUntil } from '@/utils/dateUtils';
+import { formatTimeUntil, getNextOccurrence } from '@/utils/dateUtils';
 
 // Fetch market sessions with status based on current time
 export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
@@ -27,13 +27,13 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
   nextMonday.setUTCHours(0, 0, 0, 0);
   
   // Define accurate market hours in UTC
-  // Updated with more precise opening/closing times
+  // Updated with precise opening/closing times
   const marketHours = {
-    tokyo: { open: 0, close: 9 },             // Tokyo: UTC 0:00-9:00 (9pm-6am EST)
-    london: { open: 7, close: 15.5 },         // London: UTC 7:00-15:30 (Opens 8am local UK time)
+    tokyo: { open: 0, close: 9 },             // Tokyo: UTC 0:00-9:00
+    london: { open: 8, close: 16.5 },         // London: UTC 8:00-16:30 (Opens 8am UTC)
     newYork: { open: 13.5, close: 20 },       // New York: UTC 13:30-20:00 (9:30am-4pm EST)
-    frankfurt: { open: 7, close: 15.5 },      // Frankfurt: UTC 7:00-15:30 (Opens 8am local time)
-    hongKong: { open: 1, close: 8 }           // Hong Kong: UTC 1:00-8:00 (8pm-3am EST)
+    frankfurt: { open: 8, close: 16.5 },      // Frankfurt: UTC 8:00-16:30 (Opens 8am UTC)
+    hongKong: { open: 1, close: 8 }           // Hong Kong: UTC 1:00-8:00
   };
   
   // Helper function to calculate next opening or closing time
@@ -110,7 +110,7 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
       status: isWeekend ? 'closed' : 
               (currentTime >= marketHours.london.open && currentTime < marketHours.london.close) ? 'open' : 
               isOpeningSoon(marketHours.london.open) ? 'opening-soon' : 'closed',
-      hours: '07:00-15:30 UTC (Mon-Fri)',
+      hours: '08:00-16:30 UTC (Mon-Fri)',
       nextEvent: {
         type: isWeekend ? 'open' : 
               (currentTime >= marketHours.london.open && currentTime < marketHours.london.close) ? 'close' : 'open',
@@ -138,7 +138,7 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
       status: isWeekend ? 'closed' : 
               (currentTime >= marketHours.frankfurt.open && currentTime < marketHours.frankfurt.close) ? 'open' : 
               isOpeningSoon(marketHours.frankfurt.open) ? 'opening-soon' : 'closed',
-      hours: '07:00-15:30 UTC (Mon-Fri)',
+      hours: '08:00-16:30 UTC (Mon-Fri)',
       nextEvent: {
         type: isWeekend ? 'open' : 
               (currentTime >= marketHours.frankfurt.open && currentTime < marketHours.frankfurt.close) ? 'close' : 'open',
