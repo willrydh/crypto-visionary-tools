@@ -13,7 +13,6 @@ import {
   Lightbulb,
   Activity,
 } from 'lucide-react';
-import { useTradingMode } from '@/hooks/useTradingMode';
 
 interface NavigationMenuProps {
   className?: string;
@@ -27,6 +26,8 @@ export default function NavigationMenu({ className }: NavigationMenuProps) {
   let getDescription = () => 'Select a trading mode to see details.';
   
   try {
+    // Try to import and use the hook safely
+    const { useTradingMode } = require('@/hooks/useTradingMode');
     const tradingModeContext = useTradingMode();
     tradingMode = tradingModeContext.tradingMode;
     getDescription = tradingModeContext.getDescription;

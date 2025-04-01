@@ -16,8 +16,24 @@ const TopHeader = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
-  const { tradingMode, getDescription } = useTradingMode();
-  const { isLoading, generateAnalysis } = useTechnicalAnalysis();
+  
+  // Safely use the trading mode context with fallbacks
+  let tradingMode = 'day';
+  let getDescription = () => 'Select a trading mode to see details.';
+  let isLoading = false;
+  let generateAnalysis = () => {};
+  
+  try {
+    const tradingModeContext = useTradingMode();
+    tradingMode = tradingModeContext.tradingMode;
+    getDescription = tradingModeContext.getDescription;
+    
+    const analysisContext = useTechnicalAnalysis();
+    isLoading = analysisContext.isLoading;
+    generateAnalysis = analysisContext.generateAnalysis;
+  } catch (error) {
+    console.log('Context not available:', error);
+  }
   
   // Only show trading mode bar on these pages - use path.startsWith to catch subpages too
   const showTradingBar = location.pathname === '/' || 
@@ -42,17 +58,26 @@ const TopHeader = () => {
   };
 
   const handleRefresh = () => {
-    generateAnalysis('BTC/USDT', true);
-    toast({
-      title: "Analysis Updated",
-      description: "The analysis has been refreshed based on current market data.",
-    });
+    try {
+      generateAnalysis('BTC/USDT', true);
+      toast({
+        title: "Analysis Updated",
+        description: "The analysis has been refreshed based on current market data.",
+      });
+    } catch (error) {
+      console.error('Error refreshing analysis:', error);
+      toast({
+        title: "Update Failed",
+        description: "Could not refresh the analysis. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
   
   return (
     <header className="fixed top-0 left-0 right-0 z-30 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/40">
       {/* Main header with logo and actions */}
-      <div className="h-16 flex items-center px-6 ml-64">
+      <div className="h-16 flex items-center px-6 md:ml-64">
         <div className="flex items-center gap-2 md:hidden">
           <Link to="/" className="flex items-center gap-2">
             <img src={Logo} alt="ProfitPilot" className="h-8 w-8" />
@@ -109,7 +134,7 @@ const TopHeader = () => {
       
       {/* Trading mode selector - show on specific pages */}
       {showTradingBar && (
-        <div className={cn("px-6 ml-64", getModeHeaderBgClass(tradingMode), "border-b border-border/40")}>
+        <div className={cn("px-6 md:ml-64", getModeHeaderBgClass(tradingMode), "border-b border-border/40")}>
           <div className="flex items-center justify-between py-2.5">
             <div className="flex-grow">
               <TradingModeSelector compact={true} displayLabel={false} />

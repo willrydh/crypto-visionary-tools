@@ -25,7 +25,7 @@ const navItems = [
 
 const MainNavigation: React.FC = () => {
   return (
-    <div className="hidden md:flex h-screen w-64 flex-col fixed left-0 top-0 bottom-0 border-r border-border bg-sidebar-background z-30">
+    <div className="hidden md:flex h-screen w-64 flex-col fixed left-0 top-0 bottom-0 border-r border-border bg-background z-30">
       <div className="p-6">
         <Link to="/" className="flex items-center space-x-2">
           <img src={Logo} alt="ProfitPilot" className="h-8 w-8" />

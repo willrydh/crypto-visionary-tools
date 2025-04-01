@@ -19,7 +19,7 @@ import PricingPage from '@/pages/PricingPage';
 import ForgotPassword from '@/pages/ForgotPassword';
 import ResetPasswordConfirm from '@/pages/ResetPasswordConfirm';
 import ThankYouPage from '@/pages/ThankYouPage';
-import Index from '@/pages/Index';
+import Sorry from '@/pages/Sorry';
 
 const RootLayout: React.FC = () => {
   const location = useLocation();
@@ -59,6 +59,7 @@ const RootLayout: React.FC = () => {
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password" element={<ResetPasswordConfirm />} />
                 <Route path="/thank-you" element={<ThankYouPage />} />
+                <Route path="/sorry" element={<Sorry />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </div>

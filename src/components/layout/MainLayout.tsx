@@ -43,7 +43,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             </div>
           </SidebarFooter>
         </Sidebar>
-        <div className="flex-1 flex flex-col ml-64">
+        <div className="flex-1 flex flex-col md:ml-64">
           <TopHeader />
           <main className="flex-1 overflow-auto pt-28 pb-16 md:pb-6">
             <div className="px-6 pb-6">
