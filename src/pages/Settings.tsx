@@ -8,7 +8,14 @@ import {
   DollarSign,
   Percent,
   Clock,
-  HelpCircle
+  HelpCircle,
+  LineChart,
+  TrendingUp,
+  Rocket,
+  Zap,
+  AlertCircle,
+  BarChart4,
+  Brain
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -43,60 +50,103 @@ const SettingsPage = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("settings");
 
-  // FAQ sections with questions and answers
+  // FAQ sections with updated questions and answers
   const faqSections = [
     {
       title: "Technical Analysis",
+      icon: <LineChart className="h-5 w-5 text-primary" />,
       questions: [
         {
           question: "How does ProfitPilot use technical analysis?",
-          answer: "ProfitPilot analyzes multiple technical indicators across various timeframes to generate trading signals. We combine traditional indicators like moving averages, RSI, and MACD with advanced pattern recognition to identify potential entry and exit points. The system weighs each indicator based on its reliability in current market conditions and provides an overall confidence score for each trading signal."
+          answer: "ProfitPilot continuously analyzes real-time data across multiple timeframes (1m, 5m, 15m, 1h, 4h, 1d) and combines it with historical price action to detect precise patterns, structures, and volume zones. It identifies key confirmations such as higher highs, MA reversals, RSI divergences, and MACD crosses."
         },
         {
           question: "Which technical indicators are used?",
-          answer: "Our system employs a diverse set of indicators including Moving Averages (MA21, MA50, MA100, MA200), RSI, MACD, Bollinger Bands, Volume Profile, and Support/Resistance levels. These indicators are analyzed across multiple timeframes to provide a comprehensive market view and reduce false signals."
+          answer: "We combine proven indicators for optimal accuracy, including: Moving Averages (MA21, MA50, MA100), MACD (momentum and trend strength), Stochastic RSI (overbought/oversold signals), Volume profile and liquidity zones, Market structure and trendlines, Reversal candles and pattern recognition."
         },
         {
           question: "How accurate is the technical analysis?",
-          answer: "Technical analysis accuracy varies with market conditions. During trending markets, our signals typically achieve 65-75% accuracy. In ranging or choppy markets, accuracy may decrease. We provide confidence scores with each signal to help you gauge reliability, and continuously refine our algorithms based on market performance."
+          answer: "ProfitPilot adapts based on real trade outcomes. The AI dynamically adjusts confidence levels using past signal accuracy, current market conditions, and cross-confirmation logic. Each signal includes a Confidence Score so users can assess the strength of every setup."
         }
       ]
     },
     {
-      title: "Trade Suggestions",
+      title: "Macro Events & Volatility",
+      icon: <AlertCircle className="h-5 w-5 text-primary" />,
       questions: [
         {
-          question: "How are confidence levels calculated?",
-          answer: "Confidence levels are calculated using a proprietary algorithm that evaluates multiple factors: indicator agreement across timeframes, historical performance of the pattern, volume confirmation, and market volatility. Higher confidence (>70%) indicates strong agreement among multiple indicators and favorable market conditions for the trade."
+          question: "Does ProfitPilot use real-time macroeconomic data?",
+          answer: "Yes. The app integrates global market data, including: Market openings/closings (NYSE, Nasdaq, Tokyo, Frankfurt, etc.), Economic events from Forex Factory's calendar, Countdown timers for critical events like FOMC, CPI, NFP, and rate decisions."
+        },
+        {
+          question: "How is market volatility handled?",
+          answer: "The app adjusts dynamically for volatility. During high-impact events, trade setups widen stop-losses and targets. During stable conditions, it narrows them. This ensures each trade adapts to the current environment for better risk management."
+        }
+      ]
+    },
+    {
+      title: "Trade Suggestions & AI Logic",
+      icon: <Rocket className="h-5 w-5 text-primary" />,
+      questions: [
+        {
+          question: "How are trade suggestions generated?",
+          answer: "ProfitPilot detects confluence — when multiple indicators align, the system assigns a Likely Hit % to each potential setup. It factors in volume, liquidity zones, price structure, trend confirmation, and recent momentum — all filtered through AI for precision."
+        },
+        {
+          question: "How is the confidence score calculated?",
+          answer: "Each setup is assigned a confidence score based on historical accuracy, number of confirming signals, volume strength, and macro context. The more aligned the signals, the higher the confidence."
         },
         {
           question: "What does the risk-reward ratio mean?",
-          answer: "The risk-reward ratio compares potential profit to potential loss. For example, a ratio of 1:3 means the potential reward is three times the risk. Our system targets trades with favorable risk-reward ratios, typically 1:2 or better, depending on your selected trading style. These calculations consider key support/resistance levels and recent price volatility."
+          answer: "Risk-reward shows how much potential reward a trade offers compared to the potential loss. For example, a 3:1 ratio means you risk $100 to potentially gain $300. ProfitPilot always includes this in trade suggestions."
         },
         {
           question: "Should I follow all trade suggestions?",
-          answer: "Trade suggestions should be used as one input in your decision-making process, not followed blindly. Always apply your own analysis, risk management, and consider broader market conditions. Suggestions with higher confidence scores (>70%) and favorable risk-reward ratios aligned with your trading style are generally more reliable."
+          answer: "No. ProfitPilot is your co-pilot — not your autopilot. Each signal is a tool, not a guarantee. Combine signals with your own risk management, experience level, and capital strategy."
         }
       ]
     },
     {
       title: "Trading Styles",
+      icon: <BarChart4 className="h-5 w-5 text-primary" />,
       questions: [
         {
           question: "What's the difference between Scalp, Day, and Swing trading?",
-          answer: "Scalping focuses on very short-term trades (minutes to hours) with small profit targets. Day trading opens and closes positions within the same trading day (hours to a full day). Swing trading holds positions for several days to weeks to capture larger market movements. Each style requires different timeframes, risk management, and psychological approach."
+          answer: "Scalp trading: Very short-term trades (minutes), high frequency, tight risk. Day trading: Multiple trades per day, closed before end of session. Swing trading: Held for several days, focused on broader trends."
         },
         {
-          question: "Why does timing matter in different trading styles?",
-          answer: "Different trading styles require different timing approaches. Scalping demands immediate execution and quick exits, typically within minutes or hours. Day trading follows intraday trends and requires closing positions by end-of-day. Swing trading looks for larger market moves over days or weeks, requiring patience and wider stop-losses. ProfitPilot tailors its suggestions to match your selected style."
+          question: "Why does timing matter?",
+          answer: "Different styles require different timing windows. Scalp trades often rely on volatility spikes (like NYSE open), while swing trades benefit from macro trends and higher timeframe signals."
         },
         {
-          question: "Which timeframes work best for each trading style?",
-          answer: "For scalping, we recommend 1-minute to 15-minute charts for entries, with 1-hour for trend context. Day trading works best with 15-minute to 1-hour charts, using 4-hour for trend direction. Swing trading typically uses 4-hour to daily charts, with weekly charts for broader context. Our system automatically adjusts indicator weights based on your selected style."
+          question: "Which timeframes work best for each style?",
+          answer: "Scalp: 1m, 5m, 15m, Day: 15m, 1h, Swing: 4h, 1d"
         },
         {
-          question: "How should I adjust my risk management for different styles?",
-          answer: "Scalping typically requires tighter stop-losses (0.2-0.5%) with smaller profit targets (0.5-1.5%). Day trading uses moderate stops (1-2%) and targets (2-5%). Swing trading needs wider stops (3-7%) to accommodate normal market fluctuations, with larger targets (7-20%). Each style requires different position sizing to maintain consistent risk per trade."
+          question: "How should I adjust my risk for different styles?",
+          answer: "Scalp: Tight stop losses, small capital, fast exits. Day: Balanced risk, mid-sized trades. Swing: Wider stops, fewer trades, strong patience."
+        }
+      ]
+    },
+    {
+      title: "AI & Data Analysis",
+      icon: <Brain className="h-5 w-5 text-primary" />,
+      questions: [
+        {
+          question: "How does ProfitPilot use AI to analyze the market?",
+          answer: "ProfitPilot leverages advanced AI models trained on thousands of historical trades and market events. The AI doesn't just analyze charts — it combines price action, technical indicators, volume patterns, volatility spikes, macroeconomic data, and user behavior to identify high-probability setups in real time."
+        },
+        {
+          question: "What kind of data does the AI process?",
+          answer: "Price structure: Higher highs/lows, trendlines, consolidation zones. Volume and liquidity: Hidden volume shifts, breakout pressure, order book behavior. Technical indicators: Real-time signals from MACD, MA, RSI, Stoch RSI, and more. Macro factors: Impact from FOMC, CPI, NFP, interest rate decisions. Market sessions: NYSE open/close momentum, Asia session volume. User preferences: Budget, risk appetite, preferred trading style."
+        },
+        {
+          question: "How does this increase profitability?",
+          answer: "By combining human logic with machine precision, ProfitPilot can: Anticipate market shifts before they happen, Avoid low-quality setups during uncertain conditions, Adapt trade size and stop-loss to current volatility, Offer setups with the highest possible edge based on millions of data points."
+        },
+        {
+          question: "Does the AI learn over time?",
+          answer: "Yes. ProfitPilot's engine is continuously improved with new trade outcomes, market conditions, and user feedback. It learns what works, filters out what doesn't, and adapts — just like an elite trader, but faster and more consistent."
         }
       ]
     }
@@ -325,7 +375,10 @@ const SettingsPage = () => {
         <TabsContent value="faq" className="space-y-6 mt-6">
           {faqSections.map((section, sectionIndex) => (
             <Card key={sectionIndex}>
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center space-y-0 gap-3">
+                <div className="p-2 rounded-full bg-primary/10">
+                  {section.icon}
+                </div>
                 <CardTitle>{section.title}</CardTitle>
               </CardHeader>
               <CardContent>
