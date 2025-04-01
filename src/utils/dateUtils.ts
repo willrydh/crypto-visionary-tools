@@ -1,4 +1,3 @@
-
 import { format, formatDistanceToNow, formatRelative, isToday, isTomorrow, isYesterday } from 'date-fns';
 
 // Format a date for display
@@ -199,6 +198,8 @@ export const getTimezoneAbbreviation = (): string => {
 // Get precise UTC time for market open/close calculations
 export const getPreciseMarketTime = (utcHour: number, utcMinute: number = 0): Date => {
   const now = new Date();
+  
+  // Create the target date in UTC
   const targetDate = new Date(Date.UTC(
     now.getUTCFullYear(),
     now.getUTCMonth(),
