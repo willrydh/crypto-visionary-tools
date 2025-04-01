@@ -2,14 +2,14 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Bell, Zap, TrendingDown, TrendingUp, ArrowUpRight, Clock } from 'lucide-react';
+import { Bell, Zap, TrendingDown, TrendingUp, ArrowUpRight, Clock, Building } from 'lucide-react';
 import { 
   getPreciseMarketTime,
   getLocalTimeDisplay,
   getMarketTimeRemaining
 } from '@/utils/dateUtils';
 import { useMarkets } from '@/hooks/useMarkets';
-import { fetchMarketStatistics } from '@/services/alphaVantageService';
+import { fetchMarketStatistics, analyzeVolumePatterns } from '@/services/alphaVantageService';
 import { DataSourceIndicator } from '@/components/ui/data-source-indicator';
 
 interface MarketSessionStatsProps {
@@ -17,13 +17,15 @@ interface MarketSessionStatsProps {
   asianSessionStart?: number;
   europeanSessionStart?: number;
   usSessionStart?: number;
+  compact?: boolean;
 }
 
 const MarketSessionStats = ({ 
   title = "Market Session Impact",
   asianSessionStart,
   europeanSessionStart,
-  usSessionStart
+  usSessionStart,
+  compact = false
 }: MarketSessionStatsProps) => {
   const { marketSessions, dataSource } = useMarkets();
   
@@ -33,6 +35,8 @@ const MarketSessionStats = ({
   const [activeMarkets, setActiveMarkets] = useState<{[key: string]: boolean}>({});
   // State for market stats
   const [marketStats, setMarketStats] = useState<any>({});
+  // Volume analysis results
+  const [volumeAnalysis, setVolumeAnalysis] = useState<any>(null);
   
   // Market sessions data
   const [marketSessionData, setMarketSessionData] = useState([
@@ -44,7 +48,8 @@ const MarketSessionStats = ({
       volatility: 85,
       pumpFrequency: 62,
       dumpFrequency: 38,
-      status: "upcoming"
+      status: "upcoming",
+      marketCap: "$25.62T"
     },
     {
       name: "London Close",
@@ -54,7 +59,8 @@ const MarketSessionStats = ({
       volatility: 65,
       pumpFrequency: 51,
       dumpFrequency: 49,
-      status: "upcoming"
+      status: "upcoming",
+      marketCap: "$3.83T"
     },
     {
       name: "NYSE Close",
@@ -64,7 +70,8 @@ const MarketSessionStats = ({
       volatility: 78,
       pumpFrequency: 45,
       dumpFrequency: 55,
-      status: "upcoming"
+      status: "upcoming",
+      marketCap: "$25.62T"
     },
     {
       name: "Tokyo Open",
@@ -74,13 +81,26 @@ const MarketSessionStats = ({
       volatility: 58,
       pumpFrequency: 53,
       dumpFrequency: 47,
-      status: "upcoming"
+      status: "upcoming",
+      marketCap: "$6.54T"
+    },
+    {
+      name: "Nasdaq Open",
+      time: "",
+      countdown: "Calculating...",
+      impact: "High",
+      volatility: 82,
+      pumpFrequency: 58,
+      dumpFrequency: 42,
+      status: "upcoming",
+      marketCap: "$19.51T"
     }
   ]);
 
-  // Fetch market statistics
+  // Fetch market statistics and volume analysis
   useEffect(() => {
-    const getMarketStats = async () => {
+    const getMarketData = async () => {
+      // Get market statistics
       const stats = await fetchMarketStatistics();
       if (stats) {
         setMarketStats(stats);
@@ -116,23 +136,42 @@ const MarketSessionStats = ({
                 pumpFrequency: stats.tokyo.pumpFrequency,
                 dumpFrequency: stats.tokyo.dumpFrequency
               };
+            } else if (session.name === "Nasdaq Open" && stats.nasdaq) {
+              return { 
+                ...session, 
+                volatility: stats.nasdaq.volatility,
+                pumpFrequency: stats.nasdaq.pumpFrequency,
+                dumpFrequency: stats.nasdaq.dumpFrequency
+              };
             }
             return session;
           })
         );
       }
+      
+      // Get volume analysis for SPY (S&P 500 ETF) to analyze NYSE patterns
+      try {
+        const volumeData = await analyzeVolumePatterns('SPY');
+        if (volumeData) {
+          setVolumeAnalysis(volumeData);
+        }
+      } catch (error) {
+        console.error('Error fetching volume analysis:', error);
+      }
     };
     
-    getMarketStats();
+    getMarketData();
   }, []);
 
   // Update time displays based on market session data
   useEffect(() => {
     if (marketSessions.length > 0) {
       // Find relevant market sessions
-      const nyse = marketSessions.find(m => m.name === "New York");
-      const london = marketSessions.find(m => m.name === "London");
-      const tokyo = marketSessions.find(m => m.name === "Tokyo");
+      // Match by name - we now have more detailed names from Alpha Vantage
+      const nyse = marketSessions.find(m => m.name.includes("NYSE"));
+      const london = marketSessions.find(m => m.name.includes("London") || m.name.includes("LSE"));
+      const tokyo = marketSessions.find(m => m.name.includes("Tokyo") || m.name.includes("TSE"));
+      const nasdaq = marketSessions.find(m => m.name.includes("Nasdaq"));
       
       // Extract market hours from sessions
       if (nyse && london && tokyo) {
@@ -153,6 +192,10 @@ const MarketSessionStats = ({
           { type: 'close', time: tokyo.nextEvent.time } : 
           { type: 'open', time: tokyo.nextEvent.time };
         
+        const nasdaqOpenEvent = nasdaq?.status === 'open' ? 
+          { type: 'close', time: nasdaq.nextEvent.time } : 
+          { type: 'open', time: nasdaq?.nextEvent.time || new Date() };
+        
         // Update session data with times from market sessions
         setMarketSessionData(prevSessions => 
           prevSessions.map(session => {
@@ -161,28 +204,40 @@ const MarketSessionStats = ({
                 ...session,
                 countdown: nyse.status === 'open' ? 'Now' : getMarketTimeRemaining(nyse.nextEvent.time),
                 status: nyse.status === 'open' || nyse.status === 'opening-soon' ? 'active' : 'upcoming',
-                time: nyse.hours.split('-')[0].trim() // First part of hours string
+                time: nyse.hours.split('-')[0].trim(), // First part of hours string
+                marketCap: nyse.marketCap || session.marketCap
               };
             } else if (session.name === "London Close") {
               return {
                 ...session,
                 countdown: london.status === 'open' ? getMarketTimeRemaining(london.nextEvent.time) : 'After open',
                 status: london.status === 'open' ? 'active' : 'upcoming',
-                time: london.hours.split('-')[1].trim() // Second part of hours string
+                time: london.hours.split('-')[1].trim(), // Second part of hours string
+                marketCap: london.marketCap || session.marketCap
               };
             } else if (session.name === "NYSE Close") {
               return {
                 ...session,
                 countdown: nyse.status === 'open' ? getMarketTimeRemaining(nyse.nextEvent.time) : 'After open',
                 status: nyse.status === 'open' ? 'active' : 'upcoming',
-                time: nyse.hours.split('-')[1].trim() // Second part of hours string
+                time: nyse.hours.split('-')[1].trim(), // Second part of hours string
+                marketCap: nyse.marketCap || session.marketCap
               };
             } else if (session.name === "Tokyo Open") {
               return {
                 ...session,
                 countdown: tokyo.status === 'open' ? 'Now' : getMarketTimeRemaining(tokyo.nextEvent.time),
                 status: tokyo.status === 'open' || tokyo.status === 'opening-soon' ? 'active' : 'upcoming',
-                time: tokyo.hours.split('-')[0].trim() // First part of hours string
+                time: tokyo.hours.split('-')[0].trim(), // First part of hours string
+                marketCap: tokyo.marketCap || session.marketCap
+              };
+            } else if (session.name === "Nasdaq Open" && nasdaq) {
+              return {
+                ...session,
+                countdown: nasdaq.status === 'open' ? 'Now' : getMarketTimeRemaining(nasdaq.nextEvent.time),
+                status: nasdaq.status === 'open' || nasdaq.status === 'opening-soon' ? 'active' : 'upcoming',
+                time: nasdaq.hours.split('-')[0].trim(), // First part of hours string
+                marketCap: nasdaq.marketCap || session.marketCap
               };
             }
             return session;
@@ -256,7 +311,12 @@ const MarketSessionStats = ({
               </div>
               
               <div className="text-sm text-muted-foreground mb-3 flex items-center justify-between">
-                <span>{session.time}</span>
+                <div className="flex items-center gap-1">
+                  <Building className="h-3 w-3" />
+                  <span>{session.marketCap}</span>
+                  <span className="text-muted-foreground/50 mx-2">•</span>
+                  <span>{session.time}</span>
+                </div>
                 <span className="font-mono text-xs bg-muted px-2 py-0.5 rounded">
                   {session.countdown}
                 </span>

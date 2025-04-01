@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Clock, AlertCircle } from 'lucide-react';
+import { Clock, AlertCircle, Building } from 'lucide-react';
 import { useMarkets } from '@/hooks/useMarkets';
 import { DataSourceIndicator } from '@/components/ui/data-source-indicator';
 import { getMarketTimeRemaining } from '@/utils/dateUtils';
@@ -12,12 +12,14 @@ interface MarketStatusProps {
   showDetails?: boolean;
   customTitle?: string;
   customSource?: string;
+  compact?: boolean;
 }
 
 export const MarketStatus: React.FC<MarketStatusProps> = ({ 
   showDetails = false,
   customTitle,
-  customSource
+  customSource,
+  compact = false
 }) => {
   const { marketSessions, lastUpdated, dataSource } = useMarkets();
 
@@ -40,12 +42,14 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
   };
 
   return (
-    <Card>
-      <CardHeader className="pb-2">
+    <Card className={compact ? "border-border/50" : ""}>
+      <CardHeader className={compact ? "pb-2" : "pb-3"}>
         <div className="flex justify-between items-center">
-          <CardTitle className="text-xl flex items-center gap-2">
-            <Clock className="h-5 w-5" />
-            {customTitle || "Market Status"}
+          <CardTitle className={compact ? "text-lg" : "text-xl"}>
+            <div className="flex items-center gap-2">
+              <Clock className={compact ? "h-4 w-4" : "h-5 w-5"} />
+              {customTitle || "Market Status"}
+            </div>
           </CardTitle>
           <DataSourceIndicator 
             source={getSourceLabel()} 
@@ -54,12 +58,17 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
           />
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-2">
+      <CardContent className={compact ? "p-0" : undefined}>
+        <div className={compact ? "divide-y divide-border/30" : "space-y-2"}>
           {marketSessions.map((market) => (
-            <div key={market.name} className="space-y-1">
+            <div key={market.name} className={compact ? "p-3 hover:bg-muted/10 transition-colors" : "space-y-1"}>
               <div className="flex justify-between items-center">
-                <span className="font-medium">{market.name}</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-medium">{market.name}</span>
+                  {market.marketCap && !compact && (
+                    <span className="text-xs text-muted-foreground">{market.marketCap}</span>
+                  )}
+                </div>
                 <Badge 
                   variant={market.status === "closed" ? "outline" : "default"}
                   className={getStatusBadgeStyle(market.status)}
@@ -67,10 +76,24 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
                   {market.status === "opening-soon" ? "OPENING SOON" : market.status.toUpperCase()}
                 </Badge>
               </div>
-              <div className="text-xs text-muted-foreground">
-                {market.nextEvent.type === 'open' ? 'Opens' : 'Closes'} {getMarketTimeRemaining(market.nextEvent.time)}
+              <div className={compact ? "flex justify-between text-xs text-muted-foreground mt-1" : "text-xs text-muted-foreground"}>
+                <div className="flex items-center gap-1">
+                  {market.marketCap && compact && (
+                    <div className="flex items-center gap-1">
+                      <Building className="h-3 w-3" />
+                      <span>{market.marketCap}</span>
+                      <span className="px-1">•</span>
+                    </div>
+                  )}
+                  <span>
+                    {market.nextEvent.type === 'open' ? 'Opens' : 'Closes'} {getMarketTimeRemaining(market.nextEvent.time)}
+                  </span>
+                </div>
+                {showDetails && (
+                  <span className="text-xs text-muted-foreground font-mono">{market.hours}</span>
+                )}
               </div>
-              <Separator className="my-2" />
+              {!compact && <Separator className="my-2" />}
             </div>
           ))}
           

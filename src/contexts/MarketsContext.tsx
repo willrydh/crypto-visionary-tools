@@ -12,6 +12,7 @@ export interface MarketSession {
     time: Date;
   };
   timezone: string;
+  marketCap?: string; // Optional market cap data
 }
 
 interface MarketsContextType {
@@ -37,7 +38,7 @@ export const MarketsProvider: React.FC<MarketsProviderProps> = ({ children }) =>
   const updateMarketSessions = async () => {
     setIsLoading(true);
     try {
-      // Try Alpha Vantage first
+      // Try Alpha Vantage first with the enhanced implementation
       let sessions;
       try {
         sessions = await fetchAlphaVantageMarketSessions();
