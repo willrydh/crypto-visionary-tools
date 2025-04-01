@@ -115,7 +115,25 @@ const SignalsView = () => {
 
   return (
     <div className="space-y-4">
-      <TradePageHeader isLoading={isLoading} onRefresh={handleRefresh} />
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+        <div>
+          <h1 className="text-2xl font-bold">Signals</h1>
+          <p className="text-muted-foreground">
+            Trading signals and market analysis
+          </p>
+        </div>
+        
+        <Button 
+          onClick={handleRefresh} 
+          disabled={isLoading} 
+          variant="outline"
+          size="sm"
+          className="gap-2 mt-2 md:mt-0"
+        >
+          <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
+          <span>Refresh</span>
+        </Button>
+      </div>
 
       <div className="flex flex-col gap-3">
         <div className="w-full">

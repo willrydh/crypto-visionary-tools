@@ -43,7 +43,7 @@ const RootLayout: React.FC = () => {
         <div className={!isPublicPage ? "md:ml-64" : ""}>
           {!isPublicPage && <TopHeader />}
           <main className={!isPublicPage ? 
-                          "flex-1 overflow-auto pb-16 md:pb-0 px-4 md:px-6 lg:px-8 pt-20 md:pt-24" : 
+                          "flex-1 overflow-auto pb-16 md:pb-0 px-4 md:px-6 lg:px-8 pt-16" : 
                           "flex-1 overflow-auto"}>
             <Routes>
               <Route path="/" element={<Dashboard />} />
