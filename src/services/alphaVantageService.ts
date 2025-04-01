@@ -108,6 +108,38 @@ const isOpeningSoon = (currentTime: number, marketOpenTime: number) => {
   return currentTime < marketOpenTime && (marketOpenTime - currentTime) <= 1;
 };
 
+// Get user's timezone offset in hours
+const getUserTimezoneOffset = (): number => {
+  return -new Date().getTimezoneOffset() / 60;
+};
+
+// Convert UTC time to local time
+const utcToLocalHour = (utcHour: number): number => {
+  const offset = getUserTimezoneOffset();
+  let localHour = (utcHour + offset) % 24;
+  return localHour < 0 ? localHour + 24 : localHour;
+};
+
+// Format hours for display in local timezone
+const formatMarketHoursInLocalTime = (exchange: string): string => {
+  if (!exchangeHours[exchange]) return 'N/A';
+  
+  const openHour = Math.floor(exchangeHours[exchange].open);
+  const openMinutes = Math.floor((exchangeHours[exchange].open % 1) * 60);
+  const closeHour = Math.floor(exchangeHours[exchange].close);
+  const closeMinutes = Math.floor((exchangeHours[exchange].close % 1) * 60);
+  
+  const localOpenHour = utcToLocalHour(openHour);
+  const localCloseHour = utcToLocalHour(closeHour);
+  
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const timezoneAbbr = new Intl.DateTimeFormat('en', { timeZoneName: 'short' })
+    .formatToParts(new Date())
+    .find(part => part.type === 'timeZoneName')?.value || '';
+  
+  return `${localOpenHour.toString().padStart(2, '0')}:${openMinutes.toString().padStart(2, '0')}-${localCloseHour.toString().padStart(2, '0')}:${closeMinutes.toString().padStart(2, '0')} ${timezoneAbbr} (Mon-Fri)`;
+};
+
 // Get market data with real-time checks where possible
 export const fetchAlphaVantageMarketSessions = async (): Promise<MarketSession[]> => {
   // Check if we have cached data that's still fresh
@@ -174,18 +206,6 @@ export const fetchAlphaVantageMarketSessions = async (): Promise<MarketSession[]
       return 'closed';
     };
     
-    // Format market hours for display in local timezone
-    const formatMarketHours = (exchange: string): string => {
-      if (!exchangeHours[exchange]) return 'N/A';
-      
-      const openHour = Math.floor(exchangeHours[exchange].open);
-      const openMinutes = Math.floor((exchangeHours[exchange].open % 1) * 60);
-      const closeHour = Math.floor(exchangeHours[exchange].close);
-      const closeMinutes = Math.floor((exchangeHours[exchange].close % 1) * 60);
-      
-      return `${openHour.toString().padStart(2, '0')}:${openMinutes.toString().padStart(2, '0')}-${closeHour.toString().padStart(2, '0')}:${closeMinutes.toString().padStart(2, '0')} UTC (Mon-Fri)`;
-    };
-    
     // Calculate the next opening/closing time
     const calculateNextEvent = (exchange: string, isOpen: boolean): Date => {
       if (!exchangeHours[exchange]) {
@@ -225,7 +245,7 @@ export const fetchAlphaVantageMarketSessions = async (): Promise<MarketSession[]
         name: 'NYSE (New York)',
         status: nyseOpen ? 'open' : 
                 isOpeningSoon(currentTime, exchangeHours.nyse.open) ? 'opening-soon' : 'closed',
-        hours: formatMarketHours('nyse'),
+        hours: formatMarketHoursInLocalTime('nyse'),
         nextEvent: {
           type: nyseOpen ? 'close' : 'open',
           time: calculateNextEvent('nyse', nyseOpen)
@@ -237,7 +257,7 @@ export const fetchAlphaVantageMarketSessions = async (): Promise<MarketSession[]
         name: 'LSE (London)',
         status: londonOpen ? 'open' : 
                 isOpeningSoon(currentTime, exchangeHours.london.open) ? 'opening-soon' : 'closed',
-        hours: formatMarketHours('london'),
+        hours: formatMarketHoursInLocalTime('london'),
         nextEvent: {
           type: londonOpen ? 'close' : 'open',
           time: calculateNextEvent('london', londonOpen)
@@ -249,7 +269,7 @@ export const fetchAlphaVantageMarketSessions = async (): Promise<MarketSession[]
         name: 'TSE (Tokyo)',
         status: tokyoOpen ? 'open' : 
                 isOpeningSoon(currentTime, exchangeHours.tokyo.open) ? 'opening-soon' : 'closed',
-        hours: formatMarketHours('tokyo'),
+        hours: formatMarketHoursInLocalTime('tokyo'),
         nextEvent: {
           type: tokyoOpen ? 'close' : 'open',
           time: calculateNextEvent('tokyo', tokyoOpen)
@@ -260,7 +280,7 @@ export const fetchAlphaVantageMarketSessions = async (): Promise<MarketSession[]
       {
         name: 'FSX (Frankfurt)',
         status: calculateMarketStatus('frankfurt'),
-        hours: formatMarketHours('frankfurt'),
+        hours: formatMarketHoursInLocalTime('frankfurt'),
         nextEvent: {
           type: calculateMarketStatus('frankfurt') === 'open' ? 'close' : 'open',
           time: calculateNextEvent('frankfurt', calculateMarketStatus('frankfurt') === 'open')
@@ -271,7 +291,7 @@ export const fetchAlphaVantageMarketSessions = async (): Promise<MarketSession[]
       {
         name: 'HKEX (Hong Kong)',
         status: calculateMarketStatus('hongKong'),
-        hours: formatMarketHours('hongKong'),
+        hours: formatMarketHoursInLocalTime('hongKong'),
         nextEvent: {
           type: calculateMarketStatus('hongKong') === 'open' ? 'close' : 'open',
           time: calculateNextEvent('hongKong', calculateMarketStatus('hongKong') === 'open')
@@ -286,7 +306,7 @@ export const fetchAlphaVantageMarketSessions = async (): Promise<MarketSession[]
       name: 'Nasdaq (US)',
       status: nyseOpen ? 'open' : // Nasdaq and NYSE have same hours
               isOpeningSoon(currentTime, exchangeHours.nasdaq.open) ? 'opening-soon' : 'closed',
-      hours: formatMarketHours('nasdaq'),
+      hours: formatMarketHoursInLocalTime('nasdaq'),
       nextEvent: {
         type: nyseOpen ? 'close' : 'open',
         time: calculateNextEvent('nasdaq', nyseOpen)
@@ -346,8 +366,8 @@ const fallbackMarketSessions = async (): Promise<MarketSession[]> => {
     const closeHour = Math.floor(exchangeHours[market].close);
     const closeMinute = Math.round((exchangeHours[market].close % 1) * 60);
     
-    // Format hours for display
-    const hours = `${openHour.toString().padStart(2, '0')}:${openMinute.toString().padStart(2, '0')}-${closeHour.toString().padStart(2, '0')}:${closeMinute.toString().padStart(2, '0')} UTC (Mon-Fri)`;
+    // Format hours for display in local time
+    const hours = formatMarketHoursInLocalTime(market);
     
     // Calculate next event time
     const nextEventTime = isOpen ? 

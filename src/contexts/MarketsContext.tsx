@@ -41,6 +41,7 @@ export const MarketsProvider: React.FC<MarketsProviderProps> = ({ children }) =>
       // Try Alpha Vantage first with the enhanced implementation
       let sessions;
       try {
+        console.log('Fetching Alpha Vantage market sessions...');
         sessions = await fetchAlphaVantageMarketSessions();
         setDataSource('alpha-vantage');
       } catch (avError) {

@@ -6,7 +6,8 @@ import {
   getTimezoneOffsetHours,
   getLocalTimeDisplay,
   getPreciseMarketTime,
-  getMarketTimeRemaining
+  getMarketTimeRemaining,
+  getTimezoneAbbreviation
 } from '@/utils/dateUtils';
 
 // Fetch market sessions with status based on current time
@@ -51,7 +52,11 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
     const openHour = Math.floor(openUtc);
     const closeHour = Math.floor(closeUtc);
     
-    return `${getLocalTimeDisplay(openHour, openMinutes)}-${getLocalTimeDisplay(closeHour, closeMinutes)} (Mon-Fri)`;
+    const timezoneAbbr = getTimezoneAbbreviation();
+    const localOpenHour = (openHour + getTimezoneOffsetHours() + 24) % 24;
+    const localCloseHour = (closeHour + getTimezoneOffsetHours() + 24) % 24;
+    
+    return `${localOpenHour.toString().padStart(2, '0')}:${openMinutes.toString().padStart(2, '0')}-${localCloseHour.toString().padStart(2, '0')}:${closeMinutes.toString().padStart(2, '0')} ${timezoneAbbr} (Mon-Fri)`;
   };
   
   // Calculate the next opening/closing time with precise timing
