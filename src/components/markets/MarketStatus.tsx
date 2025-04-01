@@ -21,6 +21,18 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
 }) => {
   const { marketSessions, lastUpdated } = useMarkets();
 
+  // Get status badge styling
+  const getStatusBadgeStyle = (status: string) => {
+    switch(status) {
+      case 'open':
+        return "bg-green-500/20 text-green-600 border-green-500";
+      case 'opening-soon':
+        return "bg-amber-500/20 text-amber-600 border-amber-500";
+      default:
+        return "";
+    }
+  };
+
   return (
     <Card>
       <CardHeader className="pb-2">
@@ -43,10 +55,10 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
               <div className="flex justify-between items-center">
                 <span className="font-medium">{market.name}</span>
                 <Badge 
-                  variant={market.status === "open" ? "default" : "outline"}
-                  className={market.status === "open" ? "bg-green-500/20 text-green-600 border-green-500" : ""}
+                  variant={market.status === "closed" ? "outline" : "default"}
+                  className={getStatusBadgeStyle(market.status)}
                 >
-                  {market.status.toUpperCase()}
+                  {market.status === "opening-soon" ? "OPENING SOON" : market.status.toUpperCase()}
                 </Badge>
               </div>
               <div className="text-xs text-muted-foreground">

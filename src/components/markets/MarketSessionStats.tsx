@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,10 +11,16 @@ import {
 
 interface MarketSessionStatsProps {
   title?: string;
+  asianSessionStart?: number;
+  europeanSessionStart?: number;
+  usSessionStart?: number;
 }
 
 const MarketSessionStats = ({ 
   title = "Market Session Impact",
+  asianSessionStart,
+  europeanSessionStart,
+  usSessionStart
 }: MarketSessionStatsProps) => {
   // Market hours in UTC
   const marketHours = {
