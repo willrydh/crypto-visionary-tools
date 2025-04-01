@@ -54,12 +54,10 @@ const Welcome = () => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
   const [currentSlide, setCurrentSlide] = useState(0);
   
-  // Scroll to top on component mount
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
   
-  // Auto-rotate background images
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide(prev => (prev + 1) % backgroundImages.length);
@@ -68,7 +66,6 @@ const Welcome = () => {
     return () => clearInterval(interval);
   }, []);
   
-  // Feature items to display - updated for stronger AI emphasis
   const features = [
     {
       title: "AI-Powered Market Analysis",
@@ -92,9 +89,7 @@ const Welcome = () => {
     }
   ];
   
-  // Login handler functions
   const handleLogin = (provider: string) => {
-    // For demonstration, just navigate to main dashboard
     toast({
       title: "Logged in successfully",
       description: `You've logged in with ${provider}`,
@@ -110,12 +105,10 @@ const Welcome = () => {
     navigate('/');
   };
 
-  // Handle forgot password
   const handleForgotPassword = () => {
     navigate('/forgot-password');
   };
 
-  // Pricing plans
   const pricingPlans = [
     {
       name: 'Freebie',
@@ -185,7 +178,6 @@ const Welcome = () => {
     },
   ];
 
-  // Trading modes
   const tradingModes = [
     {
       name: "Scalping",
@@ -210,7 +202,6 @@ const Welcome = () => {
     }
   ];
 
-  // Extended FAQ sections
   const extendedFaq = [
     {
       question: "How does ProfitPilot compare to other trading platforms?",
@@ -273,10 +264,9 @@ const Welcome = () => {
       answer: "Our AI system employs advanced machine learning techniques that continuously optimize analysis parameters based on market performance data. The system learns from successful and unsuccessful signals to refine its algorithms, adapts to changing market regimes, and incorporates new data sources as they become available. This self-improving approach ensures that ProfitPilot's effectiveness grows over time, particularly in markets you trade most frequently."
     }
   ];
-  
+
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Header */}
       <header className="sticky top-0 z-30 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 items-center">
           <div className="flex items-center gap-2 mr-4">
@@ -304,7 +294,6 @@ const Welcome = () => {
         </div>
       </header>
       
-      {/* Hero Section with blur effect background - enhanced AI messaging */}
       <section className="py-20 px-4 md:px-6 lg:px-8 flex flex-col items-center text-center space-y-8 relative overflow-hidden">
         <div className="absolute inset-0 w-full h-full overflow-hidden">
           {backgroundImages.map((img, index) => (
@@ -344,65 +333,8 @@ const Welcome = () => {
         </div>
       </section>
 
-      {/* Rest of the page content */}
-      <section id="features" className="py-20 px-4 md:px-6 lg:px-8">
-        <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">AI-Powered Trading Features</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              ProfitPilot's advanced AI algorithms analyze live market data 24/7 to deliver institutional-grade trading insights and real-time signals.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, index) => (
-              <Card key={index} className="bg-card/50 backdrop-blur border-border/50 overflow-hidden">
-                <CardContent className="p-6 flex flex-col items-start space-y-4">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    {feature.icon}
-                  </div>
-                  <h3 className="font-medium text-lg">{feature.title}</h3>
-                  <p className="text-sm text-muted-foreground">{feature.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          
-          <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            <div>
-              <h3 className="text-2xl font-bold mb-4">Real-time AI Market Analytics</h3>
-              <p className="text-muted-foreground mb-6">
-                Our AI engine processes live data from Bybit API to deliver real-time price analysis, technical indicators, and market sentiment predictions to help you make informed trading decisions.
-              </p>
-              <ul className="space-y-2">
-                {[
-                  "24/7 AI analysis of live Bybit market data",
-                  "AI-detected support & resistance levels",
-                  "AI-prioritized economic events for volatility prediction",
-                  "Adaptive analysis across multiple timeframes"
-                ].map((item, idx) => (
-                  <li key={idx} className="flex items-start">
-                    <CheckCircle className="h-5 w-5 mr-2 text-green-500 shrink-0 mt-0.5" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="bg-muted rounded-lg p-4 shadow-lg">
-              <img 
-                src="/lovable-uploads/c838292a-0224-48a0-a205-21fde8947f28.png" 
-                alt="AI Market Analytics Dashboard" 
-                className="rounded-md w-full"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-      
-      {/* Platforms Availability Section */}
       <PlatformsAvailability />
       
-      {/* Trading Modes Section */}
       <section id="trading-modes" className="py-20 px-4 md:px-6 lg:px-8 bg-muted">
         <div className="container mx-auto">
           <div className="text-center mb-12">
@@ -460,16 +392,12 @@ const Welcome = () => {
         </div>
       </section>
       
-      {/* Testimonials Section */}
       <CustomerReviews />
       
-      {/* Token Section */}
       <TokenProgress />
       
-      {/* Discord Community Section */}
       <DiscordCommunity />
       
-      {/* Pricing Section */}
       <section id="pricing" className="py-20 px-4 md:px-6 lg:px-8">
         <div className="container mx-auto">
           <div className="text-center mb-12">
@@ -555,12 +483,10 @@ const Welcome = () => {
         </div>
       </section>
       
-      {/* FAQ Section - Update with reference to the separate FAQ component */}
       <section id="faq" className="py-20 px-4 md:px-6 lg:px-8 bg-secondary/50">
         <FAQ />
       </section>
       
-      {/* Additional Features Grid - enhanced AI message */}
       <section className="py-20 px-4 md:px-6 lg:px-8">
         <div className="container mx-auto">
           <div className="text-center mb-12">
@@ -634,7 +560,6 @@ const Welcome = () => {
         </div>
       </section>
       
-      {/* Sign up / Login Section */}
       <section id="signup-section" className="py-20 px-4 md:px-6 lg:px-8 bg-muted">
         <div className="container mx-auto max-w-md text-center">
           <div className="space-y-6">
@@ -691,5 +616,81 @@ const Welcome = () => {
         </div>
       </section>
       
-      {/* Footer */}
-      <footer className="py-12 px-4 md:px-6 lg:px-8 bg-
+      <footer className="py-12 px-4 md:px-6 lg:px-8 bg-background border-t">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <img src={Logo} alt="Logo" className="h-8 w-8" />
+                <div className="font-bold text-xl">ProfitPilot</div>
+              </div>
+              <p className="text-muted-foreground text-sm">
+                The AI-powered trading platform for cryptocurrencies with real-time Bybit API integration.
+              </p>
+            </div>
+            
+            <div>
+              <h3 className="font-medium mb-4">Platform</h3>
+              <ul className="space-y-2 text-sm">
+                <li><a href="#features" className="text-muted-foreground hover:text-primary">Features</a></li>
+                <li><a href="#trading-modes" className="text-muted-foreground hover:text-primary">Trading Modes</a></li>
+                <li><a href="#pricing" className="text-muted-foreground hover:text-primary">Pricing</a></li>
+                <li><a href="#testimonials" className="text-muted-foreground hover:text-primary">Testimonials</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-medium mb-4">Company</h3>
+              <ul className="space-y-2 text-sm">
+                <li><a href="#" className="text-muted-foreground hover:text-primary">About</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-primary">Blog</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-primary">Careers</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-primary">Contact</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-medium mb-4">Legal</h3>
+              <ul className="space-y-2 text-sm">
+                <li><a href="#" className="text-muted-foreground hover:text-primary">Terms</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-primary">Privacy</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-primary">Cookies</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-primary">Licenses</a></li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="border-t mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+            <p className="text-sm text-muted-foreground">
+              © {new Date().getFullYear()} ProfitPilot AI. All rights reserved.
+            </p>
+            <div className="flex space-x-4 mt-4 md:mt-0">
+              <a href="#" className="text-muted-foreground hover:text-primary">
+                <span className="sr-only">Twitter</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+                  <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
+                </svg>
+              </a>
+              <a href="#" className="text-muted-foreground hover:text-primary">
+                <span className="sr-only">GitHub</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+                  <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path>
+                  <path d="M9 18c-4.51 2-5-2-7-2"></path>
+                </svg>
+              </a>
+              <a href="#" className="text-muted-foreground hover:text-primary">
+                <span className="sr-only">Discord</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+                  <path d="M9 7.5V9"></path><path d="M15 7.5V9"></path>
+                  <path d="M5.745 17.64C6.859 17.546 8.062 17.209 8.805 17.014C9.186 16.912 9.459 16.562 9.455 16.165C9.455 15.776 9.455 15.391 9.482 15.015C9.482 14.98 9.457 14.944 9.44 14.917C9.395 14.862 9.327 14.847 9.263 14.847C9.158 14.854 8.986 14.89 8.746 14.965C6.947 15.62 5.54 16.193 5.54 16.193C5.374 16.278 5.222 16.135 5.272 15.962C5.308 15.83 5.374 15.658 5.483 15.479C6.025 14.51 6.643 13.48 7.259 12.477C7.691 11.772 8.071 11.086 8.298 10.647C8.425 10.389 8.649 10.199 8.92 10.125C9.246 10.029 9.579 9.932 9.92 9.848C10.103 9.805 10.311 9.75 10.529 9.703C11.265 9.524 12.106 9.33 12.858 9.249C13.925 9.129 15.004 9.129 16.071 9.249C17.056 9.321 18.092 9.503 19.063 9.703L19.5 9.803C20.214 9.965 20.714 10.584 20.714 11.289C20.714 13.448 20.714 15.786 20.714 17.214C20.714 17.942 20.017 18.464 19.304 18.283C18.568 18.062 17.468 17.748 16.232 17.531C15.735 17.445 15.257 17.068 15.257 16.553C15.257 16.373 15.257 16.192 15.257 16.012C15.257 15.956 15.257 15.888 15.226 15.843C15.189 15.798 15.141 15.744 15.014 15.756C14.95 15.763 14.845 15.793 14.675 15.89C12.994 16.8 11.362 17.644 9.781 18.42C9.182 18.736 8.493 18.736 7.894 18.42C7.129 18.016 6.363 17.816 5.603 17.816C5.288 17.816 5.054 17.72 4.913 17.625C4.602 17.453 4.538 17.047 4.785 16.8C4.987 16.608 5.339 16.55 5.745 16.508"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default Welcome;
