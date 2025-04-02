@@ -79,3 +79,10 @@
 button {
   transition: all 0.2s ease;
 }
+
+/* Frosted glass effect */
+.frost-blur {
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}

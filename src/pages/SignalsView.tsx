@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import PriceChart from '@/components/charts/PriceChart';
 import EnhancedTechnicalAnalysis from '@/components/analysis/EnhancedTechnicalAnalysis';
@@ -103,7 +102,7 @@ const SignalsView = () => {
   
   const currentPrice = cryptoPriceData?.price || 0;
   const change24h = cryptoPriceData?.change24h || 0;
-
+  
   if (isLoading) {
     return (
       <div className="space-y-4 animate-fade-in">
