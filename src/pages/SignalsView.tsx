@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import PriceChart from '@/components/charts/PriceChart';
 import EnhancedTechnicalAnalysis from '@/components/analysis/EnhancedTechnicalAnalysis';
@@ -22,6 +23,7 @@ import { useCrypto } from '@/hooks/useCrypto';
 import CryptoSelector from '@/components/crypto/CryptoSelector';
 import { usePrice } from '@/hooks/usePrice';
 import { DataLoadingPlaceholder } from '@/components/ui/data-loading-placeholder';
+import { IndicatorBreakdown } from '@/components/analysis/IndicatorBreakdown';
 
 const SignalsView = () => {
   const { toast } = useToast();
@@ -83,10 +85,12 @@ const SignalsView = () => {
     }
   };
 
+  // Get static data
   const timeframes = getTimeframes();
   const modeIndicators = getIndicators();
   const volatilityEvents = getVolatilityEvents();
 
+  // Get styles
   const getModeColor = () => {
     switch(tradingMode) {
       case 'scalp': return 'text-blue-500';
@@ -103,10 +107,16 @@ const SignalsView = () => {
   const currentPrice = cryptoPriceData?.price || 0;
   const change24h = cryptoPriceData?.change24h || 0;
   
+  // Use a dedicated loading state component
   if (isLoading) {
     return (
       <div className="space-y-4 animate-fade-in">
-        <TradePageHeader isLoading={true} onRefresh={handleRefresh} />
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+          <div>
+            <h1 className="text-2xl font-bold">Signals</h1>
+            <p className="text-muted-foreground">Loading trading signals data...</p>
+          </div>
+        </div>
         <DataLoadingPlaceholder message="Loading trading signals data..." className="h-[400px]" />
       </div>
     );
@@ -180,7 +190,7 @@ const SignalsView = () => {
               lastUpdated={lastUpdated}
               isLoading={isLoading}
               onRefresh={handleRefresh}
-              title="Enhanced TA"
+              title="Technical Analysis"
             />
             
             <div className="mt-4 bg-card rounded-lg border p-4">
@@ -237,6 +247,8 @@ const SignalsView = () => {
                 ))}
               </ul>
             </div>
+            
+            <IndicatorBreakdown indicators={indicators} />
           </div>
         </div>
         
