@@ -1,0 +1,272 @@
+
+{
+  "appName": "ProfitPilot",
+  "rootComponent": "App.tsx",
+  "providerHierarchy": [
+    "QueryClientProvider",
+    "ThemeProvider",
+    "Router",
+    "TimeframeProvider",
+    "CryptoProvider",
+    "MarketsProvider", 
+    "TradingModeProvider",
+    "TechnicalAnalysisProvider",
+    "SupportResistanceProvider",
+    "PriceProvider"
+  ],
+  "routing": {
+    "provider": "React Router v6",
+    "mainRoutes": [
+      {
+        "path": "/",
+        "component": "Dashboard",
+        "key_components": [
+          "WelcomeHeader",
+          "CryptoSelector",
+          "PriceChart", 
+          "MarketSessionStats",
+          "TradingModeSelector",
+          "EnhancedTechnicalAnalysis",
+          "SupportResistanceLevels"
+        ]
+      },
+      {
+        "path": "/signals",
+        "component": "SignalsView",
+        "key_components": [
+          "CryptoSelector",
+          "PriceChart",
+          "EnhancedTechnicalAnalysis",
+          "TradeSuggestionCard",
+          "IndicatorBreakdown"
+        ]
+      },
+      {
+        "path": "/trade",
+        "component": "TradeSuggestion",
+        "key_components": [
+          "TradePageHeader",
+          "CoinInfo",
+          "PriceChart",
+          "EnhancedTechnicalAnalysis",
+          "TradeSuggestionCard",
+          "TradingEducation"
+        ]
+      },
+      {
+        "path": "/calendar",
+        "component": "CalendarView",
+        "key_components": [
+          "ImprovedEconomicCalendar",
+          "MarketEventList"
+        ]
+      },
+      {
+        "path": "/chart",
+        "component": "ChartView",
+        "key_components": [
+          "CryptoSelector",
+          "PriceChart"
+        ]
+      },
+      {
+        "path": "/settings",
+        "component": "Settings",
+        "key_components": [
+          "SettingsForms"
+        ]
+      },
+      {
+        "path": "/welcome",
+        "component": "Welcome",
+        "key_components": [
+          "MarketingComponents"
+        ]
+      },
+      {
+        "path": "/pricing",
+        "component": "PricingPage",
+        "key_components": [
+          "PricingComponents"
+        ]
+      }
+    ]
+  },
+  "navigation": {
+    "desktop": "MainNavigation",
+    "mobile": "MobileNavigation",
+    "topBar": "TopHeader"
+  },
+  "contextProviders": [
+    {
+      "name": "TimeframeContext",
+      "consumers": [
+        "useTimeframe()",
+        "PriceChart",
+        "TechnicalAnalysisProvider"
+      ]
+    },
+    {
+      "name": "CryptoContext",
+      "consumers": [
+        "useCrypto()",
+        "CryptoSelector",
+        "PriceChart",
+        "TradeSuggestionCard"
+      ]
+    },
+    {
+      "name": "MarketsContext",
+      "consumers": [
+        "useMarkets()",
+        "MarketSessionStats"
+      ]
+    },
+    {
+      "name": "TradingModeContext",
+      "consumers": [
+        "useTradingMode()",
+        "TradingModeSelector",
+        "TechnicalAnalysisProvider"
+      ]
+    },
+    {
+      "name": "TechnicalAnalysisContext", 
+      "consumers": [
+        "useTechnicalAnalysis()",
+        "EnhancedTechnicalAnalysis",
+        "TradeSuggestionCard"
+      ]
+    },
+    {
+      "name": "SupportResistanceContext",
+      "consumers": [
+        "useSupportResistance()",
+        "SupportResistanceLevels"
+      ]
+    },
+    {
+      "name": "PriceContext",
+      "consumers": [
+        "usePrice()",
+        "PriceChart",
+        "CoinInfo",
+        "PriceThermometer"
+      ]
+    },
+    {
+      "name": "ThemeContext",
+      "consumers": [
+        "useTheme()",
+        "UI components"
+      ]
+    }
+  ],
+  "customHooks": [
+    {
+      "name": "useTimeframe",
+      "dependency": "TimeframeContext"
+    },
+    {
+      "name": "useCrypto",
+      "dependency": "CryptoContext"
+    },
+    {
+      "name": "useMarkets",
+      "dependency": "MarketsContext" 
+    },
+    {
+      "name": "useTradingMode",
+      "dependency": "TradingModeContext"
+    },
+    {
+      "name": "useTechnicalAnalysis",
+      "dependency": "TechnicalAnalysisContext"
+    },
+    {
+      "name": "useSupportResistance",
+      "dependency": "SupportResistanceContext"
+    },
+    {
+      "name": "usePrice",
+      "dependency": "PriceContext"
+    },
+    {
+      "name": "useTheme",
+      "dependency": "ThemeContext"
+    }
+  ],
+  "serviceModules": [
+    {
+      "name": "priceDataService.ts",
+      "usedBy": "PriceContext"
+    },
+    {
+      "name": "analysisService.ts",
+      "usedBy": "TechnicalAnalysisContext"
+    },
+    {
+      "name": "marketService.ts",
+      "usedBy": "MarketsContext"
+    },
+    {
+      "name": "alphaVantageService.ts",
+      "usedBy": "MarketsContext"
+    },
+    {
+      "name": "calendarService.ts",
+      "usedBy": "CalendarView"
+    }
+  ],
+  "dataFlowPaths": [
+    {
+      "name": "Cryptocurrency Selection",
+      "flow": [
+        "App",
+        "CryptoContext",
+        "useCrypto()",
+        "PriceContext",
+        "TechnicalAnalysisContext",
+        "UI Components"
+      ]
+    },
+    {
+      "name": "Trading Mode Change",
+      "flow": [
+        "App",
+        "TradingModeContext",
+        "useTradingMode()",
+        "TechnicalAnalysisContext",
+        "UI Components"
+      ]
+    },
+    {
+      "name": "Market Data View",
+      "flow": [
+        "App",
+        "MarketsContext",
+        "useMarkets()",
+        "MarketSessionStats"
+      ]
+    },
+    {
+      "name": "Application Navigation",
+      "flow": [
+        "App",
+        "Router",
+        "RootLayout",
+        "Routes",
+        "Specific Page Component"
+      ]
+    }
+  ],
+  "buildTools": {
+    "bundler": "Vite",
+    "styling": "Tailwind CSS",
+    "components": "shadcn/ui",
+    "stateManagement": "React Context API",
+    "dataFetching": "@tanstack/react-query",
+    "routing": "react-router-dom",
+    "charts": "recharts"
+  }
+}
