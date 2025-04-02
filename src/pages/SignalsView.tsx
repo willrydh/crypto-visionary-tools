@@ -106,7 +106,7 @@ const SignalsView = () => {
 
   if (isLoading) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-4 animate-fade-in">
         <TradePageHeader isLoading={true} onRefresh={handleRefresh} />
         <DataLoadingPlaceholder message="Loading trading signals data..." className="h-[400px]" />
       </div>
@@ -114,7 +114,7 @@ const SignalsView = () => {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
         <div>
           <h1 className="text-2xl font-bold">Signals</h1>
