@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -72,6 +71,8 @@ const Welcome = () => {
         <BlurredBackground 
           imageSrc={heroImages}
           className="opacity-70"
+          animateColors={true}
+          colorTheme="neutral"
         />
         <div className="max-w-5xl mx-auto text-center relative z-10">
           <Badge className="mb-4" variant="outline">Version 2.0 Now Available</Badge>
@@ -137,6 +138,8 @@ const Welcome = () => {
         <BlurredBackground 
           imageSrc={workflowImages}
           className="opacity-60"
+          animateColors={true}
+          colorTheme="green"
         />
         <div className="max-w-7xl mx-auto relative z-10">
           <HowItWorksSection />
