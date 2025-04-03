@@ -7,6 +7,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import ProfitCalculator from '@/components/welcome/ProfitCalculator';
+import LogoImage from '@/assets/logo.svg';
 
 const Welcome = () => {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ const Welcome = () => {
       <header className="border-b border-border py-4 px-6">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-2">
-            <img src="/logo.svg" alt="ProfitPilot" className="h-8 w-8" />
+            <img src={LogoImage} alt="ProfitPilot" className="h-8 w-8" />
             <span className="font-bold text-lg">ProfitPilot</span>
           </Link>
           <div className="flex items-center gap-3">
@@ -41,6 +42,7 @@ const Welcome = () => {
           </div>
         </div>
       </header>
+      
       <section className="py-24 px-6">
         <div className="max-w-5xl mx-auto text-center">
           <h1 className="text-4xl font-bold mb-6">Welcome to ProfitPilot AI</h1>
