@@ -43,7 +43,6 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
     price: 0,
     hourlyHigh: 0,
     hourlyLow: 0,
-    hourlyPricePosition: 50,
     dailyHigh: 0,
     dailyLow: 0,
     weeklyHigh: 0,
@@ -52,12 +51,6 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
   
   // Calculate percentages for positioning within ranges
   const calculateHourlyPercentage = () => {
-    // If we have the 5m-derived position, use it directly
-    if (currentData.hourlyPricePosition !== undefined) {
-      return currentData.hourlyPricePosition;
-    }
-    
-    // Otherwise calculate based on current price
     const { price, hourlyHigh, hourlyLow } = currentData;
     const range = hourlyHigh - hourlyLow;
     if (range <= 0) return 50; // Default to middle if range is invalid
