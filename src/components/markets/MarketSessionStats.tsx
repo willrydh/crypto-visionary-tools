@@ -10,6 +10,7 @@ import {
 import { useMarkets } from '@/hooks/useMarkets';
 import { fetchMarketStatistics, analyzeVolumePatterns } from '@/services/alphaVantageService';
 import { DataSourceIndicator } from '@/components/ui/data-source-indicator';
+import { MarketDataTooltip } from '@/components/ui/market-data-tooltip';
 
 interface MarketSessionStatsProps {
   title?: string;
@@ -33,7 +34,7 @@ interface MarketSessionData {
 }
 
 const MarketSessionStats = ({ 
-  title = "Market Session Impact",
+  title = "Impact",
   asianSessionStart,
   europeanSessionStart,
   usSessionStart,
@@ -278,15 +279,17 @@ const MarketSessionStats = ({
             {title}
           </CardTitle>
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="bg-primary/5">
+            <Badge variant="outline" className="bg-primary/5 text-xs px-1.5 py-0">
               <Clock className="h-3 w-3 mr-1" /> 
-              Market Hours
+              <span className="whitespace-nowrap">Hours</span>
             </Badge>
-            <DataSourceIndicator 
-              source={dataSource === 'alpha-vantage' ? 'Alpha Vantage' : 'Internal'} 
-              isLive={true} 
-              details="Market impact data calculated from historical patterns" 
-            />
+            <MarketDataTooltip 
+              title="Data Source" 
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <p>Source: {dataSource === 'alpha-vantage' ? 'Alpha Vantage' : 'Internal'}</p>
+              <p className="mt-1">Market impact data calculated from historical patterns</p>
+            </MarketDataTooltip>
           </div>
         </div>
       </CardHeader>
