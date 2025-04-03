@@ -26,7 +26,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className={`min-h-screen flex w-full ${isTradingPage ? 'trading-page' : ''}`}>
+      <div className={`min-h-screen flex w-full overflow-x-hidden ${isTradingPage ? 'trading-page' : ''}`}>
         <Sidebar collapsible="icon" className="border-r border-border fixed z-50 h-full">
           <SidebarHeader className="p-4">
             <Link to="/" className="flex items-center space-x-2">
@@ -43,9 +43,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             </div>
           </SidebarFooter>
         </Sidebar>
-        <div className="flex-1 flex flex-col md:ml-64">
+        <div className="flex-1 flex flex-col md:ml-64 overflow-x-hidden">
           <TopHeader />
-          <main className="flex-1 overflow-auto pt-32 pb-16 md:pb-6 z-10">
+          <main className="flex-1 overflow-auto pt-32 pb-16 md:pb-6 z-10 overflow-x-hidden">
             <div className="px-6">
               {children}
             </div>

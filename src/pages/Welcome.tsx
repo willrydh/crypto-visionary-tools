@@ -2,7 +2,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { ArrowRight, GraduationCap, BookOpenCheck, ShieldCheck, TrendingUp, Lightbulb } from 'lucide-react';
+import { 
+  ArrowRight, 
+  GraduationCap, 
+  BookOpenCheck, 
+  ShieldCheck, 
+  TrendingUp, 
+  Lightbulb, 
+  BarChart3
+} from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -45,19 +53,17 @@ const Welcome = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <header className="border-b border-border py-4 px-6">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-2">
             <img src={LogoImage} alt="ProfitPilot" className="h-8 w-8" />
-            <span className="font-bold text-lg">ProfitPilot™</span>
+            <span className="font-bold text-lg">ProfitPilot</span>
           </Link>
           <div className="flex items-center gap-3">
-            <Button variant="ghost" onClick={() => navigate('/')}>
-              Dashboard
-            </Button>
-            <Button onClick={() => navigate('/pricing')}>
-              Pricing
+            <Button onClick={() => navigate('/pricing')} className="flex items-center gap-2">
+              <BarChart3 className="h-4 w-4" />
+              Get TradePilot
             </Button>
           </div>
         </div>
@@ -72,10 +78,10 @@ const Welcome = () => {
           <Badge className="mb-4" variant="outline">Version 2.0 Now Available</Badge>
           <h1 className="text-4xl md:text-5xl font-bold mb-6">Trade Smarter with AI-Powered Signals</h1>
           <p className="text-lg text-muted-foreground mb-8 max-w-3xl mx-auto">
-            ProfitPilot™ uses advanced artificial intelligence to analyze market data and provide real-time trading signals, support & resistance levels, and market insights.
+            ProfitPilot uses advanced artificial intelligence to analyze market data and provide real-time trading signals, support & resistance levels, and market insights.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Button size="lg" onClick={() => navigate('/pricing')}>
+            <Button size="lg" onClick={() => navigate('/pricing')} className="flex items-center gap-2">
               Get Started <ArrowRight className="ml-2" />
             </Button>
             <Button variant="outline" size="lg" onClick={() => navigate('/signals')}>
@@ -148,7 +154,7 @@ const Welcome = () => {
         <div className="max-w-7xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-6">Success Stories</h2>
           <p className="text-lg text-muted-foreground mb-12">
-            See how traders around the world are using ProfitPilot™ AI to achieve their financial goals.
+            See how traders around the world are using ProfitPilot AI to achieve their financial goals.
           </p>
           <Carousel className="w-full max-w-2xl mx-auto">
             <CarouselContent>
@@ -156,7 +162,7 @@ const Welcome = () => {
                 <div className="p-4">
                   <div className="bg-card rounded-lg p-6 shadow-md">
                     <p className="text-lg italic mb-4">
-                      "ProfitPilot™ AI has transformed my trading strategy. The AI-powered signals are incredibly accurate."
+                      "ProfitPilot AI has transformed my trading strategy. The AI-powered signals are incredibly accurate."
                     </p>
                     <div className="text-sm font-medium">— John Doe, Trader</div>
                   </div>
@@ -166,7 +172,7 @@ const Welcome = () => {
                 <div className="p-4">
                   <div className="bg-card rounded-lg p-6 shadow-md">
                     <p className="text-lg italic mb-4">
-                      "I've been using ProfitPilot™ AI for six months, and my profits have increased significantly."
+                      "I've been using ProfitPilot AI for six months, and my profits have increased significantly."
                     </p>
                     <div className="text-sm font-medium">— Jane Smith, Investor</div>
                   </div>
@@ -195,16 +201,16 @@ const Welcome = () => {
         <div className="max-w-7xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-6">Ready to Get Started?</h2>
           <p className="text-lg text-muted-foreground mb-8">
-            Join ProfitPilot™ AI today and start making smarter trading decisions.
+            Join ProfitPilot AI today and start making smarter trading decisions.
           </p>
-          <Button size="lg" onClick={() => navigate('/pricing')}>
-            Explore Pricing <ArrowRight className="ml-2" />
+          <Button size="lg" onClick={() => navigate('/pricing')} className="flex items-center gap-2">
+            Get TradePilot <ArrowRight className="ml-2" />
           </Button>
         </div>
       </section>
 
       <footer className="py-8 px-6 border-t border-border text-center text-muted-foreground">
-        © 2025 ProfitPilot™ by Zentra LLC. All rights reserved.
+        © 2025 ProfitPilot by Zentra LLC. All rights reserved.
       </footer>
     </div>
   );
