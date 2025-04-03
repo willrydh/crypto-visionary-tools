@@ -11,7 +11,8 @@ import {
   ArrowLeftRight,
   PieChart,
   TrendingUp,
-  Clock
+  Clock,
+  Check
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -19,10 +20,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import Logo from '@/assets/logo.svg';
 import { motion } from 'framer-motion';
 
-// Sample education content
+// Sample education content with completed status for a few items
 const educationContent = {
   gettingStarted: [
     {
@@ -32,6 +32,7 @@ const educationContent = {
       duration: '5 min',
       level: 'Beginner',
       completed: true,
+      score: 100,
       icon: <BookOpen className="h-5 w-5" />
     },
     {
@@ -41,6 +42,7 @@ const educationContent = {
       duration: '10 min',
       level: 'Beginner',
       completed: false,
+      score: 0,
       icon: <TrendingUp className="h-5 w-5" />
     },
     {
@@ -50,6 +52,7 @@ const educationContent = {
       duration: '8 min',
       level: 'Beginner',
       completed: false,
+      score: 0,
       icon: <Clock className="h-5 w-5" />
     }
   ],
@@ -61,6 +64,7 @@ const educationContent = {
       duration: '15 min',
       level: 'Intermediate',
       completed: false,
+      score: 0,
       icon: <ArrowLeftRight className="h-5 w-5" />
     },
     {
@@ -70,6 +74,7 @@ const educationContent = {
       duration: '12 min',
       level: 'Intermediate',
       completed: false,
+      score: 0,
       icon: <LineChart className="h-5 w-5" />
     },
     {
@@ -79,6 +84,7 @@ const educationContent = {
       duration: '10 min',
       level: 'Advanced',
       completed: false,
+      score: 0,
       icon: <BrainCircuit className="h-5 w-5" />
     }
   ],
@@ -90,6 +96,7 @@ const educationContent = {
       duration: '20 min',
       level: 'Advanced',
       completed: false,
+      score: 0,
       icon: <PieChart className="h-5 w-5" />
     },
     {
@@ -99,12 +106,97 @@ const educationContent = {
       duration: '15 min',
       level: 'All Levels',
       completed: false,
+      score: 0,
       icon: <BrainCircuit className="h-5 w-5" />
     }
   ]
 };
 
-const EducationCard = ({ item }: { item: any }) => {
+// New component for the learning module content
+const LearningModuleContent = ({ module }: { module: any }) => {
+  const [currentStep, setCurrentStep] = useState(0);
+  const steps = [
+    { title: "Introduction", content: "This module covers the essential concepts of " + module.title + ". We'll explore key principles and practical applications." },
+    { title: "Key Concepts", content: "The fundamental principles of " + module.title + " include understanding market dynamics, pattern recognition, and risk management." },
+    { title: "Practical Application", content: "Now let's see how to apply these concepts in real trading scenarios." },
+    { title: "Quiz", content: "Test your knowledge with this quick quiz about " + module.title + "." },
+    { title: "Summary", content: "Congratulations! You've completed the " + module.title + " module. You now understand the core concepts and how to apply them." }
+  ];
+
+  const handleNextStep = () => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const handlePrevStep = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  return (
+    <div className="mt-6 space-y-4">
+      <div className="flex justify-between items-center">
+        <h3 className="text-xl font-bold">{module.title}</h3>
+        <Badge variant={module.completed ? "default" : "outline"}>
+          {module.completed ? "Completed" : "In Progress"}
+        </Badge>
+      </div>
+      
+      <Progress value={(currentStep / (steps.length - 1)) * 100} className="h-2" />
+      
+      <Card className="mt-4">
+        <CardHeader>
+          <CardTitle>{steps[currentStep].title}</CardTitle>
+          <CardDescription>Step {currentStep + 1} of {steps.length}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground">{steps[currentStep].content}</p>
+          
+          {currentStep === 3 && (
+            <div className="mt-6 space-y-4">
+              <h4 className="font-medium">Sample Quiz Questions:</h4>
+              <div className="space-y-4">
+                <div className="p-3 rounded-md border bg-card/50">
+                  <p className="mb-2">What is the primary benefit of {module.title}?</p>
+                  <div className="flex items-center gap-2 text-green-500">
+                    <Check className="h-4 w-4" />
+                    <span className="text-sm">Improved trading decisions through data analysis</span>
+                  </div>
+                </div>
+                <div className="p-3 rounded-md border bg-card/50">
+                  <p className="mb-2">How can you apply {module.title} in volatile markets?</p>
+                  <div className="flex items-center gap-2 text-green-500">
+                    <Check className="h-4 w-4" />
+                    <span className="text-sm">By focusing on key support and resistance levels</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </CardContent>
+        <CardFooter className="flex justify-between">
+          <Button 
+            variant="outline" 
+            onClick={handlePrevStep}
+            disabled={currentStep === 0}
+          >
+            Previous
+          </Button>
+          <Button 
+            onClick={handleNextStep}
+            disabled={currentStep === steps.length - 1}
+          >
+            {currentStep === steps.length - 2 ? "Complete Quiz" : "Next"}
+          </Button>
+        </CardFooter>
+      </Card>
+    </div>
+  );
+};
+
+const EducationCard = ({ item, onSelect }: { item: any, onSelect: (item: any) => void }) => {
   return (
     <Card className="hover:shadow-md transition-shadow">
       <CardHeader className="pb-2">
@@ -124,7 +216,12 @@ const EducationCard = ({ item }: { item: any }) => {
         <CardDescription>{item.description}</CardDescription>
       </CardHeader>
       <CardFooter className="pt-0">
-        <Button size="sm" className="w-full gap-1" variant={item.completed ? "secondary" : "default"}>
+        <Button 
+          size="sm" 
+          className="w-full gap-1" 
+          variant={item.completed ? "secondary" : "default"}
+          onClick={() => onSelect(item)}
+        >
           {item.completed ? 'Review Again' : 'Start Learning'} 
           <ArrowRight className="h-4 w-4" />
         </Button>
@@ -135,6 +232,7 @@ const EducationCard = ({ item }: { item: any }) => {
 
 const Education = () => {
   const [activeTab, setActiveTab] = useState('getting-started');
+  const [selectedModule, setSelectedModule] = useState<any>(null);
   const navigate = useNavigate();
 
   // Calculate overall progress
@@ -146,31 +244,18 @@ const Education = () => {
   const completedCount = allLessons.filter(lesson => lesson.completed).length;
   const progressPercentage = Math.round((completedCount / allLessons.length) * 100);
 
+  const handleSelectModule = (module: any) => {
+    setSelectedModule(module);
+    window.scrollTo(0, 0);
+  };
+
+  const handleBackToList = () => {
+    setSelectedModule(null);
+  };
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Special header for this page since it can be accessed without being logged in */}
-      <header className="border-b border-border py-4 px-6">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <Link to="/" className="flex items-center space-x-2">
-            <img src={Logo} alt="ProfitPilot" className="h-8 w-8" />
-            <span className="font-bold text-lg">ProfitPilot</span>
-          </Link>
-          
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" onClick={() => navigate('/')}>
-              Dashboard
-            </Button>
-            <Button variant="ghost" onClick={() => navigate('/welcome')}>
-              About
-            </Button>
-            <Button onClick={() => navigate('/welcome')}>
-              Sign Up
-            </Button>
-          </div>
-        </div>
-      </header>
-      
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+      <main className="container mx-auto px-4 sm:px-6 py-8">
         <motion.div 
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -186,102 +271,117 @@ const Education = () => {
           </p>
         </motion.div>
         
-        <div className="mb-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        {selectedModule ? (
+          <div>
+            <Button 
+              variant="outline" 
+              onClick={handleBackToList} 
+              className="mb-6"
+            >
+              Back to Modules
+            </Button>
+            <LearningModuleContent module={selectedModule} />
+          </div>
+        ) : (
+          <>
+            <div className="mb-8">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                <div>
+                  <h2 className="text-xl font-semibold">Your Learning Progress</h2>
+                  <p className="text-sm text-muted-foreground">Track your educational journey</p>
+                </div>
+                
+                <div className="flex items-center gap-2 bg-card p-2 rounded-md border sm:min-w-[200px]">
+                  <div className="w-full max-w-[150px]">
+                    <Progress value={progressPercentage} className="h-2" />
+                  </div>
+                  <span className="text-sm font-medium">{progressPercentage}%</span>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <Card className="bg-blue-50 dark:bg-blue-950/20 border-blue-100 dark:border-blue-900">
+                  <CardContent className="p-4 flex flex-col items-center text-center">
+                    <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-3">
+                      <BookOpen className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <h3 className="font-medium">Beginner</h3>
+                    <p className="text-sm text-muted-foreground">3 Courses</p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-green-50 dark:bg-green-950/20 border-green-100 dark:border-green-900">
+                  <CardContent className="p-4 flex flex-col items-center text-center">
+                    <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-3">
+                      <LineChart className="h-5 w-5 text-green-600 dark:text-green-400" />
+                    </div>
+                    <h3 className="font-medium">Intermediate</h3>
+                    <p className="text-sm text-muted-foreground">3 Courses</p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-purple-50 dark:bg-purple-950/20 border-purple-100 dark:border-purple-900">
+                  <CardContent className="p-4 flex flex-col items-center text-center">
+                    <div className="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mb-3">
+                      <BrainCircuit className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                    </div>
+                    <h3 className="font-medium">Advanced</h3>
+                    <p className="text-sm text-muted-foreground">2 Courses</p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-amber-50 dark:bg-amber-950/20 border-amber-100 dark:border-amber-900">
+                  <CardContent className="p-4 flex flex-col items-center text-center">
+                    <div className="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center mb-3">
+                      <BookMarked className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                    </div>
+                    <h3 className="font-medium">Completed</h3>
+                    <p className="text-sm text-muted-foreground">{completedCount} Lessons</p>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+            
+            <Separator className="my-8" />
+            
             <div>
-              <h2 className="text-xl font-semibold">Your Learning Progress</h2>
-              <p className="text-sm text-muted-foreground">Track your educational journey</p>
+              <Tabs value={activeTab} onValueChange={setActiveTab}>
+                <TabsList className="w-full sm:w-auto mb-6">
+                  <TabsTrigger value="getting-started">Getting Started</TabsTrigger>
+                  <TabsTrigger value="trading-strategies">Trading Strategies</TabsTrigger>
+                  <TabsTrigger value="advanced">Advanced</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="getting-started" className="mt-4">
+                  <h2 className="text-xl font-semibold mb-4">Getting Started with ProfitPilot</h2>
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {educationContent.gettingStarted.map(item => (
+                      <EducationCard key={item.id} item={item} onSelect={handleSelectModule} />
+                    ))}
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="trading-strategies" className="mt-4">
+                  <h2 className="text-xl font-semibold mb-4">Trading Strategies</h2>
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {educationContent.tradingStrategies.map(item => (
+                      <EducationCard key={item.id} item={item} onSelect={handleSelectModule} />
+                    ))}
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="advanced" className="mt-4">
+                  <h2 className="text-xl font-semibold mb-4">Advanced Topics</h2>
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {educationContent.advanced.map(item => (
+                      <EducationCard key={item.id} item={item} onSelect={handleSelectModule} />
+                    ))}
+                  </div>
+                </TabsContent>
+              </Tabs>
             </div>
-            
-            <div className="flex items-center gap-2 bg-card p-2 rounded-md border sm:min-w-[200px]">
-              <div className="w-full max-w-[150px]">
-                <Progress value={progressPercentage} className="h-2" />
-              </div>
-              <span className="text-sm font-medium">{progressPercentage}%</span>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <Card className="bg-blue-50 dark:bg-blue-950/20 border-blue-100 dark:border-blue-900">
-              <CardContent className="p-4 flex flex-col items-center text-center">
-                <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-3">
-                  <BookOpen className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                </div>
-                <h3 className="font-medium">Beginner</h3>
-                <p className="text-sm text-muted-foreground">3 Courses</p>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-green-50 dark:bg-green-950/20 border-green-100 dark:border-green-900">
-              <CardContent className="p-4 flex flex-col items-center text-center">
-                <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-3">
-                  <LineChart className="h-5 w-5 text-green-600 dark:text-green-400" />
-                </div>
-                <h3 className="font-medium">Intermediate</h3>
-                <p className="text-sm text-muted-foreground">3 Courses</p>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-purple-50 dark:bg-purple-950/20 border-purple-100 dark:border-purple-900">
-              <CardContent className="p-4 flex flex-col items-center text-center">
-                <div className="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mb-3">
-                  <BrainCircuit className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                </div>
-                <h3 className="font-medium">Advanced</h3>
-                <p className="text-sm text-muted-foreground">2 Courses</p>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-amber-50 dark:bg-amber-950/20 border-amber-100 dark:border-amber-900">
-              <CardContent className="p-4 flex flex-col items-center text-center">
-                <div className="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center mb-3">
-                  <BookMarked className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-                </div>
-                <h3 className="font-medium">Completed</h3>
-                <p className="text-sm text-muted-foreground">{completedCount} Lessons</p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-        
-        <Separator className="my-8" />
-        
-        <div>
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="w-full sm:w-auto mb-6">
-              <TabsTrigger value="getting-started">Getting Started</TabsTrigger>
-              <TabsTrigger value="trading-strategies">Trading Strategies</TabsTrigger>
-              <TabsTrigger value="advanced">Advanced</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="getting-started" className="mt-4">
-              <h2 className="text-xl font-semibold mb-4">Getting Started with ProfitPilot</h2>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {educationContent.gettingStarted.map(item => (
-                  <EducationCard key={item.id} item={item} />
-                ))}
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="trading-strategies" className="mt-4">
-              <h2 className="text-xl font-semibold mb-4">Trading Strategies</h2>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {educationContent.tradingStrategies.map(item => (
-                  <EducationCard key={item.id} item={item} />
-                ))}
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="advanced" className="mt-4">
-              <h2 className="text-xl font-semibold mb-4">Advanced Topics</h2>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {educationContent.advanced.map(item => (
-                  <EducationCard key={item.id} item={item} />
-                ))}
-              </div>
-            </TabsContent>
-          </Tabs>
-        </div>
+          </>
+        )}
       </main>
     </div>
   );

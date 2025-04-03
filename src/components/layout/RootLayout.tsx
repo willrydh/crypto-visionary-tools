@@ -39,8 +39,9 @@ const RootLayout: React.FC = () => {
                        location.pathname === '/forgot-password' || 
                        location.pathname === '/reset-password' || 
                        location.pathname === '/thank-you' ||
-                       location.pathname === '/education' ||
                        location.pathname === '/easter-egg';
+
+  // Education page should have the regular app navigation, so it's not in the list above
 
   return (
     <TooltipProvider>

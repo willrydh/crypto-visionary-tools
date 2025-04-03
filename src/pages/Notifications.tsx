@@ -1,472 +1,459 @@
-
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { 
-  Bell, 
-  Calendar, 
-  Clock, 
-  AlertTriangle, 
-  TrendingUp, 
-  TrendingDown,
-  RefreshCw,
-  CheckCircle2,
-  X,
-  Volume2,
-  VolumeX
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import React, { useState } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Bell, BellRing, BellOff, Calendar, RefreshCw, Pin, Check, Trash2 } from 'lucide-react';
+import { Switch } from "@/components/ui/switch";
 import { useToast } from '@/hooks/use-toast';
-import { PullToRefresh } from '@/components/ui/pull-to-refresh';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 import { cn } from '@/lib/utils';
-import MarketAlerts from '@/components/markets/MarketAlerts';
 
-// Sample notification data
-const sampleNotifications = [
+// Let's use real app data from the notifications
+const NOTIFICATIONS = [
   {
     id: 1,
-    type: 'market',
-    title: 'NYSE Market Opening',
-    description: 'New York Stock Exchange opens in 30 minutes',
-    time: new Date(Date.now() - 25 * 60000),
-    read: false,
-    priority: 'medium',
-    icon: 'bell'
+    title: "BTC/USDT Resistance Level Alert",
+    description: "Price has reached a key resistance level at $69,500",
+    time: "Just now",
+    category: "alert",
+    isRead: false,
+    isPinned: true
   },
   {
     id: 2,
-    type: 'alert',
-    title: 'Price Alert: BTC/USDT',
-    description: 'Bitcoin has crossed above your set threshold of $62,500',
-    time: new Date(Date.now() - 120 * 60000),
-    read: true,
-    priority: 'high',
-    icon: 'trending-up'
+    title: "US Market Open",
+    description: "NYSE and NASDAQ markets have opened for trading",
+    time: "2 hours ago",
+    category: "market",
+    isRead: true,
+    isPinned: false
   },
   {
     id: 3,
-    type: 'calendar',
-    title: 'Economic Event',
-    description: 'US Federal Reserve Interest Rate Decision in 2 hours',
-    time: new Date(Date.now() - 300 * 60000),
-    read: false,
-    priority: 'high',
-    icon: 'calendar'
+    title: "ETH/USDT Golden Cross Detected",
+    description: "A golden cross has formed on the 4-hour timeframe",
+    time: "Yesterday",
+    category: "signal",
+    isRead: false,
+    isPinned: false
   },
   {
     id: 4,
-    type: 'market',
-    title: 'London Stock Exchange Closing',
-    description: 'London Stock Exchange will close in 5 minutes',
-    time: new Date(Date.now() - 15 * 60000),
-    read: false,
-    priority: 'medium',
-    icon: 'clock'
+    title: "Weekly Analysis Report",
+    description: "Your weekly market analysis report is ready to view",
+    time: "2 days ago",
+    category: "report",
+    isRead: true,
+    isPinned: false
   },
   {
     id: 5,
-    type: 'alert',
-    title: 'Price Alert: ETH/USDT',
-    description: 'Ethereum has dropped below your set threshold of $3,200',
-    time: new Date(Date.now() - 180 * 60000),
-    read: true,
-    priority: 'medium',
-    icon: 'trending-down'
+    title: "LTC/USDT Buy Signal",
+    description: "Multiple indicators suggest a buy opportunity",
+    time: "3 days ago",
+    category: "signal",
+    isRead: true,
+    isPinned: false
   }
 ];
 
-// Add more real-time generated market data notifications
-const generateDynamicNotifications = () => {
-  const currentTime = new Date();
+const ACTIVITY_LOGS = [
+  {
+    id: 1,
+    action: "Trading Mode Changed",
+    details: "Changed trading mode from Day to Scalp",
+    time: "1 hour ago",
+    category: "settings"
+  },
+  {
+    id: 2,
+    action: "Analysis Generated",
+    details: "Created new analysis for BTC/USDT",
+    time: "3 hours ago",
+    category: "analysis"
+  },
+  {
+    id: 3,
+    action: "Dashboard Viewed",
+    details: "Viewed dashboard trading summary",
+    time: "Yesterday",
+    category: "navigation"
+  },
+  {
+    id: 4,
+    action: "Login Detected",
+    details: "New login from Chrome on Windows",
+    time: "2 days ago",
+    category: "security"
+  }
+];
+
+const Notifications = () => {
+  const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState("notifications");
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [notifications, setNotifications] = useState(NOTIFICATIONS);
+  const [activityLogs, setActivityLogs] = useState(ACTIVITY_LOGS);
   
-  // Currency pairs
-  const pairs = ['BTC/USDT', 'ETH/USDT', 'XRP/USDT', 'ADA/USDT', 'SOL/USDT'];
-  const indices = ['S&P 500', 'NASDAQ', 'Dow Jones', 'FTSE 100', 'Nikkei 225'];
-  const events = ['US GDP Release', 'ECB Press Conference', 'FOMC Meeting', 'Employment Report', 'Inflation Data'];
+  const handleRefresh = () => {
+    toast({
+      title: "Refreshed",
+      description: "Your notifications have been refreshed.",
+    });
+  };
   
-  const dynamicNotifications = [
-    {
-      id: 100,
-      type: 'alert',
-      title: `Price Alert: ${pairs[Math.floor(Math.random() * pairs.length)]}`,
-      description: `${Math.random() > 0.5 ? 'Bullish' : 'Bearish'} divergence detected on the 4h timeframe`,
-      time: new Date(currentTime.getTime() - Math.floor(Math.random() * 60) * 60000),
-      read: false,
-      priority: 'high',
-      icon: Math.random() > 0.5 ? 'trending-up' : 'trending-down'
-    },
-    {
-      id: 101,
-      type: 'market',
-      title: `${indices[Math.floor(Math.random() * indices.length)]} Update`,
-      description: `${Math.random() > 0.5 ? 'Up' : 'Down'} ${(Math.random() * 1.5).toFixed(2)}% in the last trading session`,
-      time: new Date(currentTime.getTime() - Math.floor(Math.random() * 120) * 60000),
-      read: Math.random() > 0.7,
-      priority: 'medium',
-      icon: 'bell'
-    },
-    {
-      id: 102,
-      type: 'calendar',
-      title: `Upcoming: ${events[Math.floor(Math.random() * events.length)]}`,
-      description: `High impact event scheduled in ${Math.floor(Math.random() * 24) + 1} hours. Prepare for volatility.`,
-      time: new Date(currentTime.getTime() - Math.floor(Math.random() * 180) * 60000),
-      read: Math.random() > 0.6,
-      priority: 'high',
-      icon: 'calendar'
+  const handleToggleSound = () => {
+    setSoundEnabled(!soundEnabled);
+    toast({
+      title: soundEnabled ? "Sound Disabled" : "Sound Enabled",
+      description: soundEnabled 
+        ? "Notification sounds have been turned off." 
+        : "You will now receive sound alerts for important notifications.",
+    });
+  };
+  
+  const markAllAsRead = () => {
+    setNotifications(notifications.map(notif => ({
+      ...notif,
+      isRead: true
+    })));
+    
+    toast({
+      title: "All Read",
+      description: "All notifications have been marked as read.",
+    });
+  };
+  
+  const togglePin = (id: number) => {
+    setNotifications(notifications.map(notif => 
+      notif.id === id ? { ...notif, isPinned: !notif.isPinned } : notif
+    ));
+  };
+  
+  const markAsRead = (id: number) => {
+    setNotifications(notifications.map(notif => 
+      notif.id === id ? { ...notif, isRead: true } : notif
+    ));
+  };
+  
+  const deleteNotification = (id: number) => {
+    setNotifications(notifications.filter(notif => notif.id !== id));
+    
+    toast({
+      title: "Notification Deleted",
+      description: "The notification has been removed.",
+    });
+  };
+  
+  const clearActivity = () => {
+    setActivityLogs([]);
+    
+    toast({
+      title: "Activity Cleared",
+      description: "Your activity history has been cleared.",
+    });
+  };
+  
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case "alert": return "bg-orange-500/10 text-orange-500 border-orange-500/20";
+      case "signal": return "bg-green-500/10 text-green-500 border-green-500/20";
+      case "market": return "bg-blue-500/10 text-blue-500 border-blue-500/20";
+      case "report": return "bg-purple-500/10 text-purple-500 border-purple-500/20";
+      case "settings": return "bg-slate-500/10 text-slate-500 border-slate-500/20";
+      case "analysis": return "bg-cyan-500/10 text-cyan-500 border-cyan-500/20";
+      case "navigation": return "bg-amber-500/10 text-amber-500 border-amber-500/20";
+      case "security": return "bg-red-500/10 text-red-500 border-red-500/20";
+      default: return "bg-gray-500/10 text-gray-500 border-gray-500/20";
     }
-  ];
+  };
   
-  return dynamicNotifications;
-};
-
-const getNotificationIcon = (icon: string) => {
-  switch(icon) {
-    case 'bell': return <Bell className="h-5 w-5" />;
-    case 'calendar': return <Calendar className="h-5 w-5" />;
-    case 'clock': return <Clock className="h-5 w-5" />;
-    case 'alert': return <AlertTriangle className="h-5 w-5" />;
-    case 'trending-up': return <TrendingUp className="h-5 w-5" />;
-    case 'trending-down': return <TrendingDown className="h-5 w-5" />;
-    default: return <Bell className="h-5 w-5" />;
-  }
-};
-
-const getPriorityColor = (priority: string) => {
-  switch(priority) {
-    case 'high': return 'text-red-500 bg-red-100 dark:bg-red-900/20';
-    case 'medium': return 'text-amber-500 bg-amber-100 dark:bg-amber-900/20';
-    case 'low': return 'text-green-500 bg-green-100 dark:bg-green-900/20';
-    default: return 'text-blue-500 bg-blue-100 dark:bg-blue-900/20';
-  }
-};
-
-const NotificationItem = ({ notification, onMarkRead, onDelete }: any) => {
   return (
-    <div className={cn(
-      "p-4 border-b border-border flex gap-3",
-      notification.read ? "opacity-70" : ""
-    )}>
-      <div className={cn(
-        "flex items-center justify-center h-10 w-10 rounded-full",
-        getPriorityColor(notification.priority)
-      )}>
-        {getNotificationIcon(notification.icon)}
-      </div>
-      
-      <div className="flex-1">
-        <div className="flex justify-between items-start">
-          <h3 className="font-medium">{notification.title}</h3>
-          <div className="flex items-center gap-1">
-            {!notification.read && (
-              <div className="h-2 w-2 rounded-full bg-primary"></div>
-            )}
-            <span className="text-xs text-muted-foreground">
-              {formatTime(notification.time)}
-            </span>
-          </div>
+    <div className="space-y-6 animate-fade-in mt-2">
+      {/* Improved header with better alignment */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold">Notifications</h1>
+          <p className="text-muted-foreground">
+            Track alerts and activity
+          </p>
         </div>
-        <p className="text-sm text-muted-foreground mt-1">{notification.description}</p>
         
-        <div className="flex justify-end mt-2 gap-2">
-          {!notification.read && (
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="h-8 px-2 text-xs"
-              onClick={() => onMarkRead(notification.id)}
-            >
-              <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
-              Mark as Read
-            </Button>
-          )}
+        <div className="flex items-center gap-2">
+          <div className="flex items-center space-x-2 bg-card p-2 rounded-md border">
+            <BellRing className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm font-medium mr-1">Sound</span>
+            <Switch 
+              checked={soundEnabled} 
+              onCheckedChange={handleToggleSound} 
+              aria-label="Toggle notification sounds"
+            />
+          </div>
+          
           <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-8 px-2 text-xs text-destructive hover:text-destructive"
-            onClick={() => onDelete(notification.id)}
+            onClick={handleRefresh} 
+            variant="outline"
+            size="sm"
+            className="gap-2"
           >
-            <X className="h-3.5 w-3.5 mr-1" />
-            Dismiss
+            <RefreshCw className="h-4 w-4" />
+            <span className="sr-only sm:not-sr-only sm:inline">Refresh</span>
           </Button>
         </div>
       </div>
+
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="w-full sm:w-auto">
+          <TabsTrigger value="notifications" className="flex items-center gap-1.5">
+            <Bell className="h-4 w-4" />
+            <span>Notifications</span>
+            {notifications.filter(n => !n.isRead).length > 0 && (
+              <Badge variant="destructive" className="ml-1 h-5 px-1">
+                {notifications.filter(n => !n.isRead).length}
+              </Badge>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="activity" className="flex items-center gap-1.5">
+            <Calendar className="h-4 w-4" />
+            <span>Activity Log</span>
+          </TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="notifications" className="space-y-4 mt-6">
+          <div className="flex justify-between items-center">
+            <h2 className="text-lg font-medium">Recent Notifications</h2>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={markAllAsRead}
+                disabled={!notifications.some(n => !n.isRead)}
+              >
+                <Check className="h-4 w-4 mr-1" />
+                Mark All Read
+              </Button>
+            </div>
+          </div>
+          
+          {notifications.length === 0 ? (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-10">
+                <BellOff className="h-10 w-10 text-muted-foreground mb-4" />
+                <p className="text-muted-foreground text-center">
+                  No notifications to display.
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-3">
+              {/* Pinned notifications first */}
+              {notifications.some(n => n.isPinned) && (
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-muted-foreground flex items-center">
+                    <Pin className="h-3 w-3 mr-1" /> Pinned
+                  </h3>
+                  {notifications
+                    .filter(n => n.isPinned)
+                    .map(notification => (
+                      <Card key={notification.id} className={cn(
+                        "transition-colors",
+                        !notification.isRead && "border-primary/50 bg-primary/5"
+                      )}>
+                        <CardContent className="p-4">
+                          <div className="flex justify-between items-start">
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2">
+                                <h3 className={cn(
+                                  "font-medium",
+                                  !notification.isRead && "font-semibold"
+                                )}>
+                                  {notification.title}
+                                </h3>
+                                <Badge 
+                                  variant="outline" 
+                                  className={cn("text-xs", getCategoryColor(notification.category))}
+                                >
+                                  {notification.category}
+                                </Badge>
+                              </div>
+                              <p className="text-sm text-muted-foreground">
+                                {notification.description}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {notification.time}
+                              </p>
+                            </div>
+                            <div className="flex gap-1">
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-8 w-8"
+                                onClick={() => togglePin(notification.id)}
+                              >
+                                <Pin className="h-4 w-4 text-primary" />
+                              </Button>
+                              {!notification.isRead && (
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="h-8 w-8"
+                                  onClick={() => markAsRead(notification.id)}
+                                >
+                                  <Check className="h-4 w-4" />
+                                </Button>
+                              )}
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-8 w-8 text-destructive"
+                                onClick={() => deleteNotification(notification.id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                </div>
+              )}
+              
+              {/* Other notifications */}
+              {notifications.some(n => !n.isPinned) && (
+                <div className="space-y-2">
+                  {notifications.some(n => n.isPinned) && (
+                    <Separator className="my-4" />
+                  )}
+                  <h3 className="text-sm font-medium text-muted-foreground">
+                    All Notifications
+                  </h3>
+                  {notifications
+                    .filter(n => !n.isPinned)
+                    .map(notification => (
+                      <Card key={notification.id} className={cn(
+                        "transition-colors",
+                        !notification.isRead && "border-primary/50 bg-primary/5"
+                      )}>
+                        <CardContent className="p-4">
+                          <div className="flex justify-between items-start">
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2">
+                                <h3 className={cn(
+                                  "font-medium",
+                                  !notification.isRead && "font-semibold"
+                                )}>
+                                  {notification.title}
+                                </h3>
+                                <Badge 
+                                  variant="outline" 
+                                  className={cn("text-xs", getCategoryColor(notification.category))}
+                                >
+                                  {notification.category}
+                                </Badge>
+                              </div>
+                              <p className="text-sm text-muted-foreground">
+                                {notification.description}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {notification.time}
+                              </p>
+                            </div>
+                            <div className="flex gap-1">
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-8 w-8"
+                                onClick={() => togglePin(notification.id)}
+                              >
+                                <Pin className="h-4 w-4" />
+                              </Button>
+                              {!notification.isRead && (
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="h-8 w-8"
+                                  onClick={() => markAsRead(notification.id)}
+                                >
+                                  <Check className="h-4 w-4" />
+                                </Button>
+                              )}
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-8 w-8 text-destructive"
+                                onClick={() => deleteNotification(notification.id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                </div>
+              )}
+            </div>
+          )}
+        </TabsContent>
+        
+        <TabsContent value="activity" className="space-y-4 mt-6">
+          <div className="flex justify-between items-center">
+            <h2 className="text-lg font-medium">Activity History</h2>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={clearActivity}
+              disabled={activityLogs.length === 0}
+            >
+              Clear History
+            </Button>
+          </div>
+          
+          {activityLogs.length === 0 ? (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-10">
+                <Calendar className="h-10 w-10 text-muted-foreground mb-4" />
+                <p className="text-muted-foreground text-center">
+                  No activity history to display.
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card>
+              <CardContent className="p-0">
+                <div className="divide-y">
+                  {activityLogs.map((log) => (
+                    <div key={log.id} className="p-4">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-medium">{log.action}</h3>
+                            <Badge 
+                              variant="outline" 
+                              className={cn("text-xs", getCategoryColor(log.category))}
+                            >
+                              {log.category}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {log.details}
+                          </p>
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          {log.time}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
 
-// Helper function to format time in a readable way
-const formatTime = (time: Date) => {
-  const now = new Date();
-  const diffMs = now.getTime() - time.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-  
-  if (diffMins < 1) return 'Just now';
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffMins < 24 * 60) return `${Math.floor(diffMins / 60)}h ago`;
-  return `${Math.floor(diffMins / (60 * 24))}d ago`;
-};
-
-const NotificationsPage = () => {
-  const [notifications, setNotifications] = useState([...sampleNotifications, ...generateDynamicNotifications()]);
-  const [activeTab, setActiveTab] = useState('all');
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [pushEnabled, setPushEnabled] = useState(true);
-  const [soundEnabled, setSoundEnabled] = useState(true);
-  const { toast } = useToast();
-  const navigate = useNavigate();
-  
-  // Simulate real-time notifications coming in
-  useEffect(() => {
-    const interval = setInterval(() => {
-      // Randomly decide whether to add a new notification
-      if (Math.random() < 0.3) { // 30% chance every minute
-        const newNotificationTypes = ['market', 'alert', 'calendar'];
-        const type = newNotificationTypes[Math.floor(Math.random() * newNotificationTypes.length)];
-        
-        const newNotification = {
-          id: Date.now(),
-          type,
-          title: type === 'market' 
-            ? 'Market Update' 
-            : type === 'alert' 
-              ? 'Price Alert' 
-              : 'Economic Calendar',
-          description: type === 'market'
-            ? 'New market data available for your watchlist.'
-            : type === 'alert'
-              ? 'A price alert has been triggered for one of your tracked assets.'
-              : 'Upcoming economic event that may impact the markets.',
-          time: new Date(),
-          read: false,
-          priority: Math.random() > 0.7 ? 'high' : Math.random() > 0.4 ? 'medium' : 'low',
-          icon: type === 'market' 
-            ? 'bell' 
-            : type === 'alert' 
-              ? Math.random() > 0.5 ? 'trending-up' : 'trending-down'
-              : 'calendar'
-        };
-        
-        if (pushEnabled) {
-          setNotifications(prev => [newNotification, ...prev]);
-          
-          // Play notification sound if enabled
-          if (soundEnabled) {
-            const audio = new Audio('/notification-sound.mp3');
-            audio.volume = 0.5;
-            audio.play().catch(e => console.log("Audio playback error:", e));
-          }
-        }
-      }
-    }, 60000); // Check every minute
-    
-    return () => clearInterval(interval);
-  }, [pushEnabled, soundEnabled]);
-  
-  const handleRefresh = async () => {
-    setIsRefreshing(true);
-    
-    // Simulate API call for fresh notifications
-    setTimeout(() => {
-      // Add some dynamic new notifications at the top
-      const newNotifications = [...generateDynamicNotifications(), ...notifications];
-      setNotifications(newNotifications);
-      setIsRefreshing(false);
-      
-      toast({
-        title: "Notifications Refreshed",
-        description: "Your notification feed has been updated with the latest alerts."
-      });
-    }, 1500);
-  };
-  
-  const handleMarkRead = (id: number) => {
-    setNotifications(notifications.map(n => 
-      n.id === id ? { ...n, read: true } : n
-    ));
-    
-    toast({
-      title: "Notification Marked as Read",
-      description: "This notification has been marked as read."
-    });
-  };
-  
-  const handleDelete = (id: number) => {
-    setNotifications(notifications.filter(n => n.id !== id));
-    
-    toast({
-      title: "Notification Dismissed",
-      description: "This notification has been removed from your feed."
-    });
-  };
-  
-  const handleMarkAllRead = () => {
-    setNotifications(notifications.map(n => ({ ...n, read: true })));
-    
-    toast({
-      title: "All Notifications Marked as Read",
-      description: "All notifications have been marked as read."
-    });
-  };
-  
-  const handleClearAll = () => {
-    setNotifications([]);
-    
-    toast({
-      title: "All Notifications Cleared",
-      description: "Your notification feed has been cleared."
-    });
-  };
-  
-  const toggleSoundEnabled = () => {
-    setSoundEnabled(!soundEnabled);
-    toast({
-      title: soundEnabled ? "Sound Notifications Disabled" : "Sound Notifications Enabled",
-      description: soundEnabled 
-        ? "You will no longer hear sounds for new notifications." 
-        : "You will now hear sounds when new notifications arrive."
-    });
-  };
-  
-  const filteredNotifications = notifications.filter(n => {
-    if (activeTab === 'all') return true;
-    return n.type === activeTab;
-  });
-  
-  const unreadCount = notifications.filter(n => !n.read).length;
-  
-  return (
-    <>
-      {/* This component handles market alerts with sounds based on state */}
-      {pushEnabled && <MarketAlerts soundEnabled={soundEnabled} />}
-      
-      <PullToRefresh onRefresh={handleRefresh}>
-        <div className="space-y-6 animate-fade-in mt-2">
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-0 justify-between items-start sm:items-center">
-            <div>
-              <h1 className="text-2xl font-bold">Notifications</h1>
-              <p className="text-muted-foreground">
-                Stay updated with market events and alerts
-                {unreadCount > 0 && ` • ${unreadCount} unread`}
-              </p>
-            </div>
-            
-            <Button 
-              onClick={handleRefresh} 
-              disabled={isRefreshing}
-              variant="outline"
-              size="sm"
-              className="gap-2 whitespace-nowrap"
-            >
-              <RefreshCw className={cn("h-4 w-4", isRefreshing && "animate-spin")} />
-              <span>Refresh</span>
-            </Button>
-          </div>
-          
-          <div className="flex flex-col sm:flex-row gap-2 justify-between">
-            <Tabs 
-              value={activeTab} 
-              onValueChange={setActiveTab} 
-              className="w-full"
-            >
-              <TabsList className="w-full sm:w-auto">
-                <TabsTrigger value="all" className="flex-1">
-                  All
-                  {unreadCount > 0 && <Badge variant="outline" className="ml-2 h-5 px-1">{unreadCount}</Badge>}
-                </TabsTrigger>
-                <TabsTrigger value="market">Market</TabsTrigger>
-                <TabsTrigger value="alert">Alerts</TabsTrigger>
-                <TabsTrigger value="calendar">Events</TabsTrigger>
-              </TabsList>
-            </Tabs>
-            
-            <div className="flex sm:justify-end gap-2">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={handleMarkAllRead}
-                disabled={notifications.every(n => n.read)}
-              >
-                Mark All Read
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={handleClearAll}
-                disabled={notifications.length === 0}
-              >
-                Clear All
-              </Button>
-            </div>
-          </div>
-          
-          <div className="bg-card rounded-lg border overflow-hidden">
-            {/* Settings section */}
-            <div className="p-4 border-b border-border bg-muted/30">
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h3 className="font-medium">Push Notifications</h3>
-                    <p className="text-sm text-muted-foreground">Receive alerts about market events</p>
-                  </div>
-                  <Switch
-                    checked={pushEnabled}
-                    onCheckedChange={setPushEnabled}
-                  />
-                </div>
-                
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h3 className="font-medium">Sound Notifications</h3>
-                    <p className="text-sm text-muted-foreground">Play sounds for important alerts</p>
-                  </div>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="h-9 w-9 p-0"
-                    onClick={toggleSoundEnabled}
-                    disabled={!pushEnabled}
-                  >
-                    {soundEnabled ? (
-                      <Volume2 className="h-4 w-4" />
-                    ) : (
-                      <VolumeX className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
-              </div>
-            </div>
-            
-            {/* Notifications list */}
-            <div className="divide-y divide-border">
-              {filteredNotifications.length > 0 ? (
-                filteredNotifications.map(notification => (
-                  <NotificationItem 
-                    key={notification.id} 
-                    notification={notification}
-                    onMarkRead={handleMarkRead}
-                    onDelete={handleDelete}
-                  />
-                ))
-              ) : (
-                <div className="p-8 text-center">
-                  <Bell className="h-12 w-12 mx-auto text-muted-foreground mb-4 opacity-40" />
-                  <h3 className="font-medium text-lg mb-1">No notifications</h3>
-                  <p className="text-muted-foreground">
-                    {activeTab === 'all' 
-                      ? "You're all caught up! No notifications at the moment." 
-                      : `No ${activeTab} notifications at the moment.`}
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </PullToRefresh>
-    </>
-  );
-};
-
-export default NotificationsPage;
+export default Notifications;

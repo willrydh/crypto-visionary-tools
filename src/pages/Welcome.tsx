@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -134,51 +133,7 @@ const Welcome = () => {
           className="opacity-60"
         />
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-bold mb-4">How ProfitPilot Works</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Our AI-powered platform analyzes massive datasets to provide you with actionable trading insights.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              {
-                step: "1",
-                title: "Data Collection",
-                description: "We gather real-time data from multiple exchanges and market sources."
-              },
-              {
-                step: "2",
-                title: "AI Analysis",
-                description: "Our algorithms analyze patterns, trends, and market conditions."
-              },
-              {
-                step: "3",
-                title: "Signal Generation",
-                description: "High-probability trading signals are generated based on analysis."
-              },
-              {
-                step: "4",
-                title: "Trade Execution",
-                description: "Execute trades with confidence based on data-driven signals."
-              }
-            ].map((item, index) => (
-              <div key={index} className="relative">
-                <div className="absolute -left-3 -top-3 w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold">
-                  {item.step}
-                </div>
-                <Card className="pt-6 h-full bg-card/60 backdrop-blur-sm">
-                  <CardHeader>
-                    <CardTitle>{item.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">{item.description}</p>
-                  </CardContent>
-                </Card>
-              </div>
-            ))}
-          </div>
+          <HowItWorksSection />
         </div>
       </section>
       
@@ -251,6 +206,67 @@ const Welcome = () => {
         © 2025 ProfitPilot by Zentra LLC
       </footer>
     </div>
+  );
+};
+
+const HowItWorksSection = () => {
+  return (
+    <section className="py-16 px-6 bg-muted/50">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-10">
+          <h2 className="text-3xl font-bold mb-4">How ProfitPilot Works</h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Our AI-powered platform analyzes massive datasets to provide you with actionable trading insights.
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <Card className="h-full">
+            <CardHeader>
+              <CardTitle>Data Collection</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                We gather real-time data from multiple exchanges and market sources.
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card className="h-full">
+            <CardHeader>
+              <CardTitle>AI Analysis</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                Our algorithms analyze patterns, trends, and market conditions.
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card className="h-full">
+            <CardHeader>
+              <CardTitle>Signal Generation</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                High-probability trading signals are generated based on analysis.
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card className="h-full">
+            <CardHeader>
+              <CardTitle>Trade Execution</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                Execute trades with confidence based on data-driven signals.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </section>
   );
 };
 

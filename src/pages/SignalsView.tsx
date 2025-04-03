@@ -125,8 +125,8 @@ const SignalsView = () => {
 
   return (
     <div className="space-y-6 animate-fade-in mt-2">
-      {/* Page header - fixed for better alignment */}
-      <div className="flex flex-col sm:flex-row gap-2 sm:gap-0 justify-between items-start sm:items-center">
+      {/* Improved page header with better alignment */}
+      <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold">Signals</h1>
           <p className="text-muted-foreground">
