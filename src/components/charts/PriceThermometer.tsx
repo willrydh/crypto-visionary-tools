@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -69,7 +70,7 @@ export const PriceThermometer = () => {
     return () => clearInterval(interval);
   }, [hourlyRange, dailyRange, weeklyRange]);
 
-  // Calculate the subtle visual indication of price strength/weakness
+  // Calculate the visual indications of price strength/weakness
   useEffect(() => {
     // Calculate relative position of current price in each range (0-100%)
     const getPositionInRange = (data: RangeData): number => {
@@ -87,26 +88,36 @@ export const PriceThermometer = () => {
     // Give more weight to hourly, then daily, then weekly
     const combinedPosition = (hourlyPosition * 0.5) + (dailyPosition * 0.3) + (weeklyPosition * 0.2);
 
-    // Determine styles based on combined position
+    // Determine background style based on combined position
+    let newBgStyle = 'bg-card';
     let newBorderStyle = '';
     
-    // Only apply strong visual cues at the extremes
+    // Apply visual cues based on price position
     if (combinedPosition > 80) {
-      // Strong bullish - subtle green border
+      // Strong bullish - green tint and border
+      newBgStyle = 'bg-gradient-to-b from-green-50/30 to-card dark:from-green-950/20 dark:to-card';
       newBorderStyle = 'border-green-500/20 dark:border-green-500/10';
+    } else if (combinedPosition > 65) {
+      // Moderate bullish - light green tint
+      newBgStyle = 'bg-gradient-to-b from-green-50/20 to-card dark:from-green-950/10 dark:to-card';
     } else if (combinedPosition < 20) {
-      // Strong bearish - subtle red border
+      // Strong bearish - red tint and border
+      newBgStyle = 'bg-gradient-to-b from-red-50/30 to-card dark:from-red-950/20 dark:to-card';
       newBorderStyle = 'border-red-500/20 dark:border-red-500/10';
+    } else if (combinedPosition < 35) {
+      // Moderate bearish - light red tint
+      newBgStyle = 'bg-gradient-to-b from-red-50/20 to-card dark:from-red-950/10 dark:to-card';
     }
 
-    // Only update if the style has changed
+    // Only update if the styles have changed
+    if (newBgStyle !== backgroundStyle) {
+      setBackgroundStyle(newBgStyle);
+    }
+    
     if (newBorderStyle !== borderStyle) {
       setBorderStyle(newBorderStyle);
     }
-
-    // Keep background clean and consistent
-    setBackgroundStyle('bg-card');
-  }, [hourlyRange, dailyRange, weeklyRange, borderStyle]);
+  }, [hourlyRange, dailyRange, weeklyRange, backgroundStyle, borderStyle]);
 
   // Calculate the relative position of a value within a range as a percentage
   const getPositionPercent = (value: number, min: number, max: number): number => {
