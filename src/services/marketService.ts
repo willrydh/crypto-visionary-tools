@@ -64,7 +64,7 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
     
     // Asian markets
     tokyo: { open: 0, close: 6 },             // Local Japan time converted to CET/CEST
-    hongKong: { open: 3.5, close: 10 }        // Local Hong Kong time converted to CET/CEST
+    hongKong: { open: 9.5, close: 16 }        // 09:30-16:00 CET/CEST (Updated hours)
   };
   
   // Convert local market hours to UTC for calculations
@@ -226,3 +226,4 @@ export const getCryptoMarketStatus = () => {
     nextMajorEvent: null
   };
 };
+
