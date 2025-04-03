@@ -33,9 +33,9 @@ export const BlurredBackground: React.FC<BlurredBackgroundProps> = ({
       setIsTransitioning(true);
       
       // Create Ken Burns effect with random zoom and position
-      const newScale = 1.1 + Math.random() * 0.15; // Scale between 1.1 and 1.25
-      const newX = Math.random() * 5 - 2.5; // Move between -2.5% and 2.5% on x-axis
-      const newY = Math.random() * 5 - 2.5; // Move between -2.5% and 2.5% on y-axis
+      const newScale = 1.1 + Math.random() * 0.1; // Reduced scale variation (was 0.15)
+      const newX = Math.random() * 3 - 1.5; // Reduced movement (was 5 to 2.5)
+      const newY = Math.random() * 3 - 1.5; // Reduced movement (was 5 to 2.5)
       
       setScale(newScale);
       setPosition({ x: newX, y: newY });
@@ -60,26 +60,26 @@ export const BlurredBackground: React.FC<BlurredBackgroundProps> = ({
     return () => clearInterval(rotationInterval);
   }, [images.length, transitionDuration]);
 
-  // Northern lights color animation effect
+  // Northern lights color animation effect - more subtle
   useEffect(() => {
     if (!animateColors) return;
     
     const colorAnimation = setInterval(() => {
       setColorPhase(prev => (prev + 1) % 360);
-    }, 3000);
+    }, 4000); // Slowed down from 3000 for more subtle transition
     
     return () => clearInterval(colorAnimation);
   }, [animateColors]);
   
-  // Generate northern lights color based on phase
+  // Generate northern lights color based on phase - more subtle colors
   const getNorthernLightsColor = () => {
-    // Subtle aurora colors
+    // More subtle aurora colors (reduced opacity by ~35%)
     const colors = [
-      'rgba(32, 87, 100, 0.1)', // Teal
-      'rgba(23, 92, 61, 0.1)',  // Green
-      'rgba(67, 97, 157, 0.1)', // Blue
-      'rgba(114, 59, 143, 0.1)', // Purple
-      'rgba(17, 75, 95, 0.1)',  // Deep blue
+      'rgba(32, 87, 100, 0.06)', // Teal
+      'rgba(23, 92, 61, 0.06)',  // Green
+      'rgba(67, 97, 157, 0.06)', // Blue
+      'rgba(114, 59, 143, 0.06)', // Purple
+      'rgba(17, 75, 95, 0.06)',  // Deep blue
     ];
     
     const index = Math.floor(colorPhase / (360 / colors.length));
@@ -118,14 +118,14 @@ export const BlurredBackground: React.FC<BlurredBackgroundProps> = ({
       </div>
       {animateColors ? (
         <div 
-          className="absolute inset-0 backdrop-blur-md bg-background/60 northern-lights-animation"
+          className="absolute inset-0 backdrop-blur-md bg-background/70 northern-lights-animation"
           style={{ 
             background: getNorthernLightsColor(),
-            transition: 'background 3s ease-in-out'
+            transition: 'background 4s ease-in-out'  // Slowed down from 3s
           }}
         />
       ) : (
-        <div className="absolute inset-0 backdrop-blur-md bg-background/60" />
+        <div className="absolute inset-0 backdrop-blur-md bg-background/70" />
       )}
     </div>
   );

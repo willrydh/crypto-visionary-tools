@@ -137,28 +137,28 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
     );
     
     // Return appropriate background gradient based on position
-    // Using more subtle gradient colors with reduced opacity
+    // Using more subtle gradient colors with reduced opacity (35% less intense)
     if (weightedPosition > 85) {
-      return "bg-gradient-to-b from-green-900/20 to-green-700/5 northern-lights"; // Strong green but subtle
+      return "bg-gradient-to-b from-green-900/13 to-green-700/3 northern-lights"; // More subtle strong green
     } else if (weightedPosition > 75) {
-      return "bg-gradient-to-b from-green-800/15 to-green-600/5 northern-lights"; // Medium green but subtle
+      return "bg-gradient-to-b from-green-800/10 to-green-600/3 northern-lights"; // More subtle medium green
     } else if (weightedPosition > 65) {
-      return "bg-gradient-to-b from-green-700/15 to-green-500/5 northern-lights"; // Light green but subtle
+      return "bg-gradient-to-b from-green-700/10 to-green-500/3 northern-lights"; // More subtle light green
     } else if (weightedPosition > 55) {
-      return "bg-gradient-to-b from-blue-700/15 to-green-500/5 northern-lights"; // Blue-green but subtle
+      return "bg-gradient-to-b from-blue-700/10 to-green-500/3 northern-lights"; // More subtle blue-green
     } else if (weightedPosition > 45) {
-      return "bg-[#1A1F2C] northern-lights-neutral"; // Neutral dark
+      return "bg-[#1A1F2C]/90 northern-lights-neutral"; // Neutral dark with reduced opacity
     } else if (weightedPosition > 35) {
-      return "bg-gradient-to-b from-amber-900/15 to-amber-700/5 northern-lights"; // Light amber but subtle
+      return "bg-gradient-to-b from-amber-900/10 to-amber-700/3 northern-lights"; // More subtle light amber
     } else if (weightedPosition > 25) {
-      return "bg-gradient-to-b from-red-900/15 to-amber-800/5 northern-lights"; // Amber-red but subtle
+      return "bg-gradient-to-b from-red-900/10 to-amber-800/3 northern-lights"; // More subtle amber-red
     } else {
-      return "bg-gradient-to-b from-red-900/20 to-red-700/5 northern-lights"; // Strong red but subtle
+      return "bg-gradient-to-b from-red-900/13 to-red-700/3 northern-lights"; // More subtle strong red
     }
   };
   
   return (
-    <Card className={`${getBackgroundColor()} border-border/40 text-white transition-colors duration-700`}>
+    <Card className={`${getBackgroundColor()} border-border/30 text-white transition-colors duration-700`}>
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center text-lg text-white">
           {title}
@@ -184,7 +184,7 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium">Hourly Range</span>
-            <Badge variant="outline" className={`border-white/20 ${getZoneColor(hourlyZone)}`}>
+            <Badge variant="outline" className={`border-white/15 ${getZoneColor(hourlyZone)}`}>
               {hourlyZone.charAt(0).toUpperCase() + hourlyZone.slice(1)}
             </Badge>
           </div>
@@ -195,7 +195,7 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
               <span>{formatCurrency(currentData.hourlyHigh)}</span>
             </div>
             
-            <div className="h-2 bg-muted/30 rounded-full">
+            <div className="h-2 bg-muted/20 rounded-full">
               <div 
                 className="absolute w-4 h-4 bg-primary rounded-full -mt-1 transform -translate-x-1/2 transition-all"
                 style={{ left: `${hourlyPercentage}%` }}
@@ -204,9 +204,9 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
             
             {/* Overbought/Oversold Zones */}
             <div className="flex justify-between mt-1">
-              <div className="w-[20%] h-1 bg-red-500/20 rounded-l-full" />
-              <div className="w-[60%] h-1 bg-muted/20" />
-              <div className="w-[20%] h-1 bg-green-500/20 rounded-r-full" />
+              <div className="w-[20%] h-1 bg-red-500/13 rounded-l-full" />
+              <div className="w-[60%] h-1 bg-muted/13" />
+              <div className="w-[20%] h-1 bg-green-500/13 rounded-r-full" />
             </div>
           </div>
         </div>
@@ -215,7 +215,7 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium">Daily Range</span>
-            <Badge variant="outline" className={`border-white/20 ${getZoneColor(dailyZone)}`}>
+            <Badge variant="outline" className={`border-white/15 ${getZoneColor(dailyZone)}`}>
               {dailyZone.charAt(0).toUpperCase() + dailyZone.slice(1)}
             </Badge>
           </div>
@@ -226,7 +226,7 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
               <span>{formatCurrency(currentData.dailyHigh)}</span>
             </div>
             
-            <div className="h-2 bg-muted/30 rounded-full">
+            <div className="h-2 bg-muted/20 rounded-full">
               <div 
                 className="absolute w-4 h-4 bg-primary rounded-full -mt-1 transform -translate-x-1/2 transition-all"
                 style={{ left: `${dailyPercentage}%` }}
@@ -235,9 +235,9 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
             
             {/* Overbought/Oversold Zones */}
             <div className="flex justify-between mt-1">
-              <div className="w-[20%] h-1 bg-red-500/20 rounded-l-full" />
-              <div className="w-[60%] h-1 bg-muted/20" />
-              <div className="w-[20%] h-1 bg-green-500/20 rounded-r-full" />
+              <div className="w-[20%] h-1 bg-red-500/13 rounded-l-full" />
+              <div className="w-[60%] h-1 bg-muted/13" />
+              <div className="w-[20%] h-1 bg-green-500/13 rounded-r-full" />
             </div>
           </div>
         </div>
@@ -246,7 +246,7 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium">Weekly Range</span>
-            <Badge variant="outline" className={`border-white/20 ${getZoneColor(weeklyZone)}`}>
+            <Badge variant="outline" className={`border-white/15 ${getZoneColor(weeklyZone)}`}>
               {weeklyZone.charAt(0).toUpperCase() + weeklyZone.slice(1)}
             </Badge>
           </div>
@@ -257,7 +257,7 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
               <span>{formatCurrency(currentData.weeklyHigh)}</span>
             </div>
             
-            <div className="h-2 bg-muted/30 rounded-full">
+            <div className="h-2 bg-muted/20 rounded-full">
               <div 
                 className="absolute w-4 h-4 bg-primary rounded-full -mt-1 transform -translate-x-1/2 transition-all"
                 style={{ left: `${weeklyPercentage}%` }}
@@ -266,9 +266,9 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
             
             {/* Overbought/Oversold Zones */}
             <div className="flex justify-between mt-1">
-              <div className="w-[20%] h-1 bg-red-500/20 rounded-l-full" />
-              <div className="w-[60%] h-1 bg-muted/20" />
-              <div className="w-[20%] h-1 bg-green-500/20 rounded-r-full" />
+              <div className="w-[20%] h-1 bg-red-500/13 rounded-l-full" />
+              <div className="w-[60%] h-1 bg-muted/13" />
+              <div className="w-[20%] h-1 bg-green-500/13 rounded-r-full" />
             </div>
           </div>
         </div>

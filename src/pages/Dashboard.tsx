@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { LineChart } from 'lucide-react';
@@ -214,18 +215,7 @@ const Dashboard = () => {
         <div className="space-y-6">
           <PriceThermometer />
           
-          <div className={isMobile ? "block lg:hidden" : "hidden lg:block"}>
-            <div className="import">
-              {(() => {
-                const DataInsights = React.lazy(() => import('@/components/analysis/DataInsights'));
-                return (
-                  <React.Suspense fallback={<div className="p-4 bg-card rounded-lg border border-border text-center">Loading insights...</div>}>
-                    <DataInsights />
-                  </React.Suspense>
-                );
-              })()}
-            </div>
-          </div>
+          {/* DataInsights component removed from here */}
         </div>
       </div>
       
