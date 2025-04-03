@@ -72,6 +72,33 @@ export const PriceThermometer = () => {
     return "bg-red-500";
   };
   
+  // Calculate background color based on average of all percentages
+  const getBackgroundGradient = () => {
+    const hourlyPercentage = getHourlyPercentage();
+    const dailyPercentage = getDailyPercentage();
+    const weeklyPercentage = getWeeklyPercentage();
+    
+    // Calculate weighted average (giving more weight to shorter timeframes)
+    const weightedAverage = (
+      (hourlyPercentage * 0.5) + 
+      (dailyPercentage * 0.3) + 
+      (weeklyPercentage * 0.2)
+    );
+    
+    // Determine background color intensity based on weightedAverage
+    if (weightedAverage > 75) {
+      return "from-green-950/70 to-green-900/40"; // Strong green for very bullish
+    } else if (weightedAverage > 60) {
+      return "from-green-950/50 to-green-900/20"; // Light green for bullish
+    } else if (weightedAverage > 40) {
+      return "from-blue-950/50 to-blue-900/20"; // Neutral blue
+    } else if (weightedAverage > 25) {
+      return "from-amber-950/50 to-amber-900/20"; // Light amber/orange for bearish
+    } else {
+      return "from-red-950/70 to-red-900/40"; // Strong red for very bearish
+    }
+  };
+  
   if (isLoading || !priceData[symbol]) {
     return (
       <Card className="bg-[#1A1F2C] border-border/40 text-white">
@@ -90,9 +117,10 @@ export const PriceThermometer = () => {
   const hourlyPercentage = getHourlyPercentage();
   const dailyPercentage = getDailyPercentage();
   const weeklyPercentage = getWeeklyPercentage();
+  const backgroundGradient = getBackgroundGradient();
   
   return (
-    <Card className="bg-[#1A1F2C] border-border/40 text-white">
+    <Card className={`bg-gradient-to-b ${backgroundGradient} border-border/40 text-white transition-colors duration-500`}>
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg text-white">Price Range</CardTitle>
