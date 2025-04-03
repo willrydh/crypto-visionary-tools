@@ -68,27 +68,33 @@ export const TechnicalAnalysisProvider: React.FC<TechnicalAnalysisProviderProps>
         indicatorTypes
       );
       
-      setIndicators(fetchedIndicators);
-      
-      // Only change bias if it's not locked or if force = true
-      if (!biasLocked || force) {
-        // Determine market bias based on indicators
-        const bias = calculateMarketBias(fetchedIndicators);
-        setCurrentBias(bias);
-        setBiasLocked(true);
+      // Ensure we have indicators before setting them
+      if (fetchedIndicators && fetchedIndicators.length > 0) {
+        setIndicators(fetchedIndicators);
+        
+        // Only change bias if it's not locked or if force = true
+        if (!biasLocked || force) {
+          // Determine market bias based on indicators
+          const bias = calculateMarketBias(fetchedIndicators);
+          setCurrentBias(bias);
+          setBiasLocked(true);
+        }
+        
+        // Generate trade suggestion
+        const suggestion = await generateTradeSuggestion(
+          symbol, 
+          fetchedIndicators, 
+          currentBias, 
+          tradingMode
+        );
+        
+        setTradeSuggestion(suggestion);
+        setConfidenceScore(suggestion.confidence);
+        setLastUpdated(new Date());
+      } else {
+        // If no indicators were returned, log an error
+        console.error('No indicators returned from fetchTechnicalIndicators');
       }
-      
-      // Generate trade suggestion
-      const suggestion = await generateTradeSuggestion(
-        symbol, 
-        indicators, 
-        currentBias, 
-        tradingMode
-      );
-      
-      setTradeSuggestion(suggestion);
-      setConfidenceScore(suggestion.confidence);
-      setLastUpdated(new Date());
     } catch (error) {
       console.error('Error generating analysis:', error);
     } finally {
