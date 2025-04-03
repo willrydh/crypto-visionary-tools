@@ -1,693 +1,219 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { 
-  Github,
-  Mail,
-  LogIn,
-  ChevronRight,
-  Sparkles,
-  LineChart,
-  ArrowUpRight,
-  BellRing,
-  CandlestickChart,
-  Rocket,
-  ChevronDown,
-  Moon,
-  Sun,
-  CheckCircle,
-  X,
-  ExternalLink,
-  HelpCircle,
-  DollarSign,
-  Shield,
-  Zap,
-  BadgePercent,
-  TrendingUp,
-  Clock,
-  Scale,
-  CalendarDays,
-  Bot,
-  Cpu,
-  BrainCircuit
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import Logo from '@/assets/logo.svg';
-import { useToast } from '@/hooks/use-toast';
-import CustomerReviews from '@/components/marketing/CustomerReviews';
-import PlatformsAvailability from '@/components/marketing/PlatformsAvailability';
-import DiscordCommunity from '@/components/marketing/DiscordCommunity';
-import TokenProgress from '@/components/marketing/TokenProgress';
-import FAQ from './FAQ';
-
-const backgroundImages = [
-  "/lovable-uploads/c838292a-0224-48a0-a205-21fde8947f28.png",
-  "/lovable-uploads/fc481dcb-6dc5-4724-8938-9fef96e6feaf.png",
-  "/lovable-uploads/83cd3ce3-8a61-4043-aa68-18467165dbc3.png"
-];
+import { Button } from "@/components/ui/button";
+import { ArrowRight, GraduationCap, BookOpenCheck, ShieldCheck, TrendingUp, Lightbulb } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
+import ProfitCalculator from '@/components/welcome/ProfitCalculator';
 
 const Welcome = () => {
-  const { toast } = useToast();
   const navigate = useNavigate();
-  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
-  const [currentSlide, setCurrentSlide] = useState(0);
-  
+  const [isMobile, setIsMobile] = useState(false);
+
   useEffect(() => {
-    window.scrollTo(0, 0);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
-  
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide(prev => (prev + 1) % backgroundImages.length);
-    }, 5000);
-    
-    return () => clearInterval(interval);
-  }, []);
-  
-  const features = [
-    {
-      title: "AI-Powered Market Analysis",
-      description: "Our advanced AI continuously analyzes market data from Bybit API in real time for high-precision signals",
-      icon: <BrainCircuit className="h-5 w-5 text-primary" />
-    },
-    {
-      title: "Adaptive Trading Signals",
-      description: "AI-generated trade setups that adapt to market conditions across scalping, day trading and swing strategies",
-      icon: <ArrowUpRight className="h-5 w-5 text-primary" />
-    },
-    {
-      title: "Real-Time Economic Insights",
-      description: "AI-processed market events with volatility forecasting for maximum trading advantage",
-      icon: <BellRing className="h-5 w-5 text-primary" />
-    },
-    {
-      title: "Intelligent Trading Assistant",
-      description: "Experience our free AI trading co-pilot or upgrade to ProfitPilot Pro for advanced features",
-      icon: <Bot className="h-5 w-5 text-primary" />
-    }
-  ];
-  
-  const handleLogin = (provider: string) => {
-    toast({
-      title: "Logged in successfully",
-      description: `You've logged in with ${provider}`,
-    });
-    navigate('/');
-  };
-  
-  const handleGuestAccess = () => {
-    toast({
-      title: "Guest Access",
-      description: "You've accessed the app as a guest",
-    });
-    navigate('/');
-  };
-
-  const handleForgotPassword = () => {
-    navigate('/forgot-password');
-  };
-
-  const pricingPlans = [
-    {
-      name: 'Freebie',
-      description: '30-day Free Trial',
-      price: {
-        monthly: 0,
-        yearly: 0,
-      },
-      badge: '30 Days Free',
-      features: [
-        { name: 'Basic trading signals', included: true },
-        { name: 'Limited dashboard access', included: true },
-        { name: 'Market sentiment indicators', included: true },
-        { name: 'Basic price charts', included: true },
-        { name: 'Technical analysis', included: false },
-        { name: 'Economic calendar', included: false },
-        { name: 'Advanced signals', included: false },
-        { name: 'Trading', included: false },
-        { name: 'Premium analytics', included: false },
-      ],
-      cta: 'Start Free Trial',
-      popular: false,
-    },
-    {
-      name: 'Pro',
-      description: 'Perfect for active traders',
-      price: {
-        monthly: 39,
-        yearly: 349,
-      },
-      badge: 'Most Popular',
-      features: [
-        { name: 'Basic trading signals', included: true },
-        { name: 'Full dashboard access', included: true },
-        { name: 'Market sentiment indicators', included: true },
-        { name: 'Advanced price charts', included: true },
-        { name: 'Full technical analysis suite', included: true },
-        { name: 'Economic calendar', included: true },
-        { name: 'Advanced signals & alerts', included: true },
-        { name: 'Trading', included: false },
-        { name: 'Premium analytics', included: false },
-      ],
-      cta: 'Get Pro',
-      popular: true,
-    },
-    {
-      name: 'Guru',
-      description: 'For professional traders',
-      price: {
-        monthly: 99,
-        yearly: 995,
-      },
-      badge: 'Ultimate',
-      features: [
-        { name: 'Basic trading signals', included: true },
-        { name: 'Full dashboard access', included: true },
-        { name: 'Market sentiment indicators', included: true },
-        { name: 'Advanced price charts', included: true },
-        { name: 'Full technical analysis suite', included: true },
-        { name: 'Economic calendar', included: true },
-        { name: 'Advanced signals & alerts', included: true },
-        { name: 'Trading via API', included: true },
-        { name: 'Premium analytics & logging', included: true },
-      ],
-      cta: 'Get Guru',
-      popular: false,
-    },
-  ];
-
-  const tradingModes = [
-    {
-      name: "Scalping",
-      icon: <Rocket className="h-5 w-5 text-blue-500" />,
-      description: "Ultra-short term trading (minutes to hours). Focus on rapid price movements with tight stop-losses.",
-      indicators: ["MA20", "MA50", "StochRSI", "MACD", "Volume"],
-      timeframes: ["1m", "5m"]
-    },
-    {
-      name: "Day Trading",
-      icon: <Sun className="h-5 w-5 text-amber-500" />,
-      description: "Short-term trading (hours). Positions opened and closed within the same day, focusing on intraday trends.",
-      indicators: ["MA50", "MA100", "MACD", "VWAP", "RSI"],
-      timeframes: ["1h", "4h"]
-    },
-    {
-      name: "Night Trading",
-      icon: <Moon className="h-5 w-5 text-indigo-500" />,
-      description: "Medium-term trading (12+ hours). Positions that can be held overnight, focusing on larger price swings.",
-      indicators: ["MA100", "MA200", "Bollinger Bands", "RSI", "MACD"],
-      timeframes: ["4h", "1d"]
-    }
-  ];
-
-  const extendedFaq = [
-    {
-      question: "How does ProfitPilot compare to other trading platforms?",
-      answer: "ProfitPilot stands apart with its AI-driven analysis that combines multiple technical indicators, economic data, and market sentiment to provide high-confidence trading signals. Unlike platforms that offer generic indicators, we adapt to your trading style and provide actionable insights with specific entry and exit points. Our backtested strategies have shown 65-75% accuracy in trending markets, significantly outperforming standard technical analysis approaches."
-    },
-    {
-      question: "Can I use ProfitPilot alongside my existing trading platform?",
-      answer: "Absolutely! ProfitPilot is designed to complement your existing trading setup. You can use our signals and analysis while executing trades on your preferred platform like Bybit, Binance, or any other exchange. Many of our users keep ProfitPilot open on a separate screen for real-time signals while trading on their usual platform. We also offer API integration with popular exchanges for Pro and Guru users."
-    },
-    {
-      question: "How often are trading signals updated?",
-      answer: "Our system continuously analyzes market conditions and updates signals in real-time. For scalping mode, new signals can appear within minutes as market conditions change. Day trading signals are refreshed hourly, while swing trading signals are updated several times daily. Each signal includes a timestamp so you know exactly when it was generated. Premium users receive instant alerts when high-confidence signals emerge."
-    },
-    {
-      question: "Is ProfitPilot suitable for beginners?",
-      answer: "Yes, ProfitPilot is designed for traders of all experience levels. Beginners benefit from our clear, actionable signals and educational resources that explain the reasoning behind each recommendation. Our confidence scores and risk metrics help new traders make informed decisions without needing deep technical knowledge. However, we always recommend understanding basic trading principles and proper risk management before trading with real capital."
-    },
-    {
-      question: "What cryptocurrencies does ProfitPilot support?",
-      answer: "ProfitPilot analyzes over 50 major cryptocurrencies and trading pairs, with primary focus on BTC, ETH, SOL, BNB, XRP and other high-volume assets. Our Pro and Guru plans provide coverage for 100+ altcoins and emerging tokens. We continuously add support for new cryptocurrencies based on market capitalization, trading volume, and user requests."
-    },
-    {
-      question: "Can I customize the analysis parameters?",
-      answer: "Yes, Pro and Guru subscribers can customize various aspects of their analysis. You can adjust risk tolerance, preferred indicators, timeframes, and create custom alert conditions. The platform remembers your preferences and tailors future signals accordingly. Free users have access to our pre-configured analysis settings, which are optimized based on current market conditions."
-    },
-    {
-      question: "What risk management features does ProfitPilot offer?",
-      answer: "ProfitPilot incorporates sophisticated risk management tools including suggested stop-loss and take-profit levels for every trade signal. Our system calculates optimal position sizes based on your account balance and risk tolerance. We also provide volatility metrics and confidence scores to help you assess potential downside. Pro and Guru users gain access to advanced portfolio analytics that monitor overall exposure and correlation between positions."
-    },
-    {
-      question: "How is the PP Token integrated with the platform?",
-      answer: "The PP Token forms the backbone of our ecosystem, offering numerous benefits to holders. Token holders receive discounts on subscription plans (up to 30% for significant holders), exclusive early access to new features, and participation in governance decisions. The token also powers our staking program, where users can earn additional rewards for providing liquidity. As our platform grows, the utility and demand for PP Token will continue to expand."
-    },
-    {
-      question: "What kind of customer support do you provide?",
-      answer: "All users have access to our comprehensive knowledge base and community forums. Email support is available for all subscription tiers, with expected response times of 24-48 hours for free users. Pro subscribers enjoy priority email support (12-hour response) and chat support during business hours. Guru members receive VIP treatment with 24/7 chat support and dedicated account managers for personalized assistance. Our Discord community also offers peer support and regular Q&A sessions with our trading experts."
-    },
-    {
-      question: "How accurate are the trading signals?",
-      answer: "Our trading signals typically achieve 65-75% accuracy in trending markets and 55-65% in ranging markets. Each signal comes with a confidence score based on multiple confirming indicators and historical performance. High-confidence signals (rated 75%+) have demonstrated over 80% accuracy in our backtesting. We're transparent about our methodology and provide detailed explanations for each signal, allowing you to understand the reasoning and make informed decisions."
-    },
-    {
-      question: "What advanced data analysis features does ProfitPilot provide?",
-      answer: "ProfitPilot leverages powerful AI algorithms to analyze market microstructure, order flow, volume profiles, and whale wallet movements. Our system identifies high-probability trading setups by combining on-chain analytics with technical indicators and market sentiment. Pro users gain access to daily in-depth market reports, correlation heatmaps, and sector rotation analysis. For institutional traders, we offer custom API solutions with tailored analysis parameters and risk models."
-    },
-    {
-      question: "How does ProfitPilot handle volatile market conditions?",
-      answer: "During periods of high volatility, ProfitPilot automatically adjusts its analysis parameters and risk assessment. Our volatility-adaptive algorithms increase confirmation thresholds for signals, suggest wider stop-losses, and may recommend reduced position sizes. The platform provides real-time volatility metrics with historical comparisons so you can make informed decisions. Pro and Guru users receive automated volatility alerts before major market events."
-    },
-    {
-      question: "Can ProfitPilot help with tax reporting for my trades?",
-      answer: "Yes, ProfitPilot Pro and Guru plans include comprehensive trade logging and tax reporting features. The system automatically tracks your trading activity when connected to exchanges via API, categorizes transactions, calculates realized and unrealized gains/losses, and generates customizable reports for tax purposes. Our platform supports various accounting methods (FIFO, LIFO, HIFO) and can export data in formats compatible with popular tax software."
-    },
-    {
-      question: "What educational resources does ProfitPilot offer?",
-      answer: "ProfitPilot provides an extensive library of educational content for traders at all levels. This includes detailed explanations of every signal and indicator, interactive tutorials on trading strategies, weekly market analysis webinars, and a structured learning path from basic to advanced concepts. Pro users gain access to expert strategy workshops, proprietary research reports, and personalized learning recommendations based on your trading history and performance."
-    },
-    {
-      question: "How does the AI-powered system improve over time?",
-      answer: "Our AI system employs advanced machine learning techniques that continuously optimize analysis parameters based on market performance data. The system learns from successful and unsuccessful signals to refine its algorithms, adapts to changing market regimes, and incorporates new data sources as they become available. This self-improving approach ensures that ProfitPilot's effectiveness grows over time, particularly in markets you trade most frequently."
-    }
-  ];
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <header className="sticky top-0 z-30 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center">
-          <div className="flex items-center gap-2 mr-4">
-            <img src={Logo} alt="Logo" className="h-8 w-8" />
-            <div className="font-bold text-xl">ProfitPilot</div>
-          </div>
-          
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium flex-1">
-            <a href="#features" className="transition-colors hover:text-foreground/80">Features</a>
-            <a href="#trading-modes" className="transition-colors hover:text-foreground/80">Trading Modes</a>
-            <a href="#pricing" className="transition-colors hover:text-foreground/80">Pricing</a>
-            <a href="#testimonials" className="transition-colors hover:text-foreground/80">Testimonials</a>
-            <a href="#token" className="transition-colors hover:text-foreground/80">PP Token</a>
-            <a href="#faq" className="transition-colors hover:text-foreground/80">FAQ</a>
-          </nav>
-          
-          <div className="flex items-center gap-2 ml-auto">
-            <Button variant="ghost" onClick={() => document.getElementById('signup-section')?.scrollIntoView({ behavior: 'smooth' })}>
-              Log In
+    <div className="min-h-screen bg-background">
+      <header className="border-b border-border py-4 px-6">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <Link to="/" className="flex items-center space-x-2">
+            <img src="/logo.svg" alt="ProfitPilot" className="h-8 w-8" />
+            <span className="font-bold text-lg">ProfitPilot</span>
+          </Link>
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" onClick={() => navigate('/')}>
+              Dashboard
             </Button>
-            <Button onClick={() => document.getElementById('signup-section')?.scrollIntoView({ behavior: 'smooth' })}>
-              Sign Up
+            <Button onClick={() => navigate('/pricing')}>
+              Pricing
             </Button>
           </div>
         </div>
       </header>
-      
-      <section className="py-20 px-4 md:px-6 lg:px-8 flex flex-col items-center text-center space-y-8 relative overflow-hidden">
-        <div className="absolute inset-0 w-full h-full overflow-hidden">
-          {backgroundImages.map((img, index) => (
-            <div
-              key={index}
-              className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ${
-                index === currentSlide ? 'opacity-100' : 'opacity-0'
-              }`}
-            >
-              <img 
-                src={img} 
-                alt={`Chart Background ${index + 1}`} 
-                className="object-cover w-full h-full"
-              />
-            </div>
-          ))}
-          <div className="absolute inset-0 frost-blur"></div>
-        </div>
-        
-        <div className="relative z-10">
-          <Badge variant="outline" className="mb-4 bg-primary/10 border-primary/30">AI-Powered Trading Technology</Badge>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold max-w-3xl leading-tight tracking-tighter">
-            Your AI Trading Assistant with Live Bybit Integration
-          </h1>
-          <p className="text-muted-foreground text-lg md:text-xl max-w-2xl">
-            ProfitPilot delivers real-time AI analysis, intelligent trade suggestions, and adaptive signals powered by live Bybit API data.
+      <section className="py-24 px-6">
+        <div className="max-w-5xl mx-auto text-center">
+          <h1 className="text-4xl font-bold mb-6">Welcome to ProfitPilot AI</h1>
+          <p className="text-lg text-muted-foreground mb-8">
+            Unlock the power of AI-driven trading signals and market analysis.
+            Start making smarter, data-backed decisions today.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 pt-4">
-            <Button size="lg" onClick={handleGuestAccess} className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary">
-              Try AI Trading Now
-              <ChevronRight className="ml-2 h-4 w-4" />
+          <div className="flex justify-center gap-4">
+            <Button size="lg" onClick={() => navigate('/pricing')}>
+              Get Started <ArrowRight className="ml-2" />
             </Button>
-            <Button size="lg" variant="outline" onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}>
-              Explore AI Features
+            <Button variant="outline" size="lg" onClick={() => navigate('/signals')}>
+              Explore Signals
             </Button>
+          </div>
+        </div>
+      </section>
+      
+      <section className="py-16 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold mb-3">Calculate Your Trading Potential</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              See how ProfitPilot can help you reach your trading goals with enhanced signals and market insights.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            <ProfitCalculator className="w-full max-w-xl mx-auto lg:mx-0 lg:ml-auto" />
+            
+            <div className="space-y-6">
+              <div className="bg-card/50 p-6 rounded-lg border border-border">
+                <h3 className="text-xl font-bold mb-3 flex items-center gap-2">
+                  <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary">1</span>
+                  Better Decision Making
+                </h3>
+                <p className="text-muted-foreground">
+                  ProfitPilot provides real-time signals and market insights to help you make informed trading decisions.
+                </p>
+              </div>
+              
+              <div className="bg-card/50 p-6 rounded-lg border border-border">
+                <h3 className="text-xl font-bold mb-3 flex items-center gap-2">
+                  <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary">2</span>
+                  Market Timing
+                </h3>
+                <p className="text-muted-foreground">
+                  Know exactly when markets open and close with notifications and market session indicators.
+                </p>
+              </div>
+              
+              <div className="bg-card/50 p-6 rounded-lg border border-border">
+                <h3 className="text-xl font-bold mb-3 flex items-center gap-2">
+                  <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary">3</span>
+                  Reduced Emotions
+                </h3>
+                <p className="text-muted-foreground">
+                  Data-driven signals help eliminate emotional trading decisions and keep you focused on your strategy.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <PlatformsAvailability />
-      
-      <section id="trading-modes" className="py-20 px-4 md:px-6 lg:px-8 bg-muted">
-        <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Three Trading Modes for Any Strategy</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              ProfitPilot adapts to your trading style with specialized modes for different trading timeframes and strategies.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {tradingModes.map((mode, index) => (
-              <Card key={index} className={`${
-                index === 0 ? 'border-blue-500/20 bg-blue-500/5' : 
-                index === 1 ? 'border-amber-500/20 bg-amber-500/5' : 
-                'border-indigo-500/20 bg-indigo-500/5'
-              }`}>
-                <CardHeader>
-                  <div className="flex items-center gap-2">
-                    {mode.icon}
-                    <CardTitle>{mode.name}</CardTitle>
-                  </div>
-                  <CardDescription className="mt-2">{mode.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="text-sm font-medium mb-2">Key Indicators</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {mode.indicators.map((indicator, idx) => (
-                          <Badge key={idx} variant="secondary" className={
-                            index === 0 ? 'bg-blue-500/10 text-blue-500' : 
-                            index === 1 ? 'bg-amber-500/10 text-amber-500' : 
-                            'bg-indigo-500/10 text-indigo-500'
-                          }>
-                            {indicator}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-medium mb-2">Timeframes</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {mode.timeframes.map((timeframe, idx) => (
-                          <Badge key={idx} variant="outline">
-                            {timeframe}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+      <section className="py-16 px-6 bg-muted">
+        <div className="max-w-7xl mx-auto text-center">
+          <h2 className="text-3xl font-bold mb-6">Key Features</h2>
+          <p className="text-lg text-muted-foreground mb-12">
+            Explore the features that make ProfitPilot AI the ultimate trading companion.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <Card className="shadow-md hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BookOpenCheck className="h-5 w-5 text-green-500" /> AI-Powered Signals
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Receive real-time trading signals generated by advanced AI algorithms.
+                </p>
+              </CardContent>
+            </Card>
+            <Card className="shadow-md hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <ShieldCheck className="h-5 w-5 text-blue-500" /> Risk Management Tools
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Protect your investments with our integrated risk management tools.
+                </p>
+              </CardContent>
+            </Card>
+            <Card className="shadow-md hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-purple-500" /> Market Analysis
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Stay ahead of the curve with comprehensive market analysis and insights.
+                </p>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
-      
-      <CustomerReviews />
-      
-      <TokenProgress />
-      
-      <DiscordCommunity />
-      
-      <section id="pricing" className="py-20 px-4 md:px-6 lg:px-8">
-        <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Choose the Perfect Plan</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Select the right plan for your trading needs, from free trials to professional setups with API access.
-            </p>
-            
-            <div className="flex justify-center mb-8 mt-8">
-              <Tabs 
-                value={billingCycle} 
-                onValueChange={(value) => setBillingCycle(value as 'monthly' | 'yearly')}
-                className="w-[400px]"
-              >
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="monthly">Monthly</TabsTrigger>
-                  <TabsTrigger value="yearly">
-                    Yearly
-                    <Badge variant="secondary" className="ml-2 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
-                      Save 25%
-                    </Badge>
-                  </TabsTrigger>
-                </TabsList>
-              </Tabs>
-            </div>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            {pricingPlans.map((plan) => (
-              <Card 
-                key={plan.name} 
-                className={`flex flex-col ${plan.popular ? 'border-primary shadow-lg ring-2 ring-primary' : ''}`}
-              >
-                <CardHeader>
-                  <div className="flex justify-between items-center">
-                    <CardTitle>{plan.name}</CardTitle>
-                    {plan.badge && (
-                      <Badge variant={plan.popular ? "default" : "outline"}>
-                        {plan.badge}
-                      </Badge>
-                    )}
+
+      <section className="py-16 px-6">
+        <div className="max-w-7xl mx-auto text-center">
+          <h2 className="text-3xl font-bold mb-6">Success Stories</h2>
+          <p className="text-lg text-muted-foreground mb-12">
+            See how traders around the world are using ProfitPilot AI to achieve their financial goals.
+          </p>
+          <Carousel className="w-full max-w-2xl mx-auto">
+            <CarouselContent>
+              <CarouselItem>
+                <div className="p-4">
+                  <div className="bg-card rounded-lg p-6 shadow-md">
+                    <p className="text-lg italic mb-4">
+                      "ProfitPilot AI has transformed my trading strategy. The AI-powered signals are incredibly accurate."
+                    </p>
+                    <div className="text-sm font-medium">— John Doe, Trader</div>
                   </div>
-                  <CardDescription>{plan.description}</CardDescription>
-                </CardHeader>
-                <CardContent className="flex-1">
-                  <div className="mt-2 mb-6">
-                    <span className="text-4xl font-bold">
-                      ${plan.price[billingCycle]}
-                    </span>
-                    {plan.price[billingCycle] > 0 && (
-                      <span className="text-muted-foreground ml-2">
-                        /{billingCycle === 'monthly' ? 'month' : 'year'}
-                      </span>
-                    )}
+                </div>
+              </CarouselItem>
+              <CarouselItem>
+                <div className="p-4">
+                  <div className="bg-card rounded-lg p-6 shadow-md">
+                    <p className="text-lg italic mb-4">
+                      "I've been using ProfitPilot AI for six months, and my profits have increased significantly."
+                    </p>
+                    <div className="text-sm font-medium">— Jane Smith, Investor</div>
                   </div>
-                  <ul className="space-y-3">
-                    {plan.features.map((feature, index) => (
-                      <li key={index} className="flex items-center">
-                        {feature.included ? (
-                          <CheckCircle className="h-4 w-4 mr-2 text-green-500" />
-                        ) : (
-                          <X className="h-4 w-4 mr-2 text-gray-300" />
-                        )}
-                        <span className={!feature.included ? "text-muted-foreground" : ""}>
-                          {feature.name}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-                <CardFooter>
-                  <Button 
-                    className="w-full" 
-                    onClick={() => handleGuestAccess()}
-                    variant={plan.popular ? "default" : "outline"}
-                  >
-                    {plan.cta}
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-      
-      <section id="faq" className="py-20 px-4 md:px-6 lg:px-8 bg-secondary/50">
-        <FAQ />
-      </section>
-      
-      <section className="py-20 px-4 md:px-6 lg:px-8">
-        <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Why Traders Choose ProfitPilot AI</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Discover the AI-powered features that give our users the edge in today's volatile crypto markets.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                title: "Advanced AI Algorithm",
-                description: "Our proprietary AI analyzes multiple indicators and market patterns in real-time for high-confidence signals.",
-                icon: <Cpu className="h-5 w-5 text-primary" />
-              },
-              {
-                title: "Live Bybit API Integration",
-                description: "Direct connection to Bybit exchange API for the most current price data and market movements.",
-                icon: <LineChart className="h-5 w-5 text-primary" />
-              },
-              {
-                title: "AI Economic Calendar",
-                description: "AI-prioritized market events with impact forecasting and volatility predictions.",
-                icon: <CalendarDays className="h-5 w-5 text-primary" />
-              },
-              {
-                title: "AI Risk Management",
-                description: "AI-calculated stop-loss and take-profit levels with every trade recommendation.",
-                icon: <Shield className="h-5 w-5 text-primary" />
-              },
-              {
-                title: "Multi-timeframe AI Analysis",
-                description: "Simultaneous AI market analysis across multiple timeframes to confirm trends and identify optimal entries.",
-                icon: <Clock className="h-5 w-5 text-primary" />
-              },
-              {
-                title: "Performance Tracking",
-                description: "AI-powered analytics to monitor your trading performance and suggest improvements.",
-                icon: <TrendingUp className="h-5 w-5 text-primary" />
-              },
-              {
-                title: "Token Utility",
-                description: "PP Token holders receive exclusive AI features including prioritized signal delivery.",
-                icon: <DollarSign className="h-5 w-5 text-primary" />
-              },
-              {
-                title: "Real-time Execution",
-                description: "Execute AI-recommended trades quickly with our optimized interface designed for rapid action.",
-                icon: <Zap className="h-5 w-5 text-primary" />
-              },
-              {
-                title: "Special AI Features",
-                description: "Regular updates with new AI analysis techniques and trading algorithms for subscribers.",
-                icon: <BadgePercent className="h-5 w-5 text-primary" />
-              }
-            ].map((feature, index) => (
-              <Card key={index} className="border-border/60 hover:border-primary/50 transition-colors">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="p-2 rounded-full bg-primary/10">
-                      {feature.icon}
-                    </div>
-                    <h3 className="font-medium text-lg">{feature.title}</h3>
+                </div>
+              </CarouselItem>
+              <CarouselItem>
+                <div className="p-4">
+                  <div className="bg-card rounded-lg p-6 shadow-md">
+                    <p className="text-lg italic mb-4">
+                      "The risk management tools have helped me protect my investments and minimize losses."
+                    </p>
+                    <div className="text-sm font-medium">— Richard Roe, Analyst</div>
                   </div>
-                  <p className="text-muted-foreground text-sm">{feature.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                </div>
+              </CarouselItem>
+            </CarouselContent>
+            <div className="flex items-center justify-center gap-2 py-4">
+              <CarouselPrevious />
+              <CarouselNext />
+            </div>
+          </Carousel>
         </div>
       </section>
-      
-      <section id="signup-section" className="py-20 px-4 md:px-6 lg:px-8 bg-muted">
-        <div className="container mx-auto max-w-md text-center">
-          <div className="space-y-6">
-            <img src={Logo} alt="Logo" className="h-16 w-16 mx-auto" />
-            <h2 className="text-2xl font-bold">Get Started with ProfitPilot</h2>
-            <p className="text-muted-foreground">
-              Sign up now to access real-time trading signals and market analysis.
-            </p>
-            
-            <div className="space-y-3">
-              <Button 
-                variant="outline"
-                className="w-full justify-start text-base"
-                onClick={() => handleLogin('github')}
-              >
-                <Github className="mr-2 h-5 w-5" />
-                Sign in with GitHub
-                <ChevronRight className="ml-auto h-5 w-5" />
-              </Button>
-              
-              <Button 
-                variant="outline"
-                className="w-full justify-start text-base"
-                onClick={() => handleLogin('email')}
-              >
-                <Mail className="mr-2 h-5 w-5" />
-                Sign in with Email
-                <ChevronRight className="ml-auto h-5 w-5" />
-              </Button>
-              
-              <Button 
-                variant="secondary"
-                className="w-full justify-start text-base"
-                onClick={handleGuestAccess}
-              >
-                <LogIn className="mr-2 h-5 w-5" />
-                Guest Access
-                <ChevronRight className="ml-auto h-5 w-5" />
-              </Button>
-            </div>
-            
-            <p className="text-sm text-muted-foreground pt-4">
-              By signing up, you agree to our Terms of Service and Privacy Policy.
-            </p>
-            
-            <Button 
-              variant="link" 
-              className="text-primary" 
-              onClick={handleForgotPassword}
-            >
-              Forgot password?
-            </Button>
-          </div>
+
+      <section className="py-24 px-6 bg-muted">
+        <div className="max-w-7xl mx-auto text-center">
+          <h2 className="text-3xl font-bold mb-6">Ready to Get Started?</h2>
+          <p className="text-lg text-muted-foreground mb-8">
+            Join ProfitPilot AI today and start making smarter trading decisions.
+          </p>
+          <Button size="lg" onClick={() => navigate('/pricing')}>
+            Explore Pricing <ArrowRight className="ml-2" />
+          </Button>
         </div>
       </section>
-      
-      <footer className="py-12 px-4 md:px-6 lg:px-8 bg-background border-t">
-        <div className="container mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <img src={Logo} alt="Logo" className="h-8 w-8" />
-                <div className="font-bold text-xl">ProfitPilot</div>
-              </div>
-              <p className="text-muted-foreground text-sm">
-                The AI-powered trading platform for cryptocurrencies with real-time Bybit API integration.
-              </p>
-            </div>
-            
-            <div>
-              <h3 className="font-medium mb-4">Platform</h3>
-              <ul className="space-y-2 text-sm">
-                <li><a href="#features" className="text-muted-foreground hover:text-primary">Features</a></li>
-                <li><a href="#trading-modes" className="text-muted-foreground hover:text-primary">Trading Modes</a></li>
-                <li><a href="#pricing" className="text-muted-foreground hover:text-primary">Pricing</a></li>
-                <li><a href="#testimonials" className="text-muted-foreground hover:text-primary">Testimonials</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="font-medium mb-4">Company</h3>
-              <ul className="space-y-2 text-sm">
-                <li><a href="#" className="text-muted-foreground hover:text-primary">About</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-primary">Blog</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-primary">Careers</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-primary">Contact</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="font-medium mb-4">Legal</h3>
-              <ul className="space-y-2 text-sm">
-                <li><a href="#" className="text-muted-foreground hover:text-primary">Terms</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-primary">Privacy</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-primary">Cookies</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-primary">Licenses</a></li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="border-t mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} ProfitPilot AI. All rights reserved.
-            </p>
-            <div className="flex space-x-4 mt-4 md:mt-0">
-              <a href="#" className="text-muted-foreground hover:text-primary">
-                <span className="sr-only">Twitter</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-                  <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
-                </svg>
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-primary">
-                <span className="sr-only">GitHub</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-                  <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path>
-                  <path d="M9 18c-4.51 2-5-2-7-2"></path>
-                </svg>
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-primary">
-                <span className="sr-only">Discord</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-                  <path d="M9 7.5V9"></path><path d="M15 7.5V9"></path>
-                  <path d="M5.745 17.64C6.859 17.546 8.062 17.209 8.805 17.014C9.186 16.912 9.459 16.562 9.455 16.165C9.455 15.776 9.455 15.391 9.482 15.015C9.482 14.98 9.457 14.944 9.44 14.917C9.395 14.862 9.327 14.847 9.263 14.847C9.158 14.854 8.986 14.89 8.746 14.965C6.947 15.62 5.54 16.193 5.54 16.193C5.374 16.278 5.222 16.135 5.272 15.962C5.308 15.83 5.374 15.658 5.483 15.479C6.025 14.51 6.643 13.48 7.259 12.477C7.691 11.772 8.071 11.086 8.298 10.647C8.425 10.389 8.649 10.199 8.92 10.125C9.246 10.029 9.579 9.932 9.92 9.848C10.103 9.805 10.311 9.75 10.529 9.703C11.265 9.524 12.106 9.33 12.858 9.249C13.925 9.129 15.004 9.129 16.071 9.249C17.056 9.321 18.092 9.503 19.063 9.703L19.5 9.803C20.214 9.965 20.714 10.584 20.714 11.289C20.714 13.448 20.714 15.786 20.714 17.214C20.714 17.942 20.017 18.464 19.304 18.283C18.568 18.062 17.468 17.748 16.232 17.531C15.735 17.445 15.257 17.068 15.257 16.553C15.257 16.373 15.257 16.192 15.257 16.012C15.257 15.956 15.257 15.888 15.226 15.843C15.189 15.798 15.141 15.744 15.014 15.756C14.95 15.763 14.845 15.793 14.675 15.89C12.994 16.8 11.362 17.644 9.781 18.42C9.182 18.736 8.493 18.736 7.894 18.42C7.129 18.016 6.363 17.816 5.603 17.816C5.288 17.816 5.054 17.72 4.913 17.625C4.602 17.453 4.538 17.047 4.785 16.8C4.987 16.608 5.339 16.55 5.745 16.508"></path>
-                </svg>
-              </a>
-            </div>
-          </div>
-        </div>
+
+      <footer className="py-8 px-6 border-t border-border text-center text-muted-foreground">
+        © 2025 ProfitPilot by Zentra LLC
       </footer>
     </div>
   );

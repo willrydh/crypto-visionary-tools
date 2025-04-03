@@ -11,7 +11,6 @@ import Dashboard from '@/pages/Dashboard';
 import SignalsView from '@/pages/SignalsView';
 import TradeSuggestion from '@/pages/TradeSuggestion';
 import CalendarView from '@/pages/CalendarView';
-import ChartView from '@/pages/ChartView';
 import Settings from '@/pages/Settings';
 import NotFound from '@/pages/NotFound';
 import Welcome from '@/pages/Welcome';
@@ -20,6 +19,8 @@ import ForgotPassword from '@/pages/ForgotPassword';
 import ResetPasswordConfirm from '@/pages/ResetPasswordConfirm';
 import ThankYouPage from '@/pages/ThankYouPage';
 import Sorry from '@/pages/Sorry';
+import Notifications from '@/pages/Notifications';
+import Education from '@/pages/Education';
 
 const RootLayout: React.FC = () => {
   const location = useLocation();
@@ -34,7 +35,8 @@ const RootLayout: React.FC = () => {
                        location.pathname === '/pricing' || 
                        location.pathname === '/forgot-password' || 
                        location.pathname === '/reset-password' || 
-                       location.pathname === '/thank-you';
+                       location.pathname === '/thank-you' ||
+                       location.pathname === '/education';
 
   return (
     <TooltipProvider>
@@ -52,7 +54,6 @@ const RootLayout: React.FC = () => {
                 <Route path="/signals" element={<SignalsView />} />
                 <Route path="/trade" element={<TradeSuggestion />} />
                 <Route path="/calendar" element={<CalendarView />} />
-                <Route path="/chart" element={<ChartView />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/welcome" element={<Welcome />} />
                 <Route path="/pricing" element={<PricingPage />} />
@@ -60,6 +61,8 @@ const RootLayout: React.FC = () => {
                 <Route path="/reset-password" element={<ResetPasswordConfirm />} />
                 <Route path="/thank-you" element={<ThankYouPage />} />
                 <Route path="/sorry" element={<Sorry />} />
+                <Route path="/notifications" element={<Notifications />} />
+                <Route path="/education" element={<Education />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </div>

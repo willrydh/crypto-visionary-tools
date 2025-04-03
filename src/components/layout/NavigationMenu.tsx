@@ -6,7 +6,6 @@ import { buttonVariants } from '@/components/ui/button';
 import {
   Home,
   BarChart3,
-  LineChart,
   Calendar,
   Settings,
   LayoutDashboard,
@@ -58,12 +57,6 @@ export default function NavigationMenu({ className }: NavigationMenuProps) {
       href: '/calendar',
       label: 'Events',
       icon: <Calendar className="w-5 h-5" />,
-      variant: 'ghost',
-    },
-    {
-      href: '/chart',
-      label: 'Chart',
-      icon: <LineChart className="w-5 h-5" />,
       variant: 'ghost',
     },
     {

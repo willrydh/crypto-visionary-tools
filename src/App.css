@@ -89,7 +89,7 @@ button {
 
 /* Z-index layers for proper stacking */
 .z-sidebar {
-  z-index: 50;
+  z-index: 60;
 }
 
 .z-header {
@@ -98,4 +98,26 @@ button {
 
 .z-content {
   z-index: 10;
+}
+
+/* Make sure sidebar is always visible */
+.sidebar {
+  z-index: 60 !important;
+}
+
+/* Ensure main content has proper z-index */
+main {
+  position: relative;
+  z-index: 10;
+}
+
+/* Fix header overlay issues */
+header {
+  position: relative;
+  z-index: 50;
+}
+
+/* Ensure mobile navigation is always on top */
+.bottom-nav {
+  z-index: 55;
 }

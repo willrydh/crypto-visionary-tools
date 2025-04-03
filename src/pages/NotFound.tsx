@@ -2,7 +2,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Home, BarChart } from 'lucide-react';
+import { Home, BarChart, BookOpen } from 'lucide-react';
 import Logo from '@/assets/logo.svg';
 
 const NotFound = () => {
@@ -35,17 +35,26 @@ const NotFound = () => {
             <Home className="h-4 w-4" />
             Return to Dashboard
           </Button>
-          <Button variant="outline" onClick={() => navigate('/chart')} className="gap-2 w-full sm:w-auto">
+          <Button variant="outline" onClick={() => navigate('/signals')} className="gap-2 w-full sm:w-auto">
             <BarChart className="h-4 w-4" />
-            View Charts
+            View Signals
           </Button>
         </div>
 
-        <div className="p-4 bg-card/50 rounded-lg border border-border">
+        <div className="p-4 bg-card/50 rounded-lg border border-border mb-6">
           <h3 className="font-medium mb-2">Trading Tip</h3>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground mb-3">
             Even the best traders sometimes enter the wrong positions. The key is to have a clear exit strategy.
           </p>
+          <Button 
+            onClick={() => navigate('/education')} 
+            variant="secondary" 
+            size="sm" 
+            className="w-full gap-2 mt-2"
+          >
+            <BookOpen className="h-4 w-4" />
+            View Trading Education
+          </Button>
         </div>
       </div>
     </div>

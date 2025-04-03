@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import PriceChart from '@/components/charts/PriceChart';
 import EnhancedTechnicalAnalysis from '@/components/analysis/EnhancedTechnicalAnalysis';
@@ -131,7 +130,7 @@ const SignalsView = () => {
         <div>
           <h1 className="text-2xl font-bold">Signals</h1>
           <p className="text-muted-foreground">
-            Trading signals and market analysis
+            Important signals
           </p>
         </div>
         

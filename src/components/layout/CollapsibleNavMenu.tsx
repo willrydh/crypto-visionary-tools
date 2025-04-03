@@ -1,85 +1,51 @@
 
-import React, { useState } from 'react';
-import { 
-  LineChart, 
-  Activity, 
-  Zap, 
-  Brain
-} from 'lucide-react';
-import { NavLink } from 'react-router-dom';
+import React from 'react';
+import { ChevronDown } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { 
-  Collapsible, 
-  CollapsibleContent, 
-  CollapsibleTrigger 
-} from '@/components/ui/collapsible';
-import { ChevronDown, ChevronRight } from 'lucide-react';
 
-interface CollapsibleNavMenuProps {
-  className?: string;
-}
-
-const CollapsibleNavMenu: React.FC<CollapsibleNavMenuProps> = ({ className }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const navCategories = [
-    {
-      title: 'Chart',
-      icon: <LineChart className="h-5 w-5" />,
-      path: '/chart'
-    },
-    {
-      title: 'Indicators',
-      icon: <Activity className="h-5 w-5" />,
-      path: '/indicators'
-    },
-    {
-      title: 'Trading',
-      icon: <Zap className="h-5 w-5" />,
-      path: '/trading'
-    },
-    {
-      title: 'Psychology',
-      icon: <Brain className="h-5 w-5" />,
-      path: '/psychology'
-    }
-  ];
+const CollapsibleNavMenu = () => {
+  const [isOpen, setIsOpen] = React.useState(false);
 
   return (
-    <div className={cn("w-full", className)}>
-      <Collapsible 
-        open={isOpen} 
-        onOpenChange={setIsOpen}
-        className="border rounded-md bg-card/50 overflow-hidden"
-      >
-        <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-2 text-left">
-          <div className="flex items-center gap-2">
-            <LineChart className="h-5 w-5" />
-            <span className="font-medium">Trading Tools</span>
-          </div>
-          {isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <div className="py-1">
-            {navCategories.map((item) => (
-              <NavLink
-                key={item.title}
-                to={item.path}
-                className={({ isActive }) => 
-                  cn(
-                    "flex items-center gap-2 px-4 py-2 text-sm hover:bg-accent/50 transition-colors",
-                    isActive ? "text-primary bg-primary/10 font-medium" : "text-muted-foreground"
-                  )
-                }
-              >
-                {item.icon}
-                <span>{item.title}</span>
-              </NavLink>
-            ))}
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
-    </div>
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <CollapsibleTrigger asChild>
+        <Button variant="ghost" className="w-full justify-between">
+          <span>Education</span>
+          <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "transform rotate-180")} />
+        </Button>
+      </CollapsibleTrigger>
+      <CollapsibleContent className="pl-4 font-normal">
+        <ul className="space-y-1 mt-1">
+          <li>
+            <Link 
+              to="/education" 
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground py-1.5 px-3 rounded-md hover:bg-muted transition-colors"
+            >
+              Trading Courses
+            </Link>
+          </li>
+          <li>
+            <Link 
+              to="/education" 
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground py-1.5 px-3 rounded-md hover:bg-muted transition-colors"
+            >
+              Tutorials
+            </Link>
+          </li>
+          <li>
+            <Link 
+              to="/education" 
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground py-1.5 px-3 rounded-md hover:bg-muted transition-colors"
+            >
+              Psychology
+            </Link>
+          </li>
+        </ul>
+      </CollapsibleContent>
+    </Collapsible>
   );
 };
 

@@ -42,7 +42,6 @@ const TopHeader = () => {
                           location.pathname === '/trade-suggestion' || 
                           location.pathname === '/trade' || 
                           location.pathname === '/signals' ||
-                          location.pathname === '/chart' ||
                           location.pathname === '/calendar';
   
   const handleLogout = () => {

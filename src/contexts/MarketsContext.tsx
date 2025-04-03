@@ -2,6 +2,7 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { fetchMarketSessions } from '@/services/marketService';
 import { fetchAlphaVantageMarketSessions } from '@/services/alphaVantageService';
+import { checkMarketNotifications, initializeMarketNotifications } from '@/services/notificationService';
 
 export interface MarketSession {
   name: string;
@@ -66,6 +67,9 @@ export const MarketsProvider: React.FC<MarketsProviderProps> = ({ children }) =>
       console.log('Formatted sessions with proper dates:', formattedSessions);
       setMarketSessions(formattedSessions);
       setLastUpdated(new Date());
+      
+      // Check for notifications after updating market sessions
+      checkMarketNotifications(formattedSessions);
     } catch (error) {
       console.error('Error fetching market sessions:', error);
     } finally {
@@ -82,7 +86,13 @@ export const MarketsProvider: React.FC<MarketsProviderProps> = ({ children }) =>
       updateMarketSessions();
     }, 60000);
     
-    return () => clearInterval(interval);
+    // Initialize market notifications
+    const cleanupNotifications = initializeMarketNotifications(marketSessions);
+    
+    return () => {
+      clearInterval(interval);
+      cleanupNotifications();
+    };
   }, []);
 
   return (
