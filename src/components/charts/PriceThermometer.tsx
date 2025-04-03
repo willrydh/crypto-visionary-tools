@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -24,12 +23,10 @@ export const PriceThermometer = () => {
   useEffect(() => {
     loadData();
     
-    // Set a shorter interval for more frequent data updates
-    const intervalId = setInterval(loadData, 60000); // Update every minute
+    const intervalId = setInterval(loadData, 60000);
     return () => clearInterval(intervalId);
   }, []);
   
-  // Get current price data or use defaults
   const currentData = priceData[symbol] || {
     currentPrice: 0,
     hourlyHigh: 0,
@@ -42,10 +39,8 @@ export const PriceThermometer = () => {
     price: 0
   };
   
-  // Calculate where current price is in the range
   const getHourlyPercentage = () => {
     if (currentData.hourlyPricePosition !== undefined) {
-      // Use the 5m data to determine position in hourly range
       return currentData.hourlyPricePosition;
     }
     const { price, hourlyHigh, hourlyLow } = currentData;
@@ -72,30 +67,27 @@ export const PriceThermometer = () => {
     return "bg-red-500";
   };
   
-  // Calculate background color based on average of all percentages
   const getBackgroundGradient = () => {
     const hourlyPercentage = getHourlyPercentage();
     const dailyPercentage = getDailyPercentage();
     const weeklyPercentage = getWeeklyPercentage();
     
-    // Calculate weighted average (giving more weight to shorter timeframes)
     const weightedAverage = (
       (hourlyPercentage * 0.5) + 
       (dailyPercentage * 0.3) + 
       (weeklyPercentage * 0.2)
     );
     
-    // Determine background color intensity based on weightedAverage
     if (weightedAverage > 75) {
-      return "from-green-950/70 to-green-900/40"; // Strong green for very bullish
+      return "from-green-950/30 to-green-900/10";
     } else if (weightedAverage > 60) {
-      return "from-green-950/50 to-green-900/20"; // Light green for bullish
+      return "from-green-950/20 to-green-900/5";
     } else if (weightedAverage > 40) {
-      return "from-blue-950/50 to-blue-900/20"; // Neutral blue
+      return "from-blue-950/20 to-blue-900/5";
     } else if (weightedAverage > 25) {
-      return "from-amber-950/50 to-amber-900/20"; // Light amber/orange for bearish
+      return "from-amber-950/20 to-amber-900/5";
     } else {
-      return "from-red-950/70 to-red-900/40"; // Strong red for very bearish
+      return "from-red-950/30 to-red-900/10";
     }
   };
   
@@ -120,7 +112,7 @@ export const PriceThermometer = () => {
   const backgroundGradient = getBackgroundGradient();
   
   return (
-    <Card className={`bg-gradient-to-b ${backgroundGradient} border-border/40 text-white transition-colors duration-500`}>
+    <Card className={`bg-gradient-to-b ${backgroundGradient} border-border/40 text-white transition-colors duration-700`}>
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg text-white">Price Range</CardTitle>
@@ -136,7 +128,6 @@ export const PriceThermometer = () => {
             <div className="text-sm text-gray-400">Current Price</div>
           </div>
           
-          {/* Hourly Range */}
           <div className="space-y-1">
             <div className="flex justify-between text-sm mb-1">
               <span>Hourly Range</span>
@@ -158,7 +149,6 @@ export const PriceThermometer = () => {
             </div>
           </div>
           
-          {/* Daily Range */}
           <div className="space-y-1">
             <div className="flex justify-between text-sm mb-1">
               <span>Daily Range</span>
@@ -180,7 +170,6 @@ export const PriceThermometer = () => {
             </div>
           </div>
           
-          {/* Weekly Range */}
           <div className="space-y-1">
             <div className="flex justify-between text-sm mb-1">
               <span>Weekly Range</span>
