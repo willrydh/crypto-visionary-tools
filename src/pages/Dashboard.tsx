@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { LineChart } from 'lucide-react';
@@ -149,6 +148,26 @@ const Dashboard = () => {
 
   const forecast = getTradingForecast();
 
+  useEffect(() => {
+    console.log('Price position:', {
+      hourly: btcPriceData?.hourlyPricePosition,
+      daily: btcPriceData?.dailyPricePosition,
+      weekly: btcPriceData?.weeklyPricePosition
+    });
+    
+    // Check if we have price range data
+    if (priceData['BTCUSDT']) {
+      console.log('Price range data:', {
+        hourlyHigh: priceData['BTCUSDT'].hourlyHigh,
+        hourlyLow: priceData['BTCUSDT'].hourlyLow,
+        dailyHigh: priceData['BTCUSDT'].dailyHigh,
+        dailyLow: priceData['BTCUSDT'].dailyLow,
+        weeklyHigh: priceData['BTCUSDT'].weeklyHigh,
+        weeklyLow: priceData['BTCUSDT'].weeklyLow,
+      });
+    }
+  }, [priceData]);
+
   return (
     <div className="space-y-6 mt-6 animate-fade-in">
       <WelcomeHeader />
@@ -205,9 +224,9 @@ const Dashboard = () => {
         </div>
         
         <div className="space-y-6">
-          <PriceThermometer />
-          
-          {/* DataInsights component removed from here */}
+          <div className="bg-gradient-to-b from-background to-background/80 rounded-lg border border-border p-0.5 animate-pulse">
+            <PriceThermometer />
+          </div>
         </div>
       </div>
       

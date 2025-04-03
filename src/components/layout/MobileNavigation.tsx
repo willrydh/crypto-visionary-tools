@@ -3,7 +3,6 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   Home, 
-  BarChart3, 
   Calendar, 
   Settings, 
   Bell, 
@@ -61,14 +60,14 @@ const MobileNavigation = () => {
         </Link>
         
         <Link 
-          to="/notifications" 
+          to="/calendar" 
           className={cn(
             "flex flex-col items-center justify-center w-full h-full text-[10px]",
-            isActive('/notifications') ? "text-primary" : "text-muted-foreground"
+            isActive('/calendar') ? "text-primary" : "text-muted-foreground"
           )}
         >
-          <Bell className="h-5 w-5 mb-0.5" />
-          <span>Alerts</span>
+          <Calendar className="h-5 w-5 mb-0.5" />
+          <span>Calendar</span>
         </Link>
         
         <Link 
