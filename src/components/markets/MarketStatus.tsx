@@ -7,21 +7,43 @@ import { Clock, AlertCircle, Building } from 'lucide-react';
 import { useMarkets } from '@/hooks/useMarkets';
 import { DataSourceIndicator } from '@/components/ui/data-source-indicator';
 import { getMarketTimeRemaining } from '@/utils/dateUtils';
+import { MarketSession } from '@/contexts/MarketsContext';
 
 interface MarketStatusProps {
   showDetails?: boolean;
   customTitle?: string;
   customSource?: string;
   compact?: boolean;
+  marketSessions?: MarketSession[]; // Optional prop to directly receive market sessions
 }
 
 export const MarketStatus: React.FC<MarketStatusProps> = ({ 
   showDetails = false,
   customTitle,
   customSource,
-  compact = false
+  compact = false,
+  marketSessions: propMarketSessions
 }) => {
-  const { marketSessions, lastUpdated, dataSource } = useMarkets();
+  // Use provided marketSessions if available, otherwise use the context
+  let marketSessions: MarketSession[] = [];
+  let dataSource: string = 'internal';
+  let lastUpdated: Date | null = null;
+  
+  try {
+    // Only use the context if marketSessions weren't provided via props
+    if (!propMarketSessions) {
+      const marketsContext = useMarkets();
+      marketSessions = marketsContext.marketSessions;
+      dataSource = marketsContext.dataSource;
+      lastUpdated = marketsContext.lastUpdated;
+    } else {
+      marketSessions = propMarketSessions;
+    }
+  } catch (error) {
+    // Fallback to empty array if context is not available and props weren't provided
+    console.warn('MarketStatus: useMarkets context not available, using empty array');
+    marketSessions = [];
+  }
 
   // Get status badge styling
   const getStatusBadgeStyle = (status: string) => {

@@ -66,7 +66,8 @@ const CalendarView = () => {
         </TabsContent>
         
         <TabsContent value="markets" className="pt-6">
-          <MarketStatus showDetails={true} />
+          {/* Pass the marketSessions prop directly to avoid context dependency in some cases */}
+          <MarketStatus showDetails={true} marketSessions={marketSessions} />
         </TabsContent>
       </Tabs>
     </div>
