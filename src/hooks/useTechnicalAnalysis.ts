@@ -9,5 +9,9 @@ export const useTechnicalAnalysis = () => {
     throw new Error('useTechnicalAnalysis must be used within a TechnicalAnalysisProvider');
   }
   
-  return context;
+  // Make sure we always return a valid indicators array
+  return {
+    ...context,
+    indicators: context.indicators || []
+  };
 };

@@ -83,18 +83,23 @@ export const TechnicalAnalysisProvider: React.FC<TechnicalAnalysisProviderProps>
           setBiasLocked(true);
         }
         
-        // Now generate trade suggestion using the updated bias
-        const suggestion = await generateTradeSuggestion(
-          symbol, 
-          fetchedIndicators, 
-          updatedBias, // Use the updated bias here
-          tradingMode
-        );
-        
-        // Update trade suggestion and related state
-        setTradeSuggestion(suggestion);
-        setConfidenceScore(suggestion.confidence);
-        setLastUpdated(new Date());
+        // Make sure we have a valid bias before generating the suggestion
+        if (updatedBias) {
+          // Now generate trade suggestion using the updated bias
+          const suggestion = await generateTradeSuggestion(
+            symbol, 
+            fetchedIndicators, 
+            updatedBias, // Use the updated bias here
+            tradingMode
+          );
+          
+          // Update trade suggestion and related state
+          setTradeSuggestion(suggestion);
+          setConfidenceScore(suggestion.confidence);
+          setLastUpdated(new Date());
+        } else {
+          console.error('Invalid market bias detected');
+        }
       } else {
         // If no indicators were returned, log an error
         console.error('No indicators returned from fetchTechnicalIndicators');

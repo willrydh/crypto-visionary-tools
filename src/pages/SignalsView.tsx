@@ -47,8 +47,9 @@ const SignalsView = () => {
   const isLoading = priceIsLoading || analysisIsLoading;
 
   useEffect(() => {
+    // Force immediate analysis on component mount
     if (indicators.length === 0) {
-      generateAnalysis(selectedCrypto.pairSymbol);
+      generateAnalysis(selectedCrypto.pairSymbol, true);
     }
     
     fetchLevels(selectedCrypto.pairSymbol);
@@ -61,6 +62,7 @@ const SignalsView = () => {
   }, [selectedCrypto]);
 
   useEffect(() => {
+    // Make sure to force regenerate the analysis when trading mode changes
     generateAnalysis(selectedCrypto.pairSymbol, true);
     fetchLevels(selectedCrypto.pairSymbol);
     loadPriceData(selectedCrypto.pairSymbol);

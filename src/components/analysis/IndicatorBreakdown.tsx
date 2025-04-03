@@ -76,7 +76,7 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
   const [animatedPercentages, setAnimatedPercentages] = useState({ bullish: 0, bearish: 0, neutral: 0 });
 
   const filteredIndicators = useMemo(() => {
-    if (!indicators.length) return [];
+    if (!indicators || !indicators.length) return [];
     return currentTimeframe 
       ? indicators.filter(i => i.timeframe === currentTimeframe)
       : indicators;
@@ -234,7 +234,7 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
   };
 
   useEffect(() => {
-    if (filteredIndicators.length === 0) {
+    if (!filteredIndicators || filteredIndicators.length === 0) {
       setOverallSentiment('neutral');
       return;
     }
@@ -367,12 +367,23 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
     );
   };
 
-  const getBullishCount = () => filteredIndicators.filter(i => i.signal === 'bullish').length;
-  const getBearishCount = () => filteredIndicators.filter(i => i.signal === 'bearish').length;
-  const getNeutralCount = () => filteredIndicators.filter(i => i.signal === 'neutral').length;
+  const getBullishCount = () => {
+    if (!filteredIndicators || filteredIndicators.length === 0) return 0;
+    return filteredIndicators.filter(i => i.signal === 'bullish').length;
+  };
+  
+  const getBearishCount = () => {
+    if (!filteredIndicators || filteredIndicators.length === 0) return 0;
+    return filteredIndicators.filter(i => i.signal === 'bearish').length;
+  };
+  
+  const getNeutralCount = () => {
+    if (!filteredIndicators || filteredIndicators.length === 0) return 0;
+    return filteredIndicators.filter(i => i.signal === 'neutral').length;
+  };
 
   const calculateDonutPercentages = () => {
-    const total = filteredIndicators.length;
+    const total = filteredIndicators ? filteredIndicators.length : 0;
     if (total === 0) return { bullish: 0, bearish: 0, neutral: 0 };
     
     return {
@@ -747,7 +758,7 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {indicators.length === 0 ? (
+        {!indicators || indicators.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-muted-foreground">No indicators available</p>
             <p className="text-xs mt-2">Generate analysis to see indicators</p>
