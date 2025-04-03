@@ -2,7 +2,6 @@
 import { toast } from '@/hooks/use-toast';
 import { MarketSession } from '@/contexts/MarketsContext';
 import { getMarketTimeRemaining } from '@/utils/dateUtils';
-import { Bell, Clock, AlertCircle } from 'lucide-react';
 
 // Market event notification types
 export type MarketEventType = 'opening-soon' | 'closing-soon' | 'opened' | 'closed';
@@ -76,7 +75,8 @@ export const checkMarketNotifications = (
         toast({
           title: `${name} Market Opening Soon`,
           description: `Opens in ${diffMinutes} minute${diffMinutes !== 1 ? 's' : ''}`,
-          icon: <Bell className="h-4 w-4 text-blue-500" />,
+          // Replace JSX with a string for the icon variant
+          variant: "default",
           duration: 6000,
         });
         
@@ -92,7 +92,8 @@ export const checkMarketNotifications = (
         toast({
           title: `${name} Market Closing Soon`,
           description: `Closes in ${diffMinutes} minute${diffMinutes !== 1 ? 's' : ''}`,
-          icon: <Clock className="h-4 w-4 text-amber-500" />,
+          // Replace JSX with a string for the icon variant
+          variant: "default",
           duration: 6000,
         });
         
@@ -109,7 +110,8 @@ export const checkMarketNotifications = (
         toast({
           title: `${name} Market Now Open`,
           description: `Trading has begun for the ${name} session`,
-          icon: <Bell className="h-4 w-4 text-green-500" />,
+          // Replace JSX with a string for the icon variant
+          variant: "default",
           duration: 5000,
         });
         
@@ -126,7 +128,8 @@ export const checkMarketNotifications = (
         toast({
           title: `${name} Market Now Closed`,
           description: `Trading has ended for the ${name} session`,
-          icon: <AlertCircle className="h-4 w-4 text-muted-foreground" />,
+          // Replace JSX with a string for the icon variant
+          variant: "default",
           duration: 5000,
         });
         
