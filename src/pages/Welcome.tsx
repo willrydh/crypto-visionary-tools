@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -6,7 +7,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import ProfitCalculator from '@/components/welcome/ProfitCalculator';
+import { AppShowcase } from '@/components/landing/AppShowcase';
+import CustomerReviews from '@/components/marketing/CustomerReviews';
+import DiscordCommunity from '@/components/marketing/DiscordCommunity';
 import LogoImage from '@/assets/logo.svg';
 
 const Welcome = () => {
@@ -43,14 +46,14 @@ const Welcome = () => {
         </div>
       </header>
       
-      <section className="py-24 px-6">
+      <section className="py-24 px-6 bg-gradient-to-b from-background to-muted/50">
         <div className="max-w-5xl mx-auto text-center">
-          <h1 className="text-4xl font-bold mb-6">Welcome to ProfitPilot AI</h1>
-          <p className="text-lg text-muted-foreground mb-8">
-            Unlock the power of AI-driven trading signals and market analysis.
-            Start making smarter, data-backed decisions today.
+          <Badge className="mb-4" variant="outline">Version 2.0 Now Available</Badge>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">Trade Smarter with AI-Powered Signals</h1>
+          <p className="text-lg text-muted-foreground mb-8 max-w-3xl mx-auto">
+            ProfitPilot uses advanced artificial intelligence to analyze market data and provide real-time trading signals, support & resistance levels, and market insights.
           </p>
-          <div className="flex justify-center gap-4">
+          <div className="flex flex-wrap justify-center gap-4">
             <Button size="lg" onClick={() => navigate('/pricing')}>
               Get Started <ArrowRight className="ml-2" />
             </Button>
@@ -58,102 +61,105 @@ const Welcome = () => {
               Explore Signals
             </Button>
           </div>
+          
+          <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto text-left">
+            <Card className="bg-card/50 backdrop-blur">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Lightbulb className="h-5 w-5 text-yellow-500" /> AI Signals
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Get real-time trading signals powered by advanced machine learning algorithms.
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-card/50 backdrop-blur">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-green-500" /> Market Analysis
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Detailed technical analysis with support & resistance levels and trend detection.
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-card/50 backdrop-blur">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <GraduationCap className="h-5 w-5 text-blue-500" /> Trading Education
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Learn from our extensive trading academy with guides, videos, and webinars.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </section>
       
-      <section className="py-16 px-6">
+      <AppShowcase />
+      
+      <section className="py-16 px-6 bg-muted/50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-10">
-            <h2 className="text-3xl font-bold mb-3">Calculate Your Trading Potential</h2>
+            <h2 className="text-3xl font-bold mb-4">How ProfitPilot Works</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              See how ProfitPilot can help you reach your trading goals with enhanced signals and market insights.
+              Our AI-powered platform analyzes massive datasets to provide you with actionable trading insights.
             </p>
           </div>
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-            <ProfitCalculator className="w-full max-w-xl mx-auto lg:mx-0 lg:ml-auto" />
-            
-            <div className="space-y-6">
-              <div className="bg-card/50 p-6 rounded-lg border border-border">
-                <h3 className="text-xl font-bold mb-3 flex items-center gap-2">
-                  <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary">1</span>
-                  Better Decision Making
-                </h3>
-                <p className="text-muted-foreground">
-                  ProfitPilot provides real-time signals and market insights to help you make informed trading decisions.
-                </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              {
+                step: "1",
+                title: "Data Collection",
+                description: "We gather real-time data from multiple exchanges and market sources."
+              },
+              {
+                step: "2",
+                title: "AI Analysis",
+                description: "Our algorithms analyze patterns, trends, and market conditions."
+              },
+              {
+                step: "3",
+                title: "Signal Generation",
+                description: "High-probability trading signals are generated based on analysis."
+              },
+              {
+                step: "4",
+                title: "Trade Execution",
+                description: "Execute trades with confidence based on data-driven signals."
+              }
+            ].map((item, index) => (
+              <div key={index} className="relative">
+                <div className="absolute -left-3 -top-3 w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold">
+                  {item.step}
+                </div>
+                <Card className="pt-6 h-full">
+                  <CardHeader>
+                    <CardTitle>{item.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">{item.description}</p>
+                  </CardContent>
+                </Card>
               </div>
-              
-              <div className="bg-card/50 p-6 rounded-lg border border-border">
-                <h3 className="text-xl font-bold mb-3 flex items-center gap-2">
-                  <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary">2</span>
-                  Market Timing
-                </h3>
-                <p className="text-muted-foreground">
-                  Know exactly when markets open and close with notifications and market session indicators.
-                </p>
-              </div>
-              
-              <div className="bg-card/50 p-6 rounded-lg border border-border">
-                <h3 className="text-xl font-bold mb-3 flex items-center gap-2">
-                  <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary">3</span>
-                  Reduced Emotions
-                </h3>
-                <p className="text-muted-foreground">
-                  Data-driven signals help eliminate emotional trading decisions and keep you focused on your strategy.
-                </p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
-
-      <section className="py-16 px-6 bg-muted">
-        <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-6">Key Features</h2>
-          <p className="text-lg text-muted-foreground mb-12">
-            Explore the features that make ProfitPilot AI the ultimate trading companion.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="shadow-md hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BookOpenCheck className="h-5 w-5 text-green-500" /> AI-Powered Signals
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Receive real-time trading signals generated by advanced AI algorithms.
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="shadow-md hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <ShieldCheck className="h-5 w-5 text-blue-500" /> Risk Management Tools
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Protect your investments with our integrated risk management tools.
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="shadow-md hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-purple-500" /> Market Analysis
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Stay ahead of the curve with comprehensive market analysis and insights.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
+      
+      <CustomerReviews />
+      
+      <DiscordCommunity />
 
       <section className="py-16 px-6">
         <div className="max-w-7xl mx-auto text-center">
