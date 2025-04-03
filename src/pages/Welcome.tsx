@@ -11,6 +11,13 @@ import ProfitCalculator from '@/components/welcome/ProfitCalculator';
 const Welcome = () => {
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  
+  const heroImages = [
+    '/lovable-uploads/48c6cc62-c64b-4795-bbfc-c7a769f5e5a4.png',
+    '/lovable-uploads/fe008bc7-d3c5-4253-b3af-f6c27dc380de.png',
+    '/lovable-uploads/c838292a-0224-48a0-a205-21fde8947f28.png'
+  ];
 
   useEffect(() => {
     const handleResize = () => {
@@ -41,8 +48,36 @@ const Welcome = () => {
           </div>
         </div>
       </header>
-      <section className="py-24 px-6">
-        <div className="max-w-5xl mx-auto text-center">
+      
+      <section className="relative py-24 px-6 overflow-hidden">
+        <div className="absolute inset-0 -z-10">
+          <Carousel 
+            className="h-full"
+            opts={{ loop: true }}
+            setApi={(api) => {
+              api?.on('select', () => {
+                setCurrentSlide(api.selectedScrollSnap());
+              });
+            }}
+          >
+            <CarouselContent className="h-full">
+              {heroImages.map((image, index) => (
+                <CarouselItem key={index} className="h-full">
+                  <div className="relative w-full h-full">
+                    <img 
+                      src={image} 
+                      alt={`Trading background ${index + 1}`} 
+                      className="w-full h-full object-cover object-center"
+                    />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
+          <div className="absolute inset-0 bg-background/60 backdrop-blur-md"></div>
+        </div>
+        
+        <div className="max-w-5xl mx-auto text-center relative z-10">
           <h1 className="text-4xl font-bold mb-6">Welcome to ProfitPilot AI</h1>
           <p className="text-lg text-muted-foreground mb-8">
             Unlock the power of AI-driven trading signals and market analysis.
