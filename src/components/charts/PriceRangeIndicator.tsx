@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -36,7 +37,7 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
     }, 60000); // Update every minute
     
     return () => clearInterval(intervalId);
-  }, [symbol]);
+  }, [symbol, loadPriceData, priceData]);
   
   // Get current price data or use defaults
   const currentData = priceData[symbol] || {

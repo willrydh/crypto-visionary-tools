@@ -49,7 +49,10 @@ const PriceThermometer = () => {
     hourlyPricePosition,
     dailyPricePosition,
     weeklyPricePosition,
-    btcPrice: btcPriceData.price
+    btcPrice: btcPriceData.price,
+    hourlyRange: { low: btcPriceData.hourlyLow, high: btcPriceData.hourlyHigh },
+    dailyRange: { low: btcPriceData.dailyLow, high: btcPriceData.dailyHigh },
+    weeklyRange: { low: btcPriceData.weeklyLow, high: btcPriceData.weeklyHigh }
   });
 
   const getThermometerStyle = (position: number) => {
