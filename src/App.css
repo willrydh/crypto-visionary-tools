@@ -86,3 +86,16 @@ button {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
+
+/* Z-index layers for proper stacking */
+.z-sidebar {
+  z-index: 50;
+}
+
+.z-header {
+  z-index: 40;
+}
+
+.z-content {
+  z-index: 10;
+}

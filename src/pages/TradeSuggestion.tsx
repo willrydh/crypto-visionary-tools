@@ -80,7 +80,7 @@ const TradeSuggestion = () => {
   
   return (
     <PullToRefresh onRefresh={handleRefresh}>
-      <div className={cn("space-y-6 mt-6", getModeAlertClass(tradingMode))}>
+      <div className={cn("space-y-6 mt-2", getModeAlertClass(tradingMode))}>
         <TradePageHeader 
           isLoading={isLoading} 
           onRefresh={handleRefresh} 

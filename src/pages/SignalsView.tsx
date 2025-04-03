@@ -112,8 +112,8 @@ const SignalsView = () => {
   // Use a dedicated loading state component
   if (isLoading) {
     return (
-      <div className="space-y-4 animate-fade-in">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+      <div className="space-y-4 animate-fade-in mt-2">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
           <div>
             <h1 className="text-2xl font-bold">Signals</h1>
             <p className="text-muted-foreground">Loading trading signals data...</p>
@@ -125,7 +125,7 @@ const SignalsView = () => {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6 animate-fade-in mt-2">
       {/* Page header - fixed for better alignment */}
       <div className="flex flex-col sm:flex-row gap-2 sm:gap-0 justify-between items-start sm:items-center">
         <div>
