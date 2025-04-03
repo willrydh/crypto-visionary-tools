@@ -83,7 +83,24 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
   const weeklyPercentage = calculateWeeklyPercentage();
   
   // Log position percentages for debugging
-  console.log(`PriceRangeIndicator - Price positions: Hourly: ${hourlyPercentage.toFixed(1)}%, Daily: ${dailyPercentage.toFixed(1)}%, Weekly: ${weeklyPercentage.toFixed(1)}%`);
+  console.log(`PriceRangeIndicator - Price positions for ${symbol}:`, {
+    price: currentData.price,
+    hourly: {
+      percentage: hourlyPercentage.toFixed(1),
+      low: currentData.hourlyLow,
+      high: currentData.hourlyHigh
+    },
+    daily: {
+      percentage: dailyPercentage.toFixed(1),
+      low: currentData.dailyLow,
+      high: currentData.dailyHigh
+    },
+    weekly: {
+      percentage: weeklyPercentage.toFixed(1),
+      low: currentData.weeklyLow,
+      high: currentData.weeklyHigh
+    }
+  });
   
   // Determine if price is in overbought/oversold zones
   const getHourlyZone = () => {

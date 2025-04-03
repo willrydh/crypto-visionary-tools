@@ -44,9 +44,24 @@ const Dashboard = () => {
     if (!priceData['BTCUSDT']) {
       loadPriceData('BTCUSDT');
     }
-  }, [tradingMode, indicators.length, generateAnalysis]);
+  }, [tradingMode, indicators.length, generateAnalysis, loadPriceData, priceData]);
 
   const btcPriceData = priceData['BTCUSDT'] || { price: 82500, change24h: 2.3 };
+
+  // Debug log for PriceData
+  useEffect(() => {
+    if (priceData['BTCUSDT']) {
+      console.log('Dashboard - Price data for BTC:', {
+        price: priceData['BTCUSDT'].price,
+        hourlyHigh: priceData['BTCUSDT'].hourlyHigh,
+        hourlyLow: priceData['BTCUSDT'].hourlyLow,
+        dailyHigh: priceData['BTCUSDT'].dailyHigh,
+        dailyLow: priceData['BTCUSDT'].dailyLow,
+        weeklyHigh: priceData['BTCUSDT'].weeklyHigh,
+        weeklyLow: priceData['BTCUSDT'].weeklyLow,
+      });
+    }
+  }, [priceData]);
 
   const handleAnalysisGeneration = async () => {
     try {

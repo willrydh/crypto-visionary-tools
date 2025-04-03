@@ -26,33 +26,17 @@ const PriceThermometer = () => {
   };
   
   // Calculate price positions from high/low data
-  const hourlyPricePosition = calculatePosition(
-    btcPriceData.price, 
-    btcPriceData.hourlyLow, 
-    btcPriceData.hourlyHigh
-  );
-    
   const dailyPricePosition = calculatePosition(
     btcPriceData.price, 
     btcPriceData.dailyLow, 
     btcPriceData.dailyHigh
   );
   
-  const weeklyPricePosition = calculatePosition(
-    btcPriceData.price, 
-    btcPriceData.weeklyLow, 
-    btcPriceData.weeklyHigh
-  );
-
   // Log calculated positions for debugging
-  console.log("PriceThermometer - Calculated positions:", {
-    hourlyPricePosition,
+  console.log("PriceThermometer - Daily position:", {
     dailyPricePosition,
-    weeklyPricePosition,
     btcPrice: btcPriceData.price,
-    hourlyRange: { low: btcPriceData.hourlyLow, high: btcPriceData.hourlyHigh },
-    dailyRange: { low: btcPriceData.dailyLow, high: btcPriceData.dailyHigh },
-    weeklyRange: { low: btcPriceData.weeklyLow, high: btcPriceData.weeklyHigh }
+    dailyRange: { low: btcPriceData.dailyLow, high: btcPriceData.dailyHigh }
   });
 
   const getThermometerStyle = (position: number) => {
@@ -72,7 +56,13 @@ const PriceThermometer = () => {
             className="thermometer-fill absolute bottom-0 left-0 w-full bg-gradient-to-t from-green-500 to-red-500 transition-height duration-300 ease-out"
             style={getThermometerStyle(dailyPricePosition)}
           ></div>
-          <div className="thermometer-bulb absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-6 bg-red-500 rounded-full shadow-md border-2 border-background"></div>
+          <div 
+            className="absolute w-6 h-6 bg-red-500 rounded-full shadow-md border-2 border-background z-10 transform -translate-x-1/2"
+            style={{ 
+              bottom: `calc(${dailyPricePosition * 100}% - 12px)`, 
+              left: '50%' 
+            }}
+          ></div>
         </div>
         <div className="text-xs mt-2 grid grid-cols-2 gap-2">
           <div>
