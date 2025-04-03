@@ -38,11 +38,11 @@ const MarketSessionStats = ({
   // Volume analysis results
   const [volumeAnalysis, setVolumeAnalysis] = useState<any>(null);
   
-  // Market sessions data
+  // Market sessions data - updated with correct market hours
   const [marketSessionData, setMarketSessionData] = useState([
     {
       name: "NYSE Open",
-      time: "",
+      time: "15:30",
       countdown: "Calculating...",
       impact: "High",
       volatility: 85,
@@ -53,7 +53,7 @@ const MarketSessionStats = ({
     },
     {
       name: "London Close",
-      time: "",
+      time: "17:30",
       countdown: "Calculating...",
       impact: "Medium",
       volatility: 65,
@@ -64,7 +64,7 @@ const MarketSessionStats = ({
     },
     {
       name: "NYSE Close",
-      time: "",
+      time: "22:00",
       countdown: "Calculating...",
       impact: "High",
       volatility: 78,
@@ -75,7 +75,7 @@ const MarketSessionStats = ({
     },
     {
       name: "Tokyo Open",
-      time: "",
+      time: "00:00",
       countdown: "Calculating...",
       impact: "Medium",
       volatility: 58,
@@ -86,7 +86,7 @@ const MarketSessionStats = ({
     },
     {
       name: "Nasdaq Open",
-      time: "",
+      time: "15:30",
       countdown: "Calculating...",
       impact: "High",
       volatility: 82,
@@ -168,7 +168,7 @@ const MarketSessionStats = ({
     if (marketSessions.length > 0) {
       // Find relevant market sessions
       // Match by name - we now have more detailed names from Alpha Vantage
-      const nyse = marketSessions.find(m => m.name.includes("NYSE"));
+      const nyse = marketSessions.find(m => m.name.includes("NYSE") || m.name.includes("New York"));
       const london = marketSessions.find(m => m.name.includes("London") || m.name.includes("LSE"));
       const tokyo = marketSessions.find(m => m.name.includes("Tokyo") || m.name.includes("TSE"));
       const nasdaq = marketSessions.find(m => m.name.includes("Nasdaq"));
@@ -204,7 +204,7 @@ const MarketSessionStats = ({
                 ...session,
                 countdown: nyse.status === 'open' ? 'Now' : getMarketTimeRemaining(nyse.nextEvent.time),
                 status: nyse.status === 'open' || nyse.status === 'opening-soon' ? 'active' : 'upcoming',
-                time: nyse.hours.split('-')[0].trim(), // First part of hours string
+                time: "15:30", // Fixed time based on user requirements
                 marketCap: nyse.marketCap || session.marketCap
               };
             } else if (session.name === "London Close") {
@@ -212,7 +212,7 @@ const MarketSessionStats = ({
                 ...session,
                 countdown: london.status === 'open' ? getMarketTimeRemaining(london.nextEvent.time) : 'After open',
                 status: london.status === 'open' ? 'active' : 'upcoming',
-                time: london.hours.split('-')[1].trim(), // Second part of hours string
+                time: "17:30", // Fixed time based on user requirements
                 marketCap: london.marketCap || session.marketCap
               };
             } else if (session.name === "NYSE Close") {
@@ -220,7 +220,7 @@ const MarketSessionStats = ({
                 ...session,
                 countdown: nyse.status === 'open' ? getMarketTimeRemaining(nyse.nextEvent.time) : 'After open',
                 status: nyse.status === 'open' ? 'active' : 'upcoming',
-                time: nyse.hours.split('-')[1].trim(), // Second part of hours string
+                time: "22:00", // Fixed time based on user requirements
                 marketCap: nyse.marketCap || session.marketCap
               };
             } else if (session.name === "Tokyo Open") {
@@ -228,7 +228,7 @@ const MarketSessionStats = ({
                 ...session,
                 countdown: tokyo.status === 'open' ? 'Now' : getMarketTimeRemaining(tokyo.nextEvent.time),
                 status: tokyo.status === 'open' || tokyo.status === 'opening-soon' ? 'active' : 'upcoming',
-                time: tokyo.hours.split('-')[0].trim(), // First part of hours string
+                time: tokyo.hours ? tokyo.hours.split('-')[0].trim() : "00:00", // Keep time format if available
                 marketCap: tokyo.marketCap || session.marketCap
               };
             } else if (session.name === "Nasdaq Open" && nasdaq) {
@@ -236,7 +236,7 @@ const MarketSessionStats = ({
                 ...session,
                 countdown: nasdaq.status === 'open' ? 'Now' : getMarketTimeRemaining(nasdaq.nextEvent.time),
                 status: nasdaq.status === 'open' || nasdaq.status === 'opening-soon' ? 'active' : 'upcoming',
-                time: nasdaq.hours.split('-')[0].trim(), // First part of hours string
+                time: "15:30", // Fixed time based on user requirements
                 marketCap: nasdaq.marketCap || session.marketCap
               };
             }
