@@ -34,7 +34,7 @@ import {
   Calendar,
   Volume2,
   Percent,
-  LayoutGrid
+  LayoutGrid 
 } from 'lucide-react';
 
 const INDICATOR_EXPLANATIONS = {
@@ -63,7 +63,7 @@ interface IndicatorBreakdownProps {
   indicators: TechnicalIndicator[];
 }
 
-export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicators }) => {
+export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicators = [] }) => {
   const { currentTimeframe } = useTimeframe();
   const [activeTab, setActiveTab] = useState<string>('overview');
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({
@@ -554,7 +554,7 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.8, duration: 0.3 }}
           >
-            <span className="text-lg font-semibold">{filteredIndicators.length}</span>
+            <span className="text-lg font-semibold">{filteredIndicators ? filteredIndicators.length : 0}</span>
             <span className="text-xs text-muted-foreground">indicators</span>
           </motion.div>
         </div>
@@ -566,7 +566,7 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
     const bullishCount = getBullishCount();
     const bearishCount = getBearishCount();
     const neutralCount = getNeutralCount();
-    const totalCount = filteredIndicators.length;
+    const totalCount = filteredIndicators ? filteredIndicators.length : 0;
     
     if (totalCount === 0) {
       return "No indicators available to generate a summary. Please generate analysis first.";

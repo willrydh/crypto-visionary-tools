@@ -61,12 +61,18 @@ export const TechnicalAnalysisProvider: React.FC<TechnicalAnalysisProviderProps>
       const timeframes = getTimeframes();
       const indicatorTypes = getIndicators();
       
+      console.log(`Generating analysis for ${symbol} with mode ${tradingMode}`);
+      console.log(`Timeframes: ${timeframes.join(', ')}`);
+      console.log(`Indicator types: ${indicatorTypes.join(', ')}`);
+      
       // This would normally call a real API
       const fetchedIndicators = await fetchTechnicalIndicators(
         symbol, 
         timeframes, 
         indicatorTypes
       );
+      
+      console.log(`Fetched ${fetchedIndicators ? fetchedIndicators.length : 0} indicators`);
       
       // Ensure we have indicators before setting them
       if (fetchedIndicators && fetchedIndicators.length > 0) {
@@ -83,6 +89,8 @@ export const TechnicalAnalysisProvider: React.FC<TechnicalAnalysisProviderProps>
           setBiasLocked(true);
         }
         
+        console.log(`Calculated market bias: ${updatedBias}`);
+        
         // Make sure we have a valid bias before generating the suggestion
         if (updatedBias) {
           // Now generate trade suggestion using the updated bias
@@ -92,6 +100,8 @@ export const TechnicalAnalysisProvider: React.FC<TechnicalAnalysisProviderProps>
             updatedBias, // Use the updated bias here
             tradingMode
           );
+          
+          console.log(`Generated trade suggestion: ${suggestion ? suggestion.direction : 'none'}`);
           
           // Update trade suggestion and related state
           setTradeSuggestion(suggestion);
@@ -113,6 +123,11 @@ export const TechnicalAnalysisProvider: React.FC<TechnicalAnalysisProviderProps>
 
   // Calculate market bias based on indicators
   const calculateMarketBias = (indicators: TechnicalIndicator[]): MarketBias => {
+    if (!indicators || indicators.length === 0) {
+      console.warn('No indicators provided to calculateMarketBias');
+      return 'neutral';
+    }
+    
     let bullishCount = 0;
     let bearishCount = 0;
     let totalCount = 0;
@@ -127,6 +142,8 @@ export const TechnicalAnalysisProvider: React.FC<TechnicalAnalysisProviderProps>
     // Calculate percentage
     const bullishPercentage = (bullishCount / totalCount) * 100;
     const bearishPercentage = (bearishCount / totalCount) * 100;
+    
+    console.log(`Bias calculation: Bullish ${bullishPercentage.toFixed(1)}%, Bearish ${bearishPercentage.toFixed(1)}%`);
     
     // Determine bias
     if (bullishPercentage >= 60) return 'bullish';
