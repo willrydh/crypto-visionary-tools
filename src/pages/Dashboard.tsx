@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { LineChart, Calendar } from 'lucide-react';
@@ -48,7 +47,6 @@ const Dashboard = () => {
 
   const btcPriceData = priceData['BTCUSDT'] || { price: 82500, change24h: 2.3 };
 
-  // Debug log for PriceData
   useEffect(() => {
     if (priceData['BTCUSDT']) {
       console.log('Dashboard - Price data for BTC:', {
@@ -163,20 +161,6 @@ const Dashboard = () => {
 
   const forecast = getTradingForecast();
 
-  useEffect(() => {
-    if (priceData['BTCUSDT']) {
-      console.log('Price data for BTC:', {
-        price: priceData['BTCUSDT'].price,
-        hourlyHigh: priceData['BTCUSDT'].hourlyHigh,
-        hourlyLow: priceData['BTCUSDT'].hourlyLow,
-        dailyHigh: priceData['BTCUSDT'].dailyHigh,
-        dailyLow: priceData['BTCUSDT'].dailyLow,
-        weeklyHigh: priceData['BTCUSDT'].weeklyHigh,
-        weeklyLow: priceData['BTCUSDT'].weeklyLow,
-      });
-    }
-  }, [priceData]);
-
   return (
     <div className="space-y-6 mt-6 animate-fade-in">
       <WelcomeHeader />
@@ -234,9 +218,7 @@ const Dashboard = () => {
         
         <div className="space-y-6">
           <PriceRangeIndicator title="Price Ranges" symbol="BTCUSDT" />
-          <div className="bg-gradient-to-b from-background to-background/80 rounded-lg border border-border p-0.5">
-            <PriceThermometer />
-          </div>
+          <PriceThermometer />
         </div>
       </div>
       
