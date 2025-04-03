@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -75,7 +74,6 @@ export const PriceThermometer = () => {
     const dailyPercentage = getDailyPercentage();
     const weeklyPercentage = getWeeklyPercentage();
     
-    // Give more weight to hourly and daily percentages for faster visual feedback
     const weightedAverage = (
       (hourlyPercentage * 0.5) + 
       (dailyPercentage * 0.3) + 
@@ -85,7 +83,6 @@ export const PriceThermometer = () => {
     console.log(`Price position: Hourly ${hourlyPercentage.toFixed(1)}%, Daily ${dailyPercentage.toFixed(1)}%, Weekly ${weeklyPercentage.toFixed(1)}%`);
     console.log(`Weighted average: ${weightedAverage.toFixed(1)}%`);
     
-    // Return the appropriate color theme based on the price position
     if (weightedAverage > 65) {
       return "green";
     } else if (weightedAverage < 35) {
@@ -98,13 +95,12 @@ export const PriceThermometer = () => {
   const getBackgroundGradient = () => {
     const theme = getBackgroundTheme();
     
-    // Simplified background class based on theme
     if (theme === 'green') {
-      return "from-green-800/30 to-green-600/20 northern-lights-green";
+      return "from-green-800/15 to-green-600/10 northern-lights-green";
     } else if (theme === 'red') {
-      return "from-red-800/30 to-red-600/20 northern-lights-red";
+      return "from-red-800/15 to-red-600/10 northern-lights-red";
     } else {
-      return "from-blue-600/25 to-blue-400/15 northern-lights-neutral";
+      return "from-blue-600/15 to-blue-400/10 northern-lights-neutral";
     }
   };
   
