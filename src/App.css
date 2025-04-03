@@ -37,7 +37,7 @@
   animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* Northern lights animation effects - more subtle version */
+/* Northern lights animation effects - more refined and stronger overlay */
 @keyframes northern-lights {
   0% {
     filter: hue-rotate(0deg) brightness(1);
@@ -70,13 +70,13 @@
   bottom: 0;
   background: linear-gradient(
     135deg,
-    rgba(32, 87, 100, 0.03) 0%,
-    rgba(23, 92, 61, 0.03) 25%,
-    rgba(67, 97, 157, 0.03) 50%,
-    rgba(114, 59, 143, 0.03) 75%,
-    rgba(17, 75, 95, 0.03) 100%
+    rgba(32, 87, 100, 0.06) 0%,
+    rgba(23, 92, 61, 0.06) 25%,
+    rgba(67, 97, 157, 0.06) 50%,
+    rgba(114, 59, 143, 0.06) 75%,
+    rgba(17, 75, 95, 0.06) 100%
   );
-  opacity: 0.5;
+  opacity: 0.7; /* Increased from 0.5 for stronger overlay */
   animation: northern-lights 20s ease-in-out infinite;
   animation-delay: -5s;
   pointer-events: none;
@@ -96,8 +96,8 @@
   background: radial-gradient(
     circle at 50% 50%,
     transparent 50%,
-    rgba(67, 97, 157, 0.02) 75%,
-    rgba(32, 87, 100, 0.03) 100%
+    rgba(67, 97, 157, 0.04) 75%,
+    rgba(32, 87, 100, 0.06) 100%
   );
   animation: pulse-subtle 8s ease-in-out infinite;
   pointer-events: none;
@@ -116,8 +116,8 @@
   bottom: 0;
   background: linear-gradient(
     135deg,
-    rgba(45, 55, 72, 0.03) 0%,
-    rgba(45, 55, 72, 0.01) 100%
+    rgba(45, 55, 72, 0.05) 0%,
+    rgba(45, 55, 72, 0.03) 100%
   );
   animation: pulse-subtle 10s ease-in-out infinite;
   pointer-events: none;

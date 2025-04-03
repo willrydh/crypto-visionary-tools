@@ -137,23 +137,23 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
     );
     
     // Return appropriate background gradient based on position
-    // Using more subtle gradient colors with reduced opacity (35% less intense)
+    // Increased opacity for all gradients by about 10-15% to make overlay less transparent
     if (weightedPosition > 85) {
-      return "bg-gradient-to-b from-green-900/13 to-green-700/3 northern-lights"; // More subtle strong green
+      return "bg-gradient-to-b from-green-900/20 to-green-700/10 northern-lights"; // Increased opacity
     } else if (weightedPosition > 75) {
-      return "bg-gradient-to-b from-green-800/10 to-green-600/3 northern-lights"; // More subtle medium green
+      return "bg-gradient-to-b from-green-800/18 to-green-600/10 northern-lights"; // Increased opacity
     } else if (weightedPosition > 65) {
-      return "bg-gradient-to-b from-green-700/10 to-green-500/3 northern-lights"; // More subtle light green
+      return "bg-gradient-to-b from-green-700/18 to-green-500/10 northern-lights"; // Increased opacity
     } else if (weightedPosition > 55) {
-      return "bg-gradient-to-b from-blue-700/10 to-green-500/3 northern-lights"; // More subtle blue-green
+      return "bg-gradient-to-b from-blue-700/18 to-green-500/10 northern-lights"; // Increased opacity
     } else if (weightedPosition > 45) {
-      return "bg-[#1A1F2C]/90 northern-lights-neutral"; // Neutral dark with reduced opacity
+      return "bg-[#1A1F2C]/95 northern-lights-neutral"; // Increased opacity
     } else if (weightedPosition > 35) {
-      return "bg-gradient-to-b from-amber-900/10 to-amber-700/3 northern-lights"; // More subtle light amber
+      return "bg-gradient-to-b from-amber-900/18 to-amber-700/10 northern-lights"; // Increased opacity
     } else if (weightedPosition > 25) {
-      return "bg-gradient-to-b from-red-900/10 to-amber-800/3 northern-lights"; // More subtle amber-red
+      return "bg-gradient-to-b from-red-900/18 to-amber-800/10 northern-lights"; // Increased opacity
     } else {
-      return "bg-gradient-to-b from-red-900/13 to-red-700/3 northern-lights"; // More subtle strong red
+      return "bg-gradient-to-b from-red-900/20 to-red-700/10 northern-lights"; // Increased opacity
     }
   };
   
@@ -204,9 +204,9 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
             
             {/* Overbought/Oversold Zones */}
             <div className="flex justify-between mt-1">
-              <div className="w-[20%] h-1 bg-red-500/13 rounded-l-full" />
-              <div className="w-[60%] h-1 bg-muted/13" />
-              <div className="w-[20%] h-1 bg-green-500/13 rounded-r-full" />
+              <div className="w-[20%] h-1 bg-red-500/20 rounded-l-full" />
+              <div className="w-[60%] h-1 bg-muted/20" />
+              <div className="w-[20%] h-1 bg-green-500/20 rounded-r-full" />
             </div>
           </div>
         </div>
@@ -235,9 +235,9 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
             
             {/* Overbought/Oversold Zones */}
             <div className="flex justify-between mt-1">
-              <div className="w-[20%] h-1 bg-red-500/13 rounded-l-full" />
-              <div className="w-[60%] h-1 bg-muted/13" />
-              <div className="w-[20%] h-1 bg-green-500/13 rounded-r-full" />
+              <div className="w-[20%] h-1 bg-red-500/20 rounded-l-full" />
+              <div className="w-[60%] h-1 bg-muted/20" />
+              <div className="w-[20%] h-1 bg-green-500/20 rounded-r-full" />
             </div>
           </div>
         </div>
@@ -266,9 +266,9 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
             
             {/* Overbought/Oversold Zones */}
             <div className="flex justify-between mt-1">
-              <div className="w-[20%] h-1 bg-red-500/13 rounded-l-full" />
-              <div className="w-[60%] h-1 bg-muted/13" />
-              <div className="w-[20%] h-1 bg-green-500/13 rounded-r-full" />
+              <div className="w-[20%] h-1 bg-red-500/20 rounded-l-full" />
+              <div className="w-[60%] h-1 bg-muted/20" />
+              <div className="w-[20%] h-1 bg-green-500/20 rounded-r-full" />
             </div>
           </div>
         </div>

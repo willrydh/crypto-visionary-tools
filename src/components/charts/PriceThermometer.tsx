@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -85,27 +84,27 @@ export const PriceThermometer = () => {
     console.log(`Price position: Hourly ${hourlyPercentage.toFixed(1)}%, Daily ${dailyPercentage.toFixed(1)}%, Weekly ${weeklyPercentage.toFixed(1)}%`);
     console.log(`Weighted average: ${weightedAverage.toFixed(1)}%`);
     
-    // More subtle gradient transitions with reduced opacity
+    // Increased opacity for all gradients by about 10-15% to make overlay less transparent
     if (weightedAverage > 90) {
-      return "from-green-800/30 to-green-600/20 northern-lights"; // Very strong green but subtle
+      return "from-green-800/40 to-green-600/30 northern-lights"; // Increased opacity
     } else if (weightedAverage > 80) {
-      return "from-green-700/25 to-green-500/15 northern-lights"; // Strong green but subtle
+      return "from-green-700/35 to-green-500/25 northern-lights"; // Increased opacity
     } else if (weightedAverage > 70) {
-      return "from-green-600/20 to-green-400/15 northern-lights"; // Medium-strong green but subtle
+      return "from-green-600/30 to-green-400/25 northern-lights"; // Increased opacity
     } else if (weightedAverage > 60) {
-      return "from-green-500/20 to-green-300/10 northern-lights"; // Medium green but subtle
+      return "from-green-500/30 to-green-300/20 northern-lights"; // Increased opacity
     } else if (weightedAverage > 55) {
-      return "from-green-500/15 to-blue-500/10 northern-lights"; // Light green to blue but subtle
+      return "from-green-500/25 to-blue-500/20 northern-lights"; // Increased opacity
     } else if (weightedAverage > 45) {
-      return "from-blue-600/15 to-blue-400/5 northern-lights-neutral"; // Neutral blue but subtle
+      return "from-blue-600/25 to-blue-400/15 northern-lights-neutral"; // Increased opacity
     } else if (weightedAverage > 35) {
-      return "from-amber-600/15 to-amber-400/5 northern-lights"; // Amber but subtle
+      return "from-amber-600/25 to-amber-400/15 northern-lights"; // Increased opacity
     } else if (weightedAverage > 25) {
-      return "from-amber-700/15 to-red-500/5 northern-lights"; // Amber to red but subtle
+      return "from-amber-700/25 to-red-500/15 northern-lights"; // Increased opacity
     } else if (weightedAverage > 15) {
-      return "from-red-700/20 to-red-500/10 northern-lights"; // Medium red but subtle
+      return "from-red-700/30 to-red-500/20 northern-lights"; // Increased opacity
     } else {
-      return "from-red-800/25 to-red-600/15 northern-lights"; // Strong red but subtle
+      return "from-red-800/35 to-red-600/25 northern-lights"; // Increased opacity
     }
   };
   

@@ -60,7 +60,7 @@ export const BlurredBackground: React.FC<BlurredBackgroundProps> = ({
     return () => clearInterval(rotationInterval);
   }, [images.length, transitionDuration]);
 
-  // Northern lights color animation effect - more subtle
+  // Northern lights color animation effect
   useEffect(() => {
     if (!animateColors) return;
     
@@ -71,15 +71,15 @@ export const BlurredBackground: React.FC<BlurredBackgroundProps> = ({
     return () => clearInterval(colorAnimation);
   }, [animateColors]);
   
-  // Generate northern lights color based on phase - more subtle colors
+  // Generate northern lights color based on phase - more vibrant colors
   const getNorthernLightsColor = () => {
-    // More subtle aurora colors (reduced opacity by ~35%)
+    // More vibrant aurora colors with increased opacity
     const colors = [
-      'rgba(32, 87, 100, 0.06)', // Teal
-      'rgba(23, 92, 61, 0.06)',  // Green
-      'rgba(67, 97, 157, 0.06)', // Blue
-      'rgba(114, 59, 143, 0.06)', // Purple
-      'rgba(17, 75, 95, 0.06)',  // Deep blue
+      'rgba(32, 87, 100, 0.12)', // Teal
+      'rgba(23, 92, 61, 0.12)',  // Green
+      'rgba(67, 97, 157, 0.12)', // Blue
+      'rgba(114, 59, 143, 0.12)', // Purple
+      'rgba(17, 75, 95, 0.12)',  // Deep blue
     ];
     
     const index = Math.floor(colorPhase / (360 / colors.length));
@@ -118,14 +118,14 @@ export const BlurredBackground: React.FC<BlurredBackgroundProps> = ({
       </div>
       {animateColors ? (
         <div 
-          className="absolute inset-0 backdrop-blur-md bg-background/70 northern-lights-animation"
+          className="absolute inset-0 backdrop-blur-md bg-background/80 northern-lights-animation" /* Increased opacity */
           style={{ 
             background: getNorthernLightsColor(),
             transition: 'background 4s ease-in-out'  // Slowed down from 3s
           }}
         />
       ) : (
-        <div className="absolute inset-0 backdrop-blur-md bg-background/70" />
+        <div className="absolute inset-0 backdrop-blur-md bg-background/80" /> /* Increased opacity */
       )}
     </div>
   );
