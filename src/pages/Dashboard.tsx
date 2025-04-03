@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { LineChart, Calendar } from 'lucide-react';
@@ -7,7 +6,6 @@ import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';
 import { useTradingMode } from '@/hooks/useTradingMode';
 import { IndicatorBreakdown } from '@/components/analysis/IndicatorBreakdown';
 import { MarketStatus } from '@/components/markets/MarketStatus';
-import PriceThermometer from '@/components/charts/PriceThermometer';
 import PriceRangeIndicator from '@/components/charts/PriceRangeIndicator';
 import PriceChart from '@/components/charts/PriceChart';
 import { ImprovedEconomicCalendar } from '@/components/calendar/ImprovedEconomicCalendar';
@@ -218,7 +216,6 @@ const Dashboard = () => {
         
         <div className="space-y-6">
           <PriceRangeIndicator title="Price Ranges" symbol="BTCUSDT" />
-          <PriceThermometer />
         </div>
       </div>
       
