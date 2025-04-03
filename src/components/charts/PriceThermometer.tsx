@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -35,7 +34,8 @@ export const PriceThermometer = () => {
   });
   
   const [backgroundStyle, setBackgroundStyle] = useState<string>('bg-card');
-  const [currentTransition, setCurrentTransition] = useState<string>('transition-colors duration-1000');
+  const [borderStyle, setBorderStyle] = useState<string>('');
+  const [currentTransition, setCurrentTransition] = useState<string>('transition-all duration-1000');
 
   useEffect(() => {
     // Simulate real-time price updates
@@ -69,7 +69,7 @@ export const PriceThermometer = () => {
     return () => clearInterval(interval);
   }, [hourlyRange, dailyRange, weeklyRange]);
 
-  // Calculate the dynamic background color based on price levels
+  // Calculate the subtle visual indication of price strength/weakness
   useEffect(() => {
     // Calculate relative position of current price in each range (0-100%)
     const getPositionInRange = (data: RangeData): number => {
@@ -83,30 +83,30 @@ export const PriceThermometer = () => {
     const dailyPosition = getPositionInRange(dailyRange);
     const weeklyPosition = getPositionInRange(weeklyRange);
 
-    // Get combined signal strength (average of all three positions)
-    const combinedPosition = (hourlyPosition + dailyPosition + weeklyPosition) / 3;
+    // Get combined signal strength (weighted average of positions)
+    // Give more weight to hourly, then daily, then weekly
+    const combinedPosition = (hourlyPosition * 0.5) + (dailyPosition * 0.3) + (weeklyPosition * 0.2);
 
-    // Determine background color based on combined position
-    let newBgStyle = 'bg-card';
-    if (combinedPosition > 75) {
-      // Strong bullish - green tint
-      newBgStyle = 'bg-gradient-to-b from-green-50/30 to-card dark:from-green-950/20 dark:to-card';
-    } else if (combinedPosition > 65) {
-      // Moderate bullish - light green tint
-      newBgStyle = 'bg-gradient-to-b from-green-50/20 to-card dark:from-green-950/10 dark:to-card';
-    } else if (combinedPosition < 25) {
-      // Strong bearish - red tint
-      newBgStyle = 'bg-gradient-to-b from-red-50/30 to-card dark:from-red-950/20 dark:to-card';
-    } else if (combinedPosition < 35) {
-      // Moderate bearish - light red tint
-      newBgStyle = 'bg-gradient-to-b from-red-50/20 to-card dark:from-red-950/10 dark:to-card';
+    // Determine styles based on combined position
+    let newBorderStyle = '';
+    
+    // Only apply strong visual cues at the extremes
+    if (combinedPosition > 80) {
+      // Strong bullish - subtle green border
+      newBorderStyle = 'border-green-500/20 dark:border-green-500/10';
+    } else if (combinedPosition < 20) {
+      // Strong bearish - subtle red border
+      newBorderStyle = 'border-red-500/20 dark:border-red-500/10';
     }
 
     // Only update if the style has changed
-    if (newBgStyle !== backgroundStyle) {
-      setBackgroundStyle(newBgStyle);
+    if (newBorderStyle !== borderStyle) {
+      setBorderStyle(newBorderStyle);
     }
-  }, [hourlyRange, dailyRange, weeklyRange, backgroundStyle]);
+
+    // Keep background clean and consistent
+    setBackgroundStyle('bg-card');
+  }, [hourlyRange, dailyRange, weeklyRange, borderStyle]);
 
   // Calculate the relative position of a value within a range as a percentage
   const getPositionPercent = (value: number, min: number, max: number): number => {
@@ -169,7 +169,12 @@ export const PriceThermometer = () => {
   };
 
   return (
-    <Card className={cn("overflow-hidden border-border/50", backgroundStyle, currentTransition)}>
+    <Card className={cn(
+      "overflow-hidden", 
+      borderStyle, 
+      backgroundStyle, 
+      currentTransition
+    )}>
       <CardHeader className="p-4 border-b border-border/20">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-medium flex items-center">
