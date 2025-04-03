@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -72,22 +73,33 @@ export const PriceThermometer = () => {
     const dailyPercentage = getDailyPercentage();
     const weeklyPercentage = getWeeklyPercentage();
     
+    // Give more weight to hourly and daily percentages for faster visual feedback
     const weightedAverage = (
       (hourlyPercentage * 0.5) + 
       (dailyPercentage * 0.3) + 
       (weeklyPercentage * 0.2)
     );
     
-    if (weightedAverage > 75) {
-      return "from-green-950/30 to-green-900/10";
-    } else if (weightedAverage > 60) {
-      return "from-green-950/20 to-green-900/5";
-    } else if (weightedAverage > 40) {
-      return "from-blue-950/20 to-blue-900/5";
+    console.log(`Price position: Hourly ${hourlyPercentage.toFixed(1)}%, Daily ${dailyPercentage.toFixed(1)}%, Weekly ${weeklyPercentage.toFixed(1)}%`);
+    console.log(`Weighted average: ${weightedAverage.toFixed(1)}%`);
+    
+    // Enhanced gradient transitions with more green shades
+    if (weightedAverage > 85) {
+      return "from-green-800/40 to-green-600/20"; // Very strong green
+    } else if (weightedAverage > 75) {
+      return "from-green-700/30 to-green-500/15"; // Strong green
+    } else if (weightedAverage > 65) {
+      return "from-green-600/25 to-green-400/10"; // Medium green
+    } else if (weightedAverage > 55) {
+      return "from-green-500/20 to-blue-500/10"; // Light green to blue
+    } else if (weightedAverage > 45) {
+      return "from-blue-600/20 to-blue-400/10"; // Neutral blue
+    } else if (weightedAverage > 35) {
+      return "from-amber-600/20 to-amber-400/10"; // Amber
     } else if (weightedAverage > 25) {
-      return "from-amber-950/20 to-amber-900/5";
+      return "from-amber-700/25 to-red-500/10"; // Amber to red
     } else {
-      return "from-red-950/30 to-red-900/10";
+      return "from-red-800/30 to-red-600/15"; // Strong red
     }
   };
   

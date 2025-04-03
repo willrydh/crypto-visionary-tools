@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -88,6 +89,9 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
   const dailyPercentage = calculateDailyPercentage();
   const weeklyPercentage = calculateWeeklyPercentage();
   
+  // Log position percentages for debugging
+  console.log(`PriceRangeIndicator - Price positions: Hourly: ${hourlyPercentage.toFixed(1)}%, Daily: ${dailyPercentage.toFixed(1)}%, Weekly: ${weeklyPercentage.toFixed(1)}%`);
+  
   // Determine if price is in overbought/oversold zones
   const getHourlyZone = () => {
     if (hourlyPercentage >= 80) return "overbought";
@@ -115,16 +119,45 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
   const getZoneColor = (zone: string) => {
     switch (zone) {
       case "overbought":
-        return "text-red-500";
-      case "oversold":
         return "text-green-500";
+      case "oversold":
+        return "text-red-500";
       default:
         return "text-yellow-500";
     }
   };
   
+  // Calculate background color based on price position
+  const getBackgroundColor = () => {
+    // Calculate weighted average position (more weight to hourly and daily)
+    const weightedPosition = (
+      (hourlyPercentage * 0.5) + 
+      (dailyPercentage * 0.3) + 
+      (weeklyPercentage * 0.2)
+    );
+    
+    // Return appropriate background gradient based on position
+    if (weightedPosition > 85) {
+      return "bg-gradient-to-b from-green-900/30 to-green-700/10"; // Strong green
+    } else if (weightedPosition > 75) {
+      return "bg-gradient-to-b from-green-800/25 to-green-600/10"; // Medium green
+    } else if (weightedPosition > 65) {
+      return "bg-gradient-to-b from-green-700/20 to-green-500/10"; // Light green
+    } else if (weightedPosition > 55) {
+      return "bg-gradient-to-b from-blue-700/20 to-green-500/5"; // Blue-green
+    } else if (weightedPosition > 45) {
+      return "bg-[#1A1F2C]"; // Neutral dark
+    } else if (weightedPosition > 35) {
+      return "bg-gradient-to-b from-amber-900/20 to-amber-700/10"; // Light amber
+    } else if (weightedPosition > 25) {
+      return "bg-gradient-to-b from-red-900/20 to-amber-800/10"; // Amber-red
+    } else {
+      return "bg-gradient-to-b from-red-900/30 to-red-700/10"; // Strong red
+    }
+  };
+  
   return (
-    <Card className="bg-[#1A1F2C] border-border/40 text-white">
+    <Card className={`${getBackgroundColor()} border-border/40 text-white transition-colors duration-700`}>
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center text-lg text-white">
           {title}
@@ -170,9 +203,9 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
             
             {/* Overbought/Oversold Zones */}
             <div className="flex justify-between mt-1">
-              <div className="w-[20%] h-1 bg-green-500/20 rounded-l-full" />
+              <div className="w-[20%] h-1 bg-red-500/20 rounded-l-full" />
               <div className="w-[60%] h-1 bg-muted/20" />
-              <div className="w-[20%] h-1 bg-red-500/20 rounded-r-full" />
+              <div className="w-[20%] h-1 bg-green-500/20 rounded-r-full" />
             </div>
           </div>
         </div>
@@ -201,9 +234,9 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
             
             {/* Overbought/Oversold Zones */}
             <div className="flex justify-between mt-1">
-              <div className="w-[20%] h-1 bg-green-500/20 rounded-l-full" />
+              <div className="w-[20%] h-1 bg-red-500/20 rounded-l-full" />
               <div className="w-[60%] h-1 bg-muted/20" />
-              <div className="w-[20%] h-1 bg-red-500/20 rounded-r-full" />
+              <div className="w-[20%] h-1 bg-green-500/20 rounded-r-full" />
             </div>
           </div>
         </div>
@@ -232,9 +265,9 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
             
             {/* Overbought/Oversold Zones */}
             <div className="flex justify-between mt-1">
-              <div className="w-[20%] h-1 bg-green-500/20 rounded-l-full" />
+              <div className="w-[20%] h-1 bg-red-500/20 rounded-l-full" />
               <div className="w-[60%] h-1 bg-muted/20" />
-              <div className="w-[20%] h-1 bg-red-500/20 rounded-r-full" />
+              <div className="w-[20%] h-1 bg-green-500/20 rounded-r-full" />
             </div>
           </div>
         </div>
