@@ -16,22 +16,22 @@ const systemServices = [
   {
     name: 'Bybit API',
     status: 'connected',
-    icon: <Wifi className="h-4 w-4" />,
+    icon: <Wifi className="h-4 w-4 text-green-500" />,
   },
   {
     name: 'Forex Factory',
     status: 'connected',
-    icon: <Globe className="h-4 w-4" />,
+    icon: <Globe className="h-4 w-4 text-green-500" />,
   },
   {
     name: 'Market Data',
     status: 'connected',
-    icon: <Database className="h-4 w-4" />,
+    icon: <Database className="h-4 w-4 text-green-500" />,
   },
   {
     name: 'AI Engine',
     status: 'connected',
-    icon: <BrainCircuit className="h-4 w-4" />,
+    icon: <BrainCircuit className="h-4 w-4 text-green-500" />,
   }
 ];
 
