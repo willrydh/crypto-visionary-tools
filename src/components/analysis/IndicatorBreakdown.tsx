@@ -54,9 +54,9 @@ const INDICATOR_EXPLANATIONS = {
 // Pattern detection explanations
 const PATTERN_EXPLANATIONS = {
   'Moving Average Crossover': 'When a faster MA crosses above a slower MA, it signals potential upward momentum. Conversely, crossing below signals potential downward momentum.',
-  'RSI Divergence': 'When price makes new highs/lows but RSI doesn't confirm, it suggests the trend may be weakening and could reverse.',
+  'RSI Divergence': "When price makes new highs/lows but RSI doesn't confirm, it suggests the trend may be weakening and could reverse.",
   'Volume Confirmation': 'Strong price moves should be accompanied by strong volume. Lack of volume on a price move suggests it may not be sustainable.',
-  'MACD Histogram Divergence': 'When price makes new highs/lows but MACD histogram doesn't confirm, it suggests momentum is weakening and a reversal may occur.',
+  'MACD Histogram Divergence': "When price makes new highs/lows but MACD histogram doesn't confirm, it suggests momentum is weakening and a reversal may occur.",
   'Oversold Bounce': 'When multiple indicators show deeply oversold conditions, prices often bounce up temporarily, even in downtrends.',
   'Overbought Pullback': 'When multiple indicators show deeply overbought conditions, prices often pull back temporarily, even in uptrends.',
   'Trend Confirmation': 'When multiple indicators align (trend, momentum, volume), the current trend is strong and likely to continue.'
