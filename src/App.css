@@ -87,14 +87,6 @@ button {
   -webkit-backdrop-filter: blur(12px);
 }
 
-/* Enhanced frosted glass effect for sliders */
-.hero-frost {
-  background-color: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
 /* Z-index layers for proper stacking */
 .z-sidebar {
   z-index: 60;

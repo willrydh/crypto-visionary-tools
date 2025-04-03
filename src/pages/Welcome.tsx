@@ -11,13 +11,6 @@ import ProfitCalculator from '@/components/welcome/ProfitCalculator';
 const Welcome = () => {
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(false);
-  const [currentSlide, setCurrentSlide] = useState(0);
-  
-  const heroImages = [
-    '/lovable-uploads/cd165e0d-4678-4599-8125-3439bc1496cc.png',
-    '/lovable-uploads/4a0c6ea8-49f6-4dd0-8216-6e0085aec938.png',
-    '/lovable-uploads/0bbcaaf7-41ab-41c2-a81f-15c52b4d6202.png'
-  ];
 
   useEffect(() => {
     const handleResize = () => {
@@ -48,40 +41,12 @@ const Welcome = () => {
           </div>
         </div>
       </header>
-      
-      <section className="relative py-24 px-6 overflow-hidden">
-        <div className="absolute inset-0 -z-10">
-          <Carousel 
-            className="h-full"
-            opts={{ loop: true }}
-            setApi={(api) => {
-              api?.on('select', () => {
-                setCurrentSlide(api.selectedScrollSnap());
-              });
-            }}
-          >
-            <CarouselContent className="h-full">
-              {heroImages.map((image, index) => (
-                <CarouselItem key={index} className="h-full">
-                  <div className="relative w-full h-full">
-                    <img 
-                      src={image} 
-                      alt={`Trading background ${index + 1}`} 
-                      className="w-full h-full object-cover object-center"
-                    />
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-          </Carousel>
-          <div className="absolute inset-0 bg-background/60 backdrop-blur-md"></div>
-        </div>
-        
-        <div className="max-w-5xl mx-auto text-center relative z-10">
+      <section className="py-24 px-6">
+        <div className="max-w-5xl mx-auto text-center">
           <h1 className="text-4xl font-bold mb-6">Welcome to ProfitPilot AI</h1>
           <p className="text-lg text-muted-foreground mb-8">
-            Your AI-powered trading companion. Make smarter trading decisions with
-            advanced market analysis and real-time signals.
+            Unlock the power of AI-driven trading signals and market analysis.
+            Start making smarter, data-backed decisions today.
           </p>
           <div className="flex justify-center gap-4">
             <Button size="lg" onClick={() => navigate('/pricing')}>
