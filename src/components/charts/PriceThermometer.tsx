@@ -153,7 +153,7 @@ export const PriceThermometer = () => {
             </div>
             <div className="h-3 bg-muted/30 rounded-full relative overflow-hidden">
               <div 
-                className={`h-full ${getThermometerColor(hourlyPercentage)} rounded-full transition-all duration-700 ease-in-out`}
+                className={`h-full ${getThermometerColor(hourlyPercentage)} rounded-full transition-all duration-950 ease-in-out`}
                 style={{ width: `${Math.min(Math.max(hourlyPercentage, 0), 100)}%` }}
               />
               <div 
@@ -174,7 +174,7 @@ export const PriceThermometer = () => {
             </div>
             <div className="h-3 bg-muted/30 rounded-full relative overflow-hidden">
               <div 
-                className={`h-full ${getThermometerColor(dailyPercentage)} rounded-full transition-all duration-700 ease-in-out`}
+                className={`h-full ${getThermometerColor(dailyPercentage)} rounded-full transition-all duration-950 ease-in-out`}
                 style={{ width: `${Math.min(Math.max(dailyPercentage, 0), 100)}%` }}
               />
               <div 
@@ -195,7 +195,7 @@ export const PriceThermometer = () => {
             </div>
             <div className="h-3 bg-muted/30 rounded-full relative overflow-hidden">
               <div 
-                className={`h-full ${getThermometerColor(weeklyPercentage)} rounded-full transition-all duration-700 ease-in-out`}
+                className={`h-full ${getThermometerColor(weeklyPercentage)} rounded-full transition-all duration-950 ease-in-out`}
                 style={{ width: `${Math.min(Math.max(weeklyPercentage, 0), 100)}%` }}
               />
               <div 

@@ -68,7 +68,7 @@ export const BlurredBackground: React.FC<BlurredBackgroundProps> = ({
     
     const colorAnimation = setInterval(() => {
       setColorPhase(prev => (prev + 1) % 360);
-    }, 8000); // Slowed down from 4000 to 8000ms for a much gentler animation
+    }, 15000); // Slowed down from 8000 to 15000ms for a much gentler animation
     
     return () => clearInterval(colorAnimation);
   }, [animateColors]);
@@ -78,22 +78,22 @@ export const BlurredBackground: React.FC<BlurredBackgroundProps> = ({
     // Theme-based colors with reduced opacity for subtlety
     const themes = {
       green: [
-        'rgba(23, 92, 61, 0.09)', // Light green
-        'rgba(32, 128, 80, 0.09)', // Medium green
-        'rgba(40, 160, 100, 0.09)', // Bright green
-        'rgba(20, 80, 50, 0.09)',   // Dark green
+        'rgba(23, 92, 61, 0.2)', // Light green
+        'rgba(32, 128, 80, 0.2)', // Medium green
+        'rgba(40, 160, 100, 0.2)', // Bright green
+        'rgba(20, 80, 50, 0.2)',   // Dark green
       ],
       red: [
-        'rgba(128, 32, 32, 0.09)', // Medium red
-        'rgba(160, 40, 40, 0.09)', // Bright red
-        'rgba(140, 30, 30, 0.09)', // Dark red
-        'rgba(110, 25, 25, 0.09)', // Deep red
+        'rgba(128, 32, 32, 0.2)', // Medium red
+        'rgba(160, 40, 40, 0.2)', // Bright red
+        'rgba(140, 30, 30, 0.2)', // Dark red
+        'rgba(110, 25, 25, 0.2)', // Deep red
       ],
       neutral: [
-        'rgba(45, 55, 72, 0.08)', // Slate blue
-        'rgba(50, 60, 80, 0.08)',  // Dark slate blue
-        'rgba(40, 50, 70, 0.08)',  // Navy blue
-        'rgba(55, 65, 85, 0.08)',  // Steel blue
+        'rgba(45, 55, 72, 0.18)', // Slate blue
+        'rgba(50, 60, 80, 0.18)',  // Dark slate blue
+        'rgba(40, 50, 70, 0.18)',  // Navy blue
+        'rgba(55, 65, 85, 0.18)',  // Steel blue
       ]
     };
     
@@ -140,7 +140,7 @@ export const BlurredBackground: React.FC<BlurredBackgroundProps> = ({
           className="absolute inset-0 backdrop-blur-md bg-background/80" 
           style={{ 
             background: getNorthernLightsColor(),
-            transition: 'background 8s ease-in-out'  // Slowed down from 4s to 8s
+            transition: 'background 15s ease-in-out'  // Slowed down from 8s to 15s
           }}
         />
       ) : (
