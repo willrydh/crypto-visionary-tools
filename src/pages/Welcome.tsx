@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -14,9 +15,9 @@ const Welcome = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   
   const heroImages = [
-    '/lovable-uploads/48c6cc62-c64b-4795-bbfc-c7a769f5e5a4.png',
-    '/lovable-uploads/fe008bc7-d3c5-4253-b3af-f6c27dc380de.png',
-    '/lovable-uploads/c838292a-0224-48a0-a205-21fde8947f28.png'
+    '/lovable-uploads/cd165e0d-4678-4599-8125-3439bc1496cc.png',
+    '/lovable-uploads/4a0c6ea8-49f6-4dd0-8216-6e0085aec938.png',
+    '/lovable-uploads/0bbcaaf7-41ab-41c2-a81f-15c52b4d6202.png'
   ];
 
   useEffect(() => {
