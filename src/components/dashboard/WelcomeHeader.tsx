@@ -78,7 +78,13 @@ const WelcomeHeader = () => {
         <div className="flex flex-col mb-4 sm:mb-6">
           <h2 className="text-xl sm:text-2xl font-bold text-foreground flex items-center mb-1 flex-wrap">
             Welcome back, {randomName}
-            <Badge variant="outline" className={cn("ml-2 sm:ml-3 border-primary/30 text-[10px] flex items-center gap-1", getModeIconBgClass(tradingMode))}>
+            <Badge 
+              variant="outline" 
+              className={cn(
+                "ml-2 sm:ml-3 border-primary/30 min-w-[90px] text-[9px] flex items-center gap-1 justify-center px-1.5 whitespace-nowrap", 
+                getModeIconBgClass(tradingMode)
+              )}
+            >
               <Zap className="h-3 w-3" />
               <span>AI-powered</span>
             </Badge>
@@ -103,7 +109,7 @@ const WelcomeHeader = () => {
                         {service.icon}
                         <span className="text-xs sm:text-sm">{service.name}</span>
                       </div>
-                      <Badge variant="outline" className={`${latencies[index].color} ml-auto text-[9px] sm:text-[10px] h-4 sm:h-5 min-w-[40px] sm:min-w-[52px] flex justify-center`}>
+                      <Badge variant="outline" className={`${latencies[index].color} ml-auto text-[8px] sm:text-[10px] h-4 sm:h-5 min-w-[36px] sm:min-w-[52px] flex justify-center`}>
                         {latencies[index].value}ms
                       </Badge>
                     </div>
