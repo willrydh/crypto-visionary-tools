@@ -17,11 +17,13 @@ import { TrendingUp, TrendingDown, ArrowRight, Zap, Sun, Moon } from 'lucide-rea
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { usePrice } from '@/hooks/usePrice';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Dashboard = () => {
   const { toast } = useToast();
   const { tradingMode } = useTradingMode();
   const { loadPriceData, priceData } = usePrice();
+  const isMobile = useIsMobile();
   const { 
     indicators, 
     currentBias, 
@@ -212,12 +214,12 @@ const Dashboard = () => {
         <div className="space-y-6">
           <PriceThermometer />
           
-          <div className="hidden lg:block">
+          <div className={isMobile ? "block lg:hidden" : "hidden lg:block"}>
             <div className="import">
               {(() => {
                 const DataInsights = React.lazy(() => import('@/components/analysis/DataInsights'));
                 return (
-                  <React.Suspense fallback={<div>Loading...</div>}>
+                  <React.Suspense fallback={<div className="p-4 bg-card rounded-lg border border-border text-center">Loading insights...</div>}>
                     <DataInsights />
                   </React.Suspense>
                 );

@@ -28,9 +28,13 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   }, [location.pathname]);
 
   return (
-    <SidebarProvider defaultOpen={true}>
+    <SidebarProvider defaultOpen={!isMobile}>
       <div className={`min-h-screen flex w-full overflow-x-hidden ${isTradingPage ? 'trading-page' : ''}`}>
-        <Sidebar collapsible="icon" className="border-r border-border fixed z-50 h-full">
+        <Sidebar 
+          collapsible="icon" 
+          className="border-r border-border fixed z-50 h-full md:relative"
+          defaultCollapsed={isMobile}
+        >
           <SidebarHeader className="p-4">
             <Link to="/" className="flex items-center space-x-2">
               <img src={Logo} alt="ProfitPilot" className="h-8 w-8" />
@@ -46,7 +50,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             </div>
           </SidebarFooter>
         </Sidebar>
-        <div className="flex-1 flex flex-col md:ml-64 overflow-x-hidden">
+        <div className="flex-1 flex flex-col w-full md:ml-64 overflow-x-hidden">
           <TopHeader />
           <main className={`flex-1 overflow-auto pt-24 sm:pt-32 ${isMobile ? 'pb-20' : 'pb-16'} md:pb-6 z-10 overflow-x-hidden`}>
             <div className="px-3 sm:px-6">
