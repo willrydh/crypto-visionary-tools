@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -26,7 +25,6 @@ const Welcome = () => {
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(false);
   
-  // Background images
   const heroImages = [
     '/lovable-uploads/cd165e0d-4678-4599-8125-3439bc1496cc.png',
     '/lovable-uploads/b26d8332-d911-4cd0-92d8-9d88267f181e.png',
@@ -221,7 +219,7 @@ const HowItWorksSection = () => {
     <section className="py-16 px-6 bg-muted/50">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold mb-4">How ProfitPilot™ Works</h2>
+          <h2 className="text-3xl font-bold mb-4">How ProfitPilot Works</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Our AI-powered platform analyzes massive datasets to provide you with actionable trading insights.
           </p>
