@@ -279,15 +279,18 @@ const MarketSessionStats = ({
             {title}
           </CardTitle>
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="bg-primary/5 text-xs px-1.5 py-0">
+            <Badge variant="outline" className="bg-primary/5 text-xs px-2 py-0">
               <Clock className="h-3 w-3 mr-1" /> 
-              <span className="whitespace-nowrap">Hours</span>
+              <span className="whitespace-nowrap">Opening Hours</span>
             </Badge>
             <MarketDataTooltip 
               title="Data Source" 
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors group"
             >
-              <p>Source: {dataSource === 'alpha-vantage' ? 'Alpha Vantage' : 'Internal'}</p>
+              <div className="flex items-center">
+                <p>Source: {dataSource === 'alpha-vantage' ? 'Alpha Vantage' : 'Internal'}</p>
+                <span className="ml-1.5 inline-block h-2 w-2 rounded-full bg-green-500 group-hover:animate-pulse"></span>
+              </div>
               <p className="mt-1">Market impact data calculated from historical patterns</p>
             </MarketDataTooltip>
           </div>
