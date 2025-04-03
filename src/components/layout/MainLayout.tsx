@@ -5,6 +5,8 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from "@/compone
 import { SidebarProvider } from "@/components/ui/sidebar";
 import NavigationMenu from './NavigationMenu';
 import TopHeader from './TopHeader';
+import MobileNavigation from './MobileNavigation';
+import { useIsMobile } from '@/hooks/use-mobile';
 import Logo from '@/assets/logo.svg';
 
 interface MainLayoutProps {
@@ -14,6 +16,7 @@ interface MainLayoutProps {
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const location = useLocation();
   const [isTradingPage, setIsTradingPage] = useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     // Check if current route is trading related
@@ -45,11 +48,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         </Sidebar>
         <div className="flex-1 flex flex-col md:ml-64 overflow-x-hidden">
           <TopHeader />
-          <main className="flex-1 overflow-auto pt-32 pb-16 md:pb-6 z-10 overflow-x-hidden">
-            <div className="px-6">
+          <main className={`flex-1 overflow-auto pt-24 sm:pt-32 ${isMobile ? 'pb-20' : 'pb-16'} md:pb-6 z-10 overflow-x-hidden`}>
+            <div className="px-3 sm:px-6">
               {children}
             </div>
           </main>
+          <MobileNavigation />
         </div>
       </div>
     </SidebarProvider>

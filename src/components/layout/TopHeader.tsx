@@ -12,11 +12,13 @@ import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';
 import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
 import { getModeHeaderBgClass } from '@/components/trading/TradingModeStyles';
 import { TradingModeType } from '@/components/trading/TradingModeStyles';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const TopHeader = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
+  const isMobile = useIsMobile();
   
   // Safely use the trading mode context with fallbacks
   let tradingMode: TradingModeType = 'day';
@@ -79,26 +81,27 @@ const TopHeader = () => {
   return (
     <header className="fixed top-0 left-0 right-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/40">
       {/* Main header with logo and actions */}
-      <div className="h-16 flex items-center px-6 md:pl-6 md:ml-64">
+      <div className="h-14 sm:h-16 flex items-center px-3 sm:px-6 md:pl-6 md:ml-64">
         <div className="flex items-center gap-2 md:hidden">
           <Link to="/" className="flex items-center gap-2">
-            <img src={Logo} alt="ProfitPilot" className="h-8 w-8" />
-            <div className="font-semibold">
+            <img src={Logo} alt="ProfitPilot" className="h-7 w-7 sm:h-8 sm:w-8" />
+            <div className="font-semibold text-sm sm:text-base">
               ProfitPilot
             </div>
           </Link>
         </div>
         
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-1 sm:gap-2">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button 
                   variant="ghost" 
-                  size="icon"
+                  size={isMobile ? "sm" : "icon"}
                   onClick={() => navigate('/notifications')}
+                  className="h-8 w-8 sm:h-10 sm:w-10"
                 >
-                  <Bell className="h-5 w-5" />
+                  <Bell className="h-4 w-4 sm:h-5 sm:w-5" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -110,9 +113,9 @@ const TopHeader = () => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" asChild>
+                <Button variant="ghost" size={isMobile ? "sm" : "icon"} asChild className="h-8 w-8 sm:h-10 sm:w-10">
                   <Link to="/settings">
-                    <Settings className="h-5 w-5" />
+                    <Settings className="h-4 w-4 sm:h-5 sm:w-5" />
                   </Link>
                 </Button>
               </TooltipTrigger>
@@ -125,10 +128,10 @@ const TopHeader = () => {
           <Button 
             variant="outline" 
             size="sm" 
-            className="ml-2 gap-1"
+            className="ml-1 sm:ml-2 gap-1 text-xs sm:text-sm h-7 sm:h-9"
             onClick={handleLogout}
           >
-            <LogOut className="h-4 w-4" />
+            <LogOut className="h-3 w-3 sm:h-4 sm:w-4" />
             <span className="hidden sm:inline">Logout</span>
           </Button>
         </div>
@@ -136,14 +139,14 @@ const TopHeader = () => {
       
       {/* Trading mode selector - show on specific pages */}
       {showTradingBar && (
-        <div className={cn("px-6 md:pl-6 md:ml-64", getModeHeaderBgClass(tradingMode), "border-b border-border/40")}>
-          <div className="flex items-center justify-between py-2.5">
+        <div className={cn("px-3 sm:px-6 md:pl-6 md:ml-64", getModeHeaderBgClass(tradingMode), "border-b border-border/40")}>
+          <div className="flex items-center justify-between py-2">
             <div className="flex-grow">
-              <TradingModeSelector compact={true} displayLabel={false} />
+              <TradingModeSelector compact={true} displayLabel={!isMobile} />
             </div>
             
             {/* Display active mode description */}
-            {(location.pathname === '/signals' || location.pathname === '/trade-suggestion' || location.pathname === '/trade') && (
+            {!isMobile && (location.pathname === '/signals' || location.pathname === '/trade-suggestion' || location.pathname === '/trade') && (
               <div className="hidden md:flex items-center text-muted-foreground text-xs">
                 <AlertCircle className="h-3.5 w-3.5 mr-1.5" />
                 <span>{tradingMode.charAt(0).toUpperCase() + tradingMode.slice(1)} Mode</span>
@@ -158,11 +161,11 @@ const TopHeader = () => {
                     <Button 
                       variant="ghost" 
                       size="icon" 
-                      className="ml-2" 
+                      className="ml-1 sm:ml-2 h-7 w-7 sm:h-8 sm:w-8" 
                       onClick={handleRefresh}
                       disabled={isLoading}
                     >
-                      <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
+                      <RefreshCw className={cn("h-3.5 w-3.5 sm:h-4 sm:w-4", isLoading && "animate-spin")} />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
