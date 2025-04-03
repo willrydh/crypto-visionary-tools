@@ -70,24 +70,28 @@ export const TechnicalAnalysisProvider: React.FC<TechnicalAnalysisProviderProps>
       
       // Ensure we have indicators before setting them
       if (fetchedIndicators && fetchedIndicators.length > 0) {
+        // Set indicators first
         setIndicators(fetchedIndicators);
+        
+        // Determine market bias based on indicators
+        let updatedBias = currentBias;
         
         // Only change bias if it's not locked or if force = true
         if (!biasLocked || force) {
-          // Determine market bias based on indicators
-          const bias = calculateMarketBias(fetchedIndicators);
-          setCurrentBias(bias);
+          updatedBias = calculateMarketBias(fetchedIndicators);
+          setCurrentBias(updatedBias);
           setBiasLocked(true);
         }
         
-        // Generate trade suggestion
+        // Now generate trade suggestion using the updated bias
         const suggestion = await generateTradeSuggestion(
           symbol, 
           fetchedIndicators, 
-          currentBias, 
+          updatedBias, // Use the updated bias here
           tradingMode
         );
         
+        // Update trade suggestion and related state
         setTradeSuggestion(suggestion);
         setConfidenceScore(suggestion.confidence);
         setLastUpdated(new Date());
