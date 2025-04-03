@@ -76,7 +76,7 @@ const WelcomeHeader = () => {
         <div className="flex flex-col mb-6">
           <h2 className="text-2xl font-bold text-foreground flex items-center mb-1">
             Welcome back, {randomName}
-            <Badge variant="outline" className={cn("ml-3 border-primary/30", getModeIconBgClass(tradingMode))}>
+            <Badge variant="outline" className={cn("ml-3 border-primary/30 text-xs", getModeIconBgClass(tradingMode))}>
               AI-Powered Trading
             </Badge>
           </h2>
