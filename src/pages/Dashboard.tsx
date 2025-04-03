@@ -1,11 +1,10 @@
-
 import React, { useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { LineChart } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';
 import { useTradingMode } from '@/hooks/useTradingMode';
-import EnhancedTechnicalAnalysis from '@/components/analysis/EnhancedTechnicalAnalysis';
+import { IndicatorBreakdown } from '@/components/analysis/IndicatorBreakdown';
 import { MarketStatus } from '@/components/markets/MarketStatus';
 import { PriceThermometer } from '@/components/charts/PriceThermometer';
 import PriceChart from '@/components/charts/PriceChart';
@@ -198,15 +197,7 @@ const Dashboard = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <EnhancedTechnicalAnalysis 
-              currentBias={currentBias}
-              indicators={indicators}
-              confidenceScore={confidenceScore}
-              lastUpdated={lastUpdated}
-              isLoading={isLoading}
-              onRefresh={handleAnalysisGeneration}
-              title="Enhanced TA"
-            />
+            <IndicatorBreakdown indicators={indicators} />
             
             <MarketStatus showDetails={true} customTitle="Smart Money" customSource="World API" />
           </div>
