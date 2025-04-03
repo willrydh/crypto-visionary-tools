@@ -37,7 +37,7 @@ export const SupportResistanceLevels = () => {
   };
   
   return (
-    <Card>
+    <Card className="bg-[#1A1F2C] border-border/40 text-white">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg">Support & Resistance Levels</CardTitle>
@@ -46,6 +46,7 @@ export const SupportResistanceLevels = () => {
             size="sm"
             onClick={() => fetchLevels('BTC/USDT')}
             disabled={isLoading}
+            className="bg-white/5 border-white/10 hover:bg-white/10 text-white"
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
             Refresh
@@ -65,7 +66,7 @@ export const SupportResistanceLevels = () => {
               variant="ghost"
               size="sm"
               onClick={() => fetchLevels('BTC/USDT')}
-              className="mt-2"
+              className="mt-2 hover:bg-white/10 text-white"
             >
               Try again
             </Button>
@@ -93,7 +94,7 @@ export const SupportResistanceLevels = () => {
               {levels.length > 0 ? (
                 <div className="space-y-2">
                   {levels.map((level, index) => (
-                    <div key={index} className="flex justify-between items-center p-2 rounded-md border">
+                    <div key={index} className="flex justify-between items-center p-2 rounded-md border border-white/10 bg-white/5">
                       <div className="flex items-center gap-2">
                         <Badge className={getLevelColor(level.type, level.strength)}>
                           {level.type === 'support' ? 'Support' : 'Resistance'}

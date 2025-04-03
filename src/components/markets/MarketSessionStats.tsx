@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -322,19 +321,51 @@ const MarketSessionStats = ({
                 </span>
               </div>
               
-              <div className="grid grid-cols-2 gap-3">
-                <div className="flex items-center gap-1.5">
-                  <TrendingUp className="h-4 w-4 text-green-500" />
-                  <div className="text-sm">
-                    <span className="font-medium">{session.pumpFrequency}%</span> Pump Frequency
+              <div className="bg-muted/30 rounded-md p-3">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-medium text-muted-foreground">Market Impact Distribution</span>
+                  <span className="text-xs font-medium">{session.volatility}% Volatility</span>
+                </div>
+                
+                <div className="space-y-2.5">
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center text-xs">
+                      <div className="flex items-center gap-1">
+                        <TrendingUp className="h-3.5 w-3.5 text-green-500" />
+                        <span>Pump Frequency</span>
+                      </div>
+                      <span className="font-medium">{session.pumpFrequency}%</span>
+                    </div>
+                    <div className="h-2 w-full bg-muted/60 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-gradient-to-r from-green-500/80 to-green-400 rounded-full transition-all duration-500 ease-out"
+                        style={{ width: `${session.pumpFrequency}%` }}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center text-xs">
+                      <div className="flex items-center gap-1">
+                        <TrendingDown className="h-3.5 w-3.5 text-red-500" />
+                        <span>Dump Frequency</span>
+                      </div>
+                      <span className="font-medium">{session.dumpFrequency}%</span>
+                    </div>
+                    <div className="h-2 w-full bg-muted/60 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-gradient-to-r from-red-500/80 to-red-400 rounded-full transition-all duration-500 ease-out"
+                        style={{ width: `${session.dumpFrequency}%` }}
+                      />
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <TrendingDown className="h-4 w-4 text-red-500" />
-                  <div className="text-sm">
-                    <span className="font-medium">{session.dumpFrequency}%</span> Dump Frequency
+                
+                {session.lastOutcome && (
+                  <div className="text-xs text-muted-foreground mt-2 pt-2 border-t border-border/20">
+                    Last session: {session.lastOutcome}
                   </div>
-                </div>
+                )}
               </div>
             </div>
           ))}
