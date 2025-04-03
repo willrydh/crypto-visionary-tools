@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -81,8 +80,8 @@ const Welcome = () => {
         <div className="max-w-5xl mx-auto text-center relative z-10">
           <h1 className="text-4xl font-bold mb-6">Welcome to ProfitPilot AI</h1>
           <p className="text-lg text-muted-foreground mb-8">
-            Unlock the power of AI-driven trading signals and market analysis.
-            Start making smarter, data-backed decisions today.
+            Your AI-powered trading companion. Make smarter trading decisions with
+            advanced market analysis and real-time signals.
           </p>
           <div className="flex justify-center gap-4">
             <Button size="lg" onClick={() => navigate('/pricing')}>
