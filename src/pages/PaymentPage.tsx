@@ -161,7 +161,7 @@ const PaymentPage = () => {
         </Button>
       </div>
       
-      <div className="relative z-10 mt-20 md:mt-16"> {/* Increased top margin for mobile */}
+      <div className="relative z-10 mt-20 md:mt-16">
         <div className="text-center mb-8">
           <h1 className="text-2xl md:text-3xl font-bold mb-2">Complete Your Purchase</h1>
           <p className="text-base text-muted-foreground">
@@ -210,28 +210,30 @@ const PaymentPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <Button 
             variant="outline" 
-            className="relative h-16 md:h-16 p-0 overflow-hidden"
+            className="h-14 bg-black text-white hover:bg-black/90 flex items-center justify-center"
             onClick={() => handleQuickPay('Apple Pay')}
             disabled={isProcessing}
           >
-            <img 
-              src="/lovable-uploads/acffcc68-46e8-4600-83f8-e17b87866ec5.png" 
-              alt="Apple Pay" 
-              className="w-full h-full object-cover"
-            />
+            <svg viewBox="0 0 24 24" className="w-6 h-6 mr-2" fill="currentColor">
+              <path d="M17.72,6.5c0.3-0.36,0.5-0.86,0.45-1.36c-0.43,0.02-0.96,0.29-1.27,0.65c-0.28,0.32-0.52,0.83-0.45,1.32
+              C17,7.13,17.42,6.87,17.72,6.5z M17.99,7.12c-0.7-0.04-1.29,0.4-1.62,0.4s-0.85-0.38-1.4-0.37c-0.72,0.01-1.38,0.42-1.75,1.07
+              c-0.75,1.29-0.19,3.19,0.53,4.23c0.36,0.52,0.78,1.09,1.34,1.07c0.53-0.02,0.74-0.35,1.38-0.35c0.65,0,0.84,0.35,1.41,0.34
+              c0.58-0.01,0.95-0.53,1.3-1.05c0.41-0.6,0.58-1.18,0.59-1.21c-0.01-0.01-1.13-0.44-1.14-1.73c-0.01-1.08,0.88-1.6,0.92-1.62
+              C19.01,7.3,18.19,7.15,17.99,7.12z" />
+            </svg>
+            <span className="font-medium text-lg">Apple Pay</span>
           </Button>
           
           <Button 
             variant="outline" 
-            className="relative h-16 md:h-16 p-0 overflow-hidden"
+            className="h-14 bg-white text-black hover:bg-gray-100 border-gray-300 flex items-center justify-center"
             onClick={() => handleQuickPay('Google Pay')}
             disabled={isProcessing}
           >
-            <img 
-              src="/lovable-uploads/7ae52951-fe65-479a-8504-4c252f62c4e7.png" 
-              alt="Google Pay" 
-              className="w-full h-full object-cover"
-            />
+            <svg viewBox="0 0 24 24" className="w-6 h-6 mr-2">
+              <path fill="#4285F4" d="M21.435 10.7h-7.2v2.7h4.173c-.386 1.99-2.112 3.483-4.173 3.483-2.485 0-4.5-2.015-4.5-4.5s2.015-4.5 4.5-4.5c1.065 0 2.037.374 2.803 1.001l1.935-1.935C17.63 5.617 16.035 4.95 14.235 4.95c-3.866 0-7.009 3.142-7.009 7.009s3.142 7.009 7.009 7.009c3.866 0 7.009-3.142 7.009-7.009 0-.435-.045-.86-.131-1.259H21.435z" />
+            </svg>
+            <span className="font-medium text-lg">Google Pay</span>
           </Button>
         </div>
 

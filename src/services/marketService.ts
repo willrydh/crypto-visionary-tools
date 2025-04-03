@@ -1,4 +1,3 @@
-
 import { MarketSession } from '@/contexts/MarketsContext';
 import { 
   formatTimeUntil, 
@@ -35,18 +34,18 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
   nextMonday.setUTCHours(0, 0, 0, 0);
   
   // Define accurate market hours in UTC
-  // Updated to match Swedish local times in Summer (CEST, UTC+2)
-  // These hours are fixed and correct for UTC time
+  // Updated to match Swedish summer time (CEST, UTC+2)
+  // Adjusted by -1 hour from the previous values
   const marketHours = {
-    stockholm: { open: 7, close: 15.5 },    // Stockholm: 09:00-17:30 CEST (UTC+2) = 07:00-15:30 UTC
-    oslo: { open: 7, close: 14.42 },        // Oslo: 09:00-16:25 CEST (UTC+2) = 07:00-14:25 UTC
-    copenhagen: { open: 7, close: 15 },      // Copenhagen: 09:00-17:00 CEST (UTC+2) = 07:00-15:00 UTC
-    helsinki: { open: 7, close: 15.5 },      // Helsinki: 09:00-17:30 CEST (UTC+2) = 07:00-15:30 UTC
-    tokyo: { open: 0, close: 6 },           // Tokyo: 09:00-15:00 JST (UTC+9) = 00:00-06:00 UTC
-    london: { open: 7, close: 15.5 },       // London: 09:00-17:30 BST (UTC+1) = 08:00-16:30 UTC
-    newYork: { open: 13.5, close: 20 },     // New York: 09:30-16:00 EDT (UTC-4) = 13:30-20:00 UTC
-    frankfurt: { open: 7, close: 15.5 },    // Frankfurt: 09:00-17:30 CEST (UTC+2) = 07:00-15:30 UTC
-    hongKong: { open: 1, close: 8 }         // Hong Kong: 09:00-16:00 HKT (UTC+8) = 01:00-08:00 UTC
+    stockholm: { open: 6, close: 14.5 },     // Stockholm: 08:00-16:30 CEST (UTC+2) = 06:00-14:30 UTC
+    oslo: { open: 6, close: 13.42 },         // Oslo: 08:00-15:25 CEST (UTC+2) = 06:00-13:25 UTC
+    copenhagen: { open: 6, close: 14 },      // Copenhagen: 08:00-16:00 CEST (UTC+2) = 06:00-14:00 UTC
+    helsinki: { open: 6, close: 14.5 },      // Helsinki: 08:00-16:30 CEST (UTC+2) = 06:00-14:30 UTC
+    tokyo: { open: 0, close: 6 },            // Tokyo: 09:00-15:00 JST (UTC+9) = 00:00-06:00 UTC
+    london: { open: 6, close: 14.5 },        // London: 08:00-16:30 BST (UTC+1) = 07:00-15:30 UTC, adjusted to 06:00-14:30
+    newYork: { open: 12.5, close: 19 },      // New York: 08:30-15:00 EDT (UTC-4) = 12:30-19:00 UTC
+    frankfurt: { open: 6, close: 14.5 },     // Frankfurt: 08:00-16:30 CEST (UTC+2) = 06:00-14:30 UTC
+    hongKong: { open: 1, close: 8 }          // Hong Kong: 09:00-16:00 HKT (UTC+8) = 01:00-08:00 UTC
   };
   
   // Format market hours for display in local timezone
