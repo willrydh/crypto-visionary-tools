@@ -1,17 +1,25 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CheckCircle, X } from 'lucide-react';
+import { CheckCircle, X, BrainCircuit, Zap, LockKeyhole, Star } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import MainLayout from '@/components/layout/MainLayout';
+import { BlurredBackground } from '@/components/ui/blurred-background';
 
 const PricingPage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('yearly');
+  
+  // Background images
+  const pricingImages = [
+    '/lovable-uploads/4a0c6ea8-49f6-4dd0-8216-6e0085aec938.png',
+    '/lovable-uploads/83cd3ce3-8a61-4043-aa68-18467165dbc3.png',
+  ];
   
   // Pricing plans
   const pricingPlans = [
@@ -24,85 +32,90 @@ const PricingPage = () => {
       },
       badge: '30 Days Free',
       features: [
-        { name: 'Basic trading signals', included: true },
-        { name: 'Limited dashboard access', included: true },
-        { name: 'Market sentiment indicators', included: true },
-        { name: 'Basic price charts', included: true },
-        { name: 'Technical analysis', included: false },
+        { name: 'Dashboard access', included: true },
+        { name: 'Basic market data', included: true },
+        { name: 'Settings customization', included: true },
+        { name: 'Single device login', included: true },
+        { name: 'Trading signals', included: false },
+        { name: 'Real-time analysis', included: false },
+        { name: 'Support & resistance levels', included: false },
+        { name: 'Premium market insights', included: false },
         { name: 'Economic calendar', included: false },
-        { name: 'Advanced signals', included: false },
-        { name: 'AI-powered trading', included: false },
-        { name: 'Premium analytics', included: false },
       ],
       cta: 'Start Free Trial',
       popular: false,
     },
     {
       name: 'Pro',
-      description: 'Perfect for active traders',
+      description: 'Everything you need for success',
       price: {
-        monthly: 39,
-        yearly: 349,
+        monthly: 29.99,
+        yearly: 19.99,
       },
-      badge: 'Most Popular',
+      badge: 'Best Value',
       features: [
-        { name: 'Basic trading signals', included: true },
         { name: 'Full dashboard access', included: true },
-        { name: 'Market sentiment indicators', included: true },
-        { name: 'Advanced price charts', included: true },
-        { name: 'Full technical analysis suite', included: true },
+        { name: 'Complete market data', included: true },
+        { name: 'Settings customization', included: true },
+        { name: 'Multi-device login', included: true },
+        { name: 'AI-powered trading signals', included: true },
+        { name: 'Real-time analysis', included: true },
+        { name: 'Support & resistance levels', included: true },
+        { name: 'Premium market insights', included: true },
         { name: 'Economic calendar', included: true },
-        { name: 'Advanced signals & alerts', included: true },
-        { name: 'AI-powered trading', included: false },
-        { name: 'Premium analytics', included: false },
       ],
       cta: 'Get Pro',
       popular: true,
     },
-    {
-      name: 'Guru',
-      description: 'For professional traders',
-      price: {
-        monthly: 99,
-        yearly: 995,
-      },
-      badge: 'Ultimate',
-      features: [
-        { name: 'Basic trading signals', included: true },
-        { name: 'Full dashboard access', included: true },
-        { name: 'Market sentiment indicators', included: true },
-        { name: 'Advanced price charts', included: true },
-        { name: 'Full technical analysis suite', included: true },
-        { name: 'Economic calendar', included: true },
-        { name: 'Advanced signals & alerts', included: true },
-        { name: 'AI-powered trading via API', included: true },
-        { name: 'Premium analytics & logging', included: true },
-      ],
-      cta: 'Get Guru',
-      popular: false,
-    },
+  ];
+
+  const comingSoonFeatures = [
+    'AI-powered automatic trade execution',
+    'Real-time risk analysis on open positions',
+    'Advanced portfolio optimization algorithms',
+    'Personalized trading strategies based on your risk profile',
+    'Institutional-grade market analysis tools'
   ];
 
   const handleCTAClick = (plan: string) => {
-    toast({
-      title: "Plan Selected",
-      description: `You've selected the ${plan} plan.`,
-    });
-    
-    navigate('/payment');
+    if (plan === 'Freebie') {
+      toast({
+        title: "Free Trial Activated",
+        description: "You've started your 30-day free trial of ProfitPilot.",
+      });
+      navigate('/dashboard');
+    } else {
+      toast({
+        title: "Plan Selected",
+        description: `You've selected the ${plan} plan.`,
+      });
+      navigate('/payment');
+    }
   };
+  
+  const yearlySavings = (29.99 * 12 - 19.99 * 12).toFixed(2);
+  const savingsPercentage = Math.round(((29.99 * 12) - (19.99 * 12)) / (29.99 * 12) * 100);
 
   return (
-    <div className="min-h-screen flex w-full">
-      <MainLayout>
-        <div className="container mx-auto space-y-16 py-12">
+    <div className="min-h-screen flex w-full relative overflow-hidden">
+      <BlurredBackground imageSrc={pricingImages} className="opacity-50" />
+      <div className="relative z-10 w-full">
+        <header className="border-b border-border py-4 px-6">
+          <div className="max-w-7xl mx-auto flex justify-between items-center">
+            <Button variant="ghost" onClick={() => navigate('/')}>
+              ← Back to Home
+            </Button>
+          </div>
+        </header>
+        
+        <div className="container mx-auto space-y-12 py-12">
           <div className="text-center">
-            <h1 className="text-3xl font-bold mb-6">Choose the Perfect Plan</h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto mb-12">
-              Select the right plan for your trading needs, from free trials to professional setups with API access.
+            <h1 className="text-3xl md:text-4xl font-bold mb-4">Choose Your ProfitPilot Plan</h1>
+            <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
+              Unlock the full potential of AI-powered trading with our Pro plan, or try the platform for free for 30 days.
             </p>
             
-            <div className="flex justify-center mb-12 mt-8">
+            <div className="flex justify-center mb-10 mt-8">
               <Tabs 
                 value={billingCycle} 
                 onValueChange={(value) => setBillingCycle(value as 'monthly' | 'yearly')}
@@ -113,7 +126,7 @@ const PricingPage = () => {
                   <TabsTrigger value="yearly">
                     Yearly
                     <Badge variant="secondary" className="ml-2 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
-                      Save 25%
+                      Save {savingsPercentage}%
                     </Badge>
                   </TabsTrigger>
                 </TabsList>
@@ -121,11 +134,11 @@ const PricingPage = () => {
             </div>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {pricingPlans.map((plan) => (
               <Card 
                 key={plan.name} 
-                className={`flex flex-col ${plan.popular ? 'border-primary shadow-lg ring-2 ring-primary' : ''}`}
+                className={`flex flex-col backdrop-blur-sm bg-card/80 ${plan.popular ? 'border-primary shadow-lg ring-2 ring-primary' : ''}`}
               >
                 <CardHeader>
                   <div className="flex justify-between items-center">
@@ -140,16 +153,20 @@ const PricingPage = () => {
                 </CardHeader>
                 <CardContent className="flex-1">
                   <div className="mt-2 mb-6">
-                    <span className="text-4xl font-bold">
-                      ${plan.price[billingCycle]}
-                    </span>
-                    {plan.price[billingCycle] > 0 && (
-                      <span className="text-muted-foreground ml-2">
-                        /{billingCycle === 'monthly' ? 'month' : 'year'}
-                      </span>
+                    {plan.price[billingCycle] > 0 ? (
+                      <>
+                        <span className="text-4xl font-bold">
+                          ${plan.price[billingCycle]}
+                        </span>
+                        <span className="text-muted-foreground ml-2">
+                          /{billingCycle === 'monthly' ? 'mo' : 'mo, billed yearly'}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="text-4xl font-bold">Free</span>
                     )}
                   </div>
-                  <ul className="space-y-3">
+                  <ul className="space-y-3 mb-6">
                     {plan.features.map((feature, index) => (
                       <li key={index} className="flex items-center">
                         {feature.included ? (
@@ -169,6 +186,7 @@ const PricingPage = () => {
                     className="w-full" 
                     onClick={() => handleCTAClick(plan.name)}
                     variant={plan.popular ? "default" : "outline"}
+                    size="lg"
                   >
                     {plan.cta}
                   </Button>
@@ -177,31 +195,91 @@ const PricingPage = () => {
             ))}
           </div>
           
-          <div className="max-w-2xl mx-auto bg-card/50 p-6 rounded-lg border border-border">
-            <h2 className="text-xl font-bold mb-4">Frequently Asked Questions</h2>
-            <div className="space-y-4">
-              <div>
-                <h3 className="font-medium mb-1">Can I cancel my subscription?</h3>
-                <p className="text-sm text-muted-foreground">
-                  Yes, you can cancel your subscription anytime. If you cancel, you'll continue to have access until the end of your billing period.
-                </p>
-              </div>
-              <div>
-                <h3 className="font-medium mb-1">Do you offer refunds?</h3>
-                <p className="text-sm text-muted-foreground">
-                  We offer a 14-day money-back guarantee on all paid plans.
-                </p>
-              </div>
-              <div>
-                <h3 className="font-medium mb-1">What payment methods do you accept?</h3>
-                <p className="text-sm text-muted-foreground">
-                  We accept all major credit cards and cryptocurrencies including Bitcoin, Ethereum, and USDT.
-                </p>
+          <div className="max-w-4xl mx-auto">
+            <Card className="backdrop-blur-sm bg-card/80 border-dashed border-muted">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Star className="h-5 w-5 text-amber-500" />
+                  <span>Guru Plan - Coming Soon</span>
+                </CardTitle>
+                <CardDescription>
+                  Our most advanced plan with cutting-edge AI features
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="bg-primary/10 p-3 rounded-full">
+                    <BrainCircuit className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold">Advanced AI Features</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Exclusive AI-powered features that take your trading to a whole new level
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+                  {comingSoonFeatures.map((feature, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <Zap className="h-4 w-4 text-amber-500" />
+                      <span>{feature}</span>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="flex items-center gap-2 p-3 bg-muted rounded-md">
+                  <LockKeyhole className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">Pricing will be revealed soon. Join the waitlist to be notified.</span>
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button variant="outline" className="w-full" disabled>
+                  Join Waitlist
+                </Button>
+              </CardFooter>
+            </Card>
+          </div>
+          
+          <div className="max-w-3xl mx-auto mt-10">
+            <div className="bg-card/50 backdrop-blur-sm p-6 rounded-lg border border-border">
+              <h2 className="text-xl font-bold mb-4">Frequently Asked Questions</h2>
+              <div className="space-y-4">
+                <div>
+                  <h3 className="font-medium mb-1">Do you offer refunds?</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Yes, we offer a 14-day money-back guarantee on all paid plans, no questions asked.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-medium mb-1">Can I change my plan later?</h3>
+                  <p className="text-sm text-muted-foreground">
+                    You can upgrade or downgrade your plan at any time. If you upgrade, you'll be charged the prorated difference.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-medium mb-1">What payment methods do you accept?</h3>
+                  <p className="text-sm text-muted-foreground">
+                    We accept all major credit cards, Apple Pay, Google Pay, and cryptocurrencies.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-medium mb-1">Is there an easter egg discount?</h3>
+                  <p className="text-sm text-muted-foreground">
+                    <Button 
+                      variant="link" 
+                      className="p-0 h-auto text-sm"
+                      onClick={() => navigate('/easter-egg')}
+                    >
+                      Maybe... click here if you're feeling lucky!
+                    </Button>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </MainLayout>
+      </div>
     </div>
   );
 };

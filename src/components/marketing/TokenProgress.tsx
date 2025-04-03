@@ -9,7 +9,7 @@ export const TokenProgress = () => {
   return (
     <div className="py-12 px-4 md:px-6 bg-gradient-to-b from-primary/5 to-background">
       <div className="text-center mb-10">
-        <h2 className="text-3xl font-bold mb-4">ProfitPilot Token (PP)</h2>
+        <h2 className="text-3xl font-bold mb-4">$PP Token (ProfitPilot)</h2>
         <p className="text-muted-foreground max-w-2xl mx-auto">
           Join the fastest growing trading community token on the most popular meme-coin chain.
         </p>
@@ -20,7 +20,7 @@ export const TokenProgress = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Bitcoin className="h-5 w-5 text-primary" />
-              PP Token Progress
+              $PP Token Progress
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -71,7 +71,7 @@ export const TokenProgress = () => {
             </div>
             
             <div className="border rounded-lg p-4 bg-muted/50">
-              <h4 className="font-medium mb-2">PP Token Benefits</h4>
+              <h4 className="font-medium mb-2">$PP Token Benefits</h4>
               <ul className="space-y-2 text-sm">
                 <li className="flex items-start">
                   <span className="inline-block w-2 h-2 bg-primary rounded-full mt-1.5 mr-2"></span>
@@ -92,7 +92,7 @@ export const TokenProgress = () => {
               </ul>
             </div>
             
-            <Button className="w-full">Buy PP Token Now</Button>
+            <Button className="w-full">Buy $PP Token Now</Button>
           </CardContent>
         </Card>
       </div>

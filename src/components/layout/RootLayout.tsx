@@ -21,6 +21,8 @@ import ThankYouPage from '@/pages/ThankYouPage';
 import Sorry from '@/pages/Sorry';
 import Notifications from '@/pages/Notifications';
 import Education from '@/pages/Education';
+import PaymentPage from '@/pages/PaymentPage';
+import EasterEggDiscount from '@/pages/EasterEggDiscount';
 
 const RootLayout: React.FC = () => {
   const location = useLocation();
@@ -33,10 +35,12 @@ const RootLayout: React.FC = () => {
   // Check if on public pages that don't need navigation
   const isPublicPage = location.pathname === '/welcome' || 
                        location.pathname === '/pricing' || 
+                       location.pathname === '/payment' ||
                        location.pathname === '/forgot-password' || 
                        location.pathname === '/reset-password' || 
                        location.pathname === '/thank-you' ||
-                       location.pathname === '/education';
+                       location.pathname === '/education' ||
+                       location.pathname === '/easter-egg';
 
   return (
     <TooltipProvider>
@@ -57,12 +61,14 @@ const RootLayout: React.FC = () => {
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/welcome" element={<Welcome />} />
                 <Route path="/pricing" element={<PricingPage />} />
+                <Route path="/payment" element={<PaymentPage />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password" element={<ResetPasswordConfirm />} />
                 <Route path="/thank-you" element={<ThankYouPage />} />
                 <Route path="/sorry" element={<Sorry />} />
                 <Route path="/notifications" element={<Notifications />} />
                 <Route path="/education" element={<Education />} />
+                <Route path="/easter-egg" element={<EasterEggDiscount />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </div>
