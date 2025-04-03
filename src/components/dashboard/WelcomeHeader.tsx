@@ -76,8 +76,9 @@ const WelcomeHeader = () => {
         <div className="flex flex-col mb-6">
           <h2 className="text-2xl font-bold text-foreground flex items-center mb-1">
             Welcome back, {randomName}
-            <Badge variant="outline" className={cn("ml-3 border-primary/30 text-xs", getModeIconBgClass(tradingMode))}>
-              AI-Powered Trading
+            <Badge variant="outline" className={cn("ml-3 border-primary/30 text-xs flex items-center gap-1", getModeIconBgClass(tradingMode))}>
+              <Zap className="h-3 w-3" />
+              <span className="text-[10px]">AI-powered</span>
             </Badge>
           </h2>
           <p className="text-muted-foreground">
@@ -97,8 +98,8 @@ const WelcomeHeader = () => {
                         {service.icon}
                         <span className="text-sm">{service.name}</span>
                       </div>
-                      <Badge variant="outline" className={`${latencies[index].color} ml-auto`}>
-                        {latencies[index].value}ms
+                      <Badge variant="outline" className={`${latencies[index].color} ml-auto text-xs h-5 min-w-[52px] flex justify-center`}>
+                        <span className="text-[10px]">{latencies[index].value}ms</span>
                       </Badge>
                     </div>
                   </TooltipTrigger>

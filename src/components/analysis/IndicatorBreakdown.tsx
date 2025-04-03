@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -38,7 +37,6 @@ import {
   LayoutGrid
 } from 'lucide-react';
 
-// Key indicator explanations
 const INDICATOR_EXPLANATIONS = {
   'RSI': 'Relative Strength Index measures momentum on a scale of 0-100. Values above 70 indicate overbought conditions, while values below 30 indicate oversold conditions.',
   'MACD': 'Moving Average Convergence Divergence shows the relationship between two moving averages. Signal line crossovers and histogram changes indicate momentum shifts.',
@@ -51,7 +49,6 @@ const INDICATOR_EXPLANATIONS = {
   'EMA21': '21-period Exponential Moving Average responds quickly to recent price changes, making it useful for shorter timeframes. Often used by day traders.'
 };
 
-// Pattern detection explanations
 const PATTERN_EXPLANATIONS = {
   'Moving Average Crossover': 'When a faster MA crosses above a slower MA, it signals potential upward momentum. Conversely, crossing below signals potential downward momentum.',
   'RSI Divergence': "When price makes new highs/lows but RSI doesn't confirm, it suggests the trend may be weakening and could reverse.",
@@ -77,16 +74,14 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
   });
   const [overallSentiment, setOverallSentiment] = useState<'bullish' | 'bearish' | 'neutral'>('neutral');
   const [animatedPercentages, setAnimatedPercentages] = useState({ bullish: 0, bearish: 0, neutral: 0 });
-  
-  // Filter indicators by current timeframe if available
+
   const filteredIndicators = useMemo(() => {
     if (!indicators.length) return [];
     return currentTimeframe 
       ? indicators.filter(i => i.timeframe === currentTimeframe)
       : indicators;
   }, [indicators, currentTimeframe]);
-  
-  // Group indicators by type for display with icons
+
   const indicatorGroups = useMemo(() => [
     { 
       name: 'Trend Indicators', 
@@ -136,9 +131,7 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
     }
   ], [filteredIndicators]);
 
-  // Enhanced indicators for detail view
   const enhancedIndicators = useMemo(() => {
-    // Generate comprehensive set of key indicators (even if mock data)
     return [
       {
         name: 'RSI (14)',
@@ -233,15 +226,13 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
     ];
   }, [filteredIndicators, currentTimeframe]);
 
-  // Toggle expanded state for a group
   const toggleGroup = (key: string) => {
     setExpandedGroups(prev => ({
       ...prev,
       [key]: !prev[key]
     }));
   };
-  
-  // Calculate overall sentiment
+
   useEffect(() => {
     if (filteredIndicators.length === 0) {
       setOverallSentiment('neutral');
@@ -263,8 +254,7 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
       setOverallSentiment('neutral');
     }
   }, [filteredIndicators]);
-  
-  // Get background gradient based on sentiment
+
   const getBackgroundGradient = () => {
     switch (overallSentiment) {
       case 'bullish':
@@ -275,9 +265,8 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
         return 'from-blue-950/20 via-blue-900/10 to-blue-900/5';
     }
   };
-  
-  // Get signal badge style
-  const getSignalBadge = (signal: 'bullish' | 'bearish' | 'neutral') => {
+
+  const getSignalBadge = (signal: string) => {
     switch(signal) {
       case 'bullish':
         return (
@@ -310,6 +299,7 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
           </motion.div>
         );
       case 'neutral':
+      default:
         return (
           <motion.div 
             initial={{ scale: 0.9, opacity: 0 }}
@@ -325,19 +315,14 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
             </Badge>
           </motion.div>
         );
-      default:
-        return <Badge variant="outline">Unknown</Badge>;
     }
   };
-  
-  // Get indicator strength visualization
-  const getStrengthIndicator = (signal: 'bullish' | 'bearish' | 'neutral', value: number | string) => {
-    // Convert value to numeric if it's a string percentage
+
+  const getStrengthIndicator = (signal: string, value: number | string) => {
     let numericValue = typeof value === 'string' && value.includes('%')
       ? parseFloat(value.replace('%', '')) 
       : typeof value === 'number' ? value : null;
     
-    // Handle text values
     if (numericValue === null) {
       const textValue = String(value).toLowerCase();
       
@@ -348,12 +333,10 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
       } else if (textValue.includes('weak') || textValue === 'crossing' || textValue === 'average') {
         numericValue = 50;
       } else {
-        // Default values based on signal
         numericValue = signal === 'bullish' ? 70 : signal === 'bearish' ? 30 : 50;
       }
     }
     
-    // Normalize to 0-100 range
     const strengthPercent = Math.min(Math.max(numericValue, 0), 100);
     
     const getBarColor = () => {
@@ -383,13 +366,11 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
       </div>
     );
   };
-  
-  // Count indicators by signal
+
   const getBullishCount = () => filteredIndicators.filter(i => i.signal === 'bullish').length;
   const getBearishCount = () => filteredIndicators.filter(i => i.signal === 'bearish').length;
   const getNeutralCount = () => filteredIndicators.filter(i => i.signal === 'neutral').length;
-  
-  // Calculate percentages for the donut chart
+
   const calculateDonutPercentages = () => {
     const total = filteredIndicators.length;
     if (total === 0) return { bullish: 0, bearish: 0, neutral: 0 };
@@ -400,24 +381,20 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
       neutral: (getNeutralCount() / total) * 100
     };
   };
-  
+
   const donutPercentages = calculateDonutPercentages();
-  
-  // Animate percentages for visual effect
+
   useEffect(() => {
-    // Animate the percentages
     const timer = setTimeout(() => {
       setAnimatedPercentages(donutPercentages);
     }, 300);
     
     return () => clearTimeout(timer);
   }, [donutPercentages]);
-  
-  // Detect patterns based on indicators
+
   const detectPatterns = () => {
     const patterns = [];
     
-    // Check for moving average crossovers
     const ma50 = enhancedIndicators.find(i => i.name === 'MA50');
     const ma200 = enhancedIndicators.find(i => i.name === 'MA200');
     const ema21 = enhancedIndicators.find(i => i.name === 'EMA21');
@@ -430,7 +407,6 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
       });
     }
     
-    // Check for RSI conditions
     const rsi = enhancedIndicators.find(i => i.name.includes('RSI') && !i.name.includes('Stoch'));
     const stochRsi = enhancedIndicators.find(i => i.name.includes('Stoch'));
     
@@ -453,7 +429,6 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
       }
     }
     
-    // Check for MACD and volume confirmation
     const macd = enhancedIndicators.find(i => i.name === 'MACD');
     const volume = enhancedIndicators.find(i => i.name === 'Volume');
     
@@ -471,7 +446,6 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
       });
     }
     
-    // Check for trend/momentum divergence
     const trendSignal = ma50?.signal || 'neutral';
     const momentumSignal = rsi?.signal || 'neutral';
     
@@ -491,8 +465,7 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
     
     return patterns;
   };
-  
-  // Get insight icon based on type
+
   const getInsightIcon = (type: 'info' | 'warning' | 'success') => {
     switch(type) {
       case 'info':
@@ -505,17 +478,14 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
         return <Info className="h-4 w-4" />;
     }
   };
-  
-  // Create animated donut chart
+
   const renderDonutChart = () => {
-    // Calculate the stroke-dasharray values for the SVG
-    const circumference = 2 * Math.PI * 40; // radius = 40
+    const circumference = 2 * Math.PI * 40;
     
     return (
       <div className="flex justify-center my-4">
         <div className="relative">
           <svg width="120" height="120" viewBox="0 0 120 120">
-            {/* Background circle */}
             <circle 
               cx="60" cy="60" r="48" 
               fill="transparent" 
@@ -523,8 +493,6 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
               strokeWidth="12" 
               strokeLinecap="round"
             />
-            
-            {/* Bullish segment - green */}
             <motion.circle 
               cx="60" cy="60" r="48" 
               fill="transparent" 
@@ -538,8 +506,6 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
               animate={{ strokeDashoffset: circumference * (1 - animatedPercentages.bullish / 100) }}
               transition={{ duration: 1, ease: "easeOut" }}
             />
-            
-            {/* Bearish segment - red */}
             <motion.circle 
               cx="60" cy="60" r="48" 
               fill="transparent" 
@@ -553,8 +519,6 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
               animate={{ strokeDashoffset: circumference * (1 - animatedPercentages.bearish / 100) }}
               transition={{ duration: 1, ease: "easeOut", delay: 0.3 }}
             />
-            
-            {/* Neutral segment - yellow */}
             <motion.circle 
               cx="60" cy="60" r="48" 
               fill="transparent" 
@@ -568,15 +532,11 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
               animate={{ strokeDashoffset: circumference * (1 - animatedPercentages.neutral / 100) }}
               transition={{ duration: 1, ease: "easeOut", delay: 0.6 }}
             />
-            
-            {/* Center circle */}
             <circle 
               cx="60" cy="60" r="36" 
               fill="#111827" 
             />
           </svg>
-          
-          {/* Center text with count */}
           <motion.div 
             className="absolute inset-0 flex flex-col items-center justify-center"
             initial={{ opacity: 0, scale: 0.5 }}
@@ -590,8 +550,7 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
       </div>
     );
   };
-  
-  // Summary of all indicators and what they mean
+
   const generateSummary = () => {
     const bullishCount = getBullishCount();
     const bearishCount = getBearishCount();
@@ -605,7 +564,6 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
     const bullishPercentage = Math.round((bullishCount / totalCount) * 100);
     const bearishPercentage = Math.round((bearishCount / totalCount) * 100);
     
-    // Get strength words based on percentage
     const getStrengthWord = (percentage: number) => {
       if (percentage >= 80) return "very strong";
       if (percentage >= 65) return "strong";
@@ -613,7 +571,6 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
       return "weak";
     };
     
-    // Build the summary based on the sentiment
     if (bullishPercentage >= 60) {
       return `Technical indicators are showing a ${getStrengthWord(bullishPercentage)} bullish bias (${bullishPercentage}% bullish). 
       Moving averages indicate an uptrend, with momentum indicators confirming positive price action. 
@@ -633,8 +590,7 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
     point to potential upside while others show possible weakness. It may be wise to wait for 
     clearer signals before taking significant positions.`;
   };
-  
-  // Render the indicators in a grid layout
+
   const renderDetailedIndicatorsGrid = () => {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
@@ -688,8 +644,7 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
       </div>
     );
   };
-  
-  // Render the patterns and explanations
+
   const renderPatternsAndExplanations = () => {
     const patterns = detectPatterns();
     
@@ -742,8 +697,7 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
       </div>
     );
   };
-  
-  // Render educational content
+
   const renderEducationalContent = () => {
     return (
       <div className="mt-4 space-y-3">
@@ -776,7 +730,7 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
       </div>
     );
   };
-  
+
   return (
     <Card className={`bg-gradient-to-b ${getBackgroundGradient()} border-border/40 transition-colors duration-700`}>
       <CardHeader className="pb-2">
@@ -817,10 +771,8 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
               </TabsList>
               
               <TabsContent value="overview" className="space-y-4 mt-4">
-                {/* Overview Tab */}
                 {renderDonutChart()}
                 
-                {/* Signal distribution */}
                 <div className="grid grid-cols-3 gap-2 text-center">
                   <motion.div 
                     className="bg-black/20 rounded-md p-2 border border-green-500/30"
@@ -863,12 +815,10 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
               </TabsContent>
               
               <TabsContent value="details" className="space-y-4 mt-4">
-                {/* Details Tab */}
                 {renderDetailedIndicatorsGrid()}
               </TabsContent>
               
               <TabsContent value="patterns" className="space-y-4 mt-4">
-                {/* Patterns Tab */}
                 {renderPatternsAndExplanations()}
                 {renderEducationalContent()}
               </TabsContent>
@@ -879,4 +829,3 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
     </Card>
   );
 };
-
