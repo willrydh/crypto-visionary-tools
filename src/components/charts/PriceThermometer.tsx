@@ -85,27 +85,27 @@ export const PriceThermometer = () => {
     console.log(`Price position: Hourly ${hourlyPercentage.toFixed(1)}%, Daily ${dailyPercentage.toFixed(1)}%, Weekly ${weeklyPercentage.toFixed(1)}%`);
     console.log(`Weighted average: ${weightedAverage.toFixed(1)}%`);
     
-    // Enhanced gradient transitions with more green shades for better visualization
+    // More subtle gradient transitions with reduced opacity
     if (weightedAverage > 90) {
-      return "from-green-800/50 to-green-600/30"; // Very strong green
+      return "from-green-800/30 to-green-600/20 northern-lights"; // Very strong green but subtle
     } else if (weightedAverage > 80) {
-      return "from-green-700/40 to-green-500/25"; // Strong green
+      return "from-green-700/25 to-green-500/15 northern-lights"; // Strong green but subtle
     } else if (weightedAverage > 70) {
-      return "from-green-600/35 to-green-400/20"; // Medium-strong green
+      return "from-green-600/20 to-green-400/15 northern-lights"; // Medium-strong green but subtle
     } else if (weightedAverage > 60) {
-      return "from-green-500/30 to-green-300/15"; // Medium green
+      return "from-green-500/20 to-green-300/10 northern-lights"; // Medium green but subtle
     } else if (weightedAverage > 55) {
-      return "from-green-500/25 to-blue-500/15"; // Light green to blue
+      return "from-green-500/15 to-blue-500/10 northern-lights"; // Light green to blue but subtle
     } else if (weightedAverage > 45) {
-      return "from-blue-600/20 to-blue-400/10"; // Neutral blue
+      return "from-blue-600/15 to-blue-400/5 northern-lights-neutral"; // Neutral blue but subtle
     } else if (weightedAverage > 35) {
-      return "from-amber-600/20 to-amber-400/10"; // Amber
+      return "from-amber-600/15 to-amber-400/5 northern-lights"; // Amber but subtle
     } else if (weightedAverage > 25) {
-      return "from-amber-700/25 to-red-500/10"; // Amber to red
+      return "from-amber-700/15 to-red-500/5 northern-lights"; // Amber to red but subtle
     } else if (weightedAverage > 15) {
-      return "from-red-700/25 to-red-500/15"; // Medium red
+      return "from-red-700/20 to-red-500/10 northern-lights"; // Medium red but subtle
     } else {
-      return "from-red-800/30 to-red-600/20"; // Strong red
+      return "from-red-800/25 to-red-600/15 northern-lights"; // Strong red but subtle
     }
   };
   

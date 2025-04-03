@@ -137,22 +137,23 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
     );
     
     // Return appropriate background gradient based on position
+    // Using more subtle gradient colors with reduced opacity
     if (weightedPosition > 85) {
-      return "bg-gradient-to-b from-green-900/30 to-green-700/10"; // Strong green
+      return "bg-gradient-to-b from-green-900/20 to-green-700/5 northern-lights"; // Strong green but subtle
     } else if (weightedPosition > 75) {
-      return "bg-gradient-to-b from-green-800/25 to-green-600/10"; // Medium green
+      return "bg-gradient-to-b from-green-800/15 to-green-600/5 northern-lights"; // Medium green but subtle
     } else if (weightedPosition > 65) {
-      return "bg-gradient-to-b from-green-700/20 to-green-500/10"; // Light green
+      return "bg-gradient-to-b from-green-700/15 to-green-500/5 northern-lights"; // Light green but subtle
     } else if (weightedPosition > 55) {
-      return "bg-gradient-to-b from-blue-700/20 to-green-500/5"; // Blue-green
+      return "bg-gradient-to-b from-blue-700/15 to-green-500/5 northern-lights"; // Blue-green but subtle
     } else if (weightedPosition > 45) {
-      return "bg-[#1A1F2C]"; // Neutral dark
+      return "bg-[#1A1F2C] northern-lights-neutral"; // Neutral dark
     } else if (weightedPosition > 35) {
-      return "bg-gradient-to-b from-amber-900/20 to-amber-700/10"; // Light amber
+      return "bg-gradient-to-b from-amber-900/15 to-amber-700/5 northern-lights"; // Light amber but subtle
     } else if (weightedPosition > 25) {
-      return "bg-gradient-to-b from-red-900/20 to-amber-800/10"; // Amber-red
+      return "bg-gradient-to-b from-red-900/15 to-amber-800/5 northern-lights"; // Amber-red but subtle
     } else {
-      return "bg-gradient-to-b from-red-900/30 to-red-700/10"; // Strong red
+      return "bg-gradient-to-b from-red-900/20 to-red-700/5 northern-lights"; // Strong red but subtle
     }
   };
   

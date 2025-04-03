@@ -6,17 +6,20 @@ interface BlurredBackgroundProps {
   imageSrc: string | string[];
   className?: string;
   transitionDuration?: number;
+  animateColors?: boolean;
 }
 
 export const BlurredBackground: React.FC<BlurredBackgroundProps> = ({ 
   imageSrc, 
   className = "",
-  transitionDuration = 5000
+  transitionDuration = 5000,
+  animateColors = false
 }) => {
   const [currentImage, setCurrentImage] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [scale, setScale] = useState(1.1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [colorPhase, setColorPhase] = useState(0);
   const isMobile = useIsMobile();
   
   // Handle array of images or single image
@@ -57,6 +60,35 @@ export const BlurredBackground: React.FC<BlurredBackgroundProps> = ({
     return () => clearInterval(rotationInterval);
   }, [images.length, transitionDuration]);
 
+  // Northern lights color animation effect
+  useEffect(() => {
+    if (!animateColors) return;
+    
+    const colorAnimation = setInterval(() => {
+      setColorPhase(prev => (prev + 1) % 360);
+    }, 3000);
+    
+    return () => clearInterval(colorAnimation);
+  }, [animateColors]);
+  
+  // Generate northern lights color based on phase
+  const getNorthernLightsColor = () => {
+    // Subtle aurora colors
+    const colors = [
+      'rgba(32, 87, 100, 0.1)', // Teal
+      'rgba(23, 92, 61, 0.1)',  // Green
+      'rgba(67, 97, 157, 0.1)', // Blue
+      'rgba(114, 59, 143, 0.1)', // Purple
+      'rgba(17, 75, 95, 0.1)',  // Deep blue
+    ];
+    
+    const index = Math.floor(colorPhase / (360 / colors.length));
+    const nextIndex = (index + 1) % colors.length;
+    const progress = (colorPhase % (360 / colors.length)) / (360 / colors.length);
+    
+    return `linear-gradient(135deg, ${colors[index]} 0%, ${colors[nextIndex]} 100%)`;
+  };
+
   return (
     <div className={`absolute inset-0 overflow-hidden z-0 ${className}`}>
       <div className="relative w-full h-full">
@@ -84,7 +116,17 @@ export const BlurredBackground: React.FC<BlurredBackgroundProps> = ({
           </div>
         ))}
       </div>
-      <div className="absolute inset-0 backdrop-blur-md bg-background/60" />
+      {animateColors ? (
+        <div 
+          className="absolute inset-0 backdrop-blur-md bg-background/60 northern-lights-animation"
+          style={{ 
+            background: getNorthernLightsColor(),
+            transition: 'background 3s ease-in-out'
+          }}
+        />
+      ) : (
+        <div className="absolute inset-0 backdrop-blur-md bg-background/60" />
+      )}
     </div>
   );
 };

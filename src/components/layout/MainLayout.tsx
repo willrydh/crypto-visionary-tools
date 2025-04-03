@@ -33,7 +33,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         <Sidebar 
           collapsible="icon" 
           className="border-r border-border fixed z-50 h-full md:relative"
-          defaultCollapsed={isMobile}
+          // Removed defaultCollapsed prop as it doesn't exist on Sidebar component
         >
           <SidebarHeader className="p-4">
             <Link to="/" className="flex items-center space-x-2">
