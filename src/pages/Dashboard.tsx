@@ -6,7 +6,7 @@ import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';
 import { useTradingMode } from '@/hooks/useTradingMode';
 import { IndicatorBreakdown } from '@/components/analysis/IndicatorBreakdown';
 import { MarketStatus } from '@/components/markets/MarketStatus';
-import { PriceThermometer } from '@/components/charts/PriceThermometer';
+import PriceThermometer from '@/components/charts/PriceThermometer';
 import PriceChart from '@/components/charts/PriceChart';
 import { ImprovedEconomicCalendar } from '@/components/calendar/ImprovedEconomicCalendar';
 import CoinInfo from '@/components/crypto/CoinInfo';
@@ -39,19 +39,17 @@ const Dashboard = () => {
       generateAnalysis('BTCUSDT');
     }
     
-    // Load price data for BTC if not already loaded
     if (!priceData['BTCUSDT']) {
       loadPriceData('BTCUSDT');
     }
   }, [tradingMode, indicators.length, generateAnalysis]);
 
-  // Get the latest price data for BTC
   const btcPriceData = priceData['BTCUSDT'] || { price: 82500, change24h: 2.3 };
 
   const handleAnalysisGeneration = async () => {
     try {
       await generateAnalysis('BTCUSDT', true);
-      await loadPriceData('BTCUSDT'); // Refresh price data too
+      await loadPriceData('BTCUSDT');
       toast({
         title: "Analysis Complete",
         description: "Technical analysis has been generated successfully.",
@@ -149,14 +147,13 @@ const Dashboard = () => {
   const forecast = getTradingForecast();
 
   useEffect(() => {
-    console.log('Price position:', {
-      hourly: btcPriceData?.hourlyPricePosition,
-      daily: btcPriceData?.dailyPricePosition,
-      weekly: btcPriceData?.weeklyPricePosition
-    });
-    
-    // Check if we have price range data
     if (priceData['BTCUSDT']) {
+      console.log('Price position:', {
+        hourly: priceData['BTCUSDT'].hourlyPricePosition,
+        daily: priceData['BTCUSDT'].dailyPricePosition,
+        weekly: priceData['BTCUSDT'].weeklyPricePosition
+      });
+      
       console.log('Price range data:', {
         hourlyHigh: priceData['BTCUSDT'].hourlyHigh,
         hourlyLow: priceData['BTCUSDT'].hourlyLow,

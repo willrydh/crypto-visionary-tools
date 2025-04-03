@@ -1,15 +1,22 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { usePrice } from '@/hooks/usePrice';
 import { cn } from '@/lib/utils';
 
+// Calculate the position for the thermometer
+const calculatePosition = (current: number, low: number, high: number): number => {
+  if (high === low) return 0.5; // Prevent division by zero
+  const position = (current - low) / (high - low);
+  return Math.max(0, Math.min(position, 1)); // Ensure value is between 0 and 1
+};
+
 const PriceThermometer = () => {
   const { priceData } = usePrice();
+  
+  // Get BTC price data with fallback values if not available
   const btcPriceData = priceData['BTCUSDT'] || {
     price: 0,
-    hourlyPricePosition: 0.5,
-    dailyPricePosition: 0.5,
-    weeklyPricePosition: 0.5,
     hourlyHigh: 0,
     hourlyLow: 0,
     dailyHigh: 0,
@@ -17,8 +24,30 @@ const PriceThermometer = () => {
     weeklyHigh: 0,
     weeklyLow: 0,
   };
+  
+  // Calculate price position if not already provided by the API
+  const hourlyPricePosition = btcPriceData.hourlyPricePosition !== undefined 
+    ? btcPriceData.hourlyPricePosition 
+    : calculatePosition(btcPriceData.price, btcPriceData.hourlyLow, btcPriceData.hourlyHigh);
+    
+  const dailyPricePosition = btcPriceData.dailyPricePosition !== undefined 
+    ? btcPriceData.dailyPricePosition 
+    : calculatePosition(btcPriceData.price, btcPriceData.dailyLow, btcPriceData.dailyHigh);
+  
+  const weeklyPricePosition = btcPriceData.weeklyPricePosition !== undefined 
+    ? btcPriceData.weeklyPricePosition 
+    : calculatePosition(btcPriceData.price, btcPriceData.weeklyLow, btcPriceData.weeklyHigh);
+
+  // Log calculated positions for debugging
+  console.log("PriceThermometer - Calculated positions:", {
+    hourlyPricePosition,
+    dailyPricePosition,
+    weeklyPricePosition,
+    btcPrice: btcPriceData.price
+  });
 
   const getThermometerStyle = (position: number) => {
+    // Convert from 0-1 to 0-100 for percentage height
     const percentage = Math.max(0, Math.min(position * 100, 100));
     return { height: `${percentage}%` };
   };
@@ -32,7 +61,7 @@ const PriceThermometer = () => {
         <div className="thermometer-container h-40 relative bg-muted rounded-md overflow-hidden">
           <div
             className="thermometer-fill absolute bottom-0 left-0 w-full bg-gradient-to-t from-green-500 to-red-500 transition-height duration-300 ease-out"
-            style={getThermometerStyle(btcPriceData.dailyPricePosition)}
+            style={getThermometerStyle(dailyPricePosition)}
           ></div>
           <div className="thermometer-bulb absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-6 bg-red-500 rounded-full shadow-md border-2 border-background"></div>
         </div>
