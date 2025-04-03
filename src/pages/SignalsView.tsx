@@ -1,6 +1,7 @@
+
 import React, { useEffect, useState } from 'react';
 import PriceChart from '@/components/charts/PriceChart';
-import EnhancedTechnicalAnalysis from '@/components/analysis/EnhancedTechnicalAnalysis';
+import { IndicatorBreakdown } from '@/components/analysis/IndicatorBreakdown';
 import { TradeSuggestionCard } from '@/components/analysis/TradeSuggestionCard';
 import { SupportResistanceLevels } from '@/components/support-resistance/SupportResistanceLevels';
 import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';
@@ -22,7 +23,6 @@ import { useCrypto } from '@/hooks/useCrypto';
 import CryptoSelector from '@/components/crypto/CryptoSelector';
 import { usePrice } from '@/hooks/usePrice';
 import { DataLoadingPlaceholder } from '@/components/ui/data-loading-placeholder';
-import { IndicatorBreakdown } from '@/components/analysis/IndicatorBreakdown';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const SignalsView = () => {
@@ -188,15 +188,7 @@ const SignalsView = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-4">
-            <EnhancedTechnicalAnalysis 
-              currentBias={currentBias}
-              indicators={indicators}
-              confidenceScore={confidenceScore}
-              lastUpdated={lastUpdated}
-              isLoading={isLoading}
-              onRefresh={handleRefresh}
-              title="Technical Analysis"
-            />
+            <IndicatorBreakdown indicators={indicators} />
             
             <div className="bg-card rounded-lg border p-4">
               <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
@@ -252,8 +244,6 @@ const SignalsView = () => {
                 ))}
               </ul>
             </div>
-            
-            <IndicatorBreakdown indicators={indicators} />
           </div>
         </div>
         
