@@ -25,18 +25,24 @@ const PriceThermometer = () => {
     weeklyLow: 0,
   };
   
-  // Calculate price position if not already provided by the API
-  const hourlyPricePosition = btcPriceData.hourlyPricePosition !== undefined 
-    ? btcPriceData.hourlyPricePosition 
-    : calculatePosition(btcPriceData.price, btcPriceData.hourlyLow, btcPriceData.hourlyHigh);
+  // Calculate price positions from high/low data
+  const hourlyPricePosition = calculatePosition(
+    btcPriceData.price, 
+    btcPriceData.hourlyLow, 
+    btcPriceData.hourlyHigh
+  );
     
-  const dailyPricePosition = btcPriceData.dailyPricePosition !== undefined 
-    ? btcPriceData.dailyPricePosition 
-    : calculatePosition(btcPriceData.price, btcPriceData.dailyLow, btcPriceData.dailyHigh);
+  const dailyPricePosition = calculatePosition(
+    btcPriceData.price, 
+    btcPriceData.dailyLow, 
+    btcPriceData.dailyHigh
+  );
   
-  const weeklyPricePosition = btcPriceData.weeklyPricePosition !== undefined 
-    ? btcPriceData.weeklyPricePosition 
-    : calculatePosition(btcPriceData.price, btcPriceData.weeklyLow, btcPriceData.weeklyHigh);
+  const weeklyPricePosition = calculatePosition(
+    btcPriceData.price, 
+    btcPriceData.weeklyLow, 
+    btcPriceData.weeklyHigh
+  );
 
   // Log calculated positions for debugging
   console.log("PriceThermometer - Calculated positions:", {

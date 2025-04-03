@@ -1,4 +1,3 @@
-
 // Service to manage price data consistently across the app
 
 const BYBIT_API_BASE_URL = 'https://api.bybit.com';
@@ -233,10 +232,6 @@ export const fetchHighLowData = async (symbol: string, period: string = 'daily')
     const hourlyHigh = Math.max(...hourlyCandles.map(c => c.high));
     const hourlyLow = Math.min(...hourlyCandles.map(c => c.low));
     
-    // Get the latest 5m candle to determine if we're high or low for the hour
-    const latest5mCandle = hourlyCandles[0];
-    const hourlyPricePosition = ((latest5mCandle.close - hourlyLow) / (hourlyHigh - hourlyLow)) * 100;
-    
     // Calculate daily high/low
     const dailyHigh = Math.max(...dailyCandles.map(c => c.high));
     const dailyLow = Math.min(...dailyCandles.map(c => c.low));
@@ -244,6 +239,9 @@ export const fetchHighLowData = async (symbol: string, period: string = 'daily')
     // Calculate weekly high/low
     const weeklyHigh = Math.max(...weeklyCandles.map(c => c.high));
     const weeklyLow = Math.min(...weeklyCandles.map(c => c.low));
+    
+    // Get the latest price to determine current position
+    const latestPrice = hourlyCandles[0].close;
     
     console.log(`Calculated ranges for ${symbol}: Hourly: ${hourlyLow}-${hourlyHigh}, Daily: ${dailyLow}-${dailyHigh}, Weekly: ${weeklyLow}-${weeklyHigh}`);
     
@@ -254,7 +252,6 @@ export const fetchHighLowData = async (symbol: string, period: string = 'daily')
       low: period === 'daily' ? dailyLow : weeklyLow,
       hourlyHigh,
       hourlyLow,
-      hourlyPricePosition,
       dailyHigh,
       dailyLow,
       weeklyHigh,
@@ -293,7 +290,6 @@ const generateMockHighLowData = (symbol: string, period: string = 'daily') => {
   
   const hourlyHigh = basePrice * (1 + (Math.random() * hourlyVolatility));
   const hourlyLow = basePrice * (1 - (Math.random() * hourlyVolatility));
-  const hourlyPricePosition = Math.random() * 100; // Random position within hourly range (0-100%)
   
   const dailyHigh = basePrice * (1 + (Math.random() * dailyVolatility));
   const dailyLow = basePrice * (1 - (Math.random() * dailyVolatility));
@@ -310,7 +306,6 @@ const generateMockHighLowData = (symbol: string, period: string = 'daily') => {
     // New properties to match what PriceThermometer expects
     hourlyHigh,
     hourlyLow,
-    hourlyPricePosition,
     dailyHigh,
     dailyLow,
     weeklyHigh,

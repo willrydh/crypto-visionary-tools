@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
-import { LineChart } from 'lucide-react';
+import { LineChart, Calendar } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useTechnicalAnalysis } from '@/hooks/useTechnicalAnalysis';
 import { useTradingMode } from '@/hooks/useTradingMode';
@@ -148,13 +148,8 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (priceData['BTCUSDT']) {
-      console.log('Price position:', {
-        hourly: priceData['BTCUSDT'].hourlyPricePosition,
-        daily: priceData['BTCUSDT'].dailyPricePosition,
-        weekly: priceData['BTCUSDT'].weeklyPricePosition
-      });
-      
-      console.log('Price range data:', {
+      console.log('Price data for BTC:', {
+        price: priceData['BTCUSDT'].price,
         hourlyHigh: priceData['BTCUSDT'].hourlyHigh,
         hourlyLow: priceData['BTCUSDT'].hourlyLow,
         dailyHigh: priceData['BTCUSDT'].dailyHigh,

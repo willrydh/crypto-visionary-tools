@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { fetchCurrentPrice, fetchHighLowData } from '@/services/priceDataService';
 import { useCrypto } from '@/hooks/useCrypto';
@@ -12,7 +11,6 @@ interface PriceData {
   timestamp: number;
   hourlyHigh: number;
   hourlyLow: number;
-  hourlyPricePosition: number;
   dailyHigh: number;
   dailyLow: number;
   weeklyHigh: number;
@@ -43,7 +41,6 @@ export const PriceProvider: React.FC<PriceProviderProps> = ({
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [error, setError] = useState<Error | null>(null);
 
-  // Load price data for a specific symbol
   const loadPriceData = async (symbol: string): Promise<PriceData | undefined> => {
     const formattedSymbol = symbol.replace('/', '');
     
@@ -51,13 +48,10 @@ export const PriceProvider: React.FC<PriceProviderProps> = ({
     try {
       console.log(`Loading price data for ${formattedSymbol}`);
       
-      // Fetch current price data
       const currentPrice = await fetchCurrentPrice(formattedSymbol);
       
-      // Fetch high/low data
       const highLowData = await fetchHighLowData(formattedSymbol);
       
-      // Combine the data
       const combinedData: PriceData = {
         symbol: formattedSymbol,
         price: currentPrice.price,
@@ -66,7 +60,6 @@ export const PriceProvider: React.FC<PriceProviderProps> = ({
         timestamp: currentPrice.timestamp,
         hourlyHigh: highLowData.hourlyHigh,
         hourlyLow: highLowData.hourlyLow,
-        hourlyPricePosition: highLowData.hourlyPricePosition,
         dailyHigh: highLowData.dailyHigh,
         dailyLow: highLowData.dailyLow,
         weeklyHigh: highLowData.weeklyHigh,
@@ -74,7 +67,6 @@ export const PriceProvider: React.FC<PriceProviderProps> = ({
         lastUpdated: new Date()
       };
       
-      // Update state
       setPriceData(prev => ({
         ...prev,
         [formattedSymbol]: combinedData
@@ -88,7 +80,6 @@ export const PriceProvider: React.FC<PriceProviderProps> = ({
       console.error(`Error loading price data for ${formattedSymbol}:`, error);
       setError(error as Error);
       
-      // Show toast notification for errors
       toast({
         title: "Error loading price data",
         description: `Could not load price data for ${symbol}. ${(error as Error).message}`,
@@ -101,9 +92,7 @@ export const PriceProvider: React.FC<PriceProviderProps> = ({
     }
   };
 
-  // Initial data load
   useEffect(() => {
-    // Load data for major cryptocurrencies on mount
     const loadInitialData = async () => {
       try {
         setIsLoading(true);
@@ -122,11 +111,9 @@ export const PriceProvider: React.FC<PriceProviderProps> = ({
     
     loadInitialData();
     
-    // Set up refresh interval
     const intervalId = setInterval(() => {
       console.log("Refreshing price data at interval:", new Date().toISOString());
       Object.keys(priceData).forEach(symbol => {
-        // Format symbol correctly for API call
         const apiSymbol = symbol.includes('/') ? symbol : symbol + '/USDT';
         loadPriceData(apiSymbol);
       });
