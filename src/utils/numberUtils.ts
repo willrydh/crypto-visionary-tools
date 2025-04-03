@@ -8,15 +8,15 @@ export const formatDecimals = (value: number, decimals: number = 2): string => {
 export const formatCurrency = (value: number, currency: string = 'USD', options?: Intl.NumberFormatOptions): string => {
   // Handle possible NaN or invalid values
   if (isNaN(value) || value === null || value === undefined) {
-    return '$0.00';
+    return '$0';
   }
   
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency,
-    // Use appropriate decimal places based on value magnitude
-    minimumFractionDigits: value < 1 ? 4 : value < 10 ? 2 : 0,
-    maximumFractionDigits: value < 1 ? 6 : value < 10 ? 2 : 2,
+    // Use appropriate decimal places based on value magnitude but default to 0
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
     ...options
   });
   

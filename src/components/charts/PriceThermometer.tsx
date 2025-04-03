@@ -97,11 +97,11 @@ export const PriceThermometer = () => {
     const theme = getBackgroundTheme();
     
     if (theme === 'green') {
-      return "from-green-800/15 to-green-600/10 northern-lights-green";
+      return "from-green-800/15 to-green-600/15 northern-lights-green";
     } else if (theme === 'red') {
-      return "from-red-800/15 to-red-600/10 northern-lights-red";
+      return "from-red-800/15 to-red-600/15 northern-lights-red";
     } else {
-      return "from-blue-600/15 to-blue-400/10 northern-lights-neutral";
+      return "from-blue-600/15 to-blue-400/15 northern-lights-neutral";
     }
   };
   

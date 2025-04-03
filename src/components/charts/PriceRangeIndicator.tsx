@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -137,23 +136,22 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
     );
     
     // Return appropriate background gradient based on position
-    // Increased opacity for all gradients by about 10-15% to make overlay less transparent
     if (weightedPosition > 85) {
-      return "bg-gradient-to-b from-green-900/20 to-green-700/10 northern-lights"; // Increased opacity
+      return "bg-gradient-to-b from-green-900/15 to-green-700/15 northern-lights"; 
     } else if (weightedPosition > 75) {
-      return "bg-gradient-to-b from-green-800/18 to-green-600/10 northern-lights"; // Increased opacity
+      return "bg-gradient-to-b from-green-800/15 to-green-600/15 northern-lights";
     } else if (weightedPosition > 65) {
-      return "bg-gradient-to-b from-green-700/18 to-green-500/10 northern-lights"; // Increased opacity
+      return "bg-gradient-to-b from-green-700/15 to-green-500/15 northern-lights";
     } else if (weightedPosition > 55) {
-      return "bg-gradient-to-b from-blue-700/18 to-green-500/10 northern-lights"; // Increased opacity
+      return "bg-gradient-to-b from-blue-700/15 to-green-500/15 northern-lights";
     } else if (weightedPosition > 45) {
-      return "bg-[#1A1F2C]/95 northern-lights-neutral"; // Increased opacity
+      return "bg-[#1A1F2C]/95 northern-lights-neutral";
     } else if (weightedPosition > 35) {
-      return "bg-gradient-to-b from-amber-900/18 to-amber-700/10 northern-lights"; // Increased opacity
+      return "bg-gradient-to-b from-amber-900/15 to-amber-700/15 northern-lights";
     } else if (weightedPosition > 25) {
-      return "bg-gradient-to-b from-red-900/18 to-amber-800/10 northern-lights"; // Increased opacity
+      return "bg-gradient-to-b from-red-900/15 to-amber-800/15 northern-lights";
     } else {
-      return "bg-gradient-to-b from-red-900/20 to-red-700/10 northern-lights"; // Increased opacity
+      return "bg-gradient-to-b from-red-900/15 to-red-700/15 northern-lights";
     }
   };
   
