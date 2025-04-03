@@ -76,16 +76,16 @@ const WelcomeHeader = () => {
     )}>
       <div className="relative z-10">
         <div className="flex flex-col mb-4 sm:mb-6">
-          <h2 className="text-xl sm:text-2xl font-bold text-foreground flex items-center mb-1 flex-wrap">
-            Welcome back, {randomName}
+          <h2 className="text-xl sm:text-2xl font-bold text-foreground flex items-center mb-1">
+            <span className="whitespace-nowrap mr-2">Welcome back, {randomName}</span>
             <Badge 
               variant="outline" 
               className={cn(
-                "ml-2 sm:ml-3 border-primary/30 min-w-[90px] text-[9px] flex items-center gap-1 justify-center px-1.5 whitespace-nowrap", 
+                "border-primary/30 min-w-[80px] text-[8px] flex items-center gap-1 justify-center px-1 h-4 whitespace-nowrap", 
                 getModeIconBgClass(tradingMode)
               )}
             >
-              <Zap className="h-3 w-3" />
+              <Zap className="h-2.5 w-2.5" />
               <span>AI-powered</span>
             </Badge>
           </h2>
