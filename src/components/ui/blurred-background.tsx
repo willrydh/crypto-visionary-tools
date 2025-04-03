@@ -7,13 +7,15 @@ interface BlurredBackgroundProps {
   className?: string;
   transitionDuration?: number;
   animateColors?: boolean;
+  colorTheme?: 'green' | 'red' | 'neutral' | 'auto';
 }
 
 export const BlurredBackground: React.FC<BlurredBackgroundProps> = ({ 
   imageSrc, 
   className = "",
   transitionDuration = 5000,
-  animateColors = false
+  animateColors = false,
+  colorTheme = 'auto'
 }) => {
   const [currentImage, setCurrentImage] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -60,27 +62,44 @@ export const BlurredBackground: React.FC<BlurredBackgroundProps> = ({
     return () => clearInterval(rotationInterval);
   }, [images.length, transitionDuration]);
 
-  // Northern lights color animation effect
+  // Northern lights color animation effect with slowed down timing
   useEffect(() => {
     if (!animateColors) return;
     
     const colorAnimation = setInterval(() => {
       setColorPhase(prev => (prev + 1) % 360);
-    }, 4000); // Slowed down from 3000 for more subtle transition
+    }, 8000); // Slowed down from 4000 to 8000ms for a much gentler animation
     
     return () => clearInterval(colorAnimation);
   }, [animateColors]);
   
-  // Generate northern lights color based on phase - more vibrant colors
+  // Generate northern lights color based on theme
   const getNorthernLightsColor = () => {
-    // More vibrant aurora colors with increased opacity
-    const colors = [
-      'rgba(32, 87, 100, 0.12)', // Teal
-      'rgba(23, 92, 61, 0.12)',  // Green
-      'rgba(67, 97, 157, 0.12)', // Blue
-      'rgba(114, 59, 143, 0.12)', // Purple
-      'rgba(17, 75, 95, 0.12)',  // Deep blue
-    ];
+    // Theme-based colors with reduced opacity for subtlety
+    const themes = {
+      green: [
+        'rgba(23, 92, 61, 0.09)', // Light green
+        'rgba(32, 128, 80, 0.09)', // Medium green
+        'rgba(40, 160, 100, 0.09)', // Bright green
+        'rgba(20, 80, 50, 0.09)',   // Dark green
+      ],
+      red: [
+        'rgba(128, 32, 32, 0.09)', // Medium red
+        'rgba(160, 40, 40, 0.09)', // Bright red
+        'rgba(140, 30, 30, 0.09)', // Dark red
+        'rgba(110, 25, 25, 0.09)', // Deep red
+      ],
+      neutral: [
+        'rgba(45, 55, 72, 0.08)', // Slate blue
+        'rgba(50, 60, 80, 0.08)',  // Dark slate blue
+        'rgba(40, 50, 70, 0.08)',  // Navy blue
+        'rgba(55, 65, 85, 0.08)',  // Steel blue
+      ]
+    };
+    
+    // Select color theme
+    const selectedTheme = colorTheme === 'auto' ? 'neutral' : colorTheme;
+    const colors = themes[selectedTheme];
     
     const index = Math.floor(colorPhase / (360 / colors.length));
     const nextIndex = (index + 1) % colors.length;
@@ -118,14 +137,14 @@ export const BlurredBackground: React.FC<BlurredBackgroundProps> = ({
       </div>
       {animateColors ? (
         <div 
-          className="absolute inset-0 backdrop-blur-md bg-background/80 northern-lights-animation" /* Increased opacity */
+          className="absolute inset-0 backdrop-blur-md bg-background/80" 
           style={{ 
             background: getNorthernLightsColor(),
-            transition: 'background 4s ease-in-out'  // Slowed down from 3s
+            transition: 'background 8s ease-in-out'  // Slowed down from 4s to 8s
           }}
         />
       ) : (
-        <div className="absolute inset-0 backdrop-blur-md bg-background/80" /> /* Increased opacity */
+        <div className="absolute inset-0 backdrop-blur-md bg-background/80" />
       )}
     </div>
   );

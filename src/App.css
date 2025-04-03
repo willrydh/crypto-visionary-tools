@@ -1,4 +1,3 @@
-
 /* Reset some default styles */
 #root {
   width: 100%;
@@ -30,26 +29,26 @@
 /* Subtle pulse animation for loading states */
 @keyframes pulse-subtle {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.8; }
+  50% { opacity: 0.9; }
 }
 
 .pulse-subtle {
-  animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation: pulse-subtle 4s cubic-bezier(0.4,0,0.6,1) infinite;
 }
 
-/* Northern lights animation effects - more refined and stronger overlay */
+/* Northern lights animation effects - more refined and gentle overlay */
 @keyframes northern-lights {
   0% {
     filter: hue-rotate(0deg) brightness(1);
   }
   25% {
-    filter: hue-rotate(30deg) brightness(1.03);
+    filter: hue-rotate(15deg) brightness(1.02);
   }
   50% {
-    filter: hue-rotate(60deg) brightness(1.06);
+    filter: hue-rotate(30deg) brightness(1.03);
   }
   75% {
-    filter: hue-rotate(30deg) brightness(1.03);
+    filter: hue-rotate(15deg) brightness(1.02);
   }
   100% {
     filter: hue-rotate(0deg) brightness(1);
@@ -57,7 +56,7 @@
 }
 
 .northern-lights {
-  animation: northern-lights 15s ease-in-out infinite;
+  animation: northern-lights 30s ease-in-out infinite;
   position: relative;
 }
 
@@ -76,8 +75,8 @@
     rgba(114, 59, 143, 0.06) 75%,
     rgba(17, 75, 95, 0.06) 100%
   );
-  opacity: 0.7; /* Increased from 0.5 for stronger overlay */
-  animation: northern-lights 20s ease-in-out infinite;
+  opacity: 0.7;
+  animation: northern-lights 40s ease-in-out infinite;
   animation-delay: -5s;
   pointer-events: none;
 }
@@ -99,7 +98,7 @@
     rgba(67, 97, 157, 0.04) 75%,
     rgba(32, 87, 100, 0.06) 100%
   );
-  animation: pulse-subtle 8s ease-in-out infinite;
+  animation: pulse-subtle 16s ease-in-out infinite;
   pointer-events: none;
 }
 
@@ -119,7 +118,49 @@
     rgba(45, 55, 72, 0.05) 0%,
     rgba(45, 55, 72, 0.03) 100%
   );
-  animation: pulse-subtle 10s ease-in-out infinite;
+  animation: pulse-subtle 20s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Green themed animation */
+.northern-lights-green {
+  position: relative;
+}
+
+.northern-lights-green::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(23, 92, 61, 0.07) 0%,
+    rgba(32, 128, 80, 0.05) 100%
+  );
+  animation: pulse-subtle 20s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Red themed animation */
+.northern-lights-red {
+  position: relative;
+}
+
+.northern-lights-red::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(128, 32, 32, 0.07) 0%,
+    rgba(160, 40, 40, 0.05) 100%
+  );
+  animation: pulse-subtle 20s ease-in-out infinite;
   pointer-events: none;
 }
 

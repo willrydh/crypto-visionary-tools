@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -69,7 +70,7 @@ export const PriceThermometer = () => {
     return "bg-red-500";
   };
   
-  const getBackgroundGradient = () => {
+  const getBackgroundTheme = () => {
     const hourlyPercentage = getHourlyPercentage();
     const dailyPercentage = getDailyPercentage();
     const weeklyPercentage = getWeeklyPercentage();
@@ -84,27 +85,26 @@ export const PriceThermometer = () => {
     console.log(`Price position: Hourly ${hourlyPercentage.toFixed(1)}%, Daily ${dailyPercentage.toFixed(1)}%, Weekly ${weeklyPercentage.toFixed(1)}%`);
     console.log(`Weighted average: ${weightedAverage.toFixed(1)}%`);
     
-    // Increased opacity for all gradients by about 10-15% to make overlay less transparent
-    if (weightedAverage > 90) {
-      return "from-green-800/40 to-green-600/30 northern-lights"; // Increased opacity
-    } else if (weightedAverage > 80) {
-      return "from-green-700/35 to-green-500/25 northern-lights"; // Increased opacity
-    } else if (weightedAverage > 70) {
-      return "from-green-600/30 to-green-400/25 northern-lights"; // Increased opacity
-    } else if (weightedAverage > 60) {
-      return "from-green-500/30 to-green-300/20 northern-lights"; // Increased opacity
-    } else if (weightedAverage > 55) {
-      return "from-green-500/25 to-blue-500/20 northern-lights"; // Increased opacity
-    } else if (weightedAverage > 45) {
-      return "from-blue-600/25 to-blue-400/15 northern-lights-neutral"; // Increased opacity
-    } else if (weightedAverage > 35) {
-      return "from-amber-600/25 to-amber-400/15 northern-lights"; // Increased opacity
-    } else if (weightedAverage > 25) {
-      return "from-amber-700/25 to-red-500/15 northern-lights"; // Increased opacity
-    } else if (weightedAverage > 15) {
-      return "from-red-700/30 to-red-500/20 northern-lights"; // Increased opacity
+    // Return the appropriate color theme based on the price position
+    if (weightedAverage > 65) {
+      return "green";
+    } else if (weightedAverage < 35) {
+      return "red";
     } else {
-      return "from-red-800/35 to-red-600/25 northern-lights"; // Increased opacity
+      return "neutral";
+    }
+  };
+  
+  const getBackgroundGradient = () => {
+    const theme = getBackgroundTheme();
+    
+    // Simplified background class based on theme
+    if (theme === 'green') {
+      return "from-green-800/30 to-green-600/20 northern-lights-green";
+    } else if (theme === 'red') {
+      return "from-red-800/30 to-red-600/20 northern-lights-red";
+    } else {
+      return "from-blue-600/25 to-blue-400/15 northern-lights-neutral";
     }
   };
   
@@ -127,9 +127,10 @@ export const PriceThermometer = () => {
   const dailyPercentage = getDailyPercentage();
   const weeklyPercentage = getWeeklyPercentage();
   const backgroundGradient = getBackgroundGradient();
+  const colorTheme = getBackgroundTheme();
   
   return (
-    <Card className={`bg-gradient-to-b ${backgroundGradient} border-border/40 text-white transition-colors duration-700`}>
+    <Card className={`bg-gradient-to-b ${backgroundGradient} border-border/40 text-white transition-colors duration-1000`}>
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg text-white">Price Range</CardTitle>
@@ -152,7 +153,7 @@ export const PriceThermometer = () => {
             </div>
             <div className="h-3 bg-muted/30 rounded-full relative overflow-hidden">
               <div 
-                className={`h-full ${getThermometerColor(hourlyPercentage)} rounded-full transition-all duration-500 ease-in-out`}
+                className={`h-full ${getThermometerColor(hourlyPercentage)} rounded-full transition-all duration-700 ease-in-out`}
                 style={{ width: `${Math.min(Math.max(hourlyPercentage, 0), 100)}%` }}
               />
               <div 
@@ -173,7 +174,7 @@ export const PriceThermometer = () => {
             </div>
             <div className="h-3 bg-muted/30 rounded-full relative overflow-hidden">
               <div 
-                className={`h-full ${getThermometerColor(dailyPercentage)} rounded-full transition-all duration-500 ease-in-out`}
+                className={`h-full ${getThermometerColor(dailyPercentage)} rounded-full transition-all duration-700 ease-in-out`}
                 style={{ width: `${Math.min(Math.max(dailyPercentage, 0), 100)}%` }}
               />
               <div 
@@ -194,7 +195,7 @@ export const PriceThermometer = () => {
             </div>
             <div className="h-3 bg-muted/30 rounded-full relative overflow-hidden">
               <div 
-                className={`h-full ${getThermometerColor(weeklyPercentage)} rounded-full transition-all duration-500 ease-in-out`}
+                className={`h-full ${getThermometerColor(weeklyPercentage)} rounded-full transition-all duration-700 ease-in-out`}
                 style={{ width: `${Math.min(Math.max(weeklyPercentage, 0), 100)}%` }}
               />
               <div 
