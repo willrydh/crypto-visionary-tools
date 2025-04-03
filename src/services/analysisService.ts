@@ -135,12 +135,30 @@ export const generateTradeSuggestion = async (
   const bullishPercentage = (bullishCount / indicators.length) * 100;
   const bearishPercentage = (bearishCount / indicators.length) * 100;
   
-  // Determine direction based on bias and percentages
-  let direction: 'long' | 'short' | 'neutral' = 'neutral';
-  if (bias === 'bullish' && bullishPercentage >= 50) {
-    direction = 'long';
-  } else if (bias === 'bearish' && bearishPercentage >= 50) {
-    direction = 'short';
+  // Determine direction based on bias, trading mode, and percentages
+  let direction: 'long' | 'short' | 'neutral';
+  
+  // Make direction more decisive based on trading mode
+  switch(tradingMode) {
+    case 'scalp':
+      // Scalp mode is more aggressive with signals - rarely neutral
+      direction = bullishPercentage >= 45 ? 'long' : 
+                 bearishPercentage >= 45 ? 'short' : 'neutral';
+      break;
+    case 'day':
+      // Day trading is moderately decisive
+      direction = bullishPercentage >= 55 ? 'long' : 
+                 bearishPercentage >= 55 ? 'short' : 'neutral';
+      break;
+    case 'night':
+      // Night mode is more conservative - needs stronger signals
+      direction = bullishPercentage >= 65 ? 'long' : 
+                 bearishPercentage >= 65 ? 'short' : 'neutral';
+      break;
+    default:
+      // Default fallback using bias
+      direction = bias === 'bullish' ? 'long' :
+                  bias === 'bearish' ? 'short' : 'neutral';
   }
   
   // Define timeframe based on trading mode
@@ -188,13 +206,33 @@ export const generateTradeSuggestion = async (
   
   const riskRewardRatio = reward / risk;
   
-  // Calculate confidence based on indicators and risk-reward
+  // Calculate confidence based on indicators, risk-reward, and trading mode
+  // Different trading modes have different confidence thresholds
+  let confidenceMultiplier;
+  switch(tradingMode) {
+    case 'scalp':
+      // Scalp mode is generally more confident with quick decisions
+      confidenceMultiplier = 1.2;
+      break;
+    case 'day':
+      // Day trading has medium confidence
+      confidenceMultiplier = 1.0;
+      break;
+    case 'night':
+      // Night mode is more cautious
+      confidenceMultiplier = 0.85;
+      break;
+    default:
+      confidenceMultiplier = 1.0;
+  }
+  
   const confidence = Math.min(
     Math.round(
       (direction === 'long' ? bullishPercentage : 
        direction === 'short' ? bearishPercentage : 50) * 
       (riskRewardRatio / 3) * 
-      (Math.random() * 0.3 + 0.7)
+      (Math.random() * 0.3 + 0.7) *
+      confidenceMultiplier
     ),
     95
   );
@@ -209,33 +247,74 @@ export const generateTradeSuggestion = async (
   // Generate summary based on trading mode
   let tradeModeDescription = '';
   let timeDescription = '';
+  let tradingStyle = '';
   
   switch(tradingMode) {
     case 'scalp':
       tradeModeDescription = 'scalp';
-      timeDescription = 'few minutes';
+      timeDescription = 'few minutes to an hour';
+      tradingStyle = 'Fast entry and exit at key levels';
       break;
     case 'day':
       tradeModeDescription = 'day';
-      timeDescription = '1-2 hours';
+      timeDescription = '1-4 hours';
+      tradingStyle = 'Capitalize on intraday momentum';
       break;
     case 'night':
-      tradeModeDescription = 'night';
-      timeDescription = 'up to 12 hours';
+      tradeModeDescription = 'overnight';
+      timeDescription = '8-24 hours';
+      tradingStyle = 'Position for larger market moves';
       break;
     default:
       tradeModeDescription = 'standard';
       timeDescription = 'variable time';
+      tradingStyle = 'Flexible approach';
   }
   
-  // Generate summary
+  // Generate more specific summaries based on trading mode
   let summary = '';
   if (direction === 'long') {
-    summary = `Strong ${tradeModeDescription} long opportunity with ${confidence}% confidence for a ${timeDescription} position. Entry near ${entry.toFixed(0)} with defined stop loss and take profit levels. Risk-reward ratio of ${riskRewardRatio.toFixed(1)}:1 and ${probability}% probability of success based on technical analysis.`;
+    switch(tradingMode) {
+      case 'scalp':
+        summary = `Strong ${tradeModeDescription} long opportunity with ${confidence}% confidence for a ${timeDescription} position. Entry near $${entry.toFixed(0)} with tight stops. ${tradingStyle} for a ${riskRewardRatio.toFixed(1)}:1 risk-reward ratio and ${probability}% probability of success based on momentum indicators.`;
+        break;
+      case 'day':
+        summary = `Promising intraday long setup with ${confidence}% confidence for a ${timeDescription} position. Entry near $${entry.toFixed(0)} targeting key resistance levels. ${tradingStyle} with a favorable ${riskRewardRatio.toFixed(1)}:1 risk-reward ratio and ${probability}% win probability.`;
+        break;
+      case 'night':
+        summary = `Strategic ${tradeModeDescription} long position with ${confidence}% confidence for ${timeDescription} holding. Entry around $${entry.toFixed(0)} with defined risk parameters. ${tradingStyle}, aiming for a ${riskRewardRatio.toFixed(1)}:1 return and ${probability}% probability based on technical analysis.`;
+        break;
+      default:
+        summary = `Strong ${tradeModeDescription} long opportunity with ${confidence}% confidence for a ${timeDescription} position. Entry near $${entry.toFixed(0)} with defined stop loss and take profit levels. Risk-reward ratio of ${riskRewardRatio.toFixed(1)}:1 and ${probability}% probability of success based on technical analysis.`;
+    }
   } else if (direction === 'short') {
-    summary = `Potential ${tradeModeDescription} short opportunity with ${confidence}% confidence for a ${timeDescription} position. Entry near ${entry.toFixed(0)} with defined stop loss and take profit levels. Risk-reward ratio of ${riskRewardRatio.toFixed(1)}:1 and ${probability}% probability of success based on technical analysis.`;
+    switch(tradingMode) {
+      case 'scalp':
+        summary = `Quick ${tradeModeDescription} short opportunity with ${confidence}% confidence for a ${timeDescription} trade. Entry near $${entry.toFixed(0)} with precise exit targets. ${tradingStyle} for a ${riskRewardRatio.toFixed(1)}:1 risk-reward ratio and ${probability}% probability of success on this reversal setup.`;
+        break;
+      case 'day':
+        summary = `Solid intraday short setup with ${confidence}% confidence for a ${timeDescription} position. Entry near $${entry.toFixed(0)} with clear support targets. ${tradingStyle} for an attractive ${riskRewardRatio.toFixed(1)}:1 risk-reward profile and ${probability}% probability based on multiple bearish signals.`;
+        break;
+      case 'night':
+        summary = `High-quality ${tradeModeDescription} short position with ${confidence}% confidence for ${timeDescription} holding. Entry around $${entry.toFixed(0)} targeting key breakpoints. ${tradingStyle} with a strong ${riskRewardRatio.toFixed(1)}:1 risk-reward ratio and ${probability}% success probability based on our analysis.`;
+        break;
+      default:
+        summary = `Potential ${tradeModeDescription} short opportunity with ${confidence}% confidence for a ${timeDescription} position. Entry near $${entry.toFixed(0)} with defined stop loss and take profit levels. Risk-reward ratio of ${riskRewardRatio.toFixed(1)}:1 and ${probability}% probability of success based on technical analysis.`;
+    }
   } else {
-    summary = `Market conditions unclear for ${tradeModeDescription} trades (${timeDescription}). Consider waiting for better setups or reducing position size. Current analysis shows mixed signals.`;
+    switch(tradingMode) {
+      case 'scalp':
+        summary = `Current market conditions suggest waiting for clearer ${tradeModeDescription} setups (${timeDescription}). Consider monitoring key price levels at $${(basePrice - 200).toFixed(0)} and $${(basePrice + 200).toFixed(0)} for potential breakouts. Reduce position size if trading now.`;
+        break;
+      case 'day':
+        summary = `Mixed signals for ${tradeModeDescription} trades (${timeDescription}). Market is in consolidation mode between $${(basePrice - 500).toFixed(0)} and $${(basePrice + 500).toFixed(0)}. ${tradingStyle} only after clear directional breakout. Consider waiting for better opportunities.`;
+        break;
+      case 'night':
+        summary = `Neutral outlook for ${tradeModeDescription} positions (${timeDescription}). Price action is indecisive with balanced bullish and bearish indicators. ${tradingStyle} is not recommended until volatility increases or a clear trend emerges.`;
+        break;
+      default:
+        summary = `Market conditions unclear for ${tradeModeDescription} trades (${timeDescription}). Consider waiting for better setups or reducing position size. Current analysis shows mixed signals.`;
+    }
   }
   
   // Generate trade suggestion

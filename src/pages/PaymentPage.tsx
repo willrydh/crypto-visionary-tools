@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -161,7 +162,7 @@ const PaymentPage = () => {
         </Button>
       </div>
       
-      <div className="relative z-10 mt-16">
+      <div className="relative z-10 mt-20 md:mt-16"> {/* Increased top margin for mobile */}
         <div className="text-center mb-8">
           <h1 className="text-2xl md:text-3xl font-bold mb-2">Complete Your Purchase</h1>
           <p className="text-base text-muted-foreground">
@@ -210,47 +211,47 @@ const PaymentPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <Button 
             variant="outline" 
-            className="relative h-16 backdrop-blur-sm bg-card/80 hover:bg-black/5"
+            className="relative h-20 md:h-16 backdrop-blur-sm bg-card/80 hover:bg-black/5"
             onClick={() => handleQuickPay('Apple Pay')}
             disabled={isProcessing}
           >
             <div className="absolute inset-0 flex items-center justify-center">
-              <svg viewBox="0 0 24 24" className="w-8 h-8" fill="currentColor">
+              <svg viewBox="0 0 24 24" className="w-10 h-10 mr-2" fill="currentColor">
                 <path d="M17.72,6.5c0.3-0.36,0.5-0.86,0.45-1.36c-0.43,0.02-0.96,0.29-1.27,0.65c-0.28,0.32-0.52,0.83-0.45,1.32
                 C17,7.13,17.42,6.87,17.72,6.5z M17.99,7.12c-0.7-0.04-1.29,0.4-1.62,0.4s-0.85-0.38-1.4-0.37c-0.72,0.01-1.38,0.42-1.75,1.07
                 c-0.75,1.29-0.19,3.19,0.53,4.23c0.36,0.52,0.78,1.09,1.34,1.07c0.53-0.02,0.74-0.35,1.38-0.35c0.65,0,0.84,0.35,1.41,0.34
                 c0.58-0.01,0.95-0.53,1.3-1.05c0.41-0.6,0.58-1.18,0.59-1.21c-0.01-0.01-1.13-0.44-1.14-1.73c-0.01-1.08,0.88-1.6,0.92-1.62
                 C19.01,7.3,18.19,7.15,17.99,7.12z" />
               </svg>
-              <span className="ml-2 font-medium">Apple Pay</span>
+              <span className="font-medium">Apple Pay</span>
             </div>
           </Button>
           
           <Button 
             variant="outline" 
-            className="relative h-16 backdrop-blur-sm bg-card/80 hover:bg-black/5"
+            className="relative h-20 md:h-16 backdrop-blur-sm bg-card/80 hover:bg-black/5"
             onClick={() => handleQuickPay('Google Pay')}
             disabled={isProcessing}
           >
             <div className="absolute inset-0 flex items-center justify-center">
-              <svg viewBox="0 0 24 24" className="w-8 h-8">
+              <svg viewBox="0 0 24 24" className="w-10 h-10 mr-2">
                 <path fill="#4285F4" d="M21.435 10.7h-7.2v2.7h4.173c-.386 1.99-2.112 3.483-4.173 3.483-2.485 0-4.5-2.015-4.5-4.5s2.015-4.5 4.5-4.5c1.065 0 2.037.374 2.803 1.001l1.935-1.935C17.63 5.617 16.035 4.95 14.235 4.95c-3.866 0-7.009 3.142-7.009 7.009s3.142 7.009 7.009 7.009c3.866 0 7.009-3.142 7.009-7.009 0-.435-.045-.86-.131-1.259H21.435z" />
               </svg>
-              <span className="ml-2 font-medium">Google Pay</span>
+              <span className="font-medium">Google Pay</span>
             </div>
           </Button>
           
           <Button 
             variant="outline" 
-            className="relative h-16 backdrop-blur-sm bg-card/80 hover:bg-black/5"
+            className="relative h-20 md:h-16 backdrop-blur-sm bg-card/80 hover:bg-black/5"
             onClick={() => handleQuickPay('Stripe')}
             disabled={isProcessing}
           >
             <div className="absolute inset-0 flex items-center justify-center">
-              <svg viewBox="0 0 24 24" className="w-8 h-8" fill="#635BFF">
+              <svg viewBox="0 0 24 24" className="w-10 h-10 mr-2" fill="#635BFF">
                 <path d="M13.479 9.883c-1.626-.604-2.512-.931-2.512-1.635 0-.604.465-.931 1.303-.931 1.279 0 2.582.535 3.419.954l.512-3.071C15.42 4.757 14.257 4.5 13.019 4.5 10.07 4.5 8 6.046 8 8.427c0 3.164 4.745 2.838 4.745 4.473 0 .605-.512 1.001-1.558 1.001-1.325 0-2.975-.582-3.861-1.164l-.535 3.071c.931.605 2.651 1.094 4.21 1.094 3.025 0 5-1.536 5-4.055.023-3.303-4.767-2.929-4.522-4.964z" />
               </svg>
-              <span className="ml-2 font-medium">Stripe</span>
+              <span className="font-medium">Stripe</span>
             </div>
           </Button>
         </div>

@@ -23,6 +23,8 @@ import Notifications from '@/pages/Notifications';
 import Education from '@/pages/Education';
 import PaymentPage from '@/pages/PaymentPage';
 import EasterEggDiscount from '@/pages/EasterEggDiscount';
+import ChartView from '@/pages/ChartView';
+import MarketDashboard from '@/pages/MarketDashboard';
 
 const RootLayout: React.FC = () => {
   const location = useLocation();
@@ -58,6 +60,8 @@ const RootLayout: React.FC = () => {
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/signals" element={<SignalsView />} />
                 <Route path="/trade" element={<TradeSuggestion />} />
+                <Route path="/chart" element={<ChartView />} />
+                <Route path="/market-dashboard" element={<MarketDashboard />} />
                 <Route path="/calendar" element={<CalendarView />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/welcome" element={<Welcome />} />
