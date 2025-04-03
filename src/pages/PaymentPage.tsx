@@ -22,7 +22,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BlurredBackground } from '@/components/ui/blurred-background';
 
-// Crypto address placeholders
 const cryptoAddresses = {
   bitcoin: '3FZbgi29cpjq2GjdwV8eyHuJJnkLtktZc5',
   ethereum: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
@@ -46,13 +45,11 @@ const PaymentPage = () => {
     '/lovable-uploads/cd165e0d-4678-4599-8125-3439bc1496cc.png',
   ];
   
-  // Standard price details
   const standardPricing = {
     Freebie: { price: { monthly: 0, yearly: 0 }, description: 'Free Trial' },
     Pro: { price: { monthly: 29.99, yearly: 19.99 * 12 }, description: 'Everything you need for success' },
   };
 
-  // Apply discount if present
   const pricing = { ...standardPricing };
   if (discount === 'EASTER2025') {
     pricing.Pro.price.yearly = 199;
@@ -60,7 +57,6 @@ const PaymentPage = () => {
 
   const selectedPlan = pricing[plan as keyof typeof pricing];
   
-  // Define credit card form schema
   const cardFormSchema = z.object({
     cardName: z.string().min(2, { message: "Cardholder name is required" }),
     cardNumber: z.string().min(16, { message: "Please enter a valid card number" }).max(19),
@@ -71,7 +67,6 @@ const PaymentPage = () => {
     saveCard: z.boolean().optional(),
   });
 
-  // Define crypto form schema
   const cryptoFormSchema = z.object({
     email: z.string().email({ message: "Please enter a valid email address" }),
     cryptoType: z.enum(["bitcoin", "ethereum", "usdt"], {
@@ -79,7 +74,6 @@ const PaymentPage = () => {
     }),
   });
 
-  // Initialize form
   const cardForm = useForm<z.infer<typeof cardFormSchema>>({
     resolver: zodResolver(cardFormSchema),
     defaultValues: {
@@ -104,7 +98,6 @@ const PaymentPage = () => {
     setIsProcessing(true);
     console.log("Processing credit card payment...", values);
     
-    // Simulate API call
     setTimeout(() => {
       setIsProcessing(false);
       setCardSaved(values.saveCard || false);
@@ -114,7 +107,6 @@ const PaymentPage = () => {
         description: "Your payment has been processed successfully.",
       });
       
-      // Navigate to thank you page
       navigate('/thank-you');
     }, 2000);
   };
@@ -126,8 +118,6 @@ const PaymentPage = () => {
       description: `Please send payment to the displayed ${values.cryptoType} address. We'll send a confirmation to ${values.email} after receiving payment.`,
     });
     
-    // Normally this would wait for confirmation from a backend
-    // For demo, we'll simulate payment after a few seconds
     setTimeout(() => {
       navigate('/thank-you');
     }, 3000);
@@ -214,14 +204,7 @@ const PaymentPage = () => {
             onClick={() => handleQuickPay('Apple Pay')}
             disabled={isProcessing}
           >
-            <svg viewBox="0 0 24 24" className="w-6 h-6 mr-2" fill="currentColor">
-              <path d="M17.72,6.5c0.3-0.36,0.5-0.86,0.45-1.36c-0.43,0.02-0.96,0.29-1.27,0.65c-0.28,0.32-0.52,0.83-0.45,1.32
-              C17,7.13,17.42,6.87,17.72,6.5z M17.99,7.12c-0.7-0.04-1.29,0.4-1.62,0.4s-0.85-0.38-1.4-0.37c-0.72,0.01-1.38,0.42-1.75,1.07
-              c-0.75,1.29-0.19,3.19,0.53,4.23c0.36,0.52,0.78,1.09,1.34,1.07c0.53-0.02,0.74-0.35,1.38-0.35c0.65,0,0.84,0.35,1.41,0.34
-              c0.58-0.01,0.95-0.53,1.3-1.05c0.41-0.6,0.58-1.18,0.59-1.21c-0.01-0.01-1.13-0.44-1.14-1.73c-0.01-1.08,0.88-1.6,0.92-1.62
-              C19.01,7.3,18.19,7.15,17.99,7.12z" />
-            </svg>
-            <span className="font-medium text-lg">Apple Pay</span>
+            <span className="font-medium text-base">Pay with Apple</span>
           </Button>
           
           <Button 
@@ -230,10 +213,7 @@ const PaymentPage = () => {
             onClick={() => handleQuickPay('Google Pay')}
             disabled={isProcessing}
           >
-            <svg viewBox="0 0 24 24" className="w-6 h-6 mr-2">
-              <path fill="#4285F4" d="M21.435 10.7h-7.2v2.7h4.173c-.386 1.99-2.112 3.483-4.173 3.483-2.485 0-4.5-2.015-4.5-4.5s2.015-4.5 4.5-4.5c1.065 0 2.037.374 2.803 1.001l1.935-1.935C17.63 5.617 16.035 4.95 14.235 4.95c-3.866 0-7.009 3.142-7.009 7.009s3.142 7.009 7.009 7.009c3.866 0 7.009-3.142 7.009-7.009 0-.435-.045-.86-.131-1.259H21.435z" />
-            </svg>
-            <span className="font-medium text-lg">Google Pay</span>
+            <span className="font-medium text-base">Pay with Google</span>
           </Button>
         </div>
 
