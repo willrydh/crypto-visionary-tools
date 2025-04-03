@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from '@/utils/numberUtils';
-import { ArrowUp, ArrowDown, Info } from 'lucide-react';
+import { Info } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -19,7 +19,7 @@ interface PriceRangeIndicatorProps {
 }
 
 const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
-  title = 'Price Range',
+  title = 'Price Ranges',
   symbol = 'BTCUSDT',
   type
 }) => {
@@ -104,21 +104,21 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
   
   // Determine if price is in overbought/oversold zones
   const getHourlyZone = () => {
-    if (hourlyPercentage >= 80) return "overbought";
-    if (hourlyPercentage <= 20) return "oversold";
-    return "neutral";
+    if (hourlyPercentage >= 80) return "Overbought";
+    if (hourlyPercentage <= 20) return "Oversold";
+    return "Neutral";
   };
   
   const getDailyZone = () => {
-    if (dailyPercentage >= 80) return "overbought";
-    if (dailyPercentage <= 20) return "oversold";
-    return "neutral";
+    if (dailyPercentage >= 80) return "Overbought";
+    if (dailyPercentage <= 20) return "Oversold";
+    return "Neutral";
   };
   
   const getWeeklyZone = () => {
-    if (weeklyPercentage >= 80) return "overbought";
-    if (weeklyPercentage <= 20) return "oversold";
-    return "neutral";
+    if (weeklyPercentage >= 80) return "Overbought";
+    if (weeklyPercentage <= 20) return "Oversold";
+    return "Neutral";
   };
   
   const hourlyZone = getHourlyZone();
@@ -128,46 +128,17 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
   // Get color based on zone
   const getZoneColor = (zone: string) => {
     switch (zone) {
-      case "overbought":
-        return "text-green-500";
-      case "oversold":
-        return "text-red-500";
+      case "Overbought":
+        return "text-green-500 bg-green-500/10 border-green-500/30";
+      case "Oversold":
+        return "text-red-500 bg-red-500/10 border-red-500/30";
       default:
-        return "text-yellow-500";
-    }
-  };
-  
-  // Calculate background color based on price position
-  const getBackgroundColor = () => {
-    // Calculate weighted average position (more weight to hourly and daily)
-    const weightedPosition = (
-      (hourlyPercentage * 0.5) + 
-      (dailyPercentage * 0.3) + 
-      (weeklyPercentage * 0.2)
-    );
-    
-    // Return appropriate background gradient based on position
-    if (weightedPosition > 85) {
-      return "bg-gradient-to-b from-green-900/15 to-green-700/15 northern-lights"; 
-    } else if (weightedPosition > 75) {
-      return "bg-gradient-to-b from-green-800/15 to-green-600/15 northern-lights";
-    } else if (weightedPosition > 65) {
-      return "bg-gradient-to-b from-green-700/15 to-green-500/15 northern-lights";
-    } else if (weightedPosition > 55) {
-      return "bg-gradient-to-b from-blue-700/15 to-green-500/15 northern-lights";
-    } else if (weightedPosition > 45) {
-      return "bg-[#1A1F2C]/95 northern-lights-neutral";
-    } else if (weightedPosition > 35) {
-      return "bg-gradient-to-b from-amber-900/15 to-amber-700/15 northern-lights";
-    } else if (weightedPosition > 25) {
-      return "bg-gradient-to-b from-red-900/15 to-amber-800/15 northern-lights";
-    } else {
-      return "bg-gradient-to-b from-red-900/15 to-red-700/15 northern-lights";
+        return "text-yellow-500 bg-yellow-500/10 border-yellow-500/30";
     }
   };
   
   return (
-    <Card className={`${getBackgroundColor()} border-border/30 text-white transition-colors duration-700`}>
+    <Card className="bg-[#0f1729] border-border/30 text-white">
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center text-lg text-white">
           {title}
@@ -186,7 +157,7 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
       <CardContent className="space-y-4">
         {/* Current Price with Change */}
         <div className="text-center">
-          <span className="text-3xl font-bold">{formatCurrency(currentData.price)}</span>
+          <span className="text-3xl font-bold">${currentData.price.toLocaleString('en-US', { maximumFractionDigits: 0 })}</span>
         </div>
         
         {/* Hourly Range */}
@@ -194,28 +165,21 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium">Hourly Range</span>
             <Badge variant="outline" className={`border-white/15 ${getZoneColor(hourlyZone)}`}>
-              {hourlyZone.charAt(0).toUpperCase() + hourlyZone.slice(1)}
+              {hourlyZone}
             </Badge>
           </div>
           
           <div className="relative pt-1">
             <div className="flex justify-between text-xs text-gray-400 mb-1">
-              <span>{formatCurrency(currentData.hourlyLow)}</span>
-              <span>{formatCurrency(currentData.hourlyHigh)}</span>
+              <span>${Math.floor(currentData.hourlyLow).toLocaleString()}</span>
+              <span>${Math.floor(currentData.hourlyHigh).toLocaleString()}</span>
             </div>
             
-            <div className="h-2 bg-muted/20 rounded-full">
+            <div className="h-2 bg-gray-700 rounded-full">
               <div 
-                className="absolute w-4 h-4 bg-primary rounded-full -mt-1 transform -translate-x-1/2 transition-all"
+                className="absolute w-4 h-4 bg-blue-500 rounded-full -mt-1 transform -translate-x-1/2 transition-all"
                 style={{ left: `${hourlyPercentage}%` }}
               />
-            </div>
-            
-            {/* Overbought/Oversold Zones */}
-            <div className="flex justify-between mt-1">
-              <div className="w-[20%] h-1 bg-red-500/20 rounded-l-full" />
-              <div className="w-[60%] h-1 bg-muted/20" />
-              <div className="w-[20%] h-1 bg-green-500/20 rounded-r-full" />
             </div>
           </div>
         </div>
@@ -225,28 +189,21 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium">Daily Range</span>
             <Badge variant="outline" className={`border-white/15 ${getZoneColor(dailyZone)}`}>
-              {dailyZone.charAt(0).toUpperCase() + dailyZone.slice(1)}
+              {dailyZone}
             </Badge>
           </div>
           
           <div className="relative pt-1">
             <div className="flex justify-between text-xs text-gray-400 mb-1">
-              <span>{formatCurrency(currentData.dailyLow)}</span>
-              <span>{formatCurrency(currentData.dailyHigh)}</span>
+              <span>${Math.floor(currentData.dailyLow).toLocaleString()}</span>
+              <span>${Math.floor(currentData.dailyHigh).toLocaleString()}</span>
             </div>
             
-            <div className="h-2 bg-muted/20 rounded-full">
+            <div className="h-2 bg-gray-700 rounded-full">
               <div 
-                className="absolute w-4 h-4 bg-primary rounded-full -mt-1 transform -translate-x-1/2 transition-all"
+                className="absolute w-4 h-4 bg-blue-500 rounded-full -mt-1 transform -translate-x-1/2 transition-all"
                 style={{ left: `${dailyPercentage}%` }}
               />
-            </div>
-            
-            {/* Overbought/Oversold Zones */}
-            <div className="flex justify-between mt-1">
-              <div className="w-[20%] h-1 bg-red-500/20 rounded-l-full" />
-              <div className="w-[60%] h-1 bg-muted/20" />
-              <div className="w-[20%] h-1 bg-green-500/20 rounded-r-full" />
             </div>
           </div>
         </div>
@@ -256,28 +213,21 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium">Weekly Range</span>
             <Badge variant="outline" className={`border-white/15 ${getZoneColor(weeklyZone)}`}>
-              {weeklyZone.charAt(0).toUpperCase() + weeklyZone.slice(1)}
+              {weeklyZone}
             </Badge>
           </div>
           
           <div className="relative pt-1">
             <div className="flex justify-between text-xs text-gray-400 mb-1">
-              <span>{formatCurrency(currentData.weeklyLow)}</span>
-              <span>{formatCurrency(currentData.weeklyHigh)}</span>
+              <span>${Math.floor(currentData.weeklyLow).toLocaleString()}</span>
+              <span>${Math.floor(currentData.weeklyHigh).toLocaleString()}</span>
             </div>
             
-            <div className="h-2 bg-muted/20 rounded-full">
+            <div className="h-2 bg-gray-700 rounded-full">
               <div 
-                className="absolute w-4 h-4 bg-primary rounded-full -mt-1 transform -translate-x-1/2 transition-all"
+                className="absolute w-4 h-4 bg-blue-500 rounded-full -mt-1 transform -translate-x-1/2 transition-all"
                 style={{ left: `${weeklyPercentage}%` }}
               />
-            </div>
-            
-            {/* Overbought/Oversold Zones */}
-            <div className="flex justify-between mt-1">
-              <div className="w-[20%] h-1 bg-red-500/20 rounded-l-full" />
-              <div className="w-[60%] h-1 bg-muted/20" />
-              <div className="w-[20%] h-1 bg-green-500/20 rounded-r-full" />
             </div>
           </div>
         </div>
