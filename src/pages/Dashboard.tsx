@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { LineChart } from 'lucide-react';
@@ -151,15 +150,6 @@ const Dashboard = () => {
     <div className="space-y-6 mt-6 animate-fade-in">
       <WelcomeHeader />
       
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-        <div>
-          <h1 className="text-2xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground">
-            {getTradingDescription()}
-          </p>
-        </div>
-      </div>
-
       <CoinInfo 
         symbol="BTC/USDT" 
         price={btcPriceData.price}
