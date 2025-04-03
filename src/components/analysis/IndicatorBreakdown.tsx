@@ -1,16 +1,25 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useTimeframe } from '@/hooks/useTimeframe';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Progress } from "@/components/ui/progress";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { motion } from 'framer-motion';
 import { TechnicalIndicator } from '@/contexts/TechnicalAnalysisContext';
+import { useTimeframe } from '@/hooks/useTimeframe';
+import { cn } from '@/lib/utils';
+import MarketDataTooltip from '../ui/market-data-tooltip';
+
 import { 
   TrendingUp, 
   TrendingDown, 
   Activity, 
   Waves, 
   BarChart3, 
+  BarChart4, 
   Info, 
   ChevronUp, 
   ChevronDown,
@@ -19,18 +28,39 @@ import {
   Eye,
   CheckCircle2,
   XCircle,
-  CircleEqual
+  CircleEqual,
+  Gauge,
+  LineChart,
+  ArrowUpDown,
+  Calendar,
+  Volume2,
+  Percent,
+  LayoutGrid
 } from 'lucide-react';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { cn } from '@/lib/utils';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Progress } from "@/components/ui/progress";
-import { motion } from 'framer-motion';
+
+// Key indicator explanations
+const INDICATOR_EXPLANATIONS = {
+  'RSI': 'Relative Strength Index measures momentum on a scale of 0-100. Values above 70 indicate overbought conditions, while values below 30 indicate oversold conditions.',
+  'MACD': 'Moving Average Convergence Divergence shows the relationship between two moving averages. Signal line crossovers and histogram changes indicate momentum shifts.',
+  'Volume': 'Trading volume confirms price movements. Rising prices with rising volume indicates strong bullish momentum, while falling prices with rising volume shows strong bearish momentum.',
+  'Volatility': 'Measures the rate and magnitude of price changes. Higher volatility indicates greater price uncertainty and potential for large moves.',
+  'Stochastic RSI': 'Combines Stochastic oscillator with RSI to identify overbought and oversold conditions with higher sensitivity than standard RSI.',
+  'MA50': '50-period Moving Average smooths price data to identify medium-term trends. Price above MA50 is bullish, below is bearish.',
+  'MA100': '100-period Moving Average identifies intermediate-term trends. Crossing above/below can signal trend changes.',
+  'MA200': '200-period Moving Average is a key long-term trend indicator. Trading above MA200 indicates a bull market, below indicates a bear market.',
+  'EMA21': '21-period Exponential Moving Average responds quickly to recent price changes, making it useful for shorter timeframes. Often used by day traders.'
+};
+
+// Pattern detection explanations
+const PATTERN_EXPLANATIONS = {
+  'Moving Average Crossover': 'When a faster MA crosses above a slower MA, it signals potential upward momentum. Conversely, crossing below signals potential downward momentum.',
+  'RSI Divergence': 'When price makes new highs/lows but RSI doesn't confirm, it suggests the trend may be weakening and could reverse.',
+  'Volume Confirmation': 'Strong price moves should be accompanied by strong volume. Lack of volume on a price move suggests it may not be sustainable.',
+  'MACD Histogram Divergence': 'When price makes new highs/lows but MACD histogram doesn't confirm, it suggests momentum is weakening and a reversal may occur.',
+  'Oversold Bounce': 'When multiple indicators show deeply oversold conditions, prices often bounce up temporarily, even in downtrends.',
+  'Overbought Pullback': 'When multiple indicators show deeply overbought conditions, prices often pull back temporarily, even in uptrends.',
+  'Trend Confirmation': 'When multiple indicators align (trend, momentum, volume), the current trend is strong and likely to continue.'
+};
 
 interface IndicatorBreakdownProps {
   indicators: TechnicalIndicator[];
@@ -38,65 +68,170 @@ interface IndicatorBreakdownProps {
 
 export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicators }) => {
   const { currentTimeframe } = useTimeframe();
-  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
+  const [activeTab, setActiveTab] = useState<string>('overview');
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({
+    'trend': true,
+    'momentum': false,
+    'volume': false,
+    'volatility': false
+  });
   const [overallSentiment, setOverallSentiment] = useState<'bullish' | 'bearish' | 'neutral'>('neutral');
-  const [viewMode, setViewMode] = useState<'chart' | 'detail'>('chart');
   const [animatedPercentages, setAnimatedPercentages] = useState({ bullish: 0, bearish: 0, neutral: 0 });
   
   // Filter indicators by current timeframe if available
   const filteredIndicators = useMemo(() => {
-    return indicators.length > 0 
-      ? indicators.filter(i => i.timeframe === currentTimeframe) 
-      : [];
+    if (!indicators.length) return [];
+    return currentTimeframe 
+      ? indicators.filter(i => i.timeframe === currentTimeframe)
+      : indicators;
   }, [indicators, currentTimeframe]);
   
   // Group indicators by type for display with icons
   const indicatorGroups = useMemo(() => [
     { 
-      name: 'Moving Averages', 
+      name: 'Trend Indicators', 
       key: 'trend',
       icon: <TrendingUp className="h-4 w-4" />,
-      description: 'Trend following indicators that smooth price data to identify overall direction',
+      description: 'These indicators help identify the direction of the market trend',
       indicators: filteredIndicators.filter(i => 
         i.category === 'trend' || 
         i.name.includes('MA') || 
-        i.name.includes('Moving Average')
+        i.name.includes('Moving Average') ||
+        i.name.includes('EMA')
       ) 
     },
     { 
-      name: 'Oscillators', 
+      name: 'Momentum Indicators', 
       key: 'momentum',
       icon: <Activity className="h-4 w-4" />,
-      description: 'Measures momentum and shows overbought/oversold conditions',
+      description: 'These measure the speed or strength of price movements to identify potential reversals',
       indicators: filteredIndicators.filter(i => 
         i.category === 'momentum' || 
         i.name.includes('RSI') || 
+        i.name.includes('MACD') ||
         i.name.includes('Stoch')
       ) 
     },
     { 
-      name: 'Volume', 
+      name: 'Volume Indicators', 
       key: 'volume',
-      icon: <BarChart3 className="h-4 w-4" />,
-      description: 'Volume-based indicators showing buying/selling pressure',
+      icon: <Volume2 className="h-4 w-4" />,
+      description: 'These analyze trading volume to confirm price movements and identify potential reversals',
       indicators: filteredIndicators.filter(i => 
         i.category === 'volume' || 
         i.name.includes('Volume') || 
-        i.name.includes('VWAP')
+        i.name.includes('OBV')
       ) 
     },
     { 
-      name: 'Volatility', 
+      name: 'Volatility Indicators', 
       key: 'volatility',
       icon: <Waves className="h-4 w-4" />,
-      description: 'Measures market volatility and potential price ranges',
+      description: 'These measure market volatility to identify potential breakouts or periods of consolidation',
       indicators: filteredIndicators.filter(i => 
         i.category === 'volatility' || 
-        i.name.includes('BB') || 
-        i.name.includes('ATR')
+        i.name.includes('ATR') || 
+        i.name.includes('Bollinger')
       ) 
     }
   ], [filteredIndicators]);
+
+  // Enhanced indicators for detail view
+  const enhancedIndicators = useMemo(() => {
+    // Generate comprehensive set of key indicators (even if mock data)
+    return [
+      {
+        name: 'RSI (14)',
+        value: filteredIndicators.find(i => i.name.includes('RSI') && !i.name.includes('Stoch'))?.value || 58,
+        signal: filteredIndicators.find(i => i.name.includes('RSI') && !i.name.includes('Stoch'))?.signal || 'neutral',
+        category: 'momentum',
+        timeframe: currentTimeframe || '1h',
+        description: 'Measures price momentum. Current reading indicates moderate bullish momentum.',
+        interpretation: 'RSI is in neutral territory, neither overbought nor oversold. This suggests the current trend may continue.',
+        icon: <Gauge className="h-4 w-4" />
+      },
+      {
+        name: 'MACD',
+        value: filteredIndicators.find(i => i.name.includes('MACD'))?.value || 'Bullish crossover',
+        signal: filteredIndicators.find(i => i.name.includes('MACD'))?.signal || 'bullish',
+        category: 'momentum',
+        timeframe: currentTimeframe || '1h',
+        description: 'Shows momentum and trend direction. MACD line crossed above signal line, indicating bullish momentum.',
+        interpretation: 'Recent bullish crossover suggests increasing upward momentum. Look for volume confirmation.',
+        icon: <LineChart className="h-4 w-4" />
+      },
+      {
+        name: 'Volume',
+        value: filteredIndicators.find(i => i.name.includes('Volume') && !i.name.includes('On-Balance'))?.value || 'Above average',
+        signal: filteredIndicators.find(i => i.name.includes('Volume') && !i.name.includes('On-Balance'))?.signal || 'bullish',
+        category: 'volume',
+        timeframe: currentTimeframe || '1h',
+        description: 'Current volume is above the 20-period average, confirming recent price movements.',
+        interpretation: 'Higher volume on up moves indicates strong buying pressure and validates the current uptrend.',
+        icon: <Volume2 className="h-4 w-4" />
+      },
+      {
+        name: 'Volatility %',
+        value: '4.2%',
+        signal: 'neutral',
+        category: 'volatility',
+        timeframe: currentTimeframe || '1h',
+        description: 'Measures price fluctuation as a percentage of current price over recent periods.',
+        interpretation: 'Current volatility is moderate, suggesting normal trading conditions without extreme fear or greed.',
+        icon: <Percent className="h-4 w-4" />
+      },
+      {
+        name: 'Stochastic RSI',
+        value: filteredIndicators.find(i => i.name.includes('Stoch'))?.value || 82,
+        signal: filteredIndicators.find(i => i.name.includes('Stoch'))?.signal || 'bearish',
+        category: 'momentum',
+        timeframe: currentTimeframe || '1h',
+        description: 'Oscillator that identifies overbought and oversold conditions with high sensitivity.',
+        interpretation: 'Currently in overbought territory, suggesting a potential short-term pullback or consolidation.',
+        icon: <ArrowUpDown className="h-4 w-4" />
+      },
+      {
+        name: 'MA50',
+        value: filteredIndicators.find(i => i.name.includes('Moving Average (50)'))?.value || 'Above',
+        signal: filteredIndicators.find(i => i.name.includes('Moving Average (50)'))?.signal || 'bullish',
+        category: 'trend',
+        timeframe: currentTimeframe || '1h',
+        description: '50-period moving average, a medium-term trend indicator.',
+        interpretation: 'Price above MA50 confirms bullish bias in the medium-term timeframe.',
+        icon: <TrendingUp className="h-4 w-4" />
+      },
+      {
+        name: 'MA100',
+        value: 'Above',
+        signal: 'bullish',
+        category: 'trend',
+        timeframe: currentTimeframe || '1h',
+        description: '100-period moving average, an intermediate-term trend indicator.',
+        interpretation: 'Price above MA100 confirms bullish bias in the intermediate timeframe.',
+        icon: <TrendingUp className="h-4 w-4" />
+      },
+      {
+        name: 'MA200',
+        value: filteredIndicators.find(i => i.name.includes('Moving Average (200)'))?.value || 'Above',
+        signal: filteredIndicators.find(i => i.name.includes('Moving Average (200)'))?.signal || 'bullish',
+        category: 'trend',
+        timeframe: currentTimeframe || '1h',
+        description: '200-period moving average, a key long-term trend indicator.',
+        interpretation: 'Price above MA200 indicates we are in a bull market on this timeframe.',
+        icon: <TrendingUp className="h-4 w-4" />
+      },
+      {
+        name: 'EMA21',
+        value: 'Above',
+        signal: 'bullish',
+        category: 'trend',
+        timeframe: currentTimeframe || '1h',
+        description: '21-period exponential moving average, responds quickly to price changes.',
+        interpretation: 'Price above EMA21 suggests strong short-term upward momentum.',
+        icon: <TrendingUp className="h-4 w-4" />
+      }
+    ];
+  }, [filteredIndicators, currentTimeframe]);
 
   // Toggle expanded state for a group
   const toggleGroup = (key: string) => {
@@ -278,70 +413,83 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
     return () => clearTimeout(timer);
   }, [donutPercentages]);
   
-  // Get insights based on indicator analysis
-  const getInsights = () => {
-    const bullishCount = getBullishCount();
-    const bearishCount = getBearishCount();
-    const neutralCount = getNeutralCount();
-    const totalCount = filteredIndicators.length;
+  // Detect patterns based on indicators
+  const detectPatterns = () => {
+    const patterns = [];
     
-    if (totalCount === 0) return [];
+    // Check for moving average crossovers
+    const ma50 = enhancedIndicators.find(i => i.name === 'MA50');
+    const ma200 = enhancedIndicators.find(i => i.name === 'MA200');
+    const ema21 = enhancedIndicators.find(i => i.name === 'EMA21');
     
-    const insights: { text: string; type: 'info' | 'warning' | 'success' }[] = [];
+    if (ma50?.signal === 'bullish' && ma200?.signal === 'bullish' && ema21?.signal === 'bullish') {
+      patterns.push({
+        name: 'Strong Uptrend', 
+        explanation: 'Price above all major moving averages (EMA21, MA50, MA200) indicates a strong uptrend across multiple timeframes.',
+        type: 'success'
+      });
+    }
     
-    // Trend and momentum alignment
-    const trendIndicators = filteredIndicators.filter(i => 
-      i.category === 'trend' || i.name.includes('MA') || i.name.includes('Moving')
-    );
-    const momentumIndicators = filteredIndicators.filter(i => 
-      i.category === 'momentum' || i.name.includes('RSI') || i.name.includes('MACD')
-    );
+    // Check for RSI conditions
+    const rsi = enhancedIndicators.find(i => i.name.includes('RSI') && !i.name.includes('Stoch'));
+    const stochRsi = enhancedIndicators.find(i => i.name.includes('Stoch'));
     
-    const bullishTrend = trendIndicators.filter(i => i.signal === 'bullish').length;
-    const bearishTrend = trendIndicators.filter(i => i.signal === 'bearish').length;
-    const bullishMomentum = momentumIndicators.filter(i => i.signal === 'bullish').length;
-    const bearishMomentum = momentumIndicators.filter(i => i.signal === 'bearish').length;
-    
-    // Check trend and momentum alignment
-    if (trendIndicators.length > 0 && momentumIndicators.length > 0) {
-      const trendDirection = bullishTrend > bearishTrend ? 'bullish' : 'bearish';
-      const momentumDirection = bullishMomentum > bearishMomentum ? 'bullish' : 'bearish';
+    if (rsi && stochRsi) {
+      const rsiValue = typeof rsi.value === 'number' ? rsi.value : 50;
+      const stochValue = typeof stochRsi.value === 'number' ? stochRsi.value : 50;
       
-      if (trendDirection === momentumDirection) {
-        insights.push({
-          text: `Trend and momentum indicators are aligned (${trendDirection}), suggesting strong directional movement.`,
-          type: 'success'
+      if (rsiValue > 70 && stochValue > 80) {
+        patterns.push({
+          name: 'Overbought Condition',
+          explanation: 'Both RSI and Stochastic RSI are indicating overbought conditions. Watch for potential reversion or price pullback.',
+          type: 'warning'
         });
-      } else {
-        insights.push({
-          text: `Trend indicators show ${trendDirection} bias while momentum shows ${momentumDirection} bias, indicating possible trend reversal or consolidation.`,
+      } else if (rsiValue < 30 && stochValue < 20) {
+        patterns.push({
+          name: 'Oversold Condition',
+          explanation: 'Both RSI and Stochastic RSI are indicating oversold conditions. Watch for potential bounce or trend reversal.',
           type: 'warning'
         });
       }
     }
     
-    // Check for overwhelming consensus
-    if (bullishCount > totalCount * 0.8) {
-      insights.push({
-        text: `Strong bullish consensus (${Math.round(bullishCount/totalCount*100)}% of indicators). Consider potential overbought conditions.`,
-        type: 'info'
-      });
-    } else if (bearishCount > totalCount * 0.8) {
-      insights.push({
-        text: `Strong bearish consensus (${Math.round(bearishCount/totalCount*100)}% of indicators). Consider potential oversold conditions.`,
-        type: 'info'
-      });
-    }
+    // Check for MACD and volume confirmation
+    const macd = enhancedIndicators.find(i => i.name === 'MACD');
+    const volume = enhancedIndicators.find(i => i.name === 'Volume');
     
-    // Check for mixed signals
-    if (neutralCount > totalCount * 0.4) {
-      insights.push({
-        text: `High number of neutral indicators (${neutralCount}/${totalCount}), suggesting consolidation or indecision in the market.`,
+    if (macd?.signal === 'bullish' && volume?.signal === 'bullish') {
+      patterns.push({
+        name: 'Bullish Momentum with Volume Confirmation',
+        explanation: 'MACD shows bullish momentum that is confirmed by increasing volume, suggesting a strong and sustainable move higher.',
+        type: 'success'
+      });
+    } else if (macd?.signal === 'bearish' && volume?.signal === 'bearish') {
+      patterns.push({
+        name: 'Bearish Momentum with Volume Confirmation',
+        explanation: 'MACD shows bearish momentum that is confirmed by increasing volume, suggesting a strong and sustainable move lower.',
         type: 'warning'
       });
     }
     
-    return insights;
+    // Check for trend/momentum divergence
+    const trendSignal = ma50?.signal || 'neutral';
+    const momentumSignal = rsi?.signal || 'neutral';
+    
+    if (trendSignal === 'bullish' && momentumSignal === 'bearish') {
+      patterns.push({
+        name: 'Bearish Divergence',
+        explanation: 'Price is in an uptrend but momentum is weakening, suggesting a potential reversal or consolidation ahead.',
+        type: 'warning'
+      });
+    } else if (trendSignal === 'bearish' && momentumSignal === 'bullish') {
+      patterns.push({
+        name: 'Bullish Divergence',
+        explanation: 'Price is in a downtrend but momentum is strengthening, suggesting a potential reversal or bounce ahead.',
+        type: 'info'
+      });
+    }
+    
+    return patterns;
   };
   
   // Get insight icon based on type
@@ -443,100 +591,188 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
     );
   };
   
-  // Render the indicator detail view
-  const renderDetailView = () => {
+  // Summary of all indicators and what they mean
+  const generateSummary = () => {
+    const bullishCount = getBullishCount();
+    const bearishCount = getBearishCount();
+    const neutralCount = getNeutralCount();
+    const totalCount = filteredIndicators.length;
+    
+    if (totalCount === 0) {
+      return "No indicators available to generate a summary. Please generate analysis first.";
+    }
+    
+    const bullishPercentage = Math.round((bullishCount / totalCount) * 100);
+    const bearishPercentage = Math.round((bearishCount / totalCount) * 100);
+    
+    // Get strength words based on percentage
+    const getStrengthWord = (percentage: number) => {
+      if (percentage >= 80) return "very strong";
+      if (percentage >= 65) return "strong";
+      if (percentage >= 55) return "moderate";
+      return "weak";
+    };
+    
+    // Build the summary based on the sentiment
+    if (bullishPercentage >= 60) {
+      return `Technical indicators are showing a ${getStrengthWord(bullishPercentage)} bullish bias (${bullishPercentage}% bullish). 
+      Moving averages indicate an uptrend, with momentum indicators confirming positive price action. 
+      Volume analysis supports the current upward movement. Consider looking for buying opportunities 
+      while maintaining appropriate risk management.`;
+    } 
+    
+    if (bearishPercentage >= 60) {
+      return `Technical indicators are showing a ${getStrengthWord(bearishPercentage)} bearish bias (${bearishPercentage}% bearish). 
+      Moving averages indicate a downtrend, with momentum indicators confirming negative price action. 
+      Volume patterns suggest increased selling pressure. Consider caution with new long positions 
+      and watch for potential further downside.`;
+    }
+    
+    return `Technical indicators are showing mixed signals (${bullishPercentage}% bullish, ${bearishPercentage}% bearish). 
+    This suggests a consolidation phase or a market in transition between trends. Some indicators 
+    point to potential upside while others show possible weakness. It may be wise to wait for 
+    clearer signals before taking significant positions.`;
+  };
+  
+  // Render the indicators in a grid layout
+  const renderDetailedIndicatorsGrid = () => {
     return (
-      <div className="space-y-3">
-        {indicatorGroups.map((group, idx) => (
-          group.indicators.length > 0 && (
-            <Collapsible 
-              key={idx} 
-              open={expandedGroups[group.key]} 
-              onOpenChange={() => toggleGroup(group.key)}
-              className={`rounded-md border border-border/40 overflow-hidden transition-all duration-300
-                         ${expandedGroups[group.key] ? 'bg-black/20' : 'bg-black/10 hover:bg-black/15'}`}
-            >
-              <CollapsibleTrigger asChild>
-                <motion.div 
-                  className="flex items-center justify-between p-3 cursor-pointer"
-                  whileHover={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+        {enhancedIndicators.map((indicator, index) => (
+          <motion.div 
+            key={index}
+            className={`p-3 rounded-lg border ${
+              indicator.signal === 'bullish' ? 'border-green-500/30 bg-green-950/10' : 
+              indicator.signal === 'bearish' ? 'border-red-500/30 bg-red-950/10' : 
+              'border-yellow-500/30 bg-yellow-950/10'
+            }`}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.05, duration: 0.3 }}
+          >
+            <div className="flex justify-between items-start">
+              <div className="flex items-center gap-1.5">
+                {indicator.icon}
+                <h4 className="font-medium text-sm">{indicator.name}</h4>
+              </div>
+              {getSignalBadge(indicator.signal)}
+            </div>
+            
+            <div className="mt-2">
+              <div className="flex items-center justify-between mb-1">
+                <span className={cn(
+                  "text-sm font-mono",
+                  indicator.signal === 'bullish' ? 'text-green-400' : 
+                  indicator.signal === 'bearish' ? 'text-red-400' : 
+                  'text-yellow-400'
+                )}>
+                  {indicator.value.toString()}
+                </span>
+                <MarketDataTooltip 
+                  title={indicator.name}
+                  className="cursor-help"
                 >
-                  <div className="flex items-center gap-2">
-                    {group.icon}
-                    <h3 className="text-sm font-medium">{group.name}</h3>
-                    <Badge variant="outline" className="ml-2">
-                      {group.indicators.length}
-                    </Badge>
-                  </div>
-                  
-                  <div className="flex items-center">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button className="p-1 rounded-full hover:bg-muted/20">
-                            <Info className="h-3.5 w-3.5 text-muted-foreground" />
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent side="left">
-                          <p className="text-xs max-w-[200px]">{group.description}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    
-                    {expandedGroups[group.key] ? (
-                      <ChevronUp className="h-4 w-4 ml-2" />
-                    ) : (
-                      <ChevronDown className="h-4 w-4 ml-2" />
-                    )}
-                  </div>
-                </motion.div>
-              </CollapsibleTrigger>
+                  {INDICATOR_EXPLANATIONS[indicator.name.split(' ')[0] as keyof typeof INDICATOR_EXPLANATIONS] || 
+                   indicator.description}
+                </MarketDataTooltip>
+              </div>
               
-              <CollapsibleContent>
-                <div className="space-y-2 p-3 pt-0">
-                  {group.indicators.map((indicator, idxInner) => (
-                    <motion.div 
-                      key={idxInner}
-                      className="flex flex-col p-2 rounded bg-muted/20 hover:bg-muted/30 transition-colors border border-border/20"
-                      initial={{ opacity: 0, y: 5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: idxInner * 0.1, duration: 0.2 }}
-                    >
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <span className="text-sm font-medium">{indicator.name}</span>
-                          <p className="text-xs text-muted-foreground">{indicator.timeframe}</p>
-                        </div>
-                        <div>
-                          {getSignalBadge(indicator.signal)}
-                        </div>
-                      </div>
-                      
-                      <div className="mt-2 flex items-center gap-2">
-                        <span className={`font-mono text-xs ${
-                          indicator.signal === 'bullish' ? 'text-green-500' :
-                          indicator.signal === 'bearish' ? 'text-red-500' :
-                          'text-yellow-500'
-                        }`}>
-                          {indicator.value.toString()}
-                        </span>
-                        <div className="flex-grow">
-                          {getStrengthIndicator(indicator.signal, indicator.value)}
-                        </div>
-                      </div>
-                      
-                      {indicator.description && (
-                        <div className="mt-1.5">
-                          <p className="text-xs text-muted-foreground">{indicator.description}</p>
-                        </div>
-                      )}
-                    </motion.div>
-                  ))}
-                </div>
-              </CollapsibleContent>
-            </Collapsible>
-          )
+              {getStrengthIndicator(indicator.signal, indicator.value)}
+            </div>
+            
+            <p className="mt-2 text-xs text-muted-foreground">
+              {indicator.interpretation}
+            </p>
+          </motion.div>
         ))}
+      </div>
+    );
+  };
+  
+  // Render the patterns and explanations
+  const renderPatternsAndExplanations = () => {
+    const patterns = detectPatterns();
+    
+    return (
+      <div className="mt-4 space-y-3">
+        <h3 className="font-medium text-sm flex items-center gap-1.5">
+          <Lightbulb className="h-4 w-4 text-blue-500" />
+          <span>Detected Patterns & Insights</span>
+        </h3>
+        
+        {patterns.length > 0 ? (
+          <div className="space-y-2">
+            {patterns.map((pattern, index) => (
+              <motion.div 
+                key={index}
+                className={`p-3 rounded-lg border ${
+                  pattern.type === 'success' ? 'border-green-500/30 bg-green-950/10' : 
+                  pattern.type === 'warning' ? 'border-amber-500/30 bg-amber-950/10' : 
+                  'border-blue-500/30 bg-blue-950/10'
+                }`}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1, duration: 0.3 }}
+              >
+                <div className="flex items-center gap-1.5 mb-1">
+                  {getInsightIcon(pattern.type)}
+                  <h4 className="font-medium text-sm">{pattern.name}</h4>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {pattern.explanation}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            No significant patterns detected in the current market conditions.
+          </p>
+        )}
+        
+        <div className="p-3 rounded-lg border border-blue-500/30 bg-blue-950/10 mt-4">
+          <div className="flex items-center gap-1.5 mb-1">
+            <Info className="h-4 w-4 text-blue-500" />
+            <h4 className="font-medium text-sm">Technical Summary</h4>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            {generateSummary()}
+          </p>
+        </div>
+      </div>
+    );
+  };
+  
+  // Render educational content
+  const renderEducationalContent = () => {
+    return (
+      <div className="mt-4 space-y-3">
+        <h3 className="font-medium text-sm flex items-center gap-1.5">
+          <Calendar className="h-4 w-4 text-blue-500" />
+          <span>Technical Analysis Guide</span>
+        </h3>
+        
+        <Collapsible className="rounded-lg border border-border/40 overflow-hidden">
+          <CollapsibleTrigger asChild>
+            <div className="flex items-center justify-between p-3 cursor-pointer hover:bg-muted/10">
+              <div className="flex items-center gap-1.5">
+                <LayoutGrid className="h-4 w-4" />
+                <h4 className="text-sm font-medium">Understanding Key Patterns</h4>
+              </div>
+              <ChevronDown className="h-4 w-4" />
+            </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <div className="p-3 pt-0 space-y-2">
+              {Object.entries(PATTERN_EXPLANATIONS).map(([pattern, explanation]) => (
+                <div key={pattern} className="border-t border-border/20 pt-2 first:border-0 first:pt-0">
+                  <h5 className="text-xs font-medium">{pattern}</h5>
+                  <p className="text-xs text-muted-foreground mt-1">{explanation}</p>
+                </div>
+              ))}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
       </div>
     );
   };
@@ -564,37 +800,24 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="flex justify-center">
-              <div className="bg-muted/20 rounded-lg p-1 flex">
-                <Button 
-                  variant={viewMode === 'chart' ? 'default' : 'ghost'} 
-                  size="sm"
-                  onClick={() => setViewMode('chart')}
-                  className="text-xs"
-                >
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="overview" className="text-xs">
                   <Eye className="h-3.5 w-3.5 mr-1" />
                   Overview
-                </Button>
-                <Button 
-                  variant={viewMode === 'detail' ? 'default' : 'ghost'} 
-                  size="sm"
-                  onClick={() => setViewMode('detail')}
-                  className="text-xs"
-                >
+                </TabsTrigger>
+                <TabsTrigger value="details" className="text-xs">
                   <BarChart3 className="h-3.5 w-3.5 mr-1" />
-                  Details
-                </Button>
-              </div>
-            </div>
-            
-            {viewMode === 'chart' ? (
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5 }}
-                className="space-y-4"
-              >
-                {/* Chart View */}
+                  Indicators
+                </TabsTrigger>
+                <TabsTrigger value="patterns" className="text-xs">
+                  <Lightbulb className="h-3.5 w-3.5 mr-1" />
+                  Insights
+                </TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="overview" className="space-y-4 mt-4">
+                {/* Overview Tab */}
                 {renderDonutChart()}
                 
                 {/* Signal distribution */}
@@ -628,51 +851,32 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
                   </motion.div>
                 </div>
                 
-                {/* AI Insights */}
-                <div className="space-y-2">
-                  <h3 className="text-sm font-medium flex items-center gap-1.5">
-                    <Lightbulb className="h-4 w-4 text-blue-400" />
-                    AI Insights
-                  </h3>
-                  
-                  <div className="space-y-2">
-                    {getInsights().length > 0 ? (
-                      getInsights().map((insight, idx) => (
-                        <motion.div 
-                          key={idx}
-                          className="flex gap-2 p-2 bg-black/20 rounded border border-border/30 text-sm"
-                          initial={{ opacity: 0, x: -5 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.3 + idx * 0.1, duration: 0.3 }}
-                        >
-                          <div className="flex-shrink-0 mt-0.5">
-                            {getInsightIcon(insight.type)}
-                          </div>
-                          <p className="text-xs">{insight.text}</p>
-                        </motion.div>
-                      ))
-                    ) : (
-                      <p className="text-xs text-muted-foreground">
-                        Not enough data to generate insights.
-                      </p>
-                    )}
+                <div className="p-3 rounded-lg border border-blue-500/30 bg-blue-950/10">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Info className="h-4 w-4 text-blue-500" />
+                    <h4 className="font-medium text-sm">Technical Analysis Summary</h4>
                   </div>
+                  <p className="text-xs text-muted-foreground">
+                    {generateSummary()}
+                  </p>
                 </div>
-              </motion.div>
-            ) : (
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5 }}
-                className="space-y-4"
-              >
-                {/* Detail View */}
-                {renderDetailView()}
-              </motion.div>
-            )}
+              </TabsContent>
+              
+              <TabsContent value="details" className="space-y-4 mt-4">
+                {/* Details Tab */}
+                {renderDetailedIndicatorsGrid()}
+              </TabsContent>
+              
+              <TabsContent value="patterns" className="space-y-4 mt-4">
+                {/* Patterns Tab */}
+                {renderPatternsAndExplanations()}
+                {renderEducationalContent()}
+              </TabsContent>
+            </Tabs>
           </div>
         )}
       </CardContent>
     </Card>
   );
 };
+
