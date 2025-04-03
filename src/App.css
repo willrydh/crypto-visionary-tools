@@ -121,3 +121,9 @@ header {
 .bottom-nav {
   z-index: 55;
 }
+
+/* Background image opacity for subtle effects */
+.opacity-15 {
+  opacity: 0.15;
+}
+

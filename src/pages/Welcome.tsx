@@ -11,11 +11,29 @@ import { AppShowcase } from '@/components/landing/AppShowcase';
 import CustomerReviews from '@/components/marketing/CustomerReviews';
 import DiscordCommunity from '@/components/marketing/DiscordCommunity';
 import LogoImage from '@/assets/logo.svg';
+import { BlurredBackground } from '@/components/ui/blurred-background';
 
 const Welcome = () => {
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(false);
-
+  
+  // Background images
+  const heroImages = [
+    '/lovable-uploads/cd165e0d-4678-4599-8125-3439bc1496cc.png',
+    '/lovable-uploads/b26d8332-d911-4cd0-92d8-9d88267f181e.png',
+  ];
+  
+  const workflowImages = [
+    '/lovable-uploads/0bbcaaf7-41ab-41c2-a81f-15c52b4d6202.png',
+    '/lovable-uploads/cbf4d840-cd1b-4a3f-ab13-dce9b7f9bb53.png',
+    '/lovable-uploads/4a0c6ea8-49f6-4dd0-8216-6e0085aec938.png',
+    '/lovable-uploads/83cd3ce3-8a61-4043-aa68-18467165dbc3.png',
+  ];
+  
+  // For image rotation
+  const [currentHeroImage, setCurrentHeroImage] = useState(0);
+  const [currentWorkflowImage, setCurrentWorkflowImage] = useState(0);
+  
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -24,8 +42,22 @@ const Welcome = () => {
     handleResize();
     window.addEventListener('resize', handleResize);
 
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+    // Rotate hero images every 6 seconds
+    const heroRotationInterval = setInterval(() => {
+      setCurrentHeroImage((prev) => (prev + 1) % heroImages.length);
+    }, 6000);
+    
+    // Rotate workflow images every 4 seconds
+    const workflowRotationInterval = setInterval(() => {
+      setCurrentWorkflowImage((prev) => (prev + 1) % workflowImages.length);
+    }, 4000);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearInterval(heroRotationInterval);
+      clearInterval(workflowRotationInterval);
+    };
+  }, [heroImages.length, workflowImages.length]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -46,8 +78,12 @@ const Welcome = () => {
         </div>
       </header>
       
-      <section className="py-24 px-6 bg-gradient-to-b from-background to-muted/50">
-        <div className="max-w-5xl mx-auto text-center">
+      <section className="py-24 px-6 bg-gradient-to-b from-background to-muted/50 relative overflow-hidden">
+        <BlurredBackground 
+          imageSrc={heroImages[currentHeroImage]} 
+          className="opacity-70"
+        />
+        <div className="max-w-5xl mx-auto text-center relative z-10">
           <Badge className="mb-4" variant="outline">Version 2.0 Now Available</Badge>
           <h1 className="text-4xl md:text-5xl font-bold mb-6">Trade Smarter with AI-Powered Signals</h1>
           <p className="text-lg text-muted-foreground mb-8 max-w-3xl mx-auto">
@@ -107,8 +143,12 @@ const Welcome = () => {
       
       <AppShowcase />
       
-      <section className="py-16 px-6 bg-muted/50">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-16 px-6 bg-muted/50 relative overflow-hidden">
+        <BlurredBackground 
+          imageSrc={workflowImages[currentWorkflowImage]} 
+          className="opacity-60"
+        />
+        <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-10">
             <h2 className="text-3xl font-bold mb-4">How ProfitPilot Works</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -143,7 +183,7 @@ const Welcome = () => {
                 <div className="absolute -left-3 -top-3 w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold">
                   {item.step}
                 </div>
-                <Card className="pt-6 h-full">
+                <Card className="pt-6 h-full bg-card/60 backdrop-blur-sm">
                   <CardHeader>
                     <CardTitle>{item.title}</CardTitle>
                   </CardHeader>
