@@ -34,38 +34,67 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
   }
   nextMonday.setUTCHours(0, 0, 0, 0);
   
-  // Define accurate market hours in UTC based on the provided local times
-  // Using UTC offsets for accurate calculations
-  const marketHours = {
-    stockholm: { open: 7, close: 15.5 },      // Stockholm: 09:00-17:30 CET (UTC+2) = 07:00-15:30 UTC
-    oslo: { open: 7, close: 14.42 },          // Oslo: 09:00-16:25 CET (UTC+2) = 07:00-14:25 UTC
-    copenhagen: { open: 7, close: 15 },       // Copenhagen: 09:00-17:00 CET (UTC+2) = 07:00-15:00 UTC
-    helsinki: { open: 7, close: 15.5 },       // Helsinki: 09:00-17:30 CET (UTC+2) = 07:00-15:30 UTC
-    tokyo: { open: 0, close: 6 },             // Tokyo: 09:00-15:00 JST (UTC+9) = 00:00-06:00 UTC
-    london: { open: 8, close: 16.5 },         // London: 09:00-17:30 GMT (UTC+1) = 08:00-16:30 UTC
-    newYork: { open: 14.5, close: 21 },       // New York: 09:30-16:00 EST (UTC-5) = 14:30-21:00 UTC
-    frankfurt: { open: 7, close: 15.5 },      // Frankfurt: 09:00-17:30 CET (UTC+2) = 07:00-15:30 UTC
-    hongKong: { open: 1, close: 8 }           // Hong Kong: 09:00-16:00 HKT (UTC+8) = 01:00-08:00 UTC
+  // Define market hours in local time according to user's provided data
+  // Market hours are in local time (CET/CEST for European markets)
+  // Need to convert to UTC for calculations
+  
+  // User-provided market hours (local time in CET/CEST, UTC+2 currently)
+  const localMarketHours = {
+    // Nordic markets
+    stockholm: { open: 9, close: 17.5 },      // 09:00-17:30 CET/CEST
+    oslo: { open: 9, close: 16.42 },          // 09:00-16:25 CET/CEST
+    copenhagen: { open: 9, close: 17 },       // 09:00-17:00 CET/CEST
+    helsinki: { open: 9, close: 17.5 },       // 09:00-17:30 CET/CEST
+    
+    // North American markets
+    nyse: { open: 15.5, close: 22 },          // 15:30-22:00 CET/CEST
+    nasdaq: { open: 15.5, close: 22 },        // 15:30-22:00 CET/CEST
+    tsx: { open: 15.5, close: 22 },           // 15:30-22:00 CET/CEST
+    
+    // European markets
+    london: { open: 9, close: 17.5 },         // 09:00-17:30 CET/CEST
+    frankfurt: { open: 9, close: 17.5 },      // 09:00-17:30 CET/CEST
+    paris: { open: 9, close: 17.5 },          // 09:00-17:30 CET/CEST
+    amsterdam: { open: 9, close: 17.5 },      // 09:00-17:30 CET/CEST
+    brussels: { open: 9, close: 17.5 },       // 09:00-17:30 CET/CEST
+    milan: { open: 9, close: 17.5 },          // 09:00-17:30 CET/CEST
+    madrid: { open: 9, close: 17.5 },         // 09:00-17:30 CET/CEST
+    zurich: { open: 9, close: 17.5 },         // 09:00-17:30 CET/CEST
+    lisbon: { open: 9, close: 17.5 },         // 09:00-17:30 CET/CEST
+    
+    // Asian markets
+    tokyo: { open: 0, close: 6 },             // Local Japan time converted to CET/CEST
+    hongKong: { open: 3.5, close: 10 }        // Local Hong Kong time converted to CET/CEST
   };
   
+  // Convert local market hours to UTC for calculations
+  // Using fixed UTC+2 offset for CET/CEST time as specified in the data
+  const marketHours = Object.entries(localMarketHours).reduce((acc, [market, hours]) => {
+    // For European markets, assuming UTC+2 offset (CET/CEST)
+    const localToUtcOffset = 2;
+    acc[market] = {
+      open: hours.open - localToUtcOffset,
+      close: hours.close - localToUtcOffset
+    };
+    return acc;
+  }, {} as Record<string, { open: number; close: number }>);
+  
   // Format market hours for display in local timezone
-  const formatMarketHours = (openUtc: number, closeUtc: number): string => {
-    const openMinutes = Math.floor((openUtc % 1) * 60);
-    const closeMinutes = Math.floor((closeUtc % 1) * 60);
+  const formatMarketHours = (localOpen: number, localClose: number): string => {
+    const openMinutes = Math.floor((localOpen % 1) * 60);
+    const closeMinutes = Math.floor((localClose % 1) * 60);
     
-    const openHour = Math.floor(openUtc);
-    const closeHour = Math.floor(closeUtc);
+    const openHour = Math.floor(localOpen);
+    const closeHour = Math.floor(localClose);
     
     const timezoneAbbr = getTimezoneAbbreviation();
-    const localOpenHour = (openHour + getTimezoneOffsetHours() + 24) % 24;
-    const localCloseHour = (closeHour + getTimezoneOffsetHours() + 24) % 24;
     
-    return `${localOpenHour.toString().padStart(2, '0')}:${openMinutes.toString().padStart(2, '0')}-${localCloseHour.toString().padStart(2, '0')}:${closeMinutes.toString().padStart(2, '0')} ${timezoneAbbr} (Mon-Fri)`;
+    return `${openHour.toString().padStart(2, '0')}:${openMinutes.toString().padStart(2, '0')}-${closeHour.toString().padStart(2, '0')}:${closeMinutes.toString().padStart(2, '0')} ${timezoneAbbr} (Mon-Fri)`;
   };
   
   // Calculate the next opening/closing time with precise timing
   const calculateNextEvent = (market: any, isOpen: boolean): Date => {
-    // Extract open/close hours and minutes
+    // Extract open/close hours and minutes for UTC calculation
     const openHour = Math.floor(market.open);
     const openMinute = Math.round((market.open % 1) * 60);
     const closeHour = Math.floor(market.close);
@@ -111,13 +140,6 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
   console.log('Current UTC time:', currentTime.toFixed(2), 
               'Hour:', hour, 'Minute:', minute, 
               'Day:', dayOfWeek, 'Weekend:', isWeekend);
-  console.log('Market hours - NYSE open:', marketHours.newYork.open, 'close:', marketHours.newYork.close);
-  
-  // Fix for US markets: Determine status correctly
-  const isNYOpen = !isWeekend && currentTime >= marketHours.newYork.open && currentTime < marketHours.newYork.close;
-  const isNYOpeningSoon = isOpeningSoon(marketHours.newYork.open);
-  
-  console.log('NYSE Market check - isOpen:', isNYOpen, 'isOpeningSoon:', isNYOpeningSoon);
   
   // Create market sessions with accurate statuses and next event times
   const sessions: MarketSession[] = [
@@ -126,7 +148,7 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
       status: isWeekend ? 'closed' : 
               (currentTime >= marketHours.stockholm.open && currentTime < marketHours.stockholm.close) ? 'open' : 
               isOpeningSoon(marketHours.stockholm.open) ? 'opening-soon' : 'closed',
-      hours: formatMarketHours(marketHours.stockholm.open, marketHours.stockholm.close),
+      hours: formatMarketHours(localMarketHours.stockholm.open, localMarketHours.stockholm.close),
       nextEvent: {
         type: isWeekend ? 'open' : 
               (currentTime >= marketHours.stockholm.open && currentTime < marketHours.stockholm.close) ? 'close' : 'open',
@@ -140,7 +162,7 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
       status: isWeekend ? 'closed' : 
               (currentTime >= marketHours.london.open && currentTime < marketHours.london.close) ? 'open' : 
               isOpeningSoon(marketHours.london.open) ? 'opening-soon' : 'closed',
-      hours: formatMarketHours(marketHours.london.open, marketHours.london.close),
+      hours: formatMarketHours(localMarketHours.london.open, localMarketHours.london.close),
       nextEvent: {
         type: isWeekend ? 'open' : 
               (currentTime >= marketHours.london.open && currentTime < marketHours.london.close) ? 'close' : 'open',
@@ -152,13 +174,14 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
     {
       name: "New York",
       status: isWeekend ? 'closed' : 
-              isNYOpen ? 'open' : 
-              isNYOpeningSoon ? 'opening-soon' : 'closed',
-      hours: formatMarketHours(marketHours.newYork.open, marketHours.newYork.close),
+              (currentTime >= marketHours.nyse.open && currentTime < marketHours.nyse.close) ? 'open' : 
+              isOpeningSoon(marketHours.nyse.open) ? 'opening-soon' : 'closed',
+      hours: formatMarketHours(localMarketHours.nyse.open, localMarketHours.nyse.close),
       nextEvent: {
         type: isWeekend ? 'open' : 
-              isNYOpen ? 'close' : 'open',
-        time: calculateNextEvent(marketHours.newYork, isNYOpen)
+              (currentTime >= marketHours.nyse.open && currentTime < marketHours.nyse.close) ? 'close' : 'open',
+        time: calculateNextEvent(marketHours.nyse, 
+                 (currentTime >= marketHours.nyse.open && currentTime < marketHours.nyse.close))
       },
       timezone: userTimezone
     },
@@ -167,7 +190,7 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
       status: isWeekend ? 'closed' : 
               (currentTime >= marketHours.frankfurt.open && currentTime < marketHours.frankfurt.close) ? 'open' : 
               isOpeningSoon(marketHours.frankfurt.open) ? 'opening-soon' : 'closed',
-      hours: formatMarketHours(marketHours.frankfurt.open, marketHours.frankfurt.close),
+      hours: formatMarketHours(localMarketHours.frankfurt.open, localMarketHours.frankfurt.close),
       nextEvent: {
         type: isWeekend ? 'open' : 
               (currentTime >= marketHours.frankfurt.open && currentTime < marketHours.frankfurt.close) ? 'close' : 'open',
@@ -181,7 +204,7 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
       status: isWeekend ? 'closed' : 
               (currentTime >= marketHours.tokyo.open && currentTime < marketHours.tokyo.close) ? 'open' : 
               isOpeningSoon(marketHours.tokyo.open) ? 'opening-soon' : 'closed',
-      hours: formatMarketHours(marketHours.tokyo.open, marketHours.tokyo.close),
+      hours: formatMarketHours(localMarketHours.tokyo.open, localMarketHours.tokyo.close),
       nextEvent: {
         type: isWeekend ? 'open' : 
               (currentTime >= marketHours.tokyo.open && currentTime < marketHours.tokyo.close) ? 'close' : 'open',

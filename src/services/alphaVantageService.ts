@@ -29,24 +29,38 @@ let lastFetchedSessions: MarketSession[] | null = null;
 let lastFetchTime: number = 0;
 const CACHE_DURATION = 5 * 60 * 1000; // Cache for 5 minutes
 
-// Static exchange data (fallback)
+// Static exchange data with market cap information and corrected trading hours
 const EXCHANGE_STATIC_DATA = {
+  stockholm: { name: 'Stockholm Stock Exchange', localTime: '09:00–17:30', gmtTime: '07:00–15:30', marketCap: '$1.8T' },
+  oslo: { name: 'Oslo Stock Exchange', localTime: '09:00–16:25', gmtTime: '07:00–14:25', marketCap: '$0.31T' },
+  copenhagen: { name: 'Copenhagen Stock Exchange', localTime: '09:00–17:00', gmtTime: '07:00–15:00', marketCap: '$0.44T' },
+  helsinki: { name: 'Helsinki Stock Exchange', localTime: '09:00–17:30', gmtTime: '07:00–15:30', marketCap: '$0.36T' },
+  
+  nyse: { name: 'NYSE (US)', localTime: '15:30–22:00', gmtTime: '13:30–20:00', marketCap: '$25.62T' },
+  nasdaq: { name: 'Nasdaq (US)', localTime: '15:30–22:00', gmtTime: '13:30–20:00', marketCap: '$19.51T' },
+  toronto: { name: 'TSX (Toronto)', localTime: '15:30–22:00', gmtTime: '13:30–20:00', marketCap: '$2.62T' },
+  
+  london: { name: 'LSE (London)', localTime: '09:00–17:30', gmtTime: '08:00–16:30', marketCap: '$3.83T' },
+  frankfurt: { name: 'FSX (Frankfurt)', localTime: '09:00–17:30', gmtTime: '07:00–15:30', marketCap: '$2.11T' },
+  paris: { name: 'Euronext Paris', localTime: '09:00–17:30', gmtTime: '07:00–15:30', marketCap: '$3.7T' },
+  amsterdam: { name: 'Euronext Amsterdam', localTime: '09:00–17:30', gmtTime: '07:00–15:30', marketCap: '$1.5T' },
+  brussels: { name: 'Euronext Brussels', localTime: '09:00–17:30', gmtTime: '07:00–15:30', marketCap: '$0.4T' },
+  milan: { name: 'Borsa Italiana', localTime: '09:00–17:30', gmtTime: '07:00–15:30', marketCap: '$0.8T' },
+  madrid: { name: 'BME (Spain)', localTime: '09:00–17:30', gmtTime: '07:00–15:30', marketCap: '$0.7T' },
+  zurich: { name: 'SIX (Switzerland)', localTime: '09:00–17:30', gmtTime: '07:00–15:30', marketCap: '$1.75T' },
+  lisbon: { name: 'Euronext Lisbon', localTime: '09:00–17:30', gmtTime: '08:00–16:30', marketCap: '$0.1T' },
+  
+  tokyo: { name: 'TSE (Tokyo)', localTime: '02:00–08:00', gmtTime: '00:00–06:00', marketCap: '$6.54T' },
+  hongKong: { name: 'HKEX (Hong Kong)', localTime: '03:30–10:00', gmtTime: '01:30–08:00', marketCap: '$6.76T' },
+  
   australia: { name: 'ASX (Australia)', localTime: '10:00–16:00', gmtTime: '00:00–06:00', marketCap: '$1.54T' },
   india: { name: 'BSE (India)', localTime: '09:15–15:30', gmtTime: '03:45–10:00', marketCap: '$3.16T' },
   brazil: { name: 'B3 (Brazil)', localTime: '10:00–17:30', gmtTime: '13:00–20:30', marketCap: '$1.2T' },
-  euronext: { name: 'Euronext', localTime: '09:00–17:30', gmtTime: '08:00–16:30', marketCap: '$5.08T' },
-  frankfurt: { name: 'FSX (Frankfurt)', localTime: '08:00–20:00', gmtTime: '07:00–19:00', marketCap: '$2.11T' },
-  hongKong: { name: 'HKEX (Hong Kong)', localTime: '09:30–16:00', gmtTime: '01:30–08:00', marketCap: '$6.76T' },
+  euronext: { name: 'Euronext', localTime: '09:00–17:30', gmtTime: '07:00–15:30', marketCap: '$5.08T' },
+  shanghai: { name: 'SSE (Shanghai)', localTime: '09:30–15:00', gmtTime: '01:30–07:00', marketCap: '$6.56T' },
+  shenzhen: { name: 'SZSE (Shenzhen)', localTime: '09:30–15:00', gmtTime: '01:30–07:00', marketCap: '$4.83T' },
   southAfrica: { name: 'JSE (South Africa)', localTime: '09:00–17:00', gmtTime: '07:00–15:00', marketCap: '$1.13T' },
   korea: { name: 'KRX (South Korea)', localTime: '09:00–15:30', gmtTime: '00:00–06:30', marketCap: '$2.07T' },
-  london: { name: 'LSE (London)', localTime: '08:00–16:30', gmtTime: '08:00–16:30', marketCap: '$3.83T' },
-  nasdaq: { name: 'Nasdaq (US)', localTime: '09:30–16:00', gmtTime: '14:30–21:00', marketCap: '$19.51T' },
-  nyse: { name: 'NYSE (US)', localTime: '09:30–16:00', gmtTime: '14:30–21:00', marketCap: '$25.62T' },
-  shanghai: { name: 'SSX (Shanghai)', localTime: '09:30–15:00', gmtTime: '01:30–07:00', marketCap: '$6.56T' },
-  shenzhen: { name: 'SZSE (Shenzhen)', localTime: '09:30–15:00', gmtTime: '01:30–07:00', marketCap: '$4.83T' },
-  switzerland: { name: 'SIX (Switzerland)', localTime: '09:00–17:30', gmtTime: '08:00–16:30', marketCap: '$1.75T' },
-  tokyo: { name: 'TSE (Tokyo)', localTime: '09:00–15:00', gmtTime: '00:00–06:00', marketCap: '$6.54T' },
-  toronto: { name: 'TSX (Toronto)', localTime: '09:30–16:00', gmtTime: '14:30–21:00', marketCap: '$2.62T' }
 };
 
 // Parse the GMT trading times from static data to get hours in decimal format
@@ -123,20 +137,10 @@ const utcToLocalHour = (utcHour: number): number => {
 const formatMarketHoursInLocalTime = (exchange: string): string => {
   if (!exchangeHours[exchange]) return 'N/A';
   
-  const openHour = Math.floor(exchangeHours[exchange].open);
-  const openMinutes = Math.floor((exchangeHours[exchange].open % 1) * 60);
-  const closeHour = Math.floor(exchangeHours[exchange].close);
-  const closeMinutes = Math.floor((exchangeHours[exchange].close % 1) * 60);
-  
-  const localOpenHour = utcToLocalHour(openHour);
-  const localCloseHour = utcToLocalHour(closeHour);
-  
-  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const timezoneAbbr = new Intl.DateTimeFormat('en', { timeZoneName: 'short' })
-    .formatToParts(new Date())
-    .find(part => part.type === 'timeZoneName')?.value || '';
-  
-  return `${localOpenHour.toString().padStart(2, '0')}:${openMinutes.toString().padStart(2, '0')}-${localCloseHour.toString().padStart(2, '0')}:${closeMinutes.toString().padStart(2, '0')} ${timezoneAbbr} (Mon-Fri)`;
+  return EXCHANGE_STATIC_DATA[exchange].localTime.replace('–', '-') + ' ' + 
+         new Intl.DateTimeFormat('en', { timeZoneName: 'short' })
+           .formatToParts(new Date())
+           .find(part => part.type === 'timeZoneName')?.value || '';
 };
 
 // Get market data with real-time checks where possible
@@ -200,7 +204,6 @@ export const fetchAlphaVantageMarketSessions = async (): Promise<MarketSession[]
       if (isWeekend) return 'closed';
       
       // Check if the current time is within the market hours
-      // This is critical for proper functioning
       if (currentTime >= exchangeHours[exchange].open && 
           currentTime < exchangeHours[exchange].close) {
         return 'open';
@@ -252,8 +255,7 @@ export const fetchAlphaVantageMarketSessions = async (): Promise<MarketSession[]
       nyseOpen = true;
     }
     
-    // Create market sessions with current status
-    // Focus on key markets that users want to track
+    // Create market sessions with current status using updated hours
     const sessions: MarketSession[] = [
       {
         name: 'NYSE (New York)',
