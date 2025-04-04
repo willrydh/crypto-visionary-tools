@@ -58,13 +58,69 @@ const ThankYouPage = () => {
       <BlurredBackground imageSrc={backgroundImages} className="opacity-50" />
       
       <div className="container max-w-4xl px-4 py-12 relative z-10">
-        <div className="text-center mb-10">
+        <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-100 dark:bg-green-900/30 text-green-500 mb-6">
             <CheckCircle className="h-10 w-10" />
           </div>
           <h1 className="text-3xl md:text-4xl font-bold mb-3">Thank You for Your Purchase!</h1>
           <p className="text-xl text-muted-foreground max-w-xl mx-auto">
             Your account has been upgraded to ProfitPilot Pro. You now have access to all premium features.
+          </p>
+        </div>
+        
+        {/* Order Details - Moved to the top */}
+        <Card className="mb-8 backdrop-blur-sm bg-card/80">
+          <CardHeader>
+            <CardTitle>Your Order Details</CardTitle>
+            <CardDescription>Reference and account information</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-sm font-medium mb-1">Order Information</h3>
+                <div className="text-sm text-muted-foreground space-y-1">
+                  <p>Order #: PRO-12345-XYZ</p>
+                  <p>Date: {new Date().toLocaleDateString()}</p>
+                  <p>Plan: ProfitPilot Pro (Yearly)</p>
+                  <p>Next billing date: {new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toLocaleDateString()}</p>
+                </div>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium mb-1">Your Pro Benefits</h3>
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-3.5 w-3.5 text-green-500" />
+                    <span>AI Trading Signals</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-3.5 w-3.5 text-green-500" />
+                    <span>Real-time Technical Analysis</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-3.5 w-3.5 text-green-500" />
+                    <span>Support & Resistance Levels</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-3.5 w-3.5 text-green-500" />
+                    <span>Economic Calendar</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-3.5 w-3.5 text-green-500" />
+                    <span>Premium Market Insights</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        {/* Dashboard Button - Moved up */}
+        <div className="text-center mb-10">
+          <Button size="lg" onClick={() => navigate('/dashboard')}>
+            Go to Dashboard <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+          <p className="text-sm text-muted-foreground mt-4">
+            We've sent a receipt to your email. If you have any questions, please contact our support team.
           </p>
         </div>
         
@@ -131,60 +187,6 @@ const ThankYouPage = () => {
               </Button>
             </CardFooter>
           </Card>
-        </div>
-        
-        <Card className="mb-10 backdrop-blur-sm bg-card/80">
-          <CardHeader>
-            <CardTitle>Your Order Details</CardTitle>
-            <CardDescription>Reference and account information</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div>
-                <h3 className="text-sm font-medium mb-1">Order Information</h3>
-                <div className="text-sm text-muted-foreground space-y-1">
-                  <p>Order #: PRO-12345-XYZ</p>
-                  <p>Date: {new Date().toLocaleDateString()}</p>
-                  <p>Plan: ProfitPilot Pro (Yearly)</p>
-                  <p>Next billing date: {new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toLocaleDateString()}</p>
-                </div>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium mb-1">Your Pro Benefits</h3>
-                <ul className="text-sm text-muted-foreground space-y-1">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-3.5 w-3.5 text-green-500" />
-                    <span>AI Trading Signals</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-3.5 w-3.5 text-green-500" />
-                    <span>Real-time Technical Analysis</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-3.5 w-3.5 text-green-500" />
-                    <span>Support & Resistance Levels</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-3.5 w-3.5 text-green-500" />
-                    <span>Economic Calendar</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-3.5 w-3.5 text-green-500" />
-                    <span>Premium Market Insights</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <div className="text-center">
-          <Button size="lg" onClick={() => navigate('/dashboard')}>
-            Go to Dashboard <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-          <p className="text-sm text-muted-foreground mt-4">
-            We've sent a receipt to your email. If you have any questions, please contact our support team.
-          </p>
         </div>
       </div>
     </div>

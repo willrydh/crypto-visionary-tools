@@ -216,7 +216,7 @@ const Dashboard = () => {
         
         <div className="space-y-6">
           <PriceRangeIndicator title="Price Ranges" symbol="BTCUSDT" />
-          <MarketStatus showDetails={true} customTitle="Smart Money" customSource="Global Markets" />
+          {/* Removed the duplicate MarketStatus component */}
         </div>
       </div>
     </div>
