@@ -140,9 +140,7 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
   };
   
   return (
-    <Card className="bg-slate-800/90 border-border/30 text-white relative overflow-hidden">
-      <div className="absolute inset-0 bg-noise opacity-10"></div>
-      
+    <Card className="bg-card/60 text-foreground relative overflow-hidden border-border/30">
       <CardHeader className="pb-2 relative z-10">
         <CardTitle className="flex items-center text-lg text-white">
           {title}
