@@ -133,12 +133,13 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
     
     return markets.map(market => {
       // If market is marked as opening-soon but the opening time has passed, change to open
-      if (market.status === 'opening-soon' && market.nextEvent.type === 'open') {
+      if (market.status === 'opening-soon') {
         const nextEventTime = market.nextEvent.time instanceof Date 
           ? market.nextEvent.time 
           : new Date(market.nextEvent.time);
         
-        if (now > nextEventTime) {
+        if (now >= nextEventTime) {
+          console.log(`Market ${market.name} should be open now. Current time: ${now.toISOString()}, Open time: ${nextEventTime.toISOString()}`);
           return {
             ...market,
             status: 'open',
@@ -162,7 +163,8 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
     status: m.status,
     nextEvent: m.nextEvent.type,
     nextEventTime: m.nextEvent.time,
-    formattedCountdown: formatCountdown(m)
+    formattedCountdown: formatCountdown(m),
+    currentTime: new Date().toISOString()
   })));
 
   return (
