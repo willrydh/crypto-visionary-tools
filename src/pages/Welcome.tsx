@@ -9,7 +9,10 @@ import {
   ShieldCheck, 
   TrendingUp, 
   Lightbulb, 
-  BarChart3
+  BarChart3,
+  Award,
+  Trophy,
+  Medal
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
@@ -61,7 +64,7 @@ const Welcome = () => {
             <span className="font-bold text-lg">ProfitPilot</span>
           </Link>
           <div className="flex items-center gap-3">
-            <Button onClick={() => navigate('/pricing')} className="flex items-center gap-2">
+            <Button onClick={() => navigate('/pricing')} className="flex items-center gap-2 text-white">
               <BarChart3 className="h-4 w-4" />
               Get TradePilot
             </Button>
@@ -84,7 +87,7 @@ const Welcome = () => {
             ProfitPilot uses advanced artificial intelligence to analyze market data and provide real-time trading signals, support & resistance levels, and market insights.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Button size="lg" onClick={() => navigate('/pricing')} className="flex items-center gap-2">
+            <Button size="lg" onClick={() => navigate('/pricing')} className="flex items-center gap-2 text-white">
               Get Started <ArrowRight className="ml-2" />
             </Button>
             <Button variant="outline" size="lg" onClick={() => navigate('/signals')}>
@@ -201,22 +204,46 @@ const Welcome = () => {
         </div>
       </section>
 
-      <section className="py-24 px-6 bg-muted">
-        <div className="max-w-7xl mx-auto text-center">
+      <section className="py-24 px-6 relative overflow-hidden">
+        <BlurredBackground 
+          imageSrc={['/lovable-uploads/4a0c6ea8-49f6-4dd0-8216-6e0085aec938.png']}
+          className="opacity-50"
+          animateColors={true}
+          colorTheme="green"
+        />
+        <div className="max-w-7xl mx-auto text-center relative z-10">
           <h2 className="text-3xl font-bold mb-6">Ready to Get Started?</h2>
           <p className="text-lg text-muted-foreground mb-8">
             Join ProfitPilot AI today and start making smarter trading decisions.
           </p>
           <div className="flex justify-center">
-            <Button size="lg" onClick={() => navigate('/pricing')} className="flex items-center gap-2">
+            <Button size="lg" onClick={() => navigate('/pricing')} className="flex items-center gap-2 text-white">
               Get TradePilot <ArrowRight className="ml-2" />
             </Button>
           </div>
         </div>
       </section>
 
-      <footer className="py-8 px-6 border-t border-border text-center text-muted-foreground">
-        © 2025 ProfitPilot by Zentra LLC. All rights reserved.
+      <footer className="py-8 px-6 border-t border-border">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-wrap justify-center gap-6 mb-6">
+            <div className="flex items-center gap-2 px-4 py-2 bg-card/50 backdrop-blur-sm rounded-full">
+              <Award className="h-5 w-5 text-amber-500" />
+              <span className="text-sm font-medium">Best Trading App 2024</span>
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 bg-card/50 backdrop-blur-sm rounded-full">
+              <Trophy className="h-5 w-5 text-cyan-500" />
+              <span className="text-sm font-medium">FinTech Innovation Award</span>
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 bg-card/50 backdrop-blur-sm rounded-full">
+              <Medal className="h-5 w-5 text-purple-500" />
+              <span className="text-sm font-medium">Top AI Trading Solution</span>
+            </div>
+          </div>
+          <div className="text-center text-muted-foreground">
+            © 2025 ProfitPilot by Zentra LLC. All rights reserved.
+          </div>
+        </div>
       </footer>
     </div>
   );
