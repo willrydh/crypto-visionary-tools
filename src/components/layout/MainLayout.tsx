@@ -37,7 +37,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           collapsible="icon" 
           className="border-r border-border fixed z-50 h-full md:relative pt-safe"
         >
-          <SidebarHeader className="p-4 pt-2">
+          <SidebarHeader className="p-3 pt-1">
             <Link to="/" className="flex items-center space-x-2">
               <img src={Logo} alt="ProfitPilot" className="h-7 w-7" />
               <span className="font-bold text-lg">ProfitPilot</span>
@@ -46,7 +46,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           <SidebarContent>
             <NavigationMenu />
           </SidebarContent>
-          <SidebarFooter className="p-4 pb-safe">
+          <SidebarFooter className="p-3 pb-safe">
             <div className="text-xs text-muted-foreground text-center">
               © 2025 ProfitPilot by Zentra LLC
             </div>
@@ -55,7 +55,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         <div className="flex-1 flex flex-col w-full md:ml-64 overflow-x-hidden">
           <TopHeader />
           <main className={`flex-1 overflow-auto ${hasTabsBar ? 'content-padding-top-with-tabs' : 'content-padding-top'} pb-safe z-10 overflow-x-hidden`}>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-6 pb-20 md:pb-6 pt-4">
+            <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-5 pb-20 md:pb-6 pt-1">
               {children}
             </div>
           </main>

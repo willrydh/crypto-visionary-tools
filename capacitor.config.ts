@@ -23,14 +23,14 @@ const config: CapacitorConfig = {
     }
   },
   ios: {
-    contentInset: 'always',
+    contentInset: 'automatic',
     preferredContentMode: 'mobile',
     handleApplicationNotifications: true,
     limitsNavigationsToAppBoundDomains: true,
     allowsLinkPreview: false,
     useNativeStatusBar: true,
     backgroundColor: "#000000",
-    statusBarHeight: 44, // Adjusted to provide more space for iOS status bar
+    statusBarHeight: 40, // Adjusted for better iOS display
   },
   android: {
     backgroundColor: "#000000"

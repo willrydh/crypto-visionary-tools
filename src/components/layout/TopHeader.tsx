@@ -81,17 +81,17 @@ const TopHeader = () => {
   return (
     <header className="fixed top-0 left-0 right-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/40 ios-dynamic-island-area">
       {/* Main header with logo and actions - reduced height */}
-      <div className="max-w-7xl mx-auto h-12 flex items-center justify-between px-4 sm:px-6 md:px-6 md:ml-64">
+      <div className="max-w-7xl mx-auto h-10 flex items-center justify-between px-3 sm:px-4 md:px-5 md:ml-64">
         <div className="flex items-center md:hidden">
           <Link to="/" className="flex items-center gap-2">
-            <img src={Logo} alt="ProfitPilot" className="h-6 w-6" />
+            <img src={Logo} alt="ProfitPilot" className="h-5 w-5" />
             <div className="font-semibold text-sm">
               ProfitPilot
             </div>
           </Link>
         </div>
         
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1 sm:gap-2">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -99,9 +99,9 @@ const TopHeader = () => {
                   variant="ghost" 
                   size="icon"
                   onClick={() => navigate('/notifications')}
-                  className="h-7 w-7"
+                  className="h-6 w-6"
                 >
-                  <Bell className="h-4 w-4" />
+                  <Bell className="h-3.5 w-3.5" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -113,9 +113,9 @@ const TopHeader = () => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" asChild className="h-7 w-7">
+                <Button variant="ghost" size="icon" asChild className="h-6 w-6">
                   <Link to="/settings">
-                    <Settings className="h-4 w-4" />
+                    <Settings className="h-3.5 w-3.5" />
                   </Link>
                 </Button>
               </TooltipTrigger>
@@ -128,7 +128,7 @@ const TopHeader = () => {
           <Button 
             variant="outline" 
             size="sm" 
-            className="gap-1 text-xs h-7"
+            className="gap-1 text-xs h-6"
             onClick={handleLogout}
           >
             <LogOut className="h-3 w-3" />
@@ -140,8 +140,8 @@ const TopHeader = () => {
       {/* Trading mode selector - show on specific pages - more compact */}
       {showTradingBar && (
         <div className={cn("border-b border-border/40", getModeHeaderBgClass(tradingMode))}>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-6 md:ml-64">
-            <div className="flex items-center justify-between py-1">
+          <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-5 md:ml-64">
+            <div className="flex items-center justify-between py-0">
               <div className="flex-grow">
                 <TradingModeSelector compact={true} displayLabel={!isMobile} />
               </div>
@@ -149,7 +149,7 @@ const TopHeader = () => {
               {/* Display active mode description */}
               {!isMobile && (location.pathname === '/signals' || location.pathname === '/trade-suggestion' || location.pathname === '/trade') && (
                 <div className="hidden md:flex items-center text-muted-foreground text-xs">
-                  <AlertCircle className="h-3.5 w-3.5 mr-1.5" />
+                  <AlertCircle className="h-3 w-3 mr-1" />
                   <span>{tradingMode.charAt(0).toUpperCase() + tradingMode.slice(1)} Mode</span>
                 </div>
               )}
@@ -162,11 +162,11 @@ const TopHeader = () => {
                       <Button 
                         variant="ghost" 
                         size="icon" 
-                        className="h-7 w-7" 
+                        className="h-6 w-6" 
                         onClick={handleRefresh}
                         disabled={isLoading}
                       >
-                        <RefreshCw className={cn("h-3.5 w-3.5", isLoading && "animate-spin")} />
+                        <RefreshCw className={cn("h-3 w-3", isLoading && "animate-spin")} />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>

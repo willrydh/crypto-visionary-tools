@@ -80,7 +80,7 @@ const TradeSuggestion = () => {
   
   return (
     <PullToRefresh onRefresh={handleRefresh}>
-      <div className={cn("space-y-6 mt-2", getModeAlertClass(tradingMode))}>
+      <div className={cn("space-y-4 mt-0", getModeAlertClass(tradingMode))}>
         <TradePageHeader 
           isLoading={isLoading} 
           onRefresh={handleRefresh} 
@@ -94,12 +94,12 @@ const TradeSuggestion = () => {
           description={selectedCrypto.description}
         />
         
-        <div className="space-y-6">
+        <div className="space-y-4">
           <div className="w-full overflow-hidden rounded-lg border border-border">
             <PriceChart symbol={selectedCrypto.pairSymbol} />
           </div>
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <EnhancedTechnicalAnalysis 
               currentBias={currentBias}
               indicators={indicators}
@@ -116,7 +116,7 @@ const TradeSuggestion = () => {
             />
           </div>
           
-          <div className="mt-8">
+          <div className="mt-6">
             <TradingEducation />
           </div>
         </div>
