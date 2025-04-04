@@ -27,6 +27,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
+  // Determine if the current page has tabs (trading mode selector)
+  const hasTabsBar = ['/', '/dashboard', '/trade-suggestion', '/trade', '/signals', '/calendar'].includes(location.pathname);
+
   return (
     <SidebarProvider defaultOpen={!isMobile}>
       <div className={`min-h-screen flex w-full overflow-x-hidden ${isTradingPage ? 'trading-page' : ''}`}>
@@ -34,9 +37,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           collapsible="icon" 
           className="border-r border-border fixed z-50 h-full md:relative pt-safe"
         >
-          <SidebarHeader className="p-4 mt-10"> {/* Increased to mt-10 for more top spacing */}
+          <SidebarHeader className="p-4 pt-2">
             <Link to="/" className="flex items-center space-x-2">
-              <img src={Logo} alt="ProfitPilot" className="h-8 w-8" />
+              <img src={Logo} alt="ProfitPilot" className="h-7 w-7" />
               <span className="font-bold text-lg">ProfitPilot</span>
             </Link>
           </SidebarHeader>
@@ -51,7 +54,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         </Sidebar>
         <div className="flex-1 flex flex-col w-full md:ml-64 overflow-x-hidden">
           <TopHeader />
-          <main className="flex-1 overflow-auto pt-safe has-dynamic-island pb-safe z-10 overflow-x-hidden mt-12"> {/* Increased to mt-12 for more spacing */}
+          <main className={`flex-1 overflow-auto ${hasTabsBar ? 'content-padding-top-with-tabs' : 'content-padding-top'} pb-safe z-10 overflow-x-hidden`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-6 pb-20 md:pb-6">
               {children}
             </div>

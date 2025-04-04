@@ -71,12 +71,12 @@ const WelcomeHeader = () => {
 
   return (
     <div className={cn(
-      "w-full rounded-lg border border-border/40 p-4 sm:p-6 mb-6 mt-2 relative overflow-hidden",
+      "w-full rounded-lg border border-border/40 p-4 mb-4 mt-0 relative overflow-hidden",
       getModeLightBgClass(tradingMode)
     )}>
       <div className="relative z-10">
-        <div className="flex flex-col mb-4 sm:mb-6">
-          <h2 className="text-xl sm:text-2xl font-bold text-foreground flex items-center mb-1">
+        <div className="flex flex-col mb-3">
+          <h2 className="text-lg sm:text-xl font-bold text-foreground flex items-center mb-1">
             <span className="whitespace-nowrap mr-2">Welcome, {randomName}</span>
             <Badge 
               variant="outline" 
@@ -89,7 +89,7 @@ const WelcomeHeader = () => {
               <span>AI-powered</span>
             </Badge>
           </h2>
-          <p className="text-sm sm:text-base text-muted-foreground">
+          <p className="text-xs sm:text-sm text-muted-foreground">
             {isMobile 
               ? "AI trading assistant analyzing market data via Bybit API" 
               : "Your AI trading assistant is analyzing live market data via Bybit API to generate real-time signals and deep market insights"
@@ -97,19 +97,19 @@ const WelcomeHeader = () => {
           </p>
         </div>
         
-        <div className="border-t border-border/40 pt-4">
-          <h3 className="text-base sm:text-lg font-medium mb-3 sm:mb-4 text-foreground">System Status</h3>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        <div className="border-t border-border/40 pt-3">
+          <h3 className="text-sm sm:text-base font-medium mb-2 text-foreground">System Status</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {systemServices.map((service, index) => (
               <TooltipProvider key={service.name}>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground">
+                      <div className="flex items-center gap-1 text-muted-foreground">
                         {service.icon}
-                        <span className="text-xs sm:text-sm">{service.name}</span>
+                        <span className="text-xs">{service.name}</span>
                       </div>
-                      <Badge variant="outline" className={`${latencies[index].color} ml-auto text-[8px] sm:text-[10px] h-4 sm:h-5 min-w-[36px] sm:min-w-[52px] flex justify-center`}>
+                      <Badge variant="outline" className={`${latencies[index].color} ml-auto text-[8px] h-4 min-w-[36px] flex justify-center`}>
                         {latencies[index].value}ms
                       </Badge>
                     </div>

@@ -43,7 +43,8 @@ const RootLayout: React.FC = () => {
                        location.pathname === '/thank-you' ||
                        location.pathname === '/easter-egg';
 
-  // Education page should have the regular app navigation, so it's not in the list above
+  // Determine if the current page has tabs (trading mode selector)
+  const hasTabsBar = ['/', '/dashboard', '/trade-suggestion', '/trade', '/signals', '/calendar'].includes(location.pathname);
 
   return (
     <TooltipProvider>
@@ -52,9 +53,9 @@ const RootLayout: React.FC = () => {
         <div className={!isPublicPage ? "md:ml-64" : ""}>
           {!isPublicPage && <TopHeader />}
           <main className={!isPublicPage ? 
-                          "flex-1 overflow-auto pb-16 md:pb-0 pt-safe" : 
+                          `flex-1 overflow-auto pb-16 md:pb-0 pt-safe ${hasTabsBar ? 'content-padding-top-with-tabs' : 'content-padding-top'}` : 
                           "flex-1 overflow-auto"}>
-            <div className={!isPublicPage ? "max-w-7xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28" : ""}>
+            <div className={!isPublicPage ? "max-w-7xl mx-auto px-4 sm:px-6" : ""}>
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/dashboard" element={<Dashboard />} />
