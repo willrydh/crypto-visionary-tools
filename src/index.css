@@ -59,13 +59,13 @@
   }
 }
 
-/* iOS Safe Area Utilities */
+/* iOS Safe Area Utilities - Enhanced with iPhone notch/Dynamic Island support */
 .pt-safe {
-  padding-top: env(safe-area-inset-top, 24px);
+  padding-top: env(safe-area-inset-top, 44px); /* Increased default value */
 }
 
 .pb-safe {
-  padding-bottom: env(safe-area-inset-bottom, 16px);
+  padding-bottom: env(safe-area-inset-bottom, 20px); /* Increased default value */
 }
 
 .pl-safe {
@@ -78,23 +78,23 @@
 
 /* Dynamic Island Support - Updated with more space */
 .ios-dynamic-island-area {
-  padding-top: 24px; /* Increased base padding for all devices */
+  padding-top: 32px; /* Increased base padding for all devices */
 }
 
 @supports (padding: max(0px)) {
   .ios-dynamic-island-area {
-    padding-top: max(24px, env(safe-area-inset-top)); /* Use the larger value - increased base */
+    padding-top: max(32px, env(safe-area-inset-top)); /* Use the larger value - increased base */
   }
 }
 
 /* Additional padding for content when Dynamic Island is present - Increased */
 .has-dynamic-island {
-  padding-top: 64px; /* Increased padding for header + content spacing */
+  padding-top: 72px; /* Increased padding for header + content spacing */
 }
 
 @supports (padding: max(0px)) {
   .has-dynamic-island {
-    padding-top: max(64px, calc(env(safe-area-inset-top) + 40px)); /* Increased spacing */
+    padding-top: max(72px, calc(env(safe-area-inset-top) + 44px)); /* Increased spacing */
   }
 }
 

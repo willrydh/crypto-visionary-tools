@@ -28,6 +28,9 @@ const config: CapacitorConfig = {
     handleApplicationNotifications: true,
     limitsNavigationsToAppBoundDomains: true,
     allowsLinkPreview: false,
+    useNativeStatusBar: true,
+    backgroundColor: "#000000",
+    statusBarHeight: 44, // Increased value for iPhone with Dynamic Island/notch
   },
   android: {
     backgroundColor: "#000000"
