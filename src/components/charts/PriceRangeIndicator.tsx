@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from '@/utils/numberUtils';
-import { Info } from 'lucide-react';
+import { Info, TrendingUp, TrendingDown, AlertTriangle } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -153,6 +153,36 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
     }
   };
   
+  // Generate trading suggestion based on price zones
+  const getTradingSuggestion = () => {
+    // Count overbought and oversold signals
+    const zones = [hourlyZone, dailyZone, weeklyZone];
+    const overboughtCount = zones.filter(z => z === "Overbought").length;
+    const oversoldCount = zones.filter(z => z === "Oversold").length;
+    
+    if (overboughtCount >= 2) {
+      return {
+        text: "Price is overbought, look for shorts",
+        icon: <TrendingDown className="h-4 w-4 mr-2" />,
+        color: "bg-red-600/20 border-red-600/30 text-red-400"
+      };
+    } else if (oversoldCount >= 2) {
+      return {
+        text: "Price is oversold, look for longs",
+        icon: <TrendingUp className="h-4 w-4 mr-2" />,
+        color: "bg-green-600/20 border-green-600/30 text-green-400"
+      };
+    } else {
+      return {
+        text: "Price is in a neutral zone",
+        icon: <AlertTriangle className="h-4 w-4 mr-2" />,
+        color: "bg-yellow-600/20 border-yellow-600/30 text-yellow-400"
+      };
+    }
+  };
+  
+  const suggestion = getTradingSuggestion();
+  
   return (
     <Card className={`${getBackgroundGradient()} border-border/30 transition-colors duration-700 relative overflow-hidden`}>
       <CardHeader className="pb-2 relative z-10">
@@ -174,6 +204,16 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
         {/* Current Price with Change */}
         <div className="text-center">
           <span className="text-3xl font-bold">${currentData.price.toLocaleString('en-US', { maximumFractionDigits: 0 })}</span>
+        </div>
+        
+        {/* Trading Suggestion */}
+        <div className="p-3 rounded-md border bg-card/20 backdrop-blur-sm">
+          <div className="flex items-center">
+            <div className={`px-3 py-1.5 rounded-md flex items-center ${suggestion.color}`}>
+              {suggestion.icon}
+              <span className="font-medium text-sm">{suggestion.text}</span>
+            </div>
+          </div>
         </div>
         
         {/* Hourly Range */}
