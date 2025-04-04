@@ -68,9 +68,7 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
         ? market.nextEvent.time 
         : new Date(market.nextEvent.time);
         
-      const adjustedTime = new Date(nextEventTime.getTime() - 60 * 60 * 1000);
-      
-      return getMarketTimeRemaining(adjustedTime);
+      return getMarketTimeRemaining(nextEventTime);
     } catch (error) {
       console.error('Error formatting countdown:', error, market);
       return 'Error';
@@ -130,22 +128,26 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
   // Check if current time has passed market opening time and fix "opening-soon" status
   const fixMarketOpeningStatus = (markets: MarketSession[]): MarketSession[] => {
     const now = new Date();
+    console.log('Current time check for market status:', now.toISOString());
     
     return markets.map(market => {
-      // If market is marked as opening-soon but the opening time has passed, change to open
       if (market.status === 'opening-soon') {
         const nextEventTime = market.nextEvent.time instanceof Date 
           ? market.nextEvent.time 
           : new Date(market.nextEvent.time);
         
-        if (now >= nextEventTime) {
-          console.log(`Market ${market.name} should be open now. Current time: ${now.toISOString()}, Open time: ${nextEventTime.toISOString()}`);
+        console.log(`Checking market ${market.name}: Status=${market.status}, Event=${market.nextEvent.type}, EventTime=${nextEventTime.toISOString()}`);
+        
+        // If the next event is 'open' and the current time is past the event time
+        if (now > nextEventTime) {
+          console.log(`Market ${market.name} should be OPEN now - updating status`);
           return {
             ...market,
             status: 'open',
             nextEvent: {
               type: 'close',
-              time: nextEventTime
+              // Assume the close time is 8 hours after opening (typical market hours)
+              time: new Date(nextEventTime.getTime() + (8 * 60 * 60 * 1000))
             }
           };
         }
@@ -154,16 +156,16 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
     });
   };
 
-  const synchronizedMarketSessions = fixMarketOpeningStatus(
+  // Process the market sessions
+  const processedMarketSessions = fixMarketOpeningStatus(
     syncEuropeanMarketCountdowns(marketSessions)
   );
 
-  console.log('MarketStatus - Market sessions:', synchronizedMarketSessions.map(m => ({
+  console.log('MarketStatus - Processed market sessions:', processedMarketSessions.map(m => ({
     name: m.name,
     status: m.status,
     nextEvent: m.nextEvent.type,
-    nextEventTime: m.nextEvent.time,
-    formattedCountdown: formatCountdown(m),
+    nextEventTime: m.nextEvent.time instanceof Date ? m.nextEvent.time.toISOString() : m.nextEvent.time,
     currentTime: new Date().toISOString()
   })));
 
@@ -186,7 +188,7 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
       </CardHeader>
       <CardContent className={compact ? "p-0" : undefined}>
         <div className={compact ? "divide-y divide-border/30" : "space-y-2"}>
-          {synchronizedMarketSessions.map((market) => (
+          {processedMarketSessions.map((market) => (
             <div key={market.name} className={compact ? "p-3 hover:bg-muted/10 transition-colors" : "space-y-1"}>
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
@@ -223,7 +225,7 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
             </div>
           ))}
           
-          {synchronizedMarketSessions.length === 0 && (
+          {processedMarketSessions.length === 0 && (
             <div className="flex flex-col items-center justify-center py-6 text-center">
               <AlertCircle className="h-10 w-10 text-muted-foreground mb-2" />
               <p className="text-muted-foreground">No market sessions available</p>
