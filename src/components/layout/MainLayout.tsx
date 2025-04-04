@@ -51,8 +51,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         </Sidebar>
         <div className="flex-1 flex flex-col w-full md:ml-64 overflow-x-hidden">
           <TopHeader />
-          <main className={`flex-1 overflow-auto pt-24 sm:pt-32 ${isMobile ? 'pb-20' : 'pb-16'} md:pb-6 z-10 overflow-x-hidden pt-safe pb-safe pl-safe pr-safe`}>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <main className={`flex-1 overflow-auto pt-24 sm:pt-32 ${isMobile ? 'pb-20' : 'pb-16'} md:pb-6 z-10 overflow-x-hidden pt-safe pb-safe`}>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-6">
               {children}
             </div>
           </main>

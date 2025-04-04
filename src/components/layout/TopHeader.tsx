@@ -81,8 +81,8 @@ const TopHeader = () => {
   return (
     <header className="fixed top-0 left-0 right-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/40 pt-safe">
       {/* Main header with logo and actions */}
-      <div className="max-w-7xl mx-auto h-14 sm:h-16 flex items-center px-4 sm:px-6 md:pl-6 md:ml-64 pl-safe pr-safe">
-        <div className="flex items-center gap-2 md:hidden">
+      <div className="max-w-7xl mx-auto h-14 sm:h-16 flex items-center justify-between px-4 sm:px-6 md:px-6 md:ml-64">
+        <div className="flex items-center gap-2 md:hidden ml-2">
           <Link to="/" className="flex items-center gap-2">
             <img src={Logo} alt="ProfitPilot" className="h-7 w-7 sm:h-8 sm:w-8" />
             <div className="font-semibold text-sm sm:text-base">
@@ -91,7 +91,7 @@ const TopHeader = () => {
           </Link>
         </div>
         
-        <div className="ml-auto flex items-center gap-1 sm:gap-2">
+        <div className="flex items-center gap-1 sm:gap-2 mr-2">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -140,9 +140,9 @@ const TopHeader = () => {
       {/* Trading mode selector - show on specific pages */}
       {showTradingBar && (
         <div className={cn("border-b border-border/40", getModeHeaderBgClass(tradingMode))}>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 md:pl-6 md:ml-64 pl-safe pr-safe">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-6 md:ml-64">
             <div className="flex items-center justify-between py-2">
-              <div className="flex-grow">
+              <div className="flex-grow ml-2">
                 <TradingModeSelector compact={true} displayLabel={!isMobile} />
               </div>
               
@@ -162,7 +162,7 @@ const TopHeader = () => {
                       <Button 
                         variant="ghost" 
                         size="icon" 
-                        className="ml-1 sm:ml-2 h-7 w-7 sm:h-8 sm:w-8" 
+                        className="ml-1 sm:ml-2 h-7 w-7 sm:h-8 sm:w-8 mr-2" 
                         onClick={handleRefresh}
                         disabled={isLoading}
                       >
