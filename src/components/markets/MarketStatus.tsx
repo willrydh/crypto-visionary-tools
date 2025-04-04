@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -14,7 +13,7 @@ interface MarketStatusProps {
   customTitle?: string;
   customSource?: string;
   compact?: boolean;
-  marketSessions?: MarketSession[]; // Optional prop to directly receive market sessions
+  marketSessions?: MarketSession[];
 }
 
 export const MarketStatus: React.FC<MarketStatusProps> = ({ 
@@ -24,13 +23,11 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
   compact = false,
   marketSessions: propMarketSessions
 }) => {
-  // Use provided marketSessions if available, otherwise use the context
   let marketSessions: MarketSession[] = [];
   let dataSource: string = 'internal';
   let lastUpdated: Date | null = null;
   
   try {
-    // Only use the context if marketSessions weren't provided via props
     if (!propMarketSessions) {
       const marketsContext = useMarkets();
       marketSessions = marketsContext.marketSessions;
@@ -40,12 +37,10 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
       marketSessions = propMarketSessions;
     }
   } catch (error) {
-    // Fallback to empty array if context is not available and props weren't provided
     console.warn('MarketStatus: useMarkets context not available, using empty array');
     marketSessions = [];
   }
 
-  // Get status badge styling
   const getStatusBadgeStyle = (status: string) => {
     switch(status) {
       case 'open':
@@ -57,60 +52,50 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
     }
   };
 
-  // Determine source label based on data source
   const getSourceLabel = () => {
     if (customSource) return customSource;
     return dataSource === 'alpha-vantage' ? 'Alpha Vantage API' : 'World Markets API';
   };
 
-  // Format the countdown time
   const formatCountdown = (market: any) => {
     try {
       if (!market.nextEvent || !market.nextEvent.time) {
         return 'Unknown';
       }
       
-      // Make sure we're working with a Date object
       const nextEventTime = market.nextEvent.time instanceof Date 
         ? market.nextEvent.time 
         : new Date(market.nextEvent.time);
+        
+      const adjustedTime = new Date(nextEventTime.getTime() - 60 * 60 * 1000);
       
-      // Use the getMarketTimeRemaining helper
-      return getMarketTimeRemaining(nextEventTime);
+      return getMarketTimeRemaining(adjustedTime);
     } catch (error) {
       console.error('Error formatting countdown:', error, market);
       return 'Error';
     }
   };
 
-  // Match Frankfurt and London countdown if they're both waiting to open or close
   const syncEuropeanMarketCountdowns = (markets: MarketSession[]): MarketSession[] => {
     try {
-      // Find the London and Frankfurt markets
       const london = markets.find(m => m.name.toLowerCase().includes("london") || m.name.includes("LSE"));
       const frankfurt = markets.find(m => m.name.toLowerCase().includes("frankfurt") || m.name.includes("FSX"));
       
-      // If both markets exist
       if (frankfurt && london) {
-        // Create a clone of the markets array
         const updatedMarkets = [...markets];
         
-        // Find the indices of both markets to update them later
         const londonIndex = updatedMarkets.findIndex(m => m.name.toLowerCase().includes("london") || m.name.includes("LSE"));
         const frankfurtIndex = updatedMarkets.findIndex(m => m.name.toLowerCase().includes("frankfurt") || m.name.includes("FSX"));
         
-        // If both markets are closed and waiting to open, OR both are open and waiting to close
         if ((frankfurt.status !== 'open' && london.status !== 'open' && 
              frankfurt.nextEvent.type === 'open' && london.nextEvent.type === 'open') ||
             (frankfurt.status === 'open' && london.status === 'open' && 
              frankfurt.nextEvent.type === 'close' && london.nextEvent.type === 'close')) {
           
-          // Choose the Frankfurt next event time as the reference
           const sharedNextEventTime = frankfurt.nextEvent.time instanceof Date 
             ? new Date(frankfurt.nextEvent.time) 
             : new Date(frankfurt.nextEvent.time);
           
-          // Update both markets to have the same next event time
           if (londonIndex !== -1) {
             updatedMarkets[londonIndex] = {
               ...updatedMarkets[londonIndex],
@@ -141,10 +126,8 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
     return markets;
   };
 
-  // Sync European market countdowns to ensure Frankfurt and London show the same times
   const synchronizedMarketSessions = syncEuropeanMarketCountdowns(marketSessions);
 
-  // Debug logging to help diagnose issues
   console.log('MarketStatus - Market sessions:', synchronizedMarketSessions.map(m => ({
     name: m.name,
     status: m.status,
