@@ -301,6 +301,13 @@ html, body, #root {
   position: relative;
 }
 
+/* Fix for iOS WebView environments */
+@supports (-webkit-touch-callout: none) {
+  .has-safe-area {
+    height: 100dvh;
+  }
+}
+
 /* Fix mobile bottom padding for navigation */
 .pb-mobile {
   padding-bottom: 5rem;
