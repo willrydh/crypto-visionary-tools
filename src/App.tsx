@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@/components/theme-provider';
@@ -18,6 +18,46 @@ import './App.css';
 const queryClient = new QueryClient();
 
 function App() {
+  // Add WebView detection and compatibility handling
+  useEffect(() => {
+    // Workaround to detect WebView environments
+    const isWebView = () => {
+      const userAgent = navigator.userAgent.toLowerCase();
+      return (
+        userAgent.includes('wkwebview') ||
+        userAgent.includes('iphone') && !userAgent.includes('safari') ||
+        userAgent.includes('android') && userAgent.includes('wv')
+      );
+    };
+
+    // If in WebView, apply fixes
+    if (isWebView()) {
+      // Ensure scroll behavior works correctly in WebViews
+      document.documentElement.style.height = '100%';
+      document.body.style.height = '100%';
+      document.body.style.overflow = 'auto';
+      
+      // Prevent zooming in WebViews which can cause rendering issues
+      document.addEventListener('gesturestart', function(e) {
+        e.preventDefault();
+      });
+      
+      // Force repaint which can sometimes fix rendering issues
+      setTimeout(() => {
+        const root = document.getElementById('root');
+        if (root) {
+          root.style.display = 'none';
+          setTimeout(() => {
+            root.style.display = '';
+          }, 10);
+        }
+      }, 100);
+      
+      // Log WebView detected for debugging
+      console.log('WebView environment detected, applying compatibility fixes');
+    }
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="dark" storageKey="ui-theme">
