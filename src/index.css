@@ -82,7 +82,7 @@
 }
 
 .content-padding {
-  @apply px-6;
+  @apply px-4 sm:px-6;
 }
 
 .content-spacing {
