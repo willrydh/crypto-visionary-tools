@@ -139,41 +139,43 @@ const TopHeader = () => {
       
       {/* Trading mode selector - show on specific pages */}
       {showTradingBar && (
-        <div className={cn("max-w-7xl mx-auto px-4 sm:px-6 md:pl-6 md:ml-64 pl-safe pr-safe", getModeHeaderBgClass(tradingMode), "border-b border-border/40")}>
-          <div className="flex items-center justify-between py-2">
-            <div className="flex-grow">
-              <TradingModeSelector compact={true} displayLabel={!isMobile} />
-            </div>
-            
-            {/* Display active mode description */}
-            {!isMobile && (location.pathname === '/signals' || location.pathname === '/trade-suggestion' || location.pathname === '/trade') && (
-              <div className="hidden md:flex items-center text-muted-foreground text-xs">
-                <AlertCircle className="h-3.5 w-3.5 mr-1.5" />
-                <span>{tradingMode.charAt(0).toUpperCase() + tradingMode.slice(1)} Mode</span>
+        <div className={cn("border-b border-border/40", getModeHeaderBgClass(tradingMode))}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 md:pl-6 md:ml-64 pl-safe pr-safe">
+            <div className="flex items-center justify-between py-2">
+              <div className="flex-grow">
+                <TradingModeSelector compact={true} displayLabel={!isMobile} />
               </div>
-            )}
-            
-            {/* Refresh button */}
-            {(location.pathname === '/trade-suggestion' || location.pathname === '/trade' || location.pathname === '/' || location.pathname === '/dashboard' || location.pathname === '/signals') && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="ml-1 sm:ml-2 h-7 w-7 sm:h-8 sm:w-8" 
-                      onClick={handleRefresh}
-                      disabled={isLoading}
-                    >
-                      <RefreshCw className={cn("h-3.5 w-3.5 sm:h-4 sm:w-4", isLoading && "animate-spin")} />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Refresh Analysis</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )}
+              
+              {/* Display active mode description */}
+              {!isMobile && (location.pathname === '/signals' || location.pathname === '/trade-suggestion' || location.pathname === '/trade') && (
+                <div className="hidden md:flex items-center text-muted-foreground text-xs">
+                  <AlertCircle className="h-3.5 w-3.5 mr-1.5" />
+                  <span>{tradingMode.charAt(0).toUpperCase() + tradingMode.slice(1)} Mode</span>
+                </div>
+              )}
+              
+              {/* Refresh button */}
+              {(location.pathname === '/trade-suggestion' || location.pathname === '/trade' || location.pathname === '/' || location.pathname === '/dashboard' || location.pathname === '/signals') && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="ml-1 sm:ml-2 h-7 w-7 sm:h-8 sm:w-8" 
+                        onClick={handleRefresh}
+                        disabled={isLoading}
+                      >
+                        <RefreshCw className={cn("h-3.5 w-3.5 sm:h-4 sm:w-4", isLoading && "animate-spin")} />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Refresh Analysis</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+            </div>
           </div>
         </div>
       )}
