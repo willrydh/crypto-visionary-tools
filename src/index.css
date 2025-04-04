@@ -83,7 +83,8 @@
   --trading-selector-height: 60px; /* Increased for more vertical spacing */
   --header-offset: env(safe-area-inset-top, 30px);
   --content-offset-ios: 24px; /* Additional offset for iOS devices */
-  --mobile-nav-height: 80px; /* Increased height of mobile navigation */
+  --mobile-nav-height: 85px; /* Increased height of mobile navigation */
+  --mobile-bottom-padding: 120px; /* Added extra padding to ensure content is visible at bottom */
 }
 
 /* Dynamic Island Support */
@@ -152,6 +153,11 @@
 
 .grid-spacing {
   @apply gap-3;
+}
+
+/* Extra bottom padding for iOS - Ensure content doesn't get hidden */
+.ios-bottom-padding {
+  padding-bottom: var(--mobile-bottom-padding);
 }
 
 /* Trading Mode Specific Styles */

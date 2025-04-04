@@ -25,9 +25,11 @@ import PaymentPage from '@/pages/PaymentPage';
 import EasterEggDiscount from '@/pages/EasterEggDiscount';
 import ChartView from '@/pages/ChartView';
 import MarketDashboard from '@/pages/MarketDashboard';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const RootLayout: React.FC = () => {
   const location = useLocation();
+  const isMobile = useIsMobile();
 
   // Check if on iOS device
   const isIOS = () => {
@@ -62,15 +64,26 @@ const RootLayout: React.FC = () => {
   // Determine if the current page has tabs (trading mode selector)
   const hasTabsBar = ['/', '/dashboard', '/trade-suggestion', '/trade', '/signals', '/calendar'].includes(location.pathname);
 
+  // Get iOS-specific classes
+  const getIOSClasses = () => {
+    if (isIOS() && isMobile) {
+      return 'ios-bottom-padding';
+    }
+    return '';
+  };
+
   return (
     <TooltipProvider>
       <div className="flex flex-col min-h-screen">
         {!isPublicPage && <MainNavigation />}
         <div className={!isPublicPage ? "md:ml-64" : ""}>
           {!isPublicPage && <TopHeader />}
-          <main className={!isPublicPage ? 
-                          `flex-1 overflow-auto pb-16 md:pb-0 pt-safe ${hasTabsBar ? 'content-padding-top-with-tabs' : 'content-padding-top'}` : 
-                          "flex-1 overflow-auto"}>
+          <main className={`
+            ${!isPublicPage ? 
+              `flex-1 overflow-auto pb-24 md:pb-0 pt-safe ${hasTabsBar ? 'content-padding-top-with-tabs' : 'content-padding-top'}` : 
+              "flex-1 overflow-auto"}
+            ${getIOSClasses()}
+          `}>
             <div className={!isPublicPage ? "max-w-7xl mx-auto px-4 sm:px-5 md:px-6 pt-4" : ""}>
               <Routes>
                 <Route path="/" element={<Dashboard />} />

@@ -250,7 +250,7 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
           </div>
         </div>
         
-        <div className="space-y-2">
+        <div className="space-y-2 mb-6">
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium">Weekly Range</span>
             <Badge variant="outline" className={`border-white/15 ${getZoneColor(weeklyZone)}`}>

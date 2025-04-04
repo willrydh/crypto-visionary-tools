@@ -161,7 +161,7 @@ const Dashboard = () => {
   const forecast = getTradingForecast();
 
   return (
-    <div className="space-y-6 mt-6 animate-fade-in">
+    <div className="space-y-6 mt-6 animate-fade-in pb-20">
       <WelcomeHeader />
       
       <CoinInfo 

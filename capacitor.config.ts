@@ -31,9 +31,13 @@ const config: CapacitorConfig = {
     useNativeStatusBar: true,
     backgroundColor: "#000000",
     statusBarHeight: 45, // Increased for better iOS display
+    scrollEnabled: true, // Enable scrolling for iOS
+    allowsBackForwardNavigationGestures: false,
+    overrideUserInterfaceStyle: 'dark',
   },
   android: {
-    backgroundColor: "#000000"
+    backgroundColor: "#000000",
+    scrollEnabled: true
   }
 };
 
