@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -126,7 +127,35 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
     return markets;
   };
 
-  const synchronizedMarketSessions = syncEuropeanMarketCountdowns(marketSessions);
+  // Check if current time has passed market opening time and fix "opening-soon" status
+  const fixMarketOpeningStatus = (markets: MarketSession[]): MarketSession[] => {
+    const now = new Date();
+    
+    return markets.map(market => {
+      // If market is marked as opening-soon but the opening time has passed, change to open
+      if (market.status === 'opening-soon' && market.nextEvent.type === 'open') {
+        const nextEventTime = market.nextEvent.time instanceof Date 
+          ? market.nextEvent.time 
+          : new Date(market.nextEvent.time);
+        
+        if (now > nextEventTime) {
+          return {
+            ...market,
+            status: 'open',
+            nextEvent: {
+              type: 'close',
+              time: nextEventTime
+            }
+          };
+        }
+      }
+      return market;
+    });
+  };
+
+  const synchronizedMarketSessions = fixMarketOpeningStatus(
+    syncEuropeanMarketCountdowns(marketSessions)
+  );
 
   console.log('MarketStatus - Market sessions:', synchronizedMarketSessions.map(m => ({
     name: m.name,

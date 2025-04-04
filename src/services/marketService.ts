@@ -136,6 +136,14 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
            (marketOpenTime - currentTime) <= 1;
   };
   
+  // Function to determine if market is currently open
+  const isMarketOpen = (openTime: number, closeTime: number) => {
+    if (isWeekend) return false;
+    
+    // Check if current time is between opening and closing times
+    return currentTime >= openTime && currentTime < closeTime;
+  };
+  
   // Debug log to help diagnose the issue
   console.log('Current UTC time:', currentTime.toFixed(2), 
               'Hour:', hour, 'Minute:', minute, 
@@ -146,28 +154,28 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
     {
       name: "Stockholm",
       status: isWeekend ? 'closed' : 
-              (currentTime >= marketHours.stockholm.open && currentTime < marketHours.stockholm.close) ? 'open' : 
+              isMarketOpen(marketHours.stockholm.open, marketHours.stockholm.close) ? 'open' : 
               isOpeningSoon(marketHours.stockholm.open) ? 'opening-soon' : 'closed',
       hours: formatMarketHours(localMarketHours.stockholm.open, localMarketHours.stockholm.close),
       nextEvent: {
         type: isWeekend ? 'open' : 
-              (currentTime >= marketHours.stockholm.open && currentTime < marketHours.stockholm.close) ? 'close' : 'open',
+              isMarketOpen(marketHours.stockholm.open, marketHours.stockholm.close) ? 'close' : 'open',
         time: calculateNextEvent(marketHours.stockholm, 
-                 (currentTime >= marketHours.stockholm.open && currentTime < marketHours.stockholm.close))
+                 isMarketOpen(marketHours.stockholm.open, marketHours.stockholm.close))
       },
       timezone: userTimezone
     },
     {
       name: "London",
       status: isWeekend ? 'closed' : 
-              (currentTime >= marketHours.london.open && currentTime < marketHours.london.close) ? 'open' : 
+              isMarketOpen(marketHours.london.open, marketHours.london.close) ? 'open' : 
               isOpeningSoon(marketHours.london.open) ? 'opening-soon' : 'closed',
       hours: formatMarketHours(localMarketHours.london.open, localMarketHours.london.close),
       nextEvent: {
         type: isWeekend ? 'open' : 
-              (currentTime >= marketHours.london.open && currentTime < marketHours.london.close) ? 'close' : 'open',
+              isMarketOpen(marketHours.london.open, marketHours.london.close) ? 'close' : 'open',
         time: calculateNextEvent(marketHours.london, 
-                 (currentTime >= marketHours.london.open && currentTime < marketHours.london.close))
+                 isMarketOpen(marketHours.london.open, marketHours.london.close))
       },
       timezone: userTimezone,
       marketCap: "$3.83T"
@@ -175,14 +183,14 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
     {
       name: "New York",
       status: isWeekend ? 'closed' : 
-              (currentTime >= marketHours.nyse.open && currentTime < marketHours.nyse.close) ? 'open' : 
+              isMarketOpen(marketHours.nyse.open, marketHours.nyse.close) ? 'open' : 
               isOpeningSoon(marketHours.nyse.open) ? 'opening-soon' : 'closed',
       hours: formatMarketHours(localMarketHours.nyse.open, localMarketHours.nyse.close),
       nextEvent: {
         type: isWeekend ? 'open' : 
-              (currentTime >= marketHours.nyse.open && currentTime < marketHours.nyse.close) ? 'close' : 'open',
+              isMarketOpen(marketHours.nyse.open, marketHours.nyse.close) ? 'close' : 'open',
         time: calculateNextEvent(marketHours.nyse, 
-                 (currentTime >= marketHours.nyse.open && currentTime < marketHours.nyse.close))
+                 isMarketOpen(marketHours.nyse.open, marketHours.nyse.close))
       },
       timezone: userTimezone,
       marketCap: "$25.62T"
@@ -190,14 +198,14 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
     {
       name: "Frankfurt",
       status: isWeekend ? 'closed' : 
-              (currentTime >= marketHours.frankfurt.open && currentTime < marketHours.frankfurt.close) ? 'open' : 
+              isMarketOpen(marketHours.frankfurt.open, marketHours.frankfurt.close) ? 'open' : 
               isOpeningSoon(marketHours.frankfurt.open) ? 'opening-soon' : 'closed',
       hours: formatMarketHours(localMarketHours.frankfurt.open, localMarketHours.frankfurt.close),
       nextEvent: {
         type: isWeekend ? 'open' : 
-              (currentTime >= marketHours.frankfurt.open && currentTime < marketHours.frankfurt.close) ? 'close' : 'open',
+              isMarketOpen(marketHours.frankfurt.open, marketHours.frankfurt.close) ? 'close' : 'open',
         time: calculateNextEvent(marketHours.frankfurt, 
-                 (currentTime >= marketHours.frankfurt.open && currentTime < marketHours.frankfurt.close))
+                 isMarketOpen(marketHours.frankfurt.open, marketHours.frankfurt.close))
       },
       timezone: userTimezone,
       marketCap: "$2.14T"
@@ -205,14 +213,14 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
     {
       name: "Tokyo",
       status: isWeekend ? 'closed' : 
-              (currentTime >= marketHours.tokyo.open && currentTime < marketHours.tokyo.close) ? 'open' : 
+              isMarketOpen(marketHours.tokyo.open, marketHours.tokyo.close) ? 'open' : 
               isOpeningSoon(marketHours.tokyo.open) ? 'opening-soon' : 'closed',
       hours: formatMarketHours(localMarketHours.tokyo.open, localMarketHours.tokyo.close),
       nextEvent: {
         type: isWeekend ? 'open' : 
-              (currentTime >= marketHours.tokyo.open && currentTime < marketHours.tokyo.close) ? 'close' : 'open',
+              isMarketOpen(marketHours.tokyo.open, marketHours.tokyo.close) ? 'close' : 'open',
         time: calculateNextEvent(marketHours.tokyo, 
-                 (currentTime >= marketHours.tokyo.open && currentTime < marketHours.tokyo.close))
+                 isMarketOpen(marketHours.tokyo.open, marketHours.tokyo.close))
       },
       timezone: userTimezone,
       marketCap: "$6.54T"
@@ -230,4 +238,3 @@ export const getCryptoMarketStatus = () => {
     nextMajorEvent: null
   };
 };
-

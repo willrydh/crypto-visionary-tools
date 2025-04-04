@@ -140,37 +140,54 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
   };
   
   // Determine background color class based on overall market position
-  const getBackgroundColorClass = () => {
+  const getBackgroundGradient = () => {
     // Calculate overall sentiment from all three timeframes
     const overallZones = [hourlyZone, dailyZone, weeklyZone];
     const overboughtCount = overallZones.filter(zone => zone === "Overbought").length;
     const oversoldCount = overallZones.filter(zone => zone === "Oversold").length;
     
-    // Increase color intensity for mobile to improve visibility
-    const mobileIntensity = isMobile ? '!important' : '';
+    // Weighted position value from 0 (extreme oversold) to 100 (extreme overbought)
+    let positionValue = 50; // Start neutral
     
-    if (overboughtCount >= 2) {
-      return isMobile 
-        ? "bg-[#0a3e42] animate-pulse-moderate" 
-        : "bg-[#0a2e32]";
+    // Weigh the positions: hourly (20%), daily (30%), weekly (50%)
+    positionValue = (
+      (hourlyPercentage * 0.2) + 
+      (dailyPercentage * 0.3) + 
+      (weeklyPercentage * 0.5)
+    );
+    
+    // Create smooth gradient based on the position value
+    if (positionValue >= 80) {
+      // Strong overbought - deeper green
+      return "bg-gradient-to-br from-green-900/80 to-green-800/90";
+    } else if (positionValue >= 65) {
+      // Moderate overbought - medium green
+      return "bg-gradient-to-br from-green-800/70 to-green-700/80";
+    } else if (positionValue >= 55) {
+      // Slight overbought - light green with neutral
+      return "bg-gradient-to-br from-green-700/60 to-slate-800/90";
+    } else if (positionValue <= 20) {
+      // Strong oversold - deeper red
+      return "bg-gradient-to-br from-red-900/80 to-red-800/90";
+    } else if (positionValue <= 35) {
+      // Moderate oversold - medium red
+      return "bg-gradient-to-br from-red-800/70 to-red-700/80";
+    } else if (positionValue <= 45) {
+      // Slight oversold - light red with neutral
+      return "bg-gradient-to-br from-red-700/60 to-slate-800/90";
+    } else {
+      // Neutral zone - slate/dark gray
+      return "bg-gradient-to-br from-slate-800/90 to-slate-900/95";
     }
-    if (oversoldCount >= 2) {
-      return isMobile 
-        ? "bg-[#3a1947] animate-pulse-moderate" 
-        : "bg-[#2a1937]";
-    }
-    return isMobile 
-      ? "bg-[#152043] animate-pulse-moderate" 
-      : "bg-[#111a33]";
   };
   
   // Calculate the color class for card background
-  const backgroundColorClass = getBackgroundColorClass();
+  const backgroundGradient = getBackgroundGradient();
   
   return (
-    <Card className={`${backgroundColorClass} border-border/30 text-white z-10 relative overflow-hidden`}>
-      {/* Remove any potential overlay that could hide color animations */}
-      <div className="absolute inset-0 pointer-events-none z-0" />
+    <Card className={`${backgroundGradient} border-border/30 text-white relative overflow-hidden transition-colors duration-1000`}>
+      <div className="absolute inset-0 bg-noise opacity-10"></div>
+      <div className="absolute inset-0 animate-subtle-pulse pointer-events-none"></div>
       
       <CardHeader className="pb-2 relative z-10">
         <CardTitle className="flex items-center text-lg text-white">
@@ -210,7 +227,7 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
             
             <div className="h-2 w-full bg-gray-700 rounded-full overflow-hidden">
               <div 
-                className="absolute w-4 h-4 bg-blue-500 rounded-full -mt-1 transform -translate-x-1/2 transition-all duration-500"
+                className="absolute w-4 h-4 bg-white rounded-full -mt-1 transform -translate-x-1/2 transition-all duration-500 shadow-glow"
                 style={{ left: `${hourlyPercentage}%` }}
               />
             </div>
@@ -234,7 +251,7 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
             
             <div className="h-2 w-full bg-gray-700 rounded-full overflow-hidden">
               <div 
-                className="absolute w-4 h-4 bg-blue-500 rounded-full -mt-1 transform -translate-x-1/2 transition-all duration-500"
+                className="absolute w-4 h-4 bg-white rounded-full -mt-1 transform -translate-x-1/2 transition-all duration-500 shadow-glow"
                 style={{ left: `${dailyPercentage}%` }}
               />
             </div>
@@ -258,7 +275,7 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
             
             <div className="h-2 w-full bg-gray-700 rounded-full overflow-hidden">
               <div 
-                className="absolute w-4 h-4 bg-blue-500 rounded-full -mt-1 transform -translate-x-1/2 transition-all duration-500"
+                className="absolute w-4 h-4 bg-white rounded-full -mt-1 transform -translate-x-1/2 transition-all duration-500 shadow-glow"
                 style={{ left: `${weeklyPercentage}%` }}
               />
             </div>
