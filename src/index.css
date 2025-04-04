@@ -76,6 +76,28 @@
   padding-right: env(safe-area-inset-right);
 }
 
+/* Dynamic Island Support */
+.ios-dynamic-island-area {
+  padding-top: 4px; /* Base padding for all devices */
+}
+
+@supports (padding: max(0px)) {
+  .ios-dynamic-island-area {
+    padding-top: max(4px, env(safe-area-inset-top)); /* Use the larger value */
+  }
+}
+
+/* Additional padding for content when Dynamic Island is present */
+.has-dynamic-island {
+  padding-top: 34px; /* Default padding for header + content spacing */
+}
+
+@supports (padding: max(0px)) {
+  .has-dynamic-island {
+    padding-top: max(34px, calc(env(safe-area-inset-top) + 16px));
+  }
+}
+
 /* Custom Spacing Classes */
 .app-header {
   @apply fixed top-0 left-0 right-0 z-30;
@@ -159,3 +181,4 @@
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-muted-foreground/30;
 }
+

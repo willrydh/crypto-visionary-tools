@@ -80,6 +80,9 @@ const TopHeader = () => {
   
   return (
     <header className="fixed top-0 left-0 right-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/40 pt-safe">
+      {/* Dynamic Island spacer - only on iOS */}
+      <div className="h-0 ios-dynamic-island-area"></div>
+      
       {/* Main header with logo and actions */}
       <div className="max-w-7xl mx-auto h-14 sm:h-16 flex items-center justify-between px-4 sm:px-6 md:px-6 md:ml-64">
         <div className="flex items-center gap-2 md:hidden ml-2">
