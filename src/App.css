@@ -37,6 +37,19 @@
   animation: pulse-subtle 10s cubic-bezier(0.4,0,0.6,1) infinite;
 }
 
+/* WebView specific styles */
+.in-webview main {
+  padding-top: env(safe-area-inset-top, 32px);
+}
+
+.ios-device main {
+  padding-top: env(safe-area-inset-top, 48px);
+}
+
+.ios-device .app-header {
+  padding-top: env(safe-area-inset-top, 24px);
+}
+
 /* Add a more noticeable pulse animation for mobile */
 @keyframes pulse-moderate {
   0%, 100% { opacity: 1; }

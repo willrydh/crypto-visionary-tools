@@ -37,10 +37,14 @@ function App() {
       document.body.style.height = '100%';
       document.body.style.overflow = 'auto';
       
-      // Prevent zooming in WebViews which can cause rendering issues
-      document.addEventListener('gesturestart', function(e) {
-        e.preventDefault();
-      });
+      // Add CSS class to handle WebView-specific styles
+      document.documentElement.classList.add('in-webview');
+      
+      // Add iOS class if on iOS
+      if (navigator.userAgent.toLowerCase().includes('iphone') || 
+          navigator.userAgent.toLowerCase().includes('ipad')) {
+        document.documentElement.classList.add('ios-device');
+      }
       
       // Force repaint which can sometimes fix rendering issues
       setTimeout(() => {

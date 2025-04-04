@@ -18,13 +18,16 @@ const config: CapacitorConfig = {
     StatusBar: {
       style: 'dark',
       backgroundColor: '#000000',
-      overlaysWebView: false,
+      overlaysWebView: true,
+      translucent: true,
     }
   },
   ios: {
     contentInset: 'always',
     preferredContentMode: 'mobile',
     handleApplicationNotifications: true,
+    limitsNavigationsToAppBoundDomains: true,
+    allowsLinkPreview: false,
   },
   android: {
     backgroundColor: "#000000"

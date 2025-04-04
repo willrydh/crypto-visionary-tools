@@ -61,11 +61,11 @@
 
 /* iOS Safe Area Utilities */
 .pt-safe {
-  padding-top: env(safe-area-inset-top);
+  padding-top: env(safe-area-inset-top, 24px);
 }
 
 .pb-safe {
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom, 16px);
 }
 
 .pl-safe {
@@ -78,23 +78,23 @@
 
 /* Dynamic Island Support - Updated with more space */
 .ios-dynamic-island-area {
-  padding-top: 16px; /* Increased base padding for all devices */
+  padding-top: 24px; /* Increased base padding for all devices */
 }
 
 @supports (padding: max(0px)) {
   .ios-dynamic-island-area {
-    padding-top: max(16px, env(safe-area-inset-top)); /* Use the larger value - increased base */
+    padding-top: max(24px, env(safe-area-inset-top)); /* Use the larger value - increased base */
   }
 }
 
 /* Additional padding for content when Dynamic Island is present - Increased */
 .has-dynamic-island {
-  padding-top: 58px; /* Increased padding for header + content spacing */
+  padding-top: 64px; /* Increased padding for header + content spacing */
 }
 
 @supports (padding: max(0px)) {
   .has-dynamic-island {
-    padding-top: max(58px, calc(env(safe-area-inset-top) + 32px)); /* Increased spacing */
+    padding-top: max(64px, calc(env(safe-area-inset-top) + 40px)); /* Increased spacing */
   }
 }
 
