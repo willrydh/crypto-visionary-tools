@@ -294,19 +294,11 @@ body {
   width: 100%;
 }
 
-/* Dynamic viewport height for modern browsers */
+/* Fix for mobile Safari height issues */
 html, body, #root {
-  height: 100dvh;
+  height: 100%;
   width: 100%;
   position: relative;
-  overflow-x: hidden;
-}
-
-/* Fallback for browsers that don't support dvh */
-@supports not (height: 100dvh) {
-  html, body, #root {
-    height: 100%;
-  }
 }
 
 /* Fix mobile bottom padding for navigation */
@@ -318,20 +310,6 @@ html, body, #root {
 .render-fix {
   opacity: 1 !important;
   visibility: visible !important;
-}
-
-/* WebView specific optimizations */
-@supports (-webkit-touch-callout: none) {
-  /* iOS WebView specific fixes */
-  body {
-    /* Prevent momentum scrolling issues in iOS WebViews */
-    -webkit-overflow-scrolling: touch;
-  }
-  
-  /* Prevent text size adjustment on orientation change */
-  html {
-    -webkit-text-size-adjust: 100%;
-  }
 }
 
 /* Mobile optimizations */

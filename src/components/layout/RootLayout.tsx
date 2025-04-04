@@ -47,13 +47,13 @@ const RootLayout: React.FC = () => {
 
   return (
     <TooltipProvider>
-      <div className="flex flex-col min-h-[100dvh]">
+      <div className="flex flex-col min-h-screen">
         {!isPublicPage && <MainNavigation />}
         <div className={!isPublicPage ? "md:ml-64" : ""}>
           {!isPublicPage && <TopHeader />}
           <main className={!isPublicPage ? 
-                          "flex-1 overflow-auto pb-16 md:pb-0 pt-32 pt-safe pb-safe pl-safe pr-safe" : 
-                          "flex-1 overflow-auto pt-safe pb-safe pl-safe pr-safe"}>
+                          "flex-1 overflow-auto pb-16 md:pb-0 pt-32" : 
+                          "flex-1 overflow-auto"}>
             <div className={!isPublicPage ? "px-6" : ""}>
               <Routes>
                 <Route path="/" element={<Dashboard />} />
