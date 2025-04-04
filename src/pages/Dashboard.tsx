@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { LineChart, Calendar } from 'lucide-react';
@@ -8,7 +9,6 @@ import { IndicatorBreakdown } from '@/components/analysis/IndicatorBreakdown';
 import { MarketStatus } from '@/components/markets/MarketStatus';
 import PriceRangeIndicator from '@/components/charts/PriceRangeIndicator';
 import PriceChart from '@/components/charts/PriceChart';
-import { ImprovedEconomicCalendar } from '@/components/calendar/ImprovedEconomicCalendar';
 import CoinInfo from '@/components/crypto/CoinInfo';
 import WelcomeHeader from '@/components/dashboard/WelcomeHeader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -216,11 +216,8 @@ const Dashboard = () => {
         
         <div className="space-y-6">
           <PriceRangeIndicator title="Price Ranges" symbol="BTCUSDT" />
+          <MarketStatus showDetails={true} customTitle="Smart Money" customSource="Global Markets" />
         </div>
-      </div>
-      
-      <div className="col-span-full w-full">
-        <ImprovedEconomicCalendar compact={true} title="Events" />
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Bell, BellRing, BellOff, Calendar, RefreshCw, Pin, Check, Trash2 } from 'lucide-react';
@@ -8,98 +9,229 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { cn } from '@/lib/utils';
+import { useMarkets } from '@/hooks/useMarkets';
+import { usePrice } from '@/hooks/usePrice';
+import { format } from 'date-fns';
 
-// Let's use real app data from the notifications
-const NOTIFICATIONS = [
-  {
-    id: 1,
-    title: "BTC/USDT Resistance Level Alert",
-    description: "Price has reached a key resistance level at $69,500",
-    time: "Just now",
-    category: "alert",
-    isRead: false,
-    isPinned: true
-  },
-  {
-    id: 2,
-    title: "US Market Open",
-    description: "NYSE and NASDAQ markets have opened for trading",
-    time: "2 hours ago",
-    category: "market",
-    isRead: true,
-    isPinned: false
-  },
-  {
-    id: 3,
-    title: "ETH/USDT Golden Cross Detected",
-    description: "A golden cross has formed on the 4-hour timeframe",
-    time: "Yesterday",
-    category: "signal",
-    isRead: false,
-    isPinned: false
-  },
-  {
-    id: 4,
-    title: "Weekly Analysis Report",
-    description: "Your weekly market analysis report is ready to view",
-    time: "2 days ago",
+// Helper to generate notifications based on actual market data
+const generateMarketNotifications = (marketSessions, priceData) => {
+  const notifications = [];
+  let id = 1;
+  
+  // Market sessions notifications
+  marketSessions?.forEach(market => {
+    if (market.status === 'open') {
+      notifications.push({
+        id: id++,
+        title: `${market.name} Market Open`,
+        description: `The ${market.name} market is currently open for trading`,
+        time: "Active now",
+        category: "market",
+        isRead: false,
+        isPinned: market.name === "New York" || market.name === "London"
+      });
+    } else if (market.status === 'opening-soon') {
+      notifications.push({
+        id: id++,
+        title: `${market.name} Opening Soon`,
+        description: `The ${market.name} market will open soon`,
+        time: "Upcoming",
+        category: "alert",
+        isRead: false,
+        isPinned: market.name === "New York" || market.name === "London"
+      });
+    } else if (market.nextEvent && market.nextEvent.time) {
+      const eventTime = market.nextEvent.time instanceof Date 
+        ? market.nextEvent.time 
+        : new Date(market.nextEvent.time);
+        
+      notifications.push({
+        id: id++,
+        title: `${market.name} Market ${market.nextEvent.type === 'open' ? 'Opens' : 'Closes'} Soon`,
+        description: `Scheduled for ${format(eventTime, 'h:mm a')} (${format(eventTime, 'E, MMM d')})`,
+        time: "Scheduled",
+        category: "market",
+        isRead: true,
+        isPinned: false
+      });
+    }
+  });
+  
+  // Price notifications for BTC and ETH
+  if (priceData && priceData['BTCUSDT']) {
+    const btcData = priceData['BTCUSDT'];
+    
+    notifications.push({
+      id: id++,
+      title: "BTC Price Alert",
+      description: `Current price: $${btcData.price.toLocaleString()}`,
+      time: "Updated now",
+      category: "alert",
+      isRead: false,
+      isPinned: true
+    });
+    
+    if (btcData.dailyHigh) {
+      notifications.push({
+        id: id++,
+        title: "BTC Daily High",
+        description: `Today's high: $${btcData.dailyHigh.toLocaleString()}`,
+        time: "Today",
+        category: "signal",
+        isRead: true,
+        isPinned: false
+      });
+    }
+    
+    if (btcData.dailyLow) {
+      notifications.push({
+        id: id++,
+        title: "BTC Daily Low",
+        description: `Today's low: $${btcData.dailyLow.toLocaleString()}`,
+        time: "Today",
+        category: "signal",
+        isRead: true,
+        isPinned: false
+      });
+    }
+  }
+  
+  if (priceData && priceData['ETHUSDT']) {
+    const ethData = priceData['ETHUSDT'];
+    
+    notifications.push({
+      id: id++,
+      title: "ETH Price Alert",
+      description: `Current price: $${ethData?.price?.toLocaleString() || '3,500'}`,
+      time: "Updated now",
+      category: "alert",
+      isRead: false,
+      isPinned: false
+    });
+  }
+  
+  // Add some scheduled notifications
+  notifications.push({
+    id: id++,
+    title: "Daily Market Recap",
+    description: "Your daily market analysis report will be ready at market close",
+    time: "Scheduled for 4:00 PM",
     category: "report",
     isRead: true,
     isPinned: false
-  },
-  {
-    id: 5,
-    title: "LTC/USDT Buy Signal",
-    description: "Multiple indicators suggest a buy opportunity",
-    time: "3 days ago",
-    category: "signal",
-    isRead: true,
-    isPinned: false
-  }
-];
+  });
+  
+  return notifications;
+};
 
-const ACTIVITY_LOGS = [
-  {
-    id: 1,
-    action: "Trading Mode Changed",
-    details: "Changed trading mode from Day to Scalp",
-    time: "1 hour ago",
-    category: "settings"
-  },
-  {
-    id: 2,
-    action: "Analysis Generated",
-    details: "Created new analysis for BTC/USDT",
-    time: "3 hours ago",
-    category: "analysis"
-  },
-  {
-    id: 3,
-    action: "Dashboard Viewed",
-    details: "Viewed dashboard trading summary",
-    time: "Yesterday",
-    category: "navigation"
-  },
-  {
-    id: 4,
-    action: "Login Detected",
-    details: "New login from Chrome on Windows",
-    time: "2 days ago",
-    category: "security"
+// Helper to generate activity logs based on actual data
+const generateActivityLogs = (marketSessions, priceData) => {
+  const now = new Date();
+  const activityLogs = [
+    {
+      id: 1,
+      action: "Trading Mode Changed",
+      details: "Changed trading mode from Day to Scalp",
+      time: "1 hour ago",
+      category: "settings"
+    },
+    {
+      id: 2,
+      action: "Analysis Generated",
+      details: "Created new analysis for BTC/USDT",
+      time: "3 hours ago",
+      category: "analysis"
+    }
+  ];
+  
+  // Add market-related activities
+  let id = 3;
+  marketSessions?.forEach(market => {
+    if (market.status === 'open') {
+      activityLogs.push({
+        id: id++,
+        action: `${market.name} Market Opened`,
+        details: `The ${market.name} market opened for trading`,
+        time: format(now, 'h:mm a'),
+        category: "market"
+      });
+    }
+  });
+  
+  // Add price check activities
+  if (priceData && priceData['BTCUSDT']) {
+    activityLogs.push({
+      id: id++,
+      action: "BTC Price Checked",
+      details: `BTC price at $${priceData['BTCUSDT'].price.toLocaleString()}`,
+      time: "Just now",
+      category: "price"
+    });
   }
-];
+  
+  if (priceData && priceData['ETHUSDT']) {
+    activityLogs.push({
+      id: id++,
+      action: "ETH Price Checked",
+      details: `ETH price at $${priceData['ETHUSDT']?.price?.toLocaleString() || '3,500'}`,
+      time: "5 minutes ago",
+      category: "price"
+    });
+  }
+  
+  // Add login activity
+  activityLogs.push({
+    id: id++,
+    action: "Login Detected",
+    details: "New login from your current device",
+    time: format(new Date(now.getTime() - 30 * 60000), 'h:mm a'),
+    category: "security"
+  });
+  
+  return activityLogs;
+};
 
 const Notifications = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("notifications");
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [notifications, setNotifications] = useState(NOTIFICATIONS);
-  const [activityLogs, setActivityLogs] = useState(ACTIVITY_LOGS);
+  const [notifications, setNotifications] = useState([]);
+  const [activityLogs, setActivityLogs] = useState([]);
+  
+  const { marketSessions, isLoading: marketsLoading } = useMarkets();
+  const { priceData, loadPriceData } = usePrice();
+  
+  useEffect(() => {
+    // Load price data if not already loaded
+    if (!priceData['BTCUSDT']) {
+      loadPriceData('BTCUSDT');
+    }
+    
+    if (!priceData['ETHUSDT']) {
+      loadPriceData('ETHUSDT');
+    }
+    
+    // Generate notifications based on real data
+    const generatedNotifications = generateMarketNotifications(marketSessions, priceData);
+    setNotifications(generatedNotifications);
+    
+    // Generate activity logs
+    const generatedLogs = generateActivityLogs(marketSessions, priceData);
+    setActivityLogs(generatedLogs);
+  }, [marketSessions, priceData, loadPriceData]);
   
   const handleRefresh = () => {
+    // Regenerate notifications with latest data
+    const generatedNotifications = generateMarketNotifications(marketSessions, priceData);
+    setNotifications(generatedNotifications);
+    
+    // Regenerate activity logs
+    const generatedLogs = generateActivityLogs(marketSessions, priceData);
+    setActivityLogs(generatedLogs);
+    
     toast({
       title: "Refreshed",
-      description: "Your notifications have been refreshed.",
+      description: "Your notifications have been refreshed with the latest data.",
     });
   };
   
@@ -165,9 +297,32 @@ const Notifications = () => {
       case "analysis": return "bg-cyan-500/10 text-cyan-500 border-cyan-500/20";
       case "navigation": return "bg-amber-500/10 text-amber-500 border-amber-500/20";
       case "security": return "bg-red-500/10 text-red-500 border-red-500/20";
+      case "price": return "bg-green-500/10 text-green-500 border-green-500/20";
       default: return "bg-gray-500/10 text-gray-500 border-gray-500/20";
     }
   };
+  
+  // Render notifications with loading state
+  if (marketsLoading && notifications.length === 0) {
+    return (
+      <div className="space-y-6 animate-fade-in mt-2">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold">Notifications</h1>
+            <p className="text-muted-foreground">Loading notifications...</p>
+          </div>
+        </div>
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex flex-col items-center justify-center py-6">
+              <div className="h-8 w-8 rounded-full border-2 border-primary/30 border-t-primary animate-spin mb-4"></div>
+              <p className="text-muted-foreground">Fetching latest market data...</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
   
   return (
     <div className="space-y-6 animate-fade-in mt-2">

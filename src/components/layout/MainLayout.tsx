@@ -57,8 +57,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         >
           <SidebarHeader className="p-4 pt-2">
             <Link to="/" className="flex items-center space-x-2">
-              <img src={Logo} alt="ProfitPilot" className="h-7 w-7" />
-              <span className="font-bold text-lg">ProfitPilot</span>
+              <img src={Logo} alt="ProfitPilot" className="h-8.5 w-8.5" /> {/* 20% larger from h-7 w-7 */}
+              <span className="font-bold text-xl">ProfitPilot</span> {/* 20% larger from text-lg */}
             </Link>
           </SidebarHeader>
           <SidebarContent>
