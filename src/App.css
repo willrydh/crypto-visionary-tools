@@ -7,6 +7,24 @@
   text-align: left;
 }
 
+/* Safe area insets for iOS devices */
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Top header needs to respect safe area insets too */
+.app-header {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Adjust mobile navigation for safe area */
+.bottom-nav {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
 /* Page transitions and animations */
 @keyframes fade-in {
   from { opacity: 0; transform: translateY(8px); }

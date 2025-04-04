@@ -1,87 +1,73 @@
 
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { 
-  Home, 
-  Calendar, 
-  Settings, 
-  Bell, 
-  Activity,
-  BookOpen,
-  Lightbulb
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useLocation, Link } from 'react-router-dom';
+import { Gauge, LineChart, CalendarDays, BarChart3, Bell, Settings } from 'lucide-react';
 
-const MobileNavigation = () => {
+const MobileNavigation: React.FC = () => {
   const location = useLocation();
-  const isMobile = useIsMobile();
   
-  const isActive = (path: string) => {
-    return location.pathname === path;
-  };
-  
-  if (!isMobile) return null;
+  // Don't show mobile navigation on certain routes
+  const hideOnRoutes = ['/welcome', '/pricing', '/forgot-password', '/reset-password', '/thank-you', '/sorry'];
+  if (hideOnRoutes.includes(location.pathname)) {
+    return null;
+  }
   
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border z-40">
-      <div className="flex justify-around items-center h-16 px-1">
-        <Link 
+    <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-t pb-safe">
+      <div className="grid grid-cols-5 gap-1 p-1">
+        <NavItem 
           to="/" 
-          className={cn(
-            "flex flex-col items-center justify-center w-full h-full text-[10px]",
-            isActive('/') ? "text-primary" : "text-muted-foreground"
-          )}
-        >
-          <Home className="h-5 w-5 mb-0.5" />
-          <span>Home</span>
-        </Link>
-        
-        <Link 
+          icon={<Gauge className="h-5 w-5" />} 
+          label="Dashboard"
+          isActive={location.pathname === '/' || location.pathname === '/dashboard'} 
+        />
+        <NavItem 
           to="/signals" 
-          className={cn(
-            "flex flex-col items-center justify-center w-full h-full text-[10px]",
-            isActive('/signals') ? "text-primary" : "text-muted-foreground"
-          )}
-        >
-          <Activity className="h-5 w-5 mb-0.5" />
-          <span>Signals</span>
-        </Link>
-        
-        <Link 
-          to="/trade" 
-          className={cn(
-            "flex flex-col items-center justify-center w-full h-full text-[10px]",
-            isActive('/trade') ? "text-primary" : "text-muted-foreground"
-          )}
-        >
-          <Lightbulb className="h-5 w-5 mb-0.5" />
-          <span>Trade</span>
-        </Link>
-        
-        <Link 
+          icon={<LineChart className="h-5 w-5" />} 
+          label="Signals"
+          isActive={location.pathname === '/signals'} 
+        />
+        <NavItem 
           to="/calendar" 
-          className={cn(
-            "flex flex-col items-center justify-center w-full h-full text-[10px]",
-            isActive('/calendar') ? "text-primary" : "text-muted-foreground"
-          )}
-        >
-          <Calendar className="h-5 w-5 mb-0.5" />
-          <span>Calendar</span>
-        </Link>
-        
-        <Link 
-          to="/education" 
-          className={cn(
-            "flex flex-col items-center justify-center w-full h-full text-[10px]",
-            isActive('/education') ? "text-primary" : "text-muted-foreground"
-          )}
-        >
-          <BookOpen className="h-5 w-5 mb-0.5" />
-          <span>Learn</span>
-        </Link>
+          icon={<CalendarDays className="h-5 w-5" />} 
+          label="Calendar"
+          isActive={location.pathname === '/calendar'} 
+        />
+        <NavItem 
+          to="/notifications" 
+          icon={<Bell className="h-5 w-5" />} 
+          label="Alerts"
+          isActive={location.pathname === '/notifications'} 
+        />
+        <NavItem 
+          to="/settings" 
+          icon={<Settings className="h-5 w-5" />} 
+          label="Settings"
+          isActive={location.pathname === '/settings'} 
+        />
       </div>
     </div>
+  );
+};
+
+interface NavItemProps {
+  to: string;
+  icon: React.ReactNode;
+  label: string;
+  isActive: boolean;
+}
+
+const NavItem: React.FC<NavItemProps> = ({ to, icon, label, isActive }) => {
+  return (
+    <Link 
+      to={to} 
+      className={`flex flex-col items-center justify-center py-2 px-1 rounded-md ${
+        isActive ? 'text-primary bg-primary/10' : 'text-muted-foreground'
+      }`}
+    >
+      {icon}
+      <span className="text-xs mt-1">{label}</span>
+    </Link>
   );
 };
 
