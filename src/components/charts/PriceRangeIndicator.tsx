@@ -137,8 +137,20 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
     }
   };
   
+  // Determine background color class based on overall market position
+  const getBackgroundColorClass = () => {
+    // Calculate overall sentiment from all three timeframes
+    const overallZones = [hourlyZone, dailyZone, weeklyZone];
+    const overboughtCount = overallZones.filter(zone => zone === "Overbought").length;
+    const oversoldCount = overallZones.filter(zone => zone === "Oversold").length;
+    
+    if (overboughtCount >= 2) return "bg-[#0f1f29]"; // Bluish-green for bullish
+    if (oversoldCount >= 2) return "bg-[#1f1729]";   // Reddish-purple for bearish
+    return "bg-[#0f1729]";  // Default dark blue
+  };
+  
   return (
-    <Card className="bg-[#0f1729] border-border/30 text-white">
+    <Card className={`${getBackgroundColorClass()} border-border/30 text-white`}>
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center text-lg text-white">
           {title}
