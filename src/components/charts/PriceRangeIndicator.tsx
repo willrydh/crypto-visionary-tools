@@ -1,9 +1,8 @@
-
 import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from '@/utils/numberUtils';
-import { Info, TrendingUp, TrendingDown, AlertTriangle } from 'lucide-react';
+import { Info, TrendingUp, TrendingDown, AlertTriangle, BarChart2 } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -28,20 +27,17 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
   const isMobile = useIsMobile();
   
   useEffect(() => {
-    // Load price data if not already loaded
     if (!priceData[symbol]) {
       loadPriceData(symbol);
     }
     
-    // Set up interval for updates
     const intervalId = setInterval(() => {
       loadPriceData(symbol);
-    }, 60000); // Update every minute
+    }, 60000);
     
     return () => clearInterval(intervalId);
   }, [symbol, loadPriceData, priceData]);
   
-  // Get current price data or use defaults
   const currentData = priceData[symbol] || {
     price: 0,
     hourlyHigh: 0,
@@ -52,39 +48,37 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
     weeklyLow: 0
   };
   
-  // Calculate percentages for positioning within ranges
   const calculateHourlyPercentage = () => {
     const { price, hourlyHigh, hourlyLow } = currentData;
     const range = hourlyHigh - hourlyLow;
-    if (range <= 0) return 50; // Default to middle if range is invalid
+    if (range <= 0) return 50;
     
     const position = ((price - hourlyLow) / range) * 100;
-    return Math.min(Math.max(position, 0), 100); // Clamp between 0-100
+    return Math.min(Math.max(position, 0), 100);
   };
   
   const calculateDailyPercentage = () => {
     const { price, dailyHigh, dailyLow } = currentData;
     const range = dailyHigh - dailyLow;
-    if (range <= 0) return 50; // Default to middle if range is invalid
+    if (range <= 0) return 50;
     
     const position = ((price - dailyLow) / range) * 100;
-    return Math.min(Math.max(position, 0), 100); // Clamp between 0-100
+    return Math.min(Math.max(position, 0), 100);
   };
   
   const calculateWeeklyPercentage = () => {
     const { price, weeklyHigh, weeklyLow } = currentData;
     const range = weeklyHigh - weeklyLow;
-    if (range <= 0) return 50; // Default to middle if range is invalid
+    if (range <= 0) return 50;
     
     const position = ((price - weeklyLow) / range) * 100;
-    return Math.min(Math.max(position, 0), 100); // Clamp between 0-100
+    return Math.min(Math.max(position, 0), 100);
   };
   
   const hourlyPercentage = calculateHourlyPercentage();
   const dailyPercentage = calculateDailyPercentage();
   const weeklyPercentage = calculateWeeklyPercentage();
   
-  // Log position percentages for debugging
   console.log(`PriceRangeIndicator - Price positions for ${symbol}:`, {
     price: currentData.price,
     hourly: {
@@ -104,7 +98,6 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
     }
   });
   
-  // Determine if price is in overbought/oversold zones
   const getHourlyZone = () => {
     if (hourlyPercentage >= 80) return "Overbought";
     if (hourlyPercentage <= 20) return "Oversold";
@@ -127,7 +120,6 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
   const dailyZone = getDailyZone();
   const weeklyZone = getWeeklyZone();
   
-  // Get color based on zone
   const getZoneColor = (zone: string) => {
     switch (zone) {
       case "Overbought":
@@ -139,7 +131,6 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
     }
   };
   
-  // Calculate background gradient based on the current zone
   const getBackgroundGradient = () => {
     const isOverall = hourlyZone === "Overbought" && dailyZone === "Overbought";
     const isOversold = hourlyZone === "Oversold" && dailyZone === "Oversold";
@@ -153,9 +144,7 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
     }
   };
   
-  // Generate trading suggestion based on price zones
   const getTradingSuggestion = () => {
-    // Count overbought and oversold signals
     const zones = [hourlyZone, dailyZone, weeklyZone];
     const overboughtCount = zones.filter(z => z === "Overbought").length;
     const oversoldCount = zones.filter(z => z === "Oversold").length;
@@ -174,9 +163,9 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
       };
     } else {
       return {
-        text: "Price is in a neutral zone",
-        icon: <AlertTriangle className="h-4 w-4 mr-2" />,
-        color: "bg-yellow-600/20 border-yellow-600/30 text-yellow-400"
+        text: "Stand by for new entries",
+        icon: <BarChart2 className="h-4 w-4 mr-2" />,
+        color: "bg-blue-600/20 border-blue-600/30 text-blue-400"
       };
     }
   };
@@ -201,22 +190,19 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4 relative z-10">
-        {/* Current Price with Change */}
         <div className="text-center">
           <span className="text-3xl font-bold">${currentData.price.toLocaleString('en-US', { maximumFractionDigits: 0 })}</span>
         </div>
         
-        {/* Trading Suggestion */}
-        <div className="p-3 rounded-md border bg-card/20 backdrop-blur-sm">
-          <div className="flex items-center">
-            <div className={`px-3 py-1.5 rounded-md flex items-center ${suggestion.color}`}>
+        <div className="p-3 rounded-md border border-white/10 bg-black/30 backdrop-blur-sm w-full">
+          <div className="flex items-center justify-center">
+            <div className={`px-4 py-2 rounded-md flex items-center justify-center w-full ${suggestion.color}`}>
               {suggestion.icon}
-              <span className="font-medium text-sm">{suggestion.text}</span>
+              <span className="font-medium">{suggestion.text}</span>
             </div>
           </div>
         </div>
         
-        {/* Hourly Range */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium">Hourly Range</span>
@@ -240,7 +226,6 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
           </div>
         </div>
         
-        {/* Daily Range */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium">Daily Range</span>
@@ -264,7 +249,6 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
           </div>
         </div>
         
-        {/* Weekly Range */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium">Weekly Range</span>
