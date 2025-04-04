@@ -144,9 +144,9 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
     const overboughtCount = overallZones.filter(zone => zone === "Overbought").length;
     const oversoldCount = overallZones.filter(zone => zone === "Oversold").length;
     
-    if (overboughtCount >= 2) return "bg-[#0f1f29]"; // Bluish-green for bullish
-    if (oversoldCount >= 2) return "bg-[#1f1729]";   // Reddish-purple for bearish
-    return "bg-[#0f1729]";  // Default dark blue
+    if (overboughtCount >= 2) return "bg-[#0a2e32]"; // Stronger bluish-green for bullish
+    if (oversoldCount >= 2) return "bg-[#2a1937]";   // Stronger reddish-purple for bearish
+    return "bg-[#111a33]";  // Stronger dark blue for neutral
   };
   
   // Calculate the color class for card background
