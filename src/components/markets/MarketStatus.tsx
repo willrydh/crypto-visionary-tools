@@ -83,62 +83,56 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
     }
   };
 
-  // Match Frankfurt and London countdown if they're both waiting to open
+  // Match Frankfurt and London countdown if they're both waiting to open or close
   const syncEuropeanMarketCountdowns = (markets: MarketSession[]): MarketSession[] => {
     try {
-      const frankfurt = markets.find(m => m.name.includes("Frankfurt"));
-      const london = markets.find(m => m.name.includes("London"));
+      // Find the London and Frankfurt markets
+      const london = markets.find(m => m.name.toLowerCase().includes("london") || m.name.includes("LSE"));
+      const frankfurt = markets.find(m => m.name.toLowerCase().includes("frankfurt") || m.name.includes("FSX"));
       
-      // If both markets exist and they're both waiting to open
-      if (frankfurt && london && 
-          frankfurt.status !== 'open' && london.status !== 'open' &&
-          frankfurt.nextEvent.type === 'open' && london.nextEvent.type === 'open') {
+      // If both markets exist
+      if (frankfurt && london) {
+        // Create a clone of the markets array
+        const updatedMarkets = [...markets];
         
-        // Use the same nextEvent time for both
-        const earliestOpenTime = new Date(Math.min(
-          frankfurt.nextEvent.time.getTime(),
-          london.nextEvent.time.getTime()
-        ));
+        // Find the indices of both markets to update them later
+        const londonIndex = updatedMarkets.findIndex(m => m.name.toLowerCase().includes("london") || m.name.includes("LSE"));
+        const frankfurtIndex = updatedMarkets.findIndex(m => m.name.toLowerCase().includes("frankfurt") || m.name.includes("FSX"));
         
-        // Update both markets to have the same opening time
-        return markets.map(market => {
-          if (market.name.includes("Frankfurt") || market.name.includes("London")) {
-            return {
-              ...market,
+        // If both markets are closed and waiting to open, OR both are open and waiting to close
+        if ((frankfurt.status !== 'open' && london.status !== 'open' && 
+             frankfurt.nextEvent.type === 'open' && london.nextEvent.type === 'open') ||
+            (frankfurt.status === 'open' && london.status === 'open' && 
+             frankfurt.nextEvent.type === 'close' && london.nextEvent.type === 'close')) {
+          
+          // Choose the Frankfurt next event time as the reference
+          const sharedNextEventTime = frankfurt.nextEvent.time instanceof Date 
+            ? new Date(frankfurt.nextEvent.time) 
+            : new Date(frankfurt.nextEvent.time);
+          
+          // Update both markets to have the same next event time
+          if (londonIndex !== -1) {
+            updatedMarkets[londonIndex] = {
+              ...updatedMarkets[londonIndex],
               nextEvent: {
-                ...market.nextEvent,
-                time: earliestOpenTime
+                ...updatedMarkets[londonIndex].nextEvent,
+                time: sharedNextEventTime
               }
             };
           }
-          return market;
-        });
-      }
-      
-      // If both markets are open and waiting to close, also sync their closing times
-      if (frankfurt && london && 
-          frankfurt.status === 'open' && london.status === 'open' &&
-          frankfurt.nextEvent.type === 'close' && london.nextEvent.type === 'close') {
-        
-        // Use the same nextEvent time for both
-        const earliestCloseTime = new Date(Math.min(
-          frankfurt.nextEvent.time.getTime(),
-          london.nextEvent.time.getTime()
-        ));
-        
-        // Update both markets to have the same closing time
-        return markets.map(market => {
-          if (market.name.includes("Frankfurt") || market.name.includes("London")) {
-            return {
-              ...market,
+          
+          if (frankfurtIndex !== -1) {
+            updatedMarkets[frankfurtIndex] = {
+              ...updatedMarkets[frankfurtIndex],
               nextEvent: {
-                ...market.nextEvent,
-                time: earliestCloseTime
+                ...updatedMarkets[frankfurtIndex].nextEvent,
+                time: sharedNextEventTime
               }
             };
           }
-          return market;
-        });
+          
+          return updatedMarkets;
+        }
       }
     } catch (error) {
       console.error('Error syncing European market countdowns:', error);
