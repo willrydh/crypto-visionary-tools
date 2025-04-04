@@ -29,9 +29,9 @@ const WorkflowStep: React.FC<WorkflowStepProps> = ({
 }) => {
   return (
     <div className="relative">
-      {/* Step number bubble */}
+      {/* Step number bubble - updated to white text and no transparency */}
       <div className={cn(
-        "absolute -left-4 -top-4 w-8 h-8 rounded-full flex items-center justify-center font-bold text-white z-10 bg-opacity-80",
+        "absolute -left-4 -top-4 w-8 h-8 rounded-full flex items-center justify-center font-bold text-white z-10",
         color
       )}>
         {step}
@@ -61,28 +61,28 @@ const HowItWorksSection = () => {
       title: "Data Collection",
       description: "Our advanced systems gather high-frequency market data from multiple exchanges, combining real-time price action with volume profiles and order flow analytics.",
       icon: <Database className="h-5 w-5" />,
-      color: "bg-indigo-600/70",
+      color: "bg-indigo-600", // Removed transparency
       bgColor: "bg-[#1A1F2C]/90 border-none"
     },
     {
       title: "AI Processing",
       description: "Proprietary machine learning algorithms analyze patterns, trends, and market conditions, identifying key support and resistance levels with unprecedented accuracy.",
       icon: <BrainCircuit className="h-5 w-5" />,
-      color: "bg-purple-600/70",
+      color: "bg-purple-600", // Removed transparency
       bgColor: "bg-[#1A1F2C]/90 border-none"
     },
     {
       title: "Signal Generation",
       description: "High-probability trading signals are generated based on multi-timeframe analysis, with risk management parameters tailored to your selected trading strategy.",
       icon: <Zap className="h-5 w-5" />,
-      color: "bg-amber-500/70",
+      color: "bg-amber-500", // Removed transparency
       bgColor: "bg-gradient-to-br from-amber-500/70 to-orange-600/70 border-none"
     },
     {
       title: "Actionable Insights",
       description: "Receive precise entry and exit points, position sizing recommendations, and real-time alerts on your dashboard to execute trades with confidence.",
       icon: <Lightbulb className="h-5 w-5" />,
-      color: "bg-green-600/70",
+      color: "bg-green-600", // Removed transparency
       bgColor: "bg-gradient-to-br from-green-500/70 to-emerald-600/70 border-none"
     }
   ];

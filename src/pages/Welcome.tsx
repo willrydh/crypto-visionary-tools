@@ -23,6 +23,7 @@ import CustomerReviews from '@/components/marketing/CustomerReviews';
 import DiscordCommunity from '@/components/marketing/DiscordCommunity';
 import TokenProgress from '@/components/marketing/TokenProgress';
 import HowItWorksSection from '@/components/landing/HowItWorksSection';
+import TimedOffer from '@/components/marketing/TimedOffer';
 import LogoImage from '@/assets/logo.svg';
 import { BlurredBackground } from '@/components/ui/blurred-background';
 
@@ -203,6 +204,11 @@ const Welcome = () => {
           </Carousel>
         </div>
       </section>
+
+      {/* Timed Offer Section - New addition */}
+      <div className="max-w-7xl mx-auto px-6">
+        <TimedOffer seconds={60} couponCode="EASTER25" />
+      </div>
 
       <section className="py-24 px-6 relative overflow-hidden">
         <BlurredBackground 
