@@ -61,7 +61,7 @@ export const TradingModeSelector = ({ displayLabel = true, compact = false }) =>
               key={mode.id}
               onClick={() => handleModeChange(mode.id)}
               className={cn(
-                "flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-all shadow-sm",
+                "flex items-center gap-1.5 px-2.5 py-1 rounded-md transition-all shadow-sm",
                 isActive 
                   ? getModeBgClass(mode.id, true) + " text-white" 
                   : getModeBgClass(mode.id, false)
@@ -113,7 +113,7 @@ export const TradingModeSelector = ({ displayLabel = true, compact = false }) =>
                     onClick={() => handleModeChange(mode.id)}
                     className={cn(
                       "relative flex flex-col items-center justify-center rounded-lg transition-all duration-300",
-                      "py-3 px-1 border shadow-md",
+                      "py-2 px-1 border shadow-md",
                       isActive 
                         ? `${getModeGradientClass(mode.id)} border-white/10 shadow-lg` 
                         : `${getModeBgClass(mode.id, false)} ${getModeBorderClass(mode.id)} hover:bg-card/50`

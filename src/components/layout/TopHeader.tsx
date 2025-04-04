@@ -79,9 +79,9 @@ const TopHeader = () => {
   };
   
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/40">
+    <header className="fixed top-0 left-0 right-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/40 ios-dynamic-island-area">
       {/* Main header with logo and actions - reduced height */}
-      <div className="max-w-7xl mx-auto h-14 flex items-center justify-between px-4 sm:px-6 md:px-6 md:ml-64">
+      <div className="max-w-7xl mx-auto h-12 flex items-center justify-between px-4 sm:px-6 md:px-6 md:ml-64">
         <div className="flex items-center md:hidden">
           <Link to="/" className="flex items-center gap-2">
             <img src={Logo} alt="ProfitPilot" className="h-6 w-6" />
@@ -137,11 +137,11 @@ const TopHeader = () => {
         </div>
       </div>
       
-      {/* Trading mode selector - show on specific pages - reduced padding */}
+      {/* Trading mode selector - show on specific pages - more compact */}
       {showTradingBar && (
         <div className={cn("border-b border-border/40", getModeHeaderBgClass(tradingMode))}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-6 md:ml-64">
-            <div className="flex items-center justify-between py-1.5">
+            <div className="flex items-center justify-between py-1">
               <div className="flex-grow">
                 <TradingModeSelector compact={true} displayLabel={!isMobile} />
               </div>

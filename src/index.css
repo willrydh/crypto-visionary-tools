@@ -59,9 +59,9 @@
   }
 }
 
-/* iOS Safe Area Utilities - Reduced values for more compact layout */
+/* iOS Safe Area Utilities - Improved values for a more appropriate layout */
 .pt-safe {
-  padding-top: env(safe-area-inset-top, 0px);
+  padding-top: env(safe-area-inset-top, 20px);
 }
 
 .pb-safe {
@@ -76,36 +76,39 @@
   padding-right: env(safe-area-inset-right);
 }
 
-/* Header height constants for consistency */
+/* Header height constants - Reduced for compactness */
 :root {
-  --header-height: 56px;
+  --header-height: 52px;
   --header-height-with-tabs: 84px;
+  --trading-selector-height: 60px;
+  --header-offset: env(safe-area-inset-top, 20px);
 }
 
-/* Dynamic Island Support - Reduced for more compact layout */
+/* Dynamic Island Support */
 .ios-dynamic-island-area {
   padding-top: 0px;
 }
 
 @supports (padding: max(0px)) {
   .ios-dynamic-island-area {
-    padding-top: max(0px, env(safe-area-inset-top));
+    padding-top: max(20px, env(safe-area-inset-top));
   }
 }
 
 /* Main content padding to stay below header */
 .content-padding-top {
-  padding-top: var(--header-height);
+  padding-top: calc(var(--header-height) + var(--header-offset));
 }
 
 .content-padding-top-with-tabs {
-  padding-top: var(--header-height-with-tabs);
+  padding-top: calc(var(--header-height-with-tabs) + var(--header-offset));
 }
 
 /* Custom Spacing Classes */
 .app-header {
   @apply fixed top-0 left-0 right-0 z-30;
   height: var(--header-height);
+  padding-top: var(--header-offset);
 }
 
 .content-padding {
@@ -117,7 +120,7 @@
 }
 
 .header-spacing {
-  @apply h-14;
+  @apply h-12;
 }
 
 .nav-spacing {

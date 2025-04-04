@@ -30,7 +30,7 @@ const config: CapacitorConfig = {
     allowsLinkPreview: false,
     useNativeStatusBar: true,
     backgroundColor: "#000000",
-    statusBarHeight: 48, // Adjusted value to reduce spacing
+    statusBarHeight: 44, // Adjusted to provide more space for iOS status bar
   },
   android: {
     backgroundColor: "#000000"
