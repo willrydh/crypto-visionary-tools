@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
@@ -21,6 +20,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
+import { Checkbox } from "@/components/ui/checkbox";
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import confetti from 'canvas-confetti';
@@ -116,12 +116,13 @@ const educationContent = {
 
 const LearningModuleContent = ({ module }: { module: any }) => {
   const [currentStep, setCurrentStep] = useState(0);
+  const [confirmed, setConfirmed] = useState(false);
   const { toast } = useToast();
   const steps = [
     { title: "Introduction", content: "This module covers the essential concepts of " + module.title + ". We'll explore key principles and practical applications." },
     { title: "Key Concepts", content: "The fundamental principles of " + module.title + " include understanding market dynamics, pattern recognition, and risk management." },
     { title: "Practical Application", content: "Now let's see how to apply these concepts in real trading scenarios." },
-    { title: "Quiz", content: "Test your knowledge with this quick quiz about " + module.title + "." },
+    { title: "Completion", content: "You've reached the end of this module. Please confirm that you've read and understood the material to complete the course." },
     { title: "Summary", content: "Congratulations! You've completed the " + module.title + " module. You now understand the core concepts and how to apply them." }
   ];
 
@@ -182,44 +183,23 @@ const LearningModuleContent = ({ module }: { module: any }) => {
           <p className="text-muted-foreground">{steps[currentStep].content}</p>
           
           {currentStep === 3 && (
-            <div className="mt-6 space-y-4">
-              <h4 className="font-medium">Sample Quiz Questions:</h4>
-              <div className="space-y-4">
-                <div className="p-3 rounded-md border bg-card/50">
-                  <p className="mb-2">What is the primary benefit of {module.title}?</p>
-                  <div className="flex items-center space-y-2">
-                    <div className="flex items-center gap-2 w-full p-2 rounded-md hover:bg-secondary/50 cursor-pointer">
-                      <div className="w-4 h-4 rounded-full border border-primary flex items-center justify-center">
-                        <div className="w-2 h-2 rounded-full bg-primary"></div>
-                      </div>
-                      <span>Improved trading decisions through data analysis</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-y-2">
-                    <div className="flex items-center gap-2 w-full p-2 rounded-md hover:bg-secondary/50 cursor-pointer">
-                      <div className="w-4 h-4 rounded-full border border-muted-foreground"></div>
-                      <span>Guaranteed profits on every trade</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="p-3 rounded-md border bg-card/50">
-                  <p className="mb-2">How can you apply {module.title} in volatile markets?</p>
-                  <div className="flex items-center space-y-2">
-                    <div className="flex items-center gap-2 w-full p-2 rounded-md hover:bg-secondary/50 cursor-pointer">
-                      <div className="w-4 h-4 rounded-full border border-primary flex items-center justify-center">
-                        <div className="w-2 h-2 rounded-full bg-primary"></div>
-                      </div>
-                      <span>By focusing on key support and resistance levels</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-y-2">
-                    <div className="flex items-center gap-2 w-full p-2 rounded-md hover:bg-secondary/50 cursor-pointer">
-                      <div className="w-4 h-4 rounded-full border border-muted-foreground"></div>
-                      <span>By ignoring market conditions entirely</span>
-                    </div>
-                  </div>
-                </div>
+            <div className="mt-6 p-3 rounded-md border bg-card/50">
+              <div className="flex items-center space-x-2 mb-4">
+                <Checkbox 
+                  id="confirm-reading" 
+                  checked={confirmed} 
+                  onCheckedChange={(checked) => setConfirmed(!!checked)} 
+                />
+                <label
+                  htmlFor="confirm-reading"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  I confirm that I have read and understood the material in this module
+                </label>
               </div>
+              <p className="text-xs text-muted-foreground">
+                Click "Complete Course" to mark this module as finished and move to the next step.
+              </p>
             </div>
           )}
         </CardContent>
@@ -233,9 +213,9 @@ const LearningModuleContent = ({ module }: { module: any }) => {
           </Button>
           <Button 
             onClick={handleNextStep}
-            disabled={currentStep === steps.length - 1}
+            disabled={(currentStep === 3 && !confirmed) || currentStep === steps.length - 1}
           >
-            {currentStep === steps.length - 2 ? "Complete Quiz" : "Next"}
+            {currentStep === 3 ? "Complete Course" : "Next"}
           </Button>
         </CardFooter>
       </Card>
