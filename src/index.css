@@ -83,6 +83,7 @@
   --trading-selector-height: 60px; /* Increased for more vertical spacing */
   --header-offset: env(safe-area-inset-top, 30px);
   --content-offset-ios: 24px; /* Additional offset for iOS devices */
+  --mobile-nav-height: 64px; /* Height of mobile navigation */
 }
 
 /* Dynamic Island Support */

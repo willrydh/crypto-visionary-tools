@@ -57,8 +57,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         >
           <SidebarHeader className="p-4 pt-2">
             <Link to="/" className="flex items-center space-x-2">
-              <img src={Logo} alt="ProfitPilot" className="h-8.5 w-8.5" /> {/* 20% larger from h-7 w-7 */}
-              <span className="font-bold text-xl">ProfitPilot</span> {/* 20% larger from text-lg */}
+              <img src={Logo} alt="ProfitPilot" className="h-8.5 w-8.5" />
+              <span className="font-bold text-xl">ProfitPilot</span>
             </Link>
           </SidebarHeader>
           <SidebarContent>
@@ -73,7 +73,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         <div className="flex-1 flex flex-col w-full md:ml-64 overflow-x-hidden">
           <TopHeader />
           <main className={`flex-1 overflow-auto ${hasTabsBar ? 'content-padding-top-with-tabs' : 'content-padding-top'} pb-safe z-10 overflow-x-hidden`}>
-            <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-5 pb-20 md:pb-6 pt-4">
+            <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-5 pb-28 md:pb-6 pt-4">
               {children}
             </div>
           </main>

@@ -40,10 +40,14 @@
 /* WebView specific styles */
 .in-webview main {
   padding-top: env(safe-area-inset-top, 32px);
+  padding-bottom: env(safe-area-inset-bottom, 32px);
 }
 
 .ios-device main {
   padding-top: env(safe-area-inset-top, 48px);
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .ios-device .app-header {
@@ -281,6 +285,7 @@ button {
 main {
   position: relative;
   z-index: 10;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Fix header overlay issues */
@@ -319,11 +324,16 @@ html, body, #root {
   .has-safe-area {
     height: 100dvh;
   }
+  
+  /* Use the dynamic viewport height unit for iOS */
+  #root {
+    min-height: 100dvh;
+  }
 }
 
 /* Fix mobile bottom padding for navigation */
 .pb-mobile {
-  padding-bottom: 5rem;
+  padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
 }
 
 /* Fix initial render flash issues */
