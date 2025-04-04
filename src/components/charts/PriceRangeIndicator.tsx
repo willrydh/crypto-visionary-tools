@@ -149,8 +149,11 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
     return "bg-[#0f1729]";  // Default dark blue
   };
   
+  // Calculate the color class for card background
+  const backgroundColorClass = getBackgroundColorClass();
+  
   return (
-    <Card className={`${getBackgroundColorClass()} border-border/30 text-white`}>
+    <Card className={`${backgroundColorClass} border-border/30 text-white`}>
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center text-lg text-white">
           {title}
