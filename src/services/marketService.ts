@@ -169,7 +169,8 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
         time: calculateNextEvent(marketHours.london, 
                  (currentTime >= marketHours.london.open && currentTime < marketHours.london.close))
       },
-      timezone: userTimezone
+      timezone: userTimezone,
+      marketCap: "$3.83T"
     },
     {
       name: "New York",
@@ -183,7 +184,8 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
         time: calculateNextEvent(marketHours.nyse, 
                  (currentTime >= marketHours.nyse.open && currentTime < marketHours.nyse.close))
       },
-      timezone: userTimezone
+      timezone: userTimezone,
+      marketCap: "$25.62T"
     },
     {
       name: "Frankfurt",
@@ -197,7 +199,8 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
         time: calculateNextEvent(marketHours.frankfurt, 
                  (currentTime >= marketHours.frankfurt.open && currentTime < marketHours.frankfurt.close))
       },
-      timezone: userTimezone
+      timezone: userTimezone,
+      marketCap: "$2.14T"
     },
     {
       name: "Tokyo",
@@ -211,7 +214,8 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
         time: calculateNextEvent(marketHours.tokyo, 
                  (currentTime >= marketHours.tokyo.open && currentTime < marketHours.tokyo.close))
       },
-      timezone: userTimezone
+      timezone: userTimezone,
+      marketCap: "$6.54T"
     }
   ];
   

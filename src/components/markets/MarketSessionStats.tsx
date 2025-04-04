@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -169,32 +170,17 @@ const MarketSessionStats = ({
 
   useEffect(() => {
     if (marketSessions.length > 0) {
-      const nyse = marketSessions.find(m => m.name.includes("NYSE") || m.name.includes("New York"));
-      const london = marketSessions.find(m => m.name.includes("London") || m.name.includes("LSE"));
-      const tokyo = marketSessions.find(m => m.name.includes("Tokyo") || m.name.includes("TSE"));
-      const nasdaq = marketSessions.find(m => m.name.includes("Nasdaq"));
+      // Find market sessions by name
+      const nyse = marketSessions.find(m => m.name.includes("New York") || m.name.includes("NYSE"));
+      const london = marketSessions.find(m => m.name.includes("London"));
+      const tokyo = marketSessions.find(m => m.name.includes("Tokyo"));
+      const frankfurt = marketSessions.find(m => m.name.includes("Frankfurt"));
+      const nasdaq = marketSessions.find(m => m.name.includes("Nasdaq") || m.name.includes("NASDAQ"));
+      
+      // Log for debugging
+      console.log('Market Sessions data for stats:', { nyse, london, tokyo, frankfurt, nasdaq });
       
       if (nyse && london && tokyo) {
-        const nyseOpenEvent = nyse.status === 'open' ? 
-          { type: 'close', time: nyse.nextEvent.time } : 
-          { type: 'open', time: nyse.nextEvent.time };
-        
-        const nyseCloseEvent = nyse.status === 'open' ? 
-          { type: 'close', time: nyse.nextEvent.time } : 
-          { type: 'open', time: nyse.nextEvent.time };
-        
-        const londonCloseEvent = london.status === 'open' ? 
-          { type: 'close', time: london.nextEvent.time } : 
-          { type: 'open', time: london.nextEvent.time };
-        
-        const tokyoOpenEvent = tokyo.status === 'open' ? 
-          { type: 'close', time: tokyo.nextEvent.time } : 
-          { type: 'open', time: tokyo.nextEvent.time };
-        
-        const nasdaqOpenEvent = nasdaq?.status === 'open' ? 
-          { type: 'close', time: nasdaq.nextEvent.time } : 
-          { type: 'open', time: nasdaq?.nextEvent.time || new Date() };
-        
         setMarketSessionData(prevSessions => 
           prevSessions.map(session => {
             if (session.name === "NYSE Open") {
@@ -205,7 +191,7 @@ const MarketSessionStats = ({
                 time: "15:30",
                 marketCap: nyse.marketCap || session.marketCap
               };
-            } else if (session.name === "London Close") {
+            } else if (session.name === "London Close" && london) {
               return {
                 ...session,
                 countdown: london.status === 'open' ? getMarketTimeRemaining(london.nextEvent.time) : 'After open',
@@ -232,7 +218,7 @@ const MarketSessionStats = ({
             } else if (session.name === "Nasdaq Open" && nasdaq) {
               return {
                 ...session,
-                countdown: nasdaq.status === 'open' ? 'Now' : getMarketTimeRemaining(nasdaq.nextEvent.time),
+                countdown: nasdaq.status === 'open' ? 'Now' : nasdaq.nextEvent.time ? getMarketTimeRemaining(nasdaq.nextEvent.time) : 'Calculating...',
                 status: nasdaq.status === 'open' || nasdaq.status === 'opening-soon' ? 'active' : 'upcoming',
                 time: "15:30",
                 marketCap: nasdaq.marketCap || session.marketCap

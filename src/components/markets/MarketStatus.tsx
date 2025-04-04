@@ -70,8 +70,13 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
         return 'Unknown';
       }
       
+      // Make sure we're working with a Date object
+      const nextEventTime = market.nextEvent.time instanceof Date 
+        ? market.nextEvent.time 
+        : new Date(market.nextEvent.time);
+      
       // Use the getMarketTimeRemaining helper
-      return getMarketTimeRemaining(new Date(market.nextEvent.time));
+      return getMarketTimeRemaining(nextEventTime);
     } catch (error) {
       console.error('Error formatting countdown:', error, market);
       return 'Error';
@@ -79,7 +84,13 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
   };
 
   // Debug logging to help diagnose issues
-  console.log('MarketStatus - Current sessions:', marketSessions);
+  console.log('MarketStatus - Market sessions:', marketSessions.map(m => ({
+    name: m.name,
+    status: m.status,
+    nextEvent: m.nextEvent.type,
+    nextEventTime: m.nextEvent.time,
+    formattedCountdown: formatCountdown(m)
+  })));
 
   return (
     <Card className={compact ? "border-border/50" : ""}>

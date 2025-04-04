@@ -198,9 +198,14 @@ export const getTimezoneAbbreviation = (): string => {
 
 // Calculate exact time remaining until market event with consistent formatting
 export const getMarketTimeRemaining = (targetTime: Date): string => {
+  if (!targetTime || !(targetTime instanceof Date)) {
+    console.error('Invalid target time:', targetTime);
+    return "unknown";
+  }
+  
   const now = new Date();
   
-  // If the target time is in the past
+  // Ensure target time is a future date
   if (targetTime <= now) {
     return "passed";
   }
