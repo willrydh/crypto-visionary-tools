@@ -133,10 +133,10 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
   };
   
   const getBackgroundGradient = () => {
-    const isOverall = hourlyZone === "Overbought" && dailyZone === "Overbought";
+    const isOverbought = hourlyZone === "Overbought" && dailyZone === "Overbought";
     const isOversold = hourlyZone === "Oversold" && dailyZone === "Oversold";
     
-    if (isOverall) {
+    if (isOverbought) {
       return "bg-gradient-to-b from-green-950/30 via-green-900/20 to-green-900/5";
     } else if (isOversold) {
       return "bg-gradient-to-b from-red-950/30 via-red-900/20 to-red-900/5";
