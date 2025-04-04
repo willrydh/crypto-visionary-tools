@@ -139,8 +139,22 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
     }
   };
   
+  // Calculate background gradient based on the current zone
+  const getBackgroundGradient = () => {
+    const isOverall = hourlyZone === "Overbought" && dailyZone === "Overbought";
+    const isOversold = hourlyZone === "Oversold" && dailyZone === "Oversold";
+    
+    if (isOverall) {
+      return "bg-gradient-to-b from-green-950/30 via-green-900/20 to-green-900/5";
+    } else if (isOversold) {
+      return "bg-gradient-to-b from-red-950/30 via-red-900/20 to-red-900/5";
+    } else {
+      return "bg-gradient-to-b from-blue-950/20 via-blue-900/10 to-blue-900/5";
+    }
+  };
+  
   return (
-    <Card className="bg-card/60 text-foreground relative overflow-hidden border-border/30">
+    <Card className={`${getBackgroundGradient()} border-border/30 transition-colors duration-700 relative overflow-hidden`}>
       <CardHeader className="pb-2 relative z-10">
         <CardTitle className="flex items-center text-lg text-white">
           {title}
