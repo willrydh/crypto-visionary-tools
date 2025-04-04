@@ -61,11 +61,11 @@
 
 /* iOS Safe Area Utilities - Improved values for a more appropriate layout */
 .pt-safe {
-  padding-top: env(safe-area-inset-top, 20px);
+  padding-top: env(safe-area-inset-top, 30px);
 }
 
 .pb-safe {
-  padding-bottom: env(safe-area-inset-bottom, 16px);
+  padding-bottom: env(safe-area-inset-bottom, 20px);
 }
 
 .pl-safe {
@@ -76,12 +76,13 @@
   padding-right: env(safe-area-inset-right);
 }
 
-/* Header height constants - Reduced for better content display */
+/* Header height constants - Adjusted for better content display */
 :root {
   --header-height: 48px;
-  --header-height-with-tabs: 80px;
-  --trading-selector-height: 50px;
-  --header-offset: env(safe-area-inset-top, 20px);
+  --header-height-with-tabs: 96px; /* Increased to accommodate more spacious tabs */
+  --trading-selector-height: 60px; /* Increased for more vertical spacing */
+  --header-offset: env(safe-area-inset-top, 30px);
+  --content-offset-ios: 24px; /* Additional offset for iOS devices */
 }
 
 /* Dynamic Island Support */
@@ -91,17 +92,26 @@
 
 @supports (padding: max(0px)) {
   .ios-dynamic-island-area {
-    padding-top: max(20px, env(safe-area-inset-top));
+    padding-top: max(30px, env(safe-area-inset-top));
   }
 }
 
 /* Main content padding to stay below header - Adjusted for better content visibility */
 .content-padding-top {
-  padding-top: calc(var(--header-height) + var(--header-offset) - 5px);
+  padding-top: calc(var(--header-height) + var(--header-offset));
 }
 
 .content-padding-top-with-tabs {
-  padding-top: calc(var(--header-height-with-tabs) + var(--header-offset) - 10px);
+  padding-top: calc(var(--header-height-with-tabs) + var(--header-offset));
+}
+
+/* iOS specific content padding */
+.ios-device .content-padding-top {
+  padding-top: calc(var(--header-height) + var(--header-offset) + var(--content-offset-ios));
+}
+
+.ios-device .content-padding-top-with-tabs {
+  padding-top: calc(var(--header-height-with-tabs) + var(--header-offset) + var(--content-offset-ios));
 }
 
 /* Custom Spacing Classes */
@@ -193,4 +203,9 @@
 
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-muted-foreground/30;
+}
+
+/* Trading mode selector spacing */
+.trading-selector-container {
+  @apply py-3;
 }

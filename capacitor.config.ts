@@ -30,7 +30,7 @@ const config: CapacitorConfig = {
     allowsLinkPreview: false,
     useNativeStatusBar: true,
     backgroundColor: "#000000",
-    statusBarHeight: 40, // Adjusted for better iOS display
+    statusBarHeight: 45, // Increased for better iOS display
   },
   android: {
     backgroundColor: "#000000"

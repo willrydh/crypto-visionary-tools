@@ -29,8 +29,24 @@ import MarketDashboard from '@/pages/MarketDashboard';
 const RootLayout: React.FC = () => {
   const location = useLocation();
 
-  // Scroll to top when location changes
+  // Check if on iOS device
+  const isIOS = () => {
+    if (typeof window !== 'undefined') {
+      return /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+             (navigator.userAgent.includes("Mac") && "ontouchend" in document);
+    }
+    return false;
+  };
+
   useEffect(() => {
+    // Add iOS class if detected
+    if (isIOS()) {
+      document.documentElement.classList.add('ios-device');
+    } else {
+      document.documentElement.classList.remove('ios-device');
+    }
+    
+    // Scroll to top when location changes
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
@@ -55,7 +71,7 @@ const RootLayout: React.FC = () => {
           <main className={!isPublicPage ? 
                           `flex-1 overflow-auto pb-16 md:pb-0 pt-safe ${hasTabsBar ? 'content-padding-top-with-tabs' : 'content-padding-top'}` : 
                           "flex-1 overflow-auto"}>
-            <div className={!isPublicPage ? "max-w-7xl mx-auto px-3 sm:px-4 md:px-5 pt-2" : ""}>
+            <div className={!isPublicPage ? "max-w-7xl mx-auto px-4 sm:px-5 md:px-6 pt-4" : ""}>
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/dashboard" element={<Dashboard />} />

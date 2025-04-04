@@ -52,7 +52,7 @@ export const TradingModeSelector = ({ displayLabel = true, compact = false }) =>
   // Compact mode for header
   if (compact) {
     return (
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-2">
         {modeButtons.map((mode) => {
           const isActive = tradingMode === mode.id;
           
@@ -61,7 +61,7 @@ export const TradingModeSelector = ({ displayLabel = true, compact = false }) =>
               key={mode.id}
               onClick={() => handleModeChange(mode.id)}
               className={cn(
-                "flex items-center gap-1.5 px-2.5 py-1 rounded-md transition-all shadow-sm",
+                "flex items-center gap-2 px-3 py-2 rounded-md transition-all shadow-sm",
                 isActive 
                   ? getModeBgClass(mode.id, true) + " text-white" 
                   : getModeBgClass(mode.id, false)
@@ -84,7 +84,7 @@ export const TradingModeSelector = ({ displayLabel = true, compact = false }) =>
   return (
     <div className="relative w-full">
       {displayLabel && (
-        <div className="flex items-center gap-1.5 mb-2">
+        <div className="flex items-center gap-1.5 mb-3">
           <span className="text-sm font-medium flex items-center gap-1.5 text-gray-300">
             Select Trading Mode
             <TooltipProvider>
@@ -101,7 +101,7 @@ export const TradingModeSelector = ({ displayLabel = true, compact = false }) =>
         </div>
       )}
       
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-3 gap-3">
         {modeButtons.map((mode) => {
           const isActive = tradingMode === mode.id;
           
@@ -113,7 +113,7 @@ export const TradingModeSelector = ({ displayLabel = true, compact = false }) =>
                     onClick={() => handleModeChange(mode.id)}
                     className={cn(
                       "relative flex flex-col items-center justify-center rounded-lg transition-all duration-300",
-                      "py-2 px-1 border shadow-md",
+                      "py-3 px-2 border shadow-md",
                       isActive 
                         ? `${getModeGradientClass(mode.id)} border-white/10 shadow-lg` 
                         : `${getModeBgClass(mode.id, false)} ${getModeBorderClass(mode.id)} hover:bg-card/50`
@@ -124,7 +124,7 @@ export const TradingModeSelector = ({ displayLabel = true, compact = false }) =>
                     )}
                     
                     <div className={cn(
-                      "flex items-center justify-center rounded-full p-1.5 mb-1",
+                      "flex items-center justify-center rounded-full p-1.5 mb-2",
                       isActive ? "" : getModeIconBgClass(mode.id)
                     )}>
                       <span className={isActive ? "text-white" : ""}>

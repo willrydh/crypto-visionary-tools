@@ -78,9 +78,20 @@ const TradeSuggestion = () => {
     }
   };
   
+  // Check if we're on an iOS device
+  const isIOS = () => {
+    if (typeof window !== 'undefined') {
+      return /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+             (navigator.userAgent.includes("Mac") && "ontouchend" in document);
+    }
+    return false;
+  };
+  
+  const iOSClass = isIOS() ? "mt-8" : "mt-2";
+  
   return (
     <PullToRefresh onRefresh={handleRefresh}>
-      <div className={cn("space-y-4 mt-0", getModeAlertClass(tradingMode))}>
+      <div className={cn(`space-y-5 ${iOSClass}`, getModeAlertClass(tradingMode))}>
         <TradePageHeader 
           isLoading={isLoading} 
           onRefresh={handleRefresh} 
@@ -94,12 +105,12 @@ const TradeSuggestion = () => {
           description={selectedCrypto.description}
         />
         
-        <div className="space-y-4">
+        <div className="space-y-5">
           <div className="w-full overflow-hidden rounded-lg border border-border">
             <PriceChart symbol={selectedCrypto.pairSymbol} />
           </div>
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             <EnhancedTechnicalAnalysis 
               currentBias={currentBias}
               indicators={indicators}

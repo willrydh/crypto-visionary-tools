@@ -80,8 +80,8 @@ const TopHeader = () => {
   
   return (
     <header className="fixed top-0 left-0 right-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/40 ios-dynamic-island-area">
-      {/* Main header with logo and actions - reduced height */}
-      <div className="max-w-7xl mx-auto h-10 flex items-center justify-between px-3 sm:px-4 md:px-5 md:ml-64">
+      {/* Main header with logo and actions - with better spacing */}
+      <div className="max-w-7xl mx-auto h-12 flex items-center justify-between px-4 sm:px-5 md:px-6 md:ml-64">
         <div className="flex items-center md:hidden">
           <Link to="/" className="flex items-center gap-2">
             <img src={Logo} alt="ProfitPilot" className="h-5 w-5" />
@@ -91,7 +91,7 @@ const TopHeader = () => {
           </Link>
         </div>
         
-        <div className="flex items-center gap-1 sm:gap-2">
+        <div className="flex items-center gap-2 sm:gap-3">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -99,9 +99,9 @@ const TopHeader = () => {
                   variant="ghost" 
                   size="icon"
                   onClick={() => navigate('/notifications')}
-                  className="h-6 w-6"
+                  className="h-8 w-8"
                 >
-                  <Bell className="h-3.5 w-3.5" />
+                  <Bell className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -113,9 +113,9 @@ const TopHeader = () => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" asChild className="h-6 w-6">
+                <Button variant="ghost" size="icon" asChild className="h-8 w-8">
                   <Link to="/settings">
-                    <Settings className="h-3.5 w-3.5" />
+                    <Settings className="h-4 w-4" />
                   </Link>
                 </Button>
               </TooltipTrigger>
@@ -128,20 +128,20 @@ const TopHeader = () => {
           <Button 
             variant="outline" 
             size="sm" 
-            className="gap-1 text-xs h-6"
+            className="gap-1.5 text-xs h-8"
             onClick={handleLogout}
           >
-            <LogOut className="h-3 w-3" />
+            <LogOut className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Logout</span>
           </Button>
         </div>
       </div>
       
-      {/* Trading mode selector - show on specific pages - more compact */}
+      {/* Trading mode selector - show on specific pages - with improved spacing */}
       {showTradingBar && (
-        <div className={cn("border-b border-border/40", getModeHeaderBgClass(tradingMode))}>
-          <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-5 md:ml-64">
-            <div className="flex items-center justify-between py-0">
+        <div className={cn("border-b border-border/40 trading-selector-container", getModeHeaderBgClass(tradingMode))}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-5 md:px-6 md:ml-64">
+            <div className="flex items-center justify-between py-2">
               <div className="flex-grow">
                 <TradingModeSelector compact={true} displayLabel={!isMobile} />
               </div>
@@ -162,11 +162,11 @@ const TopHeader = () => {
                       <Button 
                         variant="ghost" 
                         size="icon" 
-                        className="h-6 w-6" 
+                        className="h-8 w-8 ml-2" 
                         onClick={handleRefresh}
                         disabled={isLoading}
                       >
-                        <RefreshCw className={cn("h-3 w-3", isLoading && "animate-spin")} />
+                        <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
