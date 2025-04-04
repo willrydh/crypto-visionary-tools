@@ -51,7 +51,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         </Sidebar>
         <div className="flex-1 flex flex-col w-full md:ml-64 overflow-x-hidden">
           <TopHeader />
-          <main className="flex-1 overflow-auto pt-safe has-dynamic-island pb-safe z-10 overflow-x-hidden mt-10"> {/* Increased to mt-10 for more spacing */}
+          <main className="flex-1 overflow-auto pt-safe has-dynamic-island pb-safe z-10 overflow-x-hidden mt-12"> {/* Increased to mt-12 for more spacing */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-6 pb-20 md:pb-6">
               {children}
             </div>

@@ -39,14 +39,15 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useToast } from "@/hooks/use-toast";
+import { saveToStorage, getFromStorage } from "@/utils/storageUtils";
 
 const SettingsPage = () => {
   const { toast } = useToast();
-  const [budget, setBudget] = useState("1000");
-  const [leverage, setLeverage] = useState(5);
-  const [profitTarget, setProfitTarget] = useState(20);
-  const [timezone, setTimezone] = useState("UTC+1");
-  const [notifications, setNotifications] = useState(true);
+  const [budget, setBudget] = useState(getFromStorage<string>("tradingBudget", "1000"));
+  const [leverage, setLeverage] = useState(getFromStorage<number>("tradingLeverage", 5));
+  const [profitTarget, setProfitTarget] = useState(getFromStorage<number>("profitTarget", 20));
+  const [timezone, setTimezone] = useState(getFromStorage<string>("timezone", "UTC+1"));
+  const [notifications, setNotifications] = useState(getFromStorage<boolean>("notifications", true));
   const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("settings");
 
@@ -155,6 +156,13 @@ const SettingsPage = () => {
   const handleSaveSettings = () => {
     setIsSaving(true);
     
+    // Save to localStorage
+    saveToStorage("tradingBudget", budget);
+    saveToStorage("tradingLeverage", leverage);
+    saveToStorage("profitTarget", profitTarget);
+    saveToStorage("timezone", timezone);
+    saveToStorage("notifications", notifications);
+    
     // Simulate API call
     setTimeout(() => {
       toast({
@@ -172,6 +180,13 @@ const SettingsPage = () => {
     setTimezone("UTC+1");
     setNotifications(true);
     
+    // Clear stored settings
+    saveToStorage("tradingBudget", "1000");
+    saveToStorage("tradingLeverage", 5);
+    saveToStorage("profitTarget", 20);
+    saveToStorage("timezone", "UTC+1");
+    saveToStorage("notifications", true);
+    
     toast({
       title: "Settings reset",
       description: "All settings have been reset to default values.",
@@ -179,7 +194,7 @@ const SettingsPage = () => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 mt-4 mb-20">
       <div>
         <h1 className="text-2xl font-bold">Settings</h1>
         <p className="text-muted-foreground">
@@ -188,12 +203,12 @@ const SettingsPage = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList>
-          <TabsTrigger value="settings">
+        <TabsList className="w-full">
+          <TabsTrigger value="settings" className="flex-1">
             <SettingsIcon className="h-4 w-4 mr-2" />
             Settings
           </TabsTrigger>
-          <TabsTrigger value="faq">
+          <TabsTrigger value="faq" className="flex-1">
             <HelpCircle className="h-4 w-4 mr-2" />
             FAQ
           </TabsTrigger>
@@ -208,98 +223,94 @@ const SettingsPage = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-3">
-                  <div className="space-y-2">
-                    <Label htmlFor="budget" className="flex items-center gap-2">
-                      <DollarSign className="h-4 w-4" />
-                      Trading Budget (USD)
-                    </Label>
-                    <Input
-                      id="budget"
-                      type="number"
-                      value={budget}
-                      onChange={(e) => setBudget(e.target.value)}
-                      placeholder="1000"
-                      min="0"
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Amount you're willing to invest in trades
-                    </p>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="leverage" className="flex items-center gap-2">
-                      <Repeat className="h-4 w-4" />
-                      Default Leverage: {leverage}x
-                    </Label>
-                    <Slider 
-                      id="leverage"
-                      min={1} 
-                      max={50} 
-                      step={1} 
-                      value={[leverage]} 
-                      onValueChange={(values) => setLeverage(values[0])}
-                    />
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>1x</span>
-                      <span>25x</span>
-                      <span>50x</span>
-                    </div>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="budget" className="flex items-center gap-2">
+                    <DollarSign className="h-4 w-4" />
+                    Trading Budget (USD)
+                  </Label>
+                  <Input
+                    id="budget"
+                    type="number"
+                    value={budget}
+                    onChange={(e) => setBudget(e.target.value)}
+                    placeholder="1000"
+                    min="0"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Amount you're willing to invest in trades
+                  </p>
+                </div>
+                
+                <div className="space-y-2 mt-4">
+                  <Label htmlFor="leverage" className="flex items-center gap-2">
+                    <Repeat className="h-4 w-4" />
+                    Default Leverage: {leverage}x
+                  </Label>
+                  <Slider 
+                    id="leverage"
+                    min={1} 
+                    max={50} 
+                    step={1} 
+                    value={[leverage]} 
+                    onValueChange={(values) => setLeverage(values[0])}
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>1x</span>
+                    <span>25x</span>
+                    <span>50x</span>
                   </div>
                 </div>
                 
-                <div className="space-y-3">
-                  <div className="space-y-2">
-                    <Label htmlFor="profit-target" className="flex items-center gap-2">
-                      <Percent className="h-4 w-4" />
-                      Profit Target: {profitTarget}%
-                    </Label>
-                    <Slider 
-                      id="profit-target"
-                      min={5} 
-                      max={100} 
-                      step={5} 
-                      value={[profitTarget]} 
-                      onValueChange={(values) => setProfitTarget(values[0])}
-                    />
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>5%</span>
-                      <span>50%</span>
-                      <span>100%</span>
-                    </div>
+                <div className="space-y-2 mt-4">
+                  <Label htmlFor="profit-target" className="flex items-center gap-2">
+                    <Percent className="h-4 w-4" />
+                    Profit Target: {profitTarget}%
+                  </Label>
+                  <Slider 
+                    id="profit-target"
+                    min={5} 
+                    max={100} 
+                    step={5} 
+                    value={[profitTarget]} 
+                    onValueChange={(values) => setProfitTarget(values[0])}
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>5%</span>
+                    <span>50%</span>
+                    <span>100%</span>
                   </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="timezone" className="flex items-center gap-2">
-                      <Globe className="h-4 w-4" />
-                      Timezone
-                    </Label>
-                    <Select value={timezone} onValueChange={setTimezone}>
-                      <SelectTrigger id="timezone">
-                        <SelectValue placeholder="Select timezone" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="UTC-12">UTC-12</SelectItem>
-                        <SelectItem value="UTC-8">UTC-8 (PST)</SelectItem>
-                        <SelectItem value="UTC-5">UTC-5 (EST)</SelectItem>
-                        <SelectItem value="UTC+0">UTC+0 (GMT)</SelectItem>
-                        <SelectItem value="UTC+1">UTC+1 (CET)</SelectItem>
-                        <SelectItem value="UTC+2">UTC+2 (EET)</SelectItem>
-                        <SelectItem value="UTC+5:30">UTC+5:30 (IST)</SelectItem>
-                        <SelectItem value="UTC+8">UTC+8 (CST)</SelectItem>
-                        <SelectItem value="UTC+9">UTC+9 (JST)</SelectItem>
-                        <SelectItem value="UTC+12">UTC+12</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <p className="text-xs text-muted-foreground">
-                      Timezone for market sessions and alerts
-                    </p>
-                  </div>
+                </div>
+                
+                <div className="space-y-2 mt-4">
+                  <Label htmlFor="timezone" className="flex items-center gap-2">
+                    <Globe className="h-4 w-4" />
+                    Timezone
+                  </Label>
+                  <Select value={timezone} onValueChange={setTimezone}>
+                    <SelectTrigger id="timezone">
+                      <SelectValue placeholder="Select timezone" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="UTC-12">UTC-12</SelectItem>
+                      <SelectItem value="UTC-8">UTC-8 (PST)</SelectItem>
+                      <SelectItem value="UTC-5">UTC-5 (EST)</SelectItem>
+                      <SelectItem value="UTC+0">UTC+0 (GMT)</SelectItem>
+                      <SelectItem value="UTC+1">UTC+1 (CET)</SelectItem>
+                      <SelectItem value="UTC+2">UTC+2 (EET)</SelectItem>
+                      <SelectItem value="UTC+5:30">UTC+5:30 (IST)</SelectItem>
+                      <SelectItem value="UTC+8">UTC+8 (CST)</SelectItem>
+                      <SelectItem value="UTC+9">UTC+9 (JST)</SelectItem>
+                      <SelectItem value="UTC+12">UTC+12</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">
+                    Timezone for market sessions and alerts
+                  </p>
                 </div>
               </div>
               
-              <Separator />
+              <Separator className="my-4" />
               
               <div className="space-y-3">
                 <h3 className="font-medium flex items-center gap-2">
