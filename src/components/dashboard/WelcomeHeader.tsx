@@ -77,7 +77,7 @@ const WelcomeHeader = () => {
       <div className="relative z-10">
         <div className="flex flex-col mb-4 sm:mb-6">
           <h2 className="text-xl sm:text-2xl font-bold text-foreground flex items-center mb-1">
-            <span className="whitespace-nowrap mr-2">Welcome back, {randomName}</span>
+            <span className="whitespace-nowrap mr-2">Welcome, {randomName}</span>
             <Badge 
               variant="outline" 
               className={cn(
