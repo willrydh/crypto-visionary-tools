@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -198,7 +199,7 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
           <div className="flex items-center justify-center">
             <div className={`px-4 py-2 rounded-md flex items-center justify-center w-full ${suggestion.color}`}>
               {suggestion.icon}
-              <span className="font-medium">{suggestion.text}</span>
+              <span className="font-medium text-xs whitespace-nowrap">{suggestion.text}</span>
             </div>
           </div>
         </div>
