@@ -34,7 +34,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           collapsible="icon" 
           className="border-r border-border fixed z-50 h-full md:relative pt-safe"
         >
-          <SidebarHeader className="p-4 mt-4"> {/* Added mt-4 for more top spacing */}
+          <SidebarHeader className="p-4 mt-6"> {/* Increased mt-6 for more top spacing */}
             <Link to="/" className="flex items-center space-x-2">
               <img src={Logo} alt="ProfitPilot" className="h-8 w-8" />
               <span className="font-bold text-lg">ProfitPilot</span>
@@ -51,7 +51,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         </Sidebar>
         <div className="flex-1 flex flex-col w-full md:ml-64 overflow-x-hidden">
           <TopHeader />
-          <main className="flex-1 overflow-auto pt-safe has-dynamic-island pt-safe pb-safe z-10 overflow-x-hidden mt-2"> {/* Added mt-2 */}
+          <main className="flex-1 overflow-auto pt-safe has-dynamic-island pb-safe z-10 overflow-x-hidden mt-4"> {/* Increased mt-4 */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-6 pb-20 md:pb-6">
               {children}
             </div>

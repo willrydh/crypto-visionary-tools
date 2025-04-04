@@ -81,7 +81,7 @@ const TopHeader = () => {
   return (
     <header className="fixed top-0 left-0 right-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/40 pt-safe">
       {/* Dynamic Island spacer - increased height */}
-      <div className="h-4 ios-dynamic-island-area"></div>
+      <div className="h-6 ios-dynamic-island-area"></div>
       
       {/* Main header with logo and actions */}
       <div className="max-w-7xl mx-auto h-16 sm:h-18 flex items-center justify-between px-4 sm:px-6 md:px-6 md:ml-64">
@@ -144,7 +144,7 @@ const TopHeader = () => {
       {showTradingBar && (
         <div className={cn("border-b border-border/40", getModeHeaderBgClass(tradingMode))}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-6 md:ml-64">
-            <div className="flex items-center justify-between py-2">
+            <div className="flex items-center justify-between py-2.5">
               <div className="flex-grow ml-1">
                 <TradingModeSelector compact={true} displayLabel={!isMobile} />
               </div>

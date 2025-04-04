@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -77,23 +78,23 @@
 
 /* Dynamic Island Support - Updated with more space */
 .ios-dynamic-island-area {
-  padding-top: 12px; /* Increased base padding for all devices */
+  padding-top: 16px; /* Increased base padding for all devices */
 }
 
 @supports (padding: max(0px)) {
   .ios-dynamic-island-area {
-    padding-top: max(12px, env(safe-area-inset-top)); /* Use the larger value - increased base */
+    padding-top: max(16px, env(safe-area-inset-top)); /* Use the larger value - increased base */
   }
 }
 
 /* Additional padding for content when Dynamic Island is present - Increased */
 .has-dynamic-island {
-  padding-top: 48px; /* Increased padding for header + content spacing */
+  padding-top: 58px; /* Increased padding for header + content spacing */
 }
 
 @supports (padding: max(0px)) {
   .has-dynamic-island {
-    padding-top: max(48px, calc(env(safe-area-inset-top) + 24px)); /* Increased spacing */
+    padding-top: max(58px, calc(env(safe-area-inset-top) + 32px)); /* Increased spacing */
   }
 }
 

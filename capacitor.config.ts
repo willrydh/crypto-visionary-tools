@@ -14,7 +14,20 @@ const config: CapacitorConfig = {
       launchShowDuration: 2000,
       backgroundColor: "#000000",
       showSpinner: false,
+    },
+    StatusBar: {
+      style: 'dark',
+      backgroundColor: '#000000',
+      overlaysWebView: false,
     }
+  },
+  ios: {
+    contentInset: 'always',
+    preferredContentMode: 'mobile',
+    handleApplicationNotifications: true,
+  },
+  android: {
+    backgroundColor: "#000000"
   }
 };
 
