@@ -11,6 +11,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { usePrice } from '@/hooks/usePrice';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface PriceRangeIndicatorProps {
   title?: string;
@@ -24,6 +25,7 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
   type
 }) => {
   const { loadPriceData, priceData } = usePrice();
+  const isMobile = useIsMobile();
   
   useEffect(() => {
     // Load price data if not already loaded
@@ -144,17 +146,33 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
     const overboughtCount = overallZones.filter(zone => zone === "Overbought").length;
     const oversoldCount = overallZones.filter(zone => zone === "Oversold").length;
     
-    if (overboughtCount >= 2) return "bg-[#0a2e32]"; // Stronger bluish-green for bullish
-    if (oversoldCount >= 2) return "bg-[#2a1937]";   // Stronger reddish-purple for bearish
-    return "bg-[#111a33]";  // Stronger dark blue for neutral
+    // Increase color intensity for mobile to improve visibility
+    const mobileIntensity = isMobile ? '!important' : '';
+    
+    if (overboughtCount >= 2) {
+      return isMobile 
+        ? "bg-[#0a3e42] animate-pulse-moderate" 
+        : "bg-[#0a2e32]";
+    }
+    if (oversoldCount >= 2) {
+      return isMobile 
+        ? "bg-[#3a1947] animate-pulse-moderate" 
+        : "bg-[#2a1937]";
+    }
+    return isMobile 
+      ? "bg-[#152043] animate-pulse-moderate" 
+      : "bg-[#111a33]";
   };
   
   // Calculate the color class for card background
   const backgroundColorClass = getBackgroundColorClass();
   
   return (
-    <Card className={`${backgroundColorClass} border-border/30 text-white`}>
-      <CardHeader className="pb-2">
+    <Card className={`${backgroundColorClass} border-border/30 text-white z-10 relative overflow-hidden`}>
+      {/* Remove any potential overlay that could hide color animations */}
+      <div className="absolute inset-0 pointer-events-none z-0" />
+      
+      <CardHeader className="pb-2 relative z-10">
         <CardTitle className="flex items-center text-lg text-white">
           {title}
           <TooltipProvider>
@@ -169,7 +187,7 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
           </TooltipProvider>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 relative z-10">
         {/* Current Price with Change */}
         <div className="text-center">
           <span className="text-3xl font-bold">${currentData.price.toLocaleString('en-US', { maximumFractionDigits: 0 })}</span>
@@ -190,9 +208,9 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
               <span>${Math.floor(currentData.hourlyHigh).toLocaleString()}</span>
             </div>
             
-            <div className="h-2 bg-gray-700 rounded-full">
+            <div className="h-2 w-full bg-gray-700 rounded-full overflow-hidden">
               <div 
-                className="absolute w-4 h-4 bg-blue-500 rounded-full -mt-1 transform -translate-x-1/2 transition-all"
+                className="absolute w-4 h-4 bg-blue-500 rounded-full -mt-1 transform -translate-x-1/2 transition-all duration-500"
                 style={{ left: `${hourlyPercentage}%` }}
               />
             </div>
@@ -214,9 +232,9 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
               <span>${Math.floor(currentData.dailyHigh).toLocaleString()}</span>
             </div>
             
-            <div className="h-2 bg-gray-700 rounded-full">
+            <div className="h-2 w-full bg-gray-700 rounded-full overflow-hidden">
               <div 
-                className="absolute w-4 h-4 bg-blue-500 rounded-full -mt-1 transform -translate-x-1/2 transition-all"
+                className="absolute w-4 h-4 bg-blue-500 rounded-full -mt-1 transform -translate-x-1/2 transition-all duration-500"
                 style={{ left: `${dailyPercentage}%` }}
               />
             </div>
@@ -238,9 +256,9 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
               <span>${Math.floor(currentData.weeklyHigh).toLocaleString()}</span>
             </div>
             
-            <div className="h-2 bg-gray-700 rounded-full">
+            <div className="h-2 w-full bg-gray-700 rounded-full overflow-hidden">
               <div 
-                className="absolute w-4 h-4 bg-blue-500 rounded-full -mt-1 transform -translate-x-1/2 transition-all"
+                className="absolute w-4 h-4 bg-blue-500 rounded-full -mt-1 transform -translate-x-1/2 transition-all duration-500"
                 style={{ left: `${weeklyPercentage}%` }}
               />
             </div>

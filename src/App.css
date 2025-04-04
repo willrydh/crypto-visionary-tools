@@ -36,6 +36,16 @@
   animation: pulse-subtle 10s cubic-bezier(0.4,0,0.6,1) infinite;
 }
 
+/* Add a more noticeable pulse animation for mobile */
+@keyframes pulse-moderate {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+.animate-pulse-moderate {
+  animation: pulse-moderate 4s cubic-bezier(0.4,0,0.6,1) infinite;
+}
+
 /* Northern lights animation effects - more refined and gentle overlay */
 @keyframes northern-lights {
   0% {
@@ -285,5 +295,22 @@ html, body, #root {
   .mobile-optimized {
     transition: none !important;
     animation-duration: 0s !important;
+  }
+  
+  /* Enhance color visibility for mobile */
+  .bg-\[\#0a3e42\], .bg-\[\#3a1947\], .bg-\[\#152043\] {
+    background-color: var(--bg-color, inherit) !important;
+  }
+  
+  .bg-\[\#0a3e42\] {
+    --bg-color: #0a3e42;
+  }
+  
+  .bg-\[\#3a1947\] {
+    --bg-color: #3a1947;
+  }
+  
+  .bg-\[\#152043\] {
+    --bg-color: #152043;
   }
 }
