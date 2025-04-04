@@ -1,16 +1,16 @@
 
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import { useSidebarContext } from '../ui/sidebar';
+import { SidebarProvider } from '../ui/sidebar';
 import { Button } from '../ui/button';
 import { Menu } from 'lucide-react';
+import { TradingModeSelector } from '../trading/TradingModeSelector';
 import CryptoSelector from '../crypto/CryptoSelector';
-import TradingModeSelector from '../trading/TradingModeSelector';
 import { useCrypto } from '@/hooks/useCrypto';
 import { Badge } from '../ui/badge';
 
 const TopHeader: React.FC = () => {
-  const { isCollapsed, setIsCollapsed } = useSidebarContext();
+  const [isCollapsed, setIsCollapsed] = React.useState(false);
   const location = useLocation();
   const { selectedCrypto } = useCrypto();
 
@@ -35,7 +35,7 @@ const TopHeader: React.FC = () => {
                 <CryptoSelector />
                 {selectedCrypto && (
                   <Badge variant="outline" className="ml-2">
-                    {selectedCrypto}
+                    {selectedCrypto.symbol}
                   </Badge>
                 )}
               </div>
