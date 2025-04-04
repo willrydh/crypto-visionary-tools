@@ -64,7 +64,7 @@ const TimedOffer: React.FC<TimedOfferProps> = ({
   };
 
   const handleUseClick = () => {
-    navigate('/easter-egg-discount');
+    navigate('/easter-egg');
   };
 
   const percentComplete = ((seconds - timeLeft) / seconds) * 100;
@@ -90,7 +90,7 @@ const TimedOffer: React.FC<TimedOfferProps> = ({
               <Button 
                 className="text-white" 
                 variant="outline"
-                onClick={() => navigate('/easter-egg-discount')}
+                onClick={() => navigate('/easter-egg')}
               >
                 Find Secret Discount
               </Button>
