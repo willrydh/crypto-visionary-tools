@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import PriceChart from '@/components/charts/PriceChart';
 import { IndicatorBreakdown } from '@/components/analysis/IndicatorBreakdown';
@@ -47,14 +46,12 @@ const SignalsView = () => {
   const isLoading = priceIsLoading || analysisIsLoading;
 
   useEffect(() => {
-    // Force immediate analysis on component mount
     if (indicators.length === 0) {
       generateAnalysis(selectedCrypto.pairSymbol, true);
     }
     
     fetchLevels(selectedCrypto.pairSymbol);
     
-    // Load price data if not already loaded
     const formattedSymbol = selectedCrypto.pairSymbol.replace('/', '');
     if (!priceData[formattedSymbol]) {
       loadPriceData(selectedCrypto.pairSymbol);
@@ -62,7 +59,6 @@ const SignalsView = () => {
   }, [selectedCrypto]);
 
   useEffect(() => {
-    // Make sure to force regenerate the analysis when trading mode changes
     generateAnalysis(selectedCrypto.pairSymbol, true);
     fetchLevels(selectedCrypto.pairSymbol);
     loadPriceData(selectedCrypto.pairSymbol);
@@ -88,12 +84,10 @@ const SignalsView = () => {
     }
   };
 
-  // Get static data
   const timeframes = getTimeframes();
   const modeIndicators = getIndicators();
   const volatilityEvents = getVolatilityEvents();
 
-  // Get styles
   const getModeColor = () => {
     switch(tradingMode) {
       case 'scalp': return 'text-blue-500';
@@ -103,14 +97,12 @@ const SignalsView = () => {
     }
   };
 
-  // Get price data for the selected crypto
   const formattedSymbol = selectedCrypto.pairSymbol.replace('/', '');
   const cryptoPriceData = priceData[formattedSymbol];
   
   const currentPrice = cryptoPriceData?.price || 0;
   const change24h = cryptoPriceData?.change24h || 0;
   
-  // Use a dedicated loading state component
   if (isLoading) {
     return (
       <div className="space-y-4 animate-fade-in mt-2">
@@ -127,7 +119,6 @@ const SignalsView = () => {
 
   return (
     <div className="space-y-6 animate-fade-in mt-2">
-      {/* Improved page header with better alignment */}
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold">Signals</h1>
@@ -148,7 +139,6 @@ const SignalsView = () => {
         </Button>
       </div>
 
-      {/* Crypto selector - optimized layout */}
       <div className="flex flex-col gap-3">
         <div className="w-full">
           <div className="bg-card/60 p-4 rounded-lg border border-border w-full">

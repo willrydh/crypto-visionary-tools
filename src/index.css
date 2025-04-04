@@ -82,7 +82,7 @@
 }
 
 .content-padding {
-  @apply px-4 sm:px-6 md:px-8;
+  @apply px-6;
 }
 
 .content-spacing {
@@ -159,4 +159,3 @@
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-muted-foreground/30;
 }
-

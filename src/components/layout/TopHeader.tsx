@@ -81,7 +81,7 @@ const TopHeader = () => {
   return (
     <header className="fixed top-0 left-0 right-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/40 pt-safe">
       {/* Main header with logo and actions */}
-      <div className="h-14 sm:h-16 flex items-center px-3 sm:px-6 md:pl-6 md:ml-64 pl-safe pr-safe">
+      <div className="h-14 sm:h-16 flex items-center px-6 md:pl-6 md:ml-64 pl-safe pr-safe">
         <div className="flex items-center gap-2 md:hidden">
           <Link to="/" className="flex items-center gap-2">
             <img src={Logo} alt="ProfitPilot" className="h-7 w-7 sm:h-8 sm:w-8" />
@@ -139,7 +139,7 @@ const TopHeader = () => {
       
       {/* Trading mode selector - show on specific pages */}
       {showTradingBar && (
-        <div className={cn("px-3 sm:px-6 md:pl-6 md:ml-64 pl-safe pr-safe", getModeHeaderBgClass(tradingMode), "border-b border-border/40")}>
+        <div className={cn("px-6 md:pl-6 md:ml-64 pl-safe pr-safe", getModeHeaderBgClass(tradingMode), "border-b border-border/40")}>
           <div className="flex items-center justify-between py-2">
             <div className="flex-grow">
               <TradingModeSelector compact={true} displayLabel={!isMobile} />
