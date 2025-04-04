@@ -230,3 +230,4 @@ export const getCryptoMarketStatus = () => {
     nextMajorEvent: null
   };
 };
+

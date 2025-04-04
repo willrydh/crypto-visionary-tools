@@ -1,3 +1,4 @@
+
 import { MarketSession } from '@/contexts/MarketsContext';
 import { getMarketTimeRemaining, getPreciseMarketTime } from '@/utils/dateUtils';
 
@@ -41,7 +42,7 @@ const EXCHANGE_STATIC_DATA = {
   toronto: { name: 'TSX (Toronto)', localTime: '15:30–22:00', gmtTime: '13:30–20:00', marketCap: '$2.62T' },
   
   london: { name: 'LSE (London)', localTime: '09:00–17:30', gmtTime: '08:00–16:30', marketCap: '$3.83T' },
-  frankfurt: { name: 'FSX (Frankfurt)', localTime: '09:00–17:30', gmtTime: '07:00–15:30', marketCap: '$2.11T' },
+  frankfurt: { name: 'FSX (Frankfurt)', localTime: '09:00–17:30', gmtTime: '08:00–16:30', marketCap: '$2.11T' }, // Corrected to match London's GMT time
   paris: { name: 'Euronext Paris', localTime: '09:00–17:30', gmtTime: '07:00–15:30', marketCap: '$3.7T' },
   amsterdam: { name: 'Euronext Amsterdam', localTime: '09:00–17:30', gmtTime: '07:00–15:30', marketCap: '$1.5T' },
   brussels: { name: 'Euronext Brussels', localTime: '09:00–17:30', gmtTime: '07:00–15:30', marketCap: '$0.4T' },

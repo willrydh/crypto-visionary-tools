@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -179,6 +178,21 @@ const MarketSessionStats = ({
       
       // Log for debugging
       console.log('Market Sessions data for stats:', { nyse, london, tokyo, frankfurt, nasdaq });
+      
+      // Sync Frankfurt and London countdown if they both exist since they open at the same time
+      if (frankfurt && london) {
+        // Ensure London and Frankfurt have the same countdown for consistent display
+        if (frankfurt.status !== 'open' && london.status !== 'open' && 
+            frankfurt.nextEvent.type === 'open' && london.nextEvent.type === 'open') {
+          const earliestTime = new Date(Math.min(
+            frankfurt.nextEvent.time.getTime(),
+            london.nextEvent.time.getTime()
+          ));
+          
+          london.nextEvent.time = earliestTime;
+          frankfurt.nextEvent.time = earliestTime;
+        }
+      }
       
       if (nyse && london && tokyo) {
         setMarketSessionData(prevSessions => 

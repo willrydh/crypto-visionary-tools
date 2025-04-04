@@ -83,8 +83,75 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
     }
   };
 
+  // Match Frankfurt and London countdown if they're both waiting to open
+  const syncEuropeanMarketCountdowns = (markets: MarketSession[]): MarketSession[] => {
+    try {
+      const frankfurt = markets.find(m => m.name.includes("Frankfurt"));
+      const london = markets.find(m => m.name.includes("London"));
+      
+      // If both markets exist and they're both waiting to open
+      if (frankfurt && london && 
+          frankfurt.status !== 'open' && london.status !== 'open' &&
+          frankfurt.nextEvent.type === 'open' && london.nextEvent.type === 'open') {
+        
+        // Use the same nextEvent time for both
+        const earliestOpenTime = new Date(Math.min(
+          frankfurt.nextEvent.time.getTime(),
+          london.nextEvent.time.getTime()
+        ));
+        
+        // Update both markets to have the same opening time
+        return markets.map(market => {
+          if (market.name.includes("Frankfurt") || market.name.includes("London")) {
+            return {
+              ...market,
+              nextEvent: {
+                ...market.nextEvent,
+                time: earliestOpenTime
+              }
+            };
+          }
+          return market;
+        });
+      }
+      
+      // If both markets are open and waiting to close, also sync their closing times
+      if (frankfurt && london && 
+          frankfurt.status === 'open' && london.status === 'open' &&
+          frankfurt.nextEvent.type === 'close' && london.nextEvent.type === 'close') {
+        
+        // Use the same nextEvent time for both
+        const earliestCloseTime = new Date(Math.min(
+          frankfurt.nextEvent.time.getTime(),
+          london.nextEvent.time.getTime()
+        ));
+        
+        // Update both markets to have the same closing time
+        return markets.map(market => {
+          if (market.name.includes("Frankfurt") || market.name.includes("London")) {
+            return {
+              ...market,
+              nextEvent: {
+                ...market.nextEvent,
+                time: earliestCloseTime
+              }
+            };
+          }
+          return market;
+        });
+      }
+    } catch (error) {
+      console.error('Error syncing European market countdowns:', error);
+    }
+    
+    return markets;
+  };
+
+  // Sync European market countdowns to ensure Frankfurt and London show the same times
+  const synchronizedMarketSessions = syncEuropeanMarketCountdowns(marketSessions);
+
   // Debug logging to help diagnose issues
-  console.log('MarketStatus - Market sessions:', marketSessions.map(m => ({
+  console.log('MarketStatus - Market sessions:', synchronizedMarketSessions.map(m => ({
     name: m.name,
     status: m.status,
     nextEvent: m.nextEvent.type,
@@ -111,7 +178,7 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
       </CardHeader>
       <CardContent className={compact ? "p-0" : undefined}>
         <div className={compact ? "divide-y divide-border/30" : "space-y-2"}>
-          {marketSessions.map((market) => (
+          {synchronizedMarketSessions.map((market) => (
             <div key={market.name} className={compact ? "p-3 hover:bg-muted/10 transition-colors" : "space-y-1"}>
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
@@ -148,7 +215,7 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
             </div>
           ))}
           
-          {marketSessions.length === 0 && (
+          {synchronizedMarketSessions.length === 0 && (
             <div className="flex flex-col items-center justify-center py-6 text-center">
               <AlertCircle className="h-10 w-10 text-muted-foreground mb-2" />
               <p className="text-muted-foreground">No market sessions available</p>
