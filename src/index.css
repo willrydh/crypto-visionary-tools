@@ -164,6 +164,11 @@
   }
 }
 
+/* Shadow glow for price indicator dot */
+.shadow-glow {
+  box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.3);
+}
+
 /* Scrollbar Styles */
 ::-webkit-scrollbar {
   width: 8px;
@@ -181,4 +186,3 @@
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-muted-foreground/30;
 }
-

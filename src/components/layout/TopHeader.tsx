@@ -85,7 +85,7 @@ const TopHeader = () => {
       
       {/* Main header with logo and actions */}
       <div className="max-w-7xl mx-auto h-14 sm:h-16 flex items-center justify-between px-4 sm:px-6 md:px-6 md:ml-64">
-        <div className="flex items-center gap-2 md:hidden ml-2">
+        <div className="flex items-center md:hidden ml-1">
           <Link to="/" className="flex items-center gap-2">
             <img src={Logo} alt="ProfitPilot" className="h-7 w-7 sm:h-8 sm:w-8" />
             <div className="font-semibold text-sm sm:text-base">
@@ -94,15 +94,15 @@ const TopHeader = () => {
           </Link>
         </div>
         
-        <div className="flex items-center gap-1 sm:gap-2 mr-2">
+        <div className="flex items-center gap-2 sm:gap-3 mr-1">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button 
                   variant="ghost" 
-                  size={isMobile ? "sm" : "icon"}
+                  size="icon"
                   onClick={() => navigate('/notifications')}
-                  className="h-8 w-8 sm:h-10 sm:w-10"
+                  className="h-8 w-8 sm:h-9 sm:w-9"
                 >
                   <Bell className="h-4 w-4 sm:h-5 sm:w-5" />
                 </Button>
@@ -116,7 +116,7 @@ const TopHeader = () => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size={isMobile ? "sm" : "icon"} asChild className="h-8 w-8 sm:h-10 sm:w-10">
+                <Button variant="ghost" size="icon" asChild className="h-8 w-8 sm:h-9 sm:w-9">
                   <Link to="/settings">
                     <Settings className="h-4 w-4 sm:h-5 sm:w-5" />
                   </Link>
@@ -131,7 +131,7 @@ const TopHeader = () => {
           <Button 
             variant="outline" 
             size="sm" 
-            className="ml-1 sm:ml-2 gap-1 text-xs sm:text-sm h-7 sm:h-9"
+            className="ml-0.5 sm:ml-1 gap-1 text-xs sm:text-sm h-7 sm:h-8"
             onClick={handleLogout}
           >
             <LogOut className="h-3 w-3 sm:h-4 sm:w-4" />
@@ -145,7 +145,7 @@ const TopHeader = () => {
         <div className={cn("border-b border-border/40", getModeHeaderBgClass(tradingMode))}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-6 md:ml-64">
             <div className="flex items-center justify-between py-2">
-              <div className="flex-grow ml-2">
+              <div className="flex-grow ml-1">
                 <TradingModeSelector compact={true} displayLabel={!isMobile} />
               </div>
               
@@ -165,7 +165,7 @@ const TopHeader = () => {
                       <Button 
                         variant="ghost" 
                         size="icon" 
-                        className="ml-1 sm:ml-2 h-7 w-7 sm:h-8 sm:w-8 mr-2" 
+                        className="ml-1 sm:ml-2 h-7 w-7 sm:h-8 sm:w-8 mr-1" 
                         onClick={handleRefresh}
                         disabled={isLoading}
                       >

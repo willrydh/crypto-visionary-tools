@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
@@ -12,7 +11,8 @@ import {
   PieChart,
   TrendingUp,
   Clock,
-  Check
+  Check,
+  Confetti
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -21,8 +21,9 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { motion } from 'framer-motion';
+import { useToast } from '@/hooks/use-toast';
+import confetti from 'canvas-confetti';
 
-// Sample education content with completed status for a few items
 const educationContent = {
   gettingStarted: [
     {
@@ -112,9 +113,9 @@ const educationContent = {
   ]
 };
 
-// New component for the learning module content
 const LearningModuleContent = ({ module }: { module: any }) => {
   const [currentStep, setCurrentStep] = useState(0);
+  const { toast } = useToast();
   const steps = [
     { title: "Introduction", content: "This module covers the essential concepts of " + module.title + ". We'll explore key principles and practical applications." },
     { title: "Key Concepts", content: "The fundamental principles of " + module.title + " include understanding market dynamics, pattern recognition, and risk management." },
@@ -126,6 +127,14 @@ const LearningModuleContent = ({ module }: { module: any }) => {
   const handleNextStep = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
+      
+      if (currentStep === steps.length - 2) {
+        triggerConfetti();
+        toast({
+          title: "Course Completed!",
+          description: `You've completed the ${module.title} module. Great job!`,
+        });
+      }
     }
   };
 
@@ -133,6 +142,23 @@ const LearningModuleContent = ({ module }: { module: any }) => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
     }
+  };
+  
+  const triggerConfetti = () => {
+    const end = Date.now() + 2000;
+    
+    const interval = setInterval(() => {
+      if (Date.now() > end) {
+        return clearInterval(interval);
+      }
+      
+      confetti({
+        particleCount: 50,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#4F46E5', '#10B981', '#F59E0B', '#EF4444'],
+      });
+    }, 250);
   };
 
   return (
@@ -160,16 +186,36 @@ const LearningModuleContent = ({ module }: { module: any }) => {
               <div className="space-y-4">
                 <div className="p-3 rounded-md border bg-card/50">
                   <p className="mb-2">What is the primary benefit of {module.title}?</p>
-                  <div className="flex items-center gap-2 text-green-500">
-                    <Check className="h-4 w-4" />
-                    <span className="text-sm">Improved trading decisions through data analysis</span>
+                  <div className="flex items-center space-y-2">
+                    <div className="flex items-center gap-2 w-full p-2 rounded-md hover:bg-secondary/50 cursor-pointer">
+                      <div className="w-4 h-4 rounded-full border border-primary flex items-center justify-center">
+                        <div className="w-2 h-2 rounded-full bg-primary"></div>
+                      </div>
+                      <span>Improved trading decisions through data analysis</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-y-2">
+                    <div className="flex items-center gap-2 w-full p-2 rounded-md hover:bg-secondary/50 cursor-pointer">
+                      <div className="w-4 h-4 rounded-full border border-muted-foreground"></div>
+                      <span>Guaranteed profits on every trade</span>
+                    </div>
                   </div>
                 </div>
                 <div className="p-3 rounded-md border bg-card/50">
                   <p className="mb-2">How can you apply {module.title} in volatile markets?</p>
-                  <div className="flex items-center gap-2 text-green-500">
-                    <Check className="h-4 w-4" />
-                    <span className="text-sm">By focusing on key support and resistance levels</span>
+                  <div className="flex items-center space-y-2">
+                    <div className="flex items-center gap-2 w-full p-2 rounded-md hover:bg-secondary/50 cursor-pointer">
+                      <div className="w-4 h-4 rounded-full border border-primary flex items-center justify-center">
+                        <div className="w-2 h-2 rounded-full bg-primary"></div>
+                      </div>
+                      <span>By focusing on key support and resistance levels</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-y-2">
+                    <div className="flex items-center gap-2 w-full p-2 rounded-md hover:bg-secondary/50 cursor-pointer">
+                      <div className="w-4 h-4 rounded-full border border-muted-foreground"></div>
+                      <span>By ignoring market conditions entirely</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -235,7 +281,6 @@ const Education = () => {
   const [selectedModule, setSelectedModule] = useState<any>(null);
   const navigate = useNavigate();
 
-  // Calculate overall progress
   const allLessons = [
     ...educationContent.gettingStarted, 
     ...educationContent.tradingStrategies, 

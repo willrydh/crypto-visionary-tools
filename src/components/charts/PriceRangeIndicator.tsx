@@ -139,55 +139,9 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
     }
   };
   
-  // Determine background color class based on overall market position
-  const getBackgroundGradient = () => {
-    // Calculate overall sentiment from all three timeframes
-    const overallZones = [hourlyZone, dailyZone, weeklyZone];
-    const overboughtCount = overallZones.filter(zone => zone === "Overbought").length;
-    const oversoldCount = overallZones.filter(zone => zone === "Oversold").length;
-    
-    // Weighted position value from 0 (extreme oversold) to 100 (extreme overbought)
-    let positionValue = 50; // Start neutral
-    
-    // Weigh the positions: hourly (20%), daily (30%), weekly (50%)
-    positionValue = (
-      (hourlyPercentage * 0.2) + 
-      (dailyPercentage * 0.3) + 
-      (weeklyPercentage * 0.5)
-    );
-    
-    // Create smooth gradient based on the position value
-    if (positionValue >= 80) {
-      // Strong overbought - deeper green
-      return "bg-gradient-to-br from-green-900/80 to-green-800/90";
-    } else if (positionValue >= 65) {
-      // Moderate overbought - medium green
-      return "bg-gradient-to-br from-green-800/70 to-green-700/80";
-    } else if (positionValue >= 55) {
-      // Slight overbought - light green with neutral
-      return "bg-gradient-to-br from-green-700/60 to-slate-800/90";
-    } else if (positionValue <= 20) {
-      // Strong oversold - deeper red
-      return "bg-gradient-to-br from-red-900/80 to-red-800/90";
-    } else if (positionValue <= 35) {
-      // Moderate oversold - medium red
-      return "bg-gradient-to-br from-red-800/70 to-red-700/80";
-    } else if (positionValue <= 45) {
-      // Slight oversold - light red with neutral
-      return "bg-gradient-to-br from-red-700/60 to-slate-800/90";
-    } else {
-      // Neutral zone - slate/dark gray
-      return "bg-gradient-to-br from-slate-800/90 to-slate-900/95";
-    }
-  };
-  
-  // Calculate the color class for card background
-  const backgroundGradient = getBackgroundGradient();
-  
   return (
-    <Card className={`${backgroundGradient} border-border/30 text-white relative overflow-hidden transition-colors duration-1000`}>
+    <Card className="bg-slate-800/90 border-border/30 text-white relative overflow-hidden">
       <div className="absolute inset-0 bg-noise opacity-10"></div>
-      <div className="absolute inset-0 animate-subtle-pulse pointer-events-none"></div>
       
       <CardHeader className="pb-2 relative z-10">
         <CardTitle className="flex items-center text-lg text-white">
