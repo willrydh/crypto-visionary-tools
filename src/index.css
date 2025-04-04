@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -65,7 +64,7 @@
 }
 
 .pb-safe {
-  padding-bottom: env(safe-area-inset-bottom, 20px);
+  padding-bottom: env(safe-area-inset-bottom, 30px);
 }
 
 .pl-safe {
@@ -83,7 +82,7 @@
   --trading-selector-height: 60px; /* Increased for more vertical spacing */
   --header-offset: env(safe-area-inset-top, 30px);
   --content-offset-ios: 24px; /* Additional offset for iOS devices */
-  --mobile-nav-height: 64px; /* Height of mobile navigation */
+  --mobile-nav-height: 80px; /* Increased height of mobile navigation */
 }
 
 /* Dynamic Island Support */

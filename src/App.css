@@ -1,4 +1,3 @@
-
 /* Reset some default styles */
 #root {
   width: 100%;
@@ -40,7 +39,7 @@
 /* WebView specific styles */
 .in-webview main {
   padding-top: env(safe-area-inset-top, 32px);
-  padding-bottom: env(safe-area-inset-bottom, 32px);
+  padding-bottom: env(safe-area-inset-bottom, 40px);
 }
 
 .ios-device main {
@@ -48,6 +47,7 @@
   height: 100%;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  padding-bottom: env(safe-area-inset-bottom, 40px);
 }
 
 .ios-device .app-header {
@@ -333,7 +333,7 @@ html, body, #root {
 
 /* Fix mobile bottom padding for navigation */
 .pb-mobile {
-  padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(6rem + env(safe-area-inset-bottom, 16px));
 }
 
 /* Fix initial render flash issues */

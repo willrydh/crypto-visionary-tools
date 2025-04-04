@@ -25,7 +25,7 @@ const MobileNavigation = () => {
   
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border z-40 pb-safe">
-      <div className="flex justify-around items-center h-16 px-1">
+      <div className="flex justify-around items-center h-20 px-1">
         <Link 
           to="/" 
           className={cn(
