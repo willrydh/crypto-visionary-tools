@@ -59,23 +59,6 @@
   }
 }
 
-/* Safe Area Utilities */
-.pt-safe {
-  padding-top: env(safe-area-inset-top);
-}
-
-.pb-safe {
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-.pl-safe {
-  padding-left: env(safe-area-inset-left);
-}
-
-.pr-safe {
-  padding-right: env(safe-area-inset-right);
-}
-
 /* Custom Spacing Classes */
 .app-header {
   @apply fixed top-0 left-0 right-0 z-30;
@@ -159,3 +142,4 @@
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-muted-foreground/30;
 }
+
