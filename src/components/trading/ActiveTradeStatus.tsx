@@ -15,6 +15,7 @@ interface ActiveTradeStatusProps {
   trade: {
     entryPrice: number;
     size: number;
+    leverage: number;
     type: TradeType;
     symbol: string;
     name: string;
@@ -24,15 +25,15 @@ interface ActiveTradeStatusProps {
   onEnd: () => void;
 }
 
-function getPnl(entry: number, current: number, size: number, type: TradeType) {
+function getPnl(entry: number, current: number, size: number, leverage: number, type: TradeType) {
   const direction = type === "long" ? 1 : -1;
-  const pnlPct = ((current - entry) * direction) / entry * 100;
-  const pnlVal = ((current - entry) * size * direction);
+  const pnlPct = ((current - entry) * direction) / entry * 100 * (leverage || 1);
+  const pnlVal = ((current - entry) * size * direction) * (leverage || 1);
   return { pnlPct, pnlVal };
 }
 
 function getRecommendation(entry: number, current: number, type: TradeType): { rec: Recommendation; reason: string } {
-  const { pnlPct } = getPnl(entry, current, 1, type);
+  const { pnlPct } = getPnl(entry, current, 1, 1, type);
   
   if (pnlPct > 3) return { rec: "ADD", reason: "Positiv trend, hög vinst sedan entry. Daten är realtidsdata." };
   if (pnlPct < -2) return { rec: "REMOVE", reason: "Negativ utveckling, kritisk nivå passerad. Daten är realtidsdata." };
@@ -46,7 +47,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
   const [lastPrice, setLastPrice] = useState(initialPrice);
   const [ticking, setTicking] = useState(false);
   
-  const { pnlPct, pnlVal } = getPnl(trade.entryPrice, lastPrice, trade.size, trade.type);
+  const { pnlPct, pnlVal } = getPnl(trade.entryPrice, lastPrice, trade.size, trade.leverage || 1, trade.type);
   
   const { rec, reason } = getRecommendation(trade.entryPrice, lastPrice, trade.type);
   
@@ -93,8 +94,15 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
     onEnd();
   };
 
+  // Determine the background color based on P&L
+  const bgColorClass = pnlPct > 0 
+    ? "bg-gradient-to-br from-green-950 to-green-900 border-green-800" 
+    : pnlPct < 0 
+      ? "bg-gradient-to-br from-red-950 to-red-900 border-red-800" 
+      : "bg-slate-900 border-slate-800";
+
   return (
-    <div className="relative bg-slate-900 rounded-xl p-6 border border-slate-800 shadow-xl">
+    <div className={cn("relative rounded-xl p-6 border shadow-xl transition-colors duration-500", bgColorClass)}>
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold mb-4 text-white">AI Rekommendation</h2>
         
@@ -117,6 +125,12 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
             <span>{trade.name}</span>
             <span>•</span>
             <span>{trade.pairSymbol}</span>
+            {trade.leverage > 1 && (
+              <>
+                <span>•</span>
+                <span className="font-medium text-orange-400">{trade.leverage}x</span>
+              </>
+            )}
           </div>
           
           <p className="text-sm text-gray-400 mt-1 max-w-xs text-center">{reason}</p>
@@ -134,14 +148,14 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
       </div>
       
       <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="bg-slate-800 p-3 rounded-lg">
+        <div className="bg-slate-800/50 p-3 rounded-lg">
           <div className="text-xs text-muted-foreground">Entry</div>
           <div className="font-bold text-white text-lg">
             {trade.entryPrice.toLocaleString('sv-SE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </div>
         </div>
         
-        <div className="bg-slate-800 p-3 rounded-lg">
+        <div className="bg-slate-800/50 p-3 rounded-lg">
           <div className="text-xs text-muted-foreground">P&amp;L %</div>
           <div className={cn(
             "flex items-center gap-1 font-bold text-lg",
@@ -152,7 +166,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
           </div>
         </div>
         
-        <div className="bg-slate-800 p-3 rounded-lg">
+        <div className="bg-slate-800/50 p-3 rounded-lg">
           <div className="text-xs text-muted-foreground">P&amp;L (val.)</div>
           <div className={cn(
             "font-bold text-lg",
@@ -162,9 +176,14 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
           </div>
         </div>
         
-        <div className="bg-slate-800 p-3 rounded-lg">
-          <div className="text-xs text-muted-foreground">Storlek</div>
-          <div className="font-bold text-white text-lg">{trade.size}</div>
+        <div className="bg-slate-800/50 p-3 rounded-lg">
+          <div className="text-xs text-muted-foreground">
+            {trade.leverage > 1 ? "Storlek (hävstång)" : "Storlek"}
+          </div>
+          <div className="font-bold text-white text-lg">
+            {trade.size}
+            {trade.leverage > 1 && <span className="text-orange-400 ml-2">{trade.leverage}x</span>}
+          </div>
         </div>
       </div>
       

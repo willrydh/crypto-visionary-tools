@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -18,6 +19,7 @@ type Recommendation = "HODL" | "ADD" | "REMOVE";
 interface TradeEntry {
   entryPrice: number;
   size: number;
+  leverage: number;
   stopLoss?: number;
   takeProfit?: number;
   dateTime?: string;
@@ -36,6 +38,7 @@ interface CoachHistoryItem {
   tradeType: TradeType;
   entry: number;
   size: number;
+  leverage: number;
   lastPrice: number;
 }
 
@@ -44,7 +47,7 @@ const COACH_HISTORY_STORAGE_KEY = "coachHistory";
 
 const getRecommendation = (entry: TradeEntry, current: number): { rec: Recommendation; reason: string; pnl: number } => {
   if (!entry || !current) return { rec: 'HODL', reason: "Ingen data", pnl: 0 };
-  const pnl = ((current - entry.entryPrice) * (entry.type === "long" ? 1 : -1)) / entry.entryPrice * 100;
+  const pnl = ((current - entry.entryPrice) * (entry.type === "long" ? 1 : -1)) / entry.entryPrice * 100 * (entry.leverage || 1);
   if (pnl > 3) return { rec: "ADD", reason: "Positiv trend, hög vinst sedan entry. Daten är realtidsdata.", pnl };
   if (pnl < -2) return { rec: "REMOVE", reason: "Negativ utveckling, kritisk nivå passerad. Daten är realtidsdata.", pnl };
   return { rec: "HODL", reason: "Stabilitet - ingen tydlig vinst/förlust.", pnl };
@@ -65,6 +68,7 @@ const TradingCoach: React.FC = () => {
     symbol: selectedCrypto.symbol,
     pairSymbol: selectedCrypto.pairSymbol,
     name: selectedCrypto.name,
+    leverage: 1, // Default leverage
   });
   const [coachHistory, setCoachHistory] = useState<CoachHistoryItem[]>([]);
   const [activeTrade, setActiveTrade] = useState<TradeEntry | null>(null);
@@ -135,7 +139,8 @@ const TradingCoach: React.FC = () => {
     setTrade((old) => ({
       ...old,
       entryPrice: Number(form.entryPrice.value),
-      size: Number(form.size.value)
+      size: Number(form.size.value),
+      leverage: Number(form.leverage.value) || 1
     }));
     setStep(4);
   }
@@ -154,7 +159,12 @@ const TradingCoach: React.FC = () => {
 
   function handleAnalyse() {
     if (trade.entryPrice && trade.size && trade.type && trade.symbol && trade.pairSymbol && trade.name) {
-      const { rec, reason, pnl } = getRecommendation(trade as TradeEntry, currentPrice);
+      const fullTrade = {
+        ...trade,
+        leverage: trade.leverage || 1
+      } as TradeEntry;
+      
+      const { rec, reason, pnl } = getRecommendation(fullTrade, currentPrice);
       const newHistory = [
         {
           timestamp: new Date().toISOString().slice(0, 16).replace('T', ' '),
@@ -166,6 +176,7 @@ const TradingCoach: React.FC = () => {
           tradeType: trade.type,
           entry: trade.entryPrice,
           size: trade.size,
+          leverage: trade.leverage || 1,
           lastPrice: currentPrice,
         },
         ...coachHistory
@@ -174,7 +185,7 @@ const TradingCoach: React.FC = () => {
       setCoachHistory(newHistory);
       saveToStorage(COACH_HISTORY_STORAGE_KEY, newHistory);
       
-      const newActiveTrade = trade as TradeEntry;
+      const newActiveTrade = fullTrade;
       setActiveTrade(newActiveTrade);
       saveToStorage(ACTIVE_TRADE_STORAGE_KEY, newActiveTrade);
       
@@ -184,6 +195,7 @@ const TradingCoach: React.FC = () => {
         symbol: selectedCrypto.symbol,
         pairSymbol: selectedCrypto.pairSymbol,
         name: selectedCrypto.name,
+        leverage: 1,
       });
       
       toast({
@@ -204,6 +216,7 @@ const TradingCoach: React.FC = () => {
       symbol: selectedCrypto.symbol,
       pairSymbol: selectedCrypto.pairSymbol,
       name: selectedCrypto.name,
+      leverage: 1,
     });
   }
 
@@ -328,6 +341,22 @@ const TradingCoach: React.FC = () => {
                       placeholder="T.ex. 0.01"
                     />
                   </div>
+                  <div>
+                    <Label htmlFor="leverage">Hävstång (Leverage)</Label>
+                    <Input
+                      id="leverage"
+                      name="leverage"
+                      type="number"
+                      inputMode="decimal"
+                      min="1"
+                      max="100"
+                      step="1"
+                      defaultValue="1"
+                      className="mt-1 bg-muted/40"
+                      placeholder="T.ex. 5x"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">1x betyder ingen hävstång</p>
+                  </div>
                   <div className="flex flex-col gap-3 pt-1">
                     <TransparentWhiteButton type="button" onClick={() => backTo(2)} className="w-full">Tillbaka</TransparentWhiteButton>
                     <TransparentWhiteButton
@@ -402,7 +431,10 @@ const TradingCoach: React.FC = () => {
               </CardHeader>
               <CardContent className="flex flex-col gap-2">
                 {(() => {
-                  const { rec, reason, pnl } = getRecommendation(trade as TradeEntry, currentPrice);
+                  const fullTrade = { ...trade, leverage: trade.leverage || 1 } as TradeEntry;
+                  const { rec, reason, pnl } = getRecommendation(fullTrade, currentPrice);
+                  const leverageMultiplier = trade.leverage || 1;
+                  
                   return (
                     <>
                       <div className="flex items-center justify-between mb-2">
@@ -412,6 +444,7 @@ const TradingCoach: React.FC = () => {
                         )}>{rec}</Badge>
                         <span className="text-base font-semibold text-gray-100 drop-shadow whitespace-nowrap">
                           {selectedCrypto.name} • {selectedCrypto.pairSymbol}
+                          {leverageMultiplier > 1 && <span className="text-orange-400 ml-2">{leverageMultiplier}x</span>}
                         </span>
                       </div>
                       <div className={cn("mb-2 text-sm text-center", rec === "REMOVE" ? "text-red-300" : rec === "ADD" ? "text-green-300" : "text-yellow-700")}>{reason}</div>
@@ -431,7 +464,7 @@ const TradingCoach: React.FC = () => {
                         <div>
                           <div className="text-xs text-muted-foreground">P&amp;L (val.)</div>
                           <div className={cn("font-semibold text-lg", pnl >= 0 ? "text-green-400" : "text-red-400")}>
-                            {((currentPrice - (trade.entryPrice as number)) * (trade.size as number) * (trade.type === "long" ? 1 : -1)).toFixed(2)}
+                            {((currentPrice - (trade.entryPrice as number)) * (trade.size as number) * (trade.type === "long" ? 1 : -1) * leverageMultiplier).toFixed(2)}
                           </div>
                         </div>
                       </div>
@@ -465,7 +498,12 @@ const TradingCoach: React.FC = () => {
               {coachHistory.map((item, i) => (
                 <div key={i} className="p-3 rounded-lg bg-slate-800/40 border border-slate-700 flex flex-col gap-1">
                   <div className="flex justify-between text-xs items-center flex-wrap gap-1">
-                    <span className="text-slate-200">{item.timestamp} <span className="ml-2 bg-muted px-2 py-0.5 rounded text-xs">{item.symbol}</span> <span>({item.pairSymbol})</span></span>
+                    <span className="text-slate-200">
+                      {item.timestamp} 
+                      <span className="ml-2 bg-muted px-2 py-0.5 rounded text-xs">{item.symbol}</span> 
+                      <span>({item.pairSymbol})</span>
+                      {item.leverage > 1 && <span className="text-orange-400 ml-1">{item.leverage}x</span>}
+                    </span>
                     <Badge variant="outline" className={cn(
                       "text-xs border-0",
                       item.recommendation === "ADD" ? "text-green-400" :
