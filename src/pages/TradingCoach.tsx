@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -12,6 +11,7 @@ import TransparentWhiteButton from "@/components/ui/TransparentWhiteButton";
 import ActiveTradeStatus from "@/components/trading/ActiveTradeStatus";
 import { getFromStorage, saveToStorage, removeFromStorage } from '@/utils/storageUtils';
 import { toast } from "@/components/ui/use-toast";
+import { Slider } from "@/components/ui/slider";
 
 type Step = 1 | 2 | 3 | 4 | 5;
 type TradeType = "long" | "short";
@@ -72,6 +72,7 @@ const TradingCoach: React.FC = () => {
   });
   const [coachHistory, setCoachHistory] = useState<CoachHistoryItem[]>([]);
   const [activeTrade, setActiveTrade] = useState<TradeEntry | null>(null);
+  const [leverageValue, setLeverageValue] = useState([1]);
 
   useEffect(() => {
     const savedTrade = getFromStorage<TradeEntry | null>(ACTIVE_TRADE_STORAGE_KEY, null);
@@ -342,20 +343,23 @@ const TradingCoach: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="leverage">Hävstång (Leverage)</Label>
-                    <Input
+                    <Label htmlFor="leverage">Hävstång (Leverage): {leverageValue[0]}x</Label>
+                    <input
+                      type="hidden"
                       id="leverage"
                       name="leverage"
-                      type="number"
-                      inputMode="decimal"
-                      min="1"
-                      max="100"
-                      step="1"
-                      defaultValue="1"
-                      className="mt-1 bg-muted/40"
-                      placeholder="T.ex. 5x"
+                      value={leverageValue[0]}
                     />
-                    <p className="text-xs text-muted-foreground mt-1">1x betyder ingen hävstång</p>
+                    <Slider
+                      className="mt-2"
+                      defaultValue={[1]}
+                      value={leverageValue}
+                      onValueChange={setLeverageValue}
+                      max={100}
+                      min={1}
+                      step={1}
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">Justera hävstång: 1x (ingen hävstång) till 100x</p>
                   </div>
                   <div className="flex flex-col gap-3 pt-1">
                     <TransparentWhiteButton type="button" onClick={() => backTo(2)} className="w-full">Tillbaka</TransparentWhiteButton>
