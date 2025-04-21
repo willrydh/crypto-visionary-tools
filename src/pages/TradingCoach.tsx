@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-
 import { useCrypto } from "@/hooks/useCrypto";
 import CryptoSelector from "@/components/crypto/CryptoSelector";
 import { usePrice } from "@/hooks/usePrice";
@@ -46,7 +45,7 @@ const dummyIndicators = {
   isUptrend: true
 };
 
-// BYT: Den här funktionen måste få in rätt symbol och nuvarande prisdata!
+// Beräknar rekommendation & PnL
 function getDummyRecommendation(entry: TradeEntry, cur: number): { rec: Recommendation, reason: string, pnl: number } {
   const pnl = ((cur - entry.entryPrice) * (entry.type === 'long' ? 1 : -1)) / entry.entryPrice * 100;
   if (pnl > 3) return { rec: "ADD", reason: "Trenden fortsatt stark: MA21 ovan, MACD positiv. → ADD", pnl };
@@ -54,6 +53,7 @@ function getDummyRecommendation(entry: TradeEntry, cur: number): { rec: Recommen
   return { rec: "HODL", reason: "MACD neutral, MA ordning ej bruten ännu. → HODL", pnl };
 }
 
+// Startvärde för trade
 const initialTrade: TradeEntry = {
   entryPrice: 71000,
   size: 0.21,
@@ -64,20 +64,14 @@ const initialTrade: TradeEntry = {
 };
 
 const TradingCoach: React.FC = () => {
-  // Lägg till stöd för att välja krypto
+  // Stöd för val av krypto & prisdata (samma som Welcome => korrekt för BTC, ETH, XRP, SOL)
   const { selectedCrypto } = useCrypto();
   const { priceData } = usePrice();
 
-  // Bybit symbol utan /
   const pairSymbol = selectedCrypto.pairSymbol;
   const priceKey = pairSymbol.replace('/', '');
   const currentPriceObj = priceData[priceKey];
-
-  // Om data saknas, defaulta till 0
   const dummyCurrentPrice = currentPriceObj?.price || 0;
-
-  // TODO: Byt även indikatorvärden till rätt krypto (leave dummy tills vidare)
-  // Senare: Hämta och visa realtidsindikatorer per symbol
 
   const [trade, setTrade] = useState<TradeEntry>(initialTrade);
   const [coachHistory, setCoachHistory] = useState<CoachHistoryItem[]>([
@@ -89,7 +83,6 @@ const TradingCoach: React.FC = () => {
     }
   ]);
 
-  // Anpassa DUMMY-funktion om det behövs för andra coins
   const { rec, reason, pnl } = getDummyRecommendation(trade, dummyCurrentPrice);
 
   function handleManualInput(e: React.FormEvent) {
@@ -115,194 +108,205 @@ const TradingCoach: React.FC = () => {
     ]);
   }
 
-  // UI START — Settings/modern look
+  // === UI: Anpassad till Welcome ===
   return (
-    <div className="w-full max-w-2xl mx-auto pt-6 pb-12 flex flex-col gap-8">
-      {/* Selector sektion överst LIKE i Settings */}
-      <div>
-        <h1 className="text-2xl font-bold mb-2">Trading Coach</h1>
-        <p className="text-muted-foreground max-w-xl">
-          Få coach-rekommendationer på din trade! Ange dina tradingparametrar för att analysera din position och se AI-coachens råd. <br />
-          <span className="hidden md:inline">Du kan välja kryptovaluta och analysen gäller alltid den du valt.</span>
+    <div className="min-h-screen flex flex-col bg-background/80 pb-24 px-2 md:px-0">
+      {/* Hero-liknande sektion (rubrik + info) */}
+      <section className="max-w-3xl mx-auto py-14 sm:py-20 px-4 md:px-0 text-center relative">
+        <Badge className="mb-4" variant="outline">AI Trading Assistant</Badge>
+        <h1 className="text-4xl md:text-5xl font-bold mb-5 text-foreground drop-shadow">Trade Coach</h1>
+        <p className="text-lg max-w-2xl mx-auto text-muted-foreground mb-7">
+          Få AI-drivna rekommendationer för dina trades på {selectedCrypto.name}. Ange din entry, storlek & stop-loss och analysera med ett knapptryck!
         </p>
-      </div>
-      <div className="bg-card/80 rounded-xl border border-border p-4 mt-2 mb-2">
-        <CryptoSelector fullWidth={true} showDataSource={true} label="Välj kryptovaluta" />
-      </div>
+        <div className="flex justify-center mb-2">
+          <CryptoSelector fullWidth={true} showDataSource={true} label="Kryptovaluta" />
+        </div>
+      </section>
 
-      <Card className="glass border-0 shadow-card">
-        <CardHeader>
-          <CardTitle>Analys av din {selectedCrypto.name}-trade</CardTitle>
-          <CardDescription>
-            Mata in din position för personlig AI-analys och strategi.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleManualInput} className="space-y-6 mt-2">
-            <div className="flex items-center justify-center gap-6">
-              <Label htmlFor="type-long" className={cn("cursor-pointer", trade.type === "long" ? "text-green-400" : "text-muted-foreground")}>
-                <input type="radio" name="type" id="type-long" value="long" defaultChecked={trade.type === "long"} className="accent-green-400 mr-2" />
-                Long
-              </Label>
-              <Label htmlFor="type-short" className={cn("cursor-pointer", trade.type === "short" ? "text-red-400" : "text-muted-foreground")}>
-                <input type="radio" name="type" id="type-short" value="short" defaultChecked={trade.type === "short"} className="accent-red-400 mr-2" />
-                Short
-              </Label>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="entryPrice">Entrypris</Label>
-              <Input
-                id="entryPrice"
-                name="entryPrice"
-                type="number"
-                required
-                defaultValue={trade.entryPrice}
-                step="0.01"
-                className="glass"
-                placeholder="Entryprice"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="size">Positionstorlek</Label>
-              <Input
-                id="size"
-                name="size"
-                type="number"
-                required
-                defaultValue={trade.size}
-                step="0.0001"
-                className="glass"
-                placeholder="Storlek"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="stopLoss">Stop Loss <span className="text-muted-foreground">(valfritt)</span></Label>
-              <Input
-                id="stopLoss"
-                name="stopLoss"
-                type="number"
-                defaultValue={trade.stopLoss}
-                step="0.01"
-                className="glass"
-                placeholder="Stop Loss"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="takeProfit">Take Profit <span className="text-muted-foreground">(valfritt)</span></Label>
-              <Input
-                id="takeProfit"
-                name="takeProfit"
-                type="number"
-                defaultValue={trade.takeProfit}
-                step="0.01"
-                className="glass"
-                placeholder="Take Profit"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="dateTime">Datum/tid <span className="text-muted-foreground">(valfritt)</span></Label>
-              <Input
-                id="dateTime"
-                name="dateTime"
-                type="datetime-local"
-                defaultValue={trade.dateTime}
-                className="glass"
-                placeholder="Datum/tid"
-              />
-            </div>
-            <Button type="submit" className="w-full bg-gradient-to-tr from-primary to-secondary/80 text-white shadow hover:from-primary/70 hover:to-secondary/70">
-              Analysera trade
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+      {/* Trade input + analys */}
+      <section className="flex flex-col sm:flex-row gap-8 max-w-4xl w-full mx-auto mb-7">
+        <Card className="bg-card/80 w-full max-w-md mx-auto shadow-xl border border-border rounded-2xl">
+          <CardHeader>
+            <CardTitle className="text-xl flex flex-row gap-2 items-center">
+              Mata in Trade <Badge variant="outline" className="ml-2 text-xs">{selectedCrypto.symbol}</Badge>
+            </CardTitle>
+            <CardDescription>
+              Fyll i dina parametrar och tryck <span className="font-semibold">Analysera</span>.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleManualInput} className="space-y-5 mt-2">
+              <div className="flex items-center justify-center gap-6">
+                <Label htmlFor="type-long" className={cn("cursor-pointer px-2 py-1 rounded", trade.type === "long" ? "bg-green-500/20 text-green-600 font-bold" : "text-muted-foreground")}>
+                  <input type="radio" name="type" id="type-long" value="long" defaultChecked={trade.type === "long"} className="accent-green-400 mr-2" />
+                  Long
+                </Label>
+                <Label htmlFor="type-short" className={cn("cursor-pointer px-2 py-1 rounded", trade.type === "short" ? "bg-red-500/20 text-red-500 font-bold" : "text-muted-foreground")}>
+                  <input type="radio" name="type" id="type-short" value="short" defaultChecked={trade.type === "short"} className="accent-red-400 mr-2" />
+                  Short
+                </Label>
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="entryPrice">Entrypris</Label>
+                <Input
+                  id="entryPrice"
+                  name="entryPrice"
+                  type="number"
+                  required
+                  defaultValue={trade.entryPrice}
+                  step="0.01"
+                  className="glass"
+                  placeholder="Entrypris"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="size">Positionstorlek</Label>
+                <Input
+                  id="size"
+                  name="size"
+                  type="number"
+                  required
+                  defaultValue={trade.size}
+                  step="0.0001"
+                  className="glass"
+                  placeholder="Storlek"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="stopLoss">Stop Loss <span className="text-muted-foreground">(valfritt)</span></Label>
+                <Input
+                  id="stopLoss"
+                  name="stopLoss"
+                  type="number"
+                  defaultValue={trade.stopLoss}
+                  step="0.01"
+                  className="glass"
+                  placeholder="Stop Loss"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="takeProfit">Take Profit <span className="text-muted-foreground">(valfritt)</span></Label>
+                <Input
+                  id="takeProfit"
+                  name="takeProfit"
+                  type="number"
+                  defaultValue={trade.takeProfit}
+                  step="0.01"
+                  className="glass"
+                  placeholder="Take Profit"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="dateTime">Datum/tid <span className="text-muted-foreground">(valfritt)</span></Label>
+                <Input
+                  id="dateTime"
+                  name="dateTime"
+                  type="datetime-local"
+                  defaultValue={trade.dateTime}
+                  className="glass"
+                  placeholder="Datum/tid"
+                />
+              </div>
+              <Button type="submit" size="lg" className="w-full bg-gradient-to-tr from-primary to-secondary/80 text-white shadow hover:from-primary/70 hover:to-secondary/70">
+                Analysera
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
 
-      <Card className="glass border-0 shadow-card">
-        <CardHeader>
-          <CardTitle>Rekommendation</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col items-center gap-2 pb-4">
-            <div className={cn(
-              "text-3xl font-bold",
-              rec === "ADD" ? "text-green-300" : rec === "REMOVE" ? "text-red-300" : "text-yellow-200"
-            )}>{rec}</div>
-            <Badge className={cn(
-              "text-base px-6 py-2 rounded-full font-semibold shadow pulse-subtle backdrop-blur select-none border-0",
-              rec === "ADD" ? "bg-green-400/30 text-green-200" :
-                rec === "REMOVE" ? "bg-red-400/30 text-red-200" : "bg-yellow-300/20 text-yellow-100"
-            )}>{rec}</Badge>
-            <div className="mb-2 text-sm text-center text-slate-200">{reason}</div>
-          </div>
-          <div className="grid grid-cols-2 gap-3 mb-4">
-            <div>
-              <div className="text-xs text-muted-foreground">Entry</div>
-              <div className="font-semibold text-white">{trade.entryPrice}</div>
-            </div>
-            <div>
-              <div className="text-xs text-muted-foreground">Nuvarande pris</div>
-              <div className="font-semibold text-white">{dummyCurrentPrice}</div>
-            </div>
-            <div>
-              <div className="text-xs text-slate-200">P&amp;L %</div>
-              <div className={cn("font-semibold text-lg", pnl >= 0 ? "text-green-400" : "text-red-300")}>{pnl.toFixed(2)}%</div>
-            </div>
-            <div>
-              <div className="text-xs text-slate-200">P&amp;L (val)</div>
-              <div className={cn("font-semibold text-lg", pnl >= 0 ? "text-green-400" : "text-red-300")}>
-                {((dummyCurrentPrice - trade.entryPrice) * trade.size * (trade.type === "long" ? 1 : -1)).toFixed(2)}
+        {/* Analys/resultatkort */}
+        <Card className="bg-gradient-to-br from-card to-secondary/40 shadow-lg border-0 w-full max-w-md mx-auto glass py-2 flex flex-col justify-between">
+          <CardHeader>
+            <CardTitle className="text-xl">
+              Rekommendation
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col items-center gap-3 pb-3">
+              <Badge className={cn(
+                "text-base px-7 py-2 rounded-full font-bold shadow pulse-subtle text-center select-none border-0 text-white tracking-wide text-lg mb-2",
+                rec === "ADD" ? "bg-green-500/80" :
+                rec === "REMOVE" ? "bg-red-500/80" : "bg-yellow-400/80 text-black"
+              )}>{rec}</Badge>
+              <div className={cn("mb-2 text-sm text-center w-full", rec === "REMOVE" ? "text-red-200" : rec === "ADD" ? "text-green-200" : "text-yellow-700")}>
+                {reason}
               </div>
             </div>
-          </div>
-          <div className="flex flex-wrap gap-2 mb-1 justify-center">
-            <span className="rounded-full glass px-3 py-1 text-xs text-blue-100 border border-blue-200/20 backdrop-blur">{`MA21: ${dummyIndicators.ma21}`}</span>
-            <span className="rounded-full glass px-3 py-1 text-xs text-blue-100 border border-blue-200/20 backdrop-blur">{`MA50: ${dummyIndicators.ma50}`}</span>
-            <span className="rounded-full glass px-3 py-1 text-xs text-blue-100 border border-blue-200/20 backdrop-blur">{`MA100: ${dummyIndicators.ma100}`}</span>
-            <span className="rounded-full glass px-3 py-1 text-xs text-blue-100 border border-blue-200/20 backdrop-blur">{`MA200: ${dummyIndicators.ma200}`}</span>
-            <span className="rounded-full glass px-3 py-1 text-xs text-violet-100 border border-violet-200/20 backdrop-blur">{`EMA21: ${dummyIndicators.ema21}`}</span>
-          </div>
-          <div className="flex flex-wrap gap-2 mb-1 justify-center">
-            <span className="rounded-full glass px-3 py-1 text-xs text-cyan-100 border border-cyan-200/20 backdrop-blur">{`MACD: ${dummyIndicators.macd} (${dummyIndicators.macdSignal})`}</span>
-            <span className="rounded-full glass px-3 py-1 text-xs text-pink-100 border border-pink-200/20 backdrop-blur">{`RSI6: ${dummyIndicators.rsi6}`}</span>
-            <span className="rounded-full glass px-3 py-1 text-xs text-pink-100 border border-pink-200/20 backdrop-blur">{`RSI12: ${dummyIndicators.rsi12}`}</span>
-            <span className="rounded-full glass px-3 py-1 text-xs text-pink-100 border border-pink-200/20 backdrop-blur">{`RSI24: ${dummyIndicators.rsi24}`}</span>
-            <span className="rounded-full glass px-3 py-1 text-xs text-orange-100 border border-orange-200/20 backdrop-blur">{`Stoch RSI: ${dummyIndicators.stochRsi}`}</span>
-          </div>
-          <div className="flex flex-wrap gap-2 justify-center">
-            <span className="rounded-full glass px-3 py-1 text-xs text-slate-100 border border-slate-200/20 backdrop-blur">{`Volym: ${dummyIndicators.volume.toLocaleString()}`}</span>
-            <span className="rounded-full glass px-3 py-1 text-xs text-purple-100 border border-purple-200/20 backdrop-blur">{`Trend: ${dummyIndicators.isUptrend ? "Stark ↑" : "Svag ↓"}`}</span>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="glass border-0 shadow-card">
-        <CardHeader>
-          <CardTitle>Rekommendations-historik</CardTitle>
-          <CardDescription>
-            Tidigare AI-rekommendationer baserat på din trade-inmatning.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col gap-3">
-            {coachHistory.map((item, i) => (
-              <div key={i} className="p-2 rounded-md glass border border-white/10 flex flex-col gap-1 shadow-sm">
-                <div className="flex justify-between text-xs items-center">
-                  <span className="text-slate-200">{item.timestamp}</span>
-                  <Badge variant="outline" className={cn(
-                    "text-xs border-0",
-                    item.recommendation === "ADD" ? "text-green-300" : 
-                    item.recommendation === "REMOVE" ? "text-red-300" : "text-yellow-100"
-                  )}>{item.recommendation}</Badge>
-                </div>
-                <div className="text-xs text-slate-300">{item.reason}</div>
-                <div className={cn("text-xs font-medium", item.pnl >= 0 ? "text-green-400" : "text-red-300")}>
-                  P&amp;L: {item.pnl.toFixed(2)}%
+            <div className="grid grid-cols-2 gap-2 mb-3">
+              <div>
+                <div className="text-xs text-muted-foreground">Entry</div>
+                <div className="font-semibold text-white">{trade.entryPrice}</div>
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground">Nuvarande pris</div>
+                <div className="font-semibold text-white">{dummyCurrentPrice}</div>
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground">P&amp;L %</div>
+                <div className={cn("font-semibold text-lg", pnl >= 0 ? "text-green-400" : "text-red-300")}>{pnl.toFixed(2)}%</div>
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground">P&amp;L (val)</div>
+                <div className={cn("font-semibold text-lg", pnl >= 0 ? "text-green-400" : "text-red-300")}>
+                  {((dummyCurrentPrice - trade.entryPrice) * trade.size * (trade.type === "long" ? 1 : -1)).toFixed(2)}
                 </div>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+            </div>
+            {/* Indikatorer som små badges under */}
+            <div className="flex flex-wrap gap-2 justify-center mb-1">
+              <span className="rounded-full glass px-3 py-1 text-xs text-blue-100 border border-blue-200/20 backdrop-blur">{`MA21: ${dummyIndicators.ma21}`}</span>
+              <span className="rounded-full glass px-3 py-1 text-xs text-blue-100 border border-blue-200/20 backdrop-blur">{`MA50: ${dummyIndicators.ma50}`}</span>
+              <span className="rounded-full glass px-3 py-1 text-xs text-blue-100 border border-blue-200/20 backdrop-blur">{`MA100: ${dummyIndicators.ma100}`}</span>
+              <span className="rounded-full glass px-3 py-1 text-xs text-blue-100 border border-blue-200/20 backdrop-blur">{`MA200: ${dummyIndicators.ma200}`}</span>
+              <span className="rounded-full glass px-3 py-1 text-xs text-violet-100 border border-violet-200/20 backdrop-blur">{`EMA21: ${dummyIndicators.ema21}`}</span>
+            </div>
+            <div className="flex flex-wrap gap-2 justify-center mb-1">
+              <span className="rounded-full glass px-3 py-1 text-xs text-cyan-100 border border-cyan-200/20 backdrop-blur">{`MACD: ${dummyIndicators.macd} (${dummyIndicators.macdSignal})`}</span>
+              <span className="rounded-full glass px-3 py-1 text-xs text-pink-100 border border-pink-200/20 backdrop-blur">{`RSI6: ${dummyIndicators.rsi6}`}</span>
+              <span className="rounded-full glass px-3 py-1 text-xs text-pink-100 border border-pink-200/20 backdrop-blur">{`RSI12: ${dummyIndicators.rsi12}`}</span>
+              <span className="rounded-full glass px-3 py-1 text-xs text-pink-100 border border-pink-200/20 backdrop-blur">{`RSI24: ${dummyIndicators.rsi24}`}</span>
+              <span className="rounded-full glass px-3 py-1 text-xs text-orange-100 border border-orange-200/20 backdrop-blur">{`Stoch RSI: ${dummyIndicators.stochRsi}`}</span>
+            </div>
+            <div className="flex flex-wrap gap-2 justify-center">
+              <span className="rounded-full glass px-3 py-1 text-xs text-slate-100 border border-slate-200/20 backdrop-blur">{`Volym: ${dummyIndicators.volume.toLocaleString()}`}</span>
+              <span className="rounded-full glass px-3 py-1 text-xs text-purple-100 border border-purple-200/20 backdrop-blur">{`Trend: ${dummyIndicators.isUptrend ? "Stark ↑" : "Svag ↓"}`}</span>
+            </div>
+          </CardContent>
+        </Card>
+      </section>
+
+      {/* Historik med liknande layout till reviews på Welcome */}
+      <section className="max-w-3xl mx-auto w-full">
+        <Card className="bg-card/80 shadow-lg border-0 rounded-2xl">
+          <CardHeader>
+            <CardTitle>Rekommendationshistorik</CardTitle>
+            <CardDescription>
+              Tidigare AI-rekommendationer för dina analyserade trades.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col gap-3">
+              {coachHistory.map((item, i) => (
+                <div key={i} className="p-3 rounded-lg glass border border-white/10 flex flex-col gap-1">
+                  <div className="flex justify-between text-xs items-center">
+                    <span className="text-slate-200">{item.timestamp}</span>
+                    <Badge variant="outline" className={cn(
+                      "text-xs border-0",
+                      item.recommendation === "ADD" ? "text-green-400" :
+                      item.recommendation === "REMOVE" ? "text-red-400" : "text-yellow-600"
+                    )}>{item.recommendation}</Badge>
+                  </div>
+                  <div className={cn("text-xs", item.recommendation === "REMOVE" ? "text-red-300" : item.recommendation === "ADD" ? "text-green-300" : "text-yellow-700")}>{item.reason}</div>
+                  <div className={cn("text-xs font-medium", item.pnl >= 0 ? "text-green-400" : "text-red-300")}>
+                    P&amp;L: {item.pnl.toFixed(2)}%
+                  </div>
+                </div>
+              ))}
+              {coachHistory.length === 0 && <div className="text-muted-foreground text-sm text-center py-2">Ingen historik ännu.</div>}
+            </div>
+          </CardContent>
+        </Card>
+      </section>
     </div>
   );
 };
