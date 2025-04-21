@@ -153,7 +153,6 @@ const TradingCoach: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-background to-secondary/40 pb-24 px-2 md:px-0 section-padding">
       <section className="max-w-2xl mx-auto py-12 sm:py-20 w-full fade-in">
-        {/* BYBIT NOTIS - placerad högst upp */}
         <div className="flex flex-col items-center gap-3 mb-8">
           <Badge className="box-border px-4 py-1 text-base border border-white/10 rounded-lg font-semibold bg-card/90 shadow"
             variant="outline"
@@ -169,13 +168,11 @@ const TradingCoach: React.FC = () => {
           </div>
         </div>
         
-        {/* HUVUDTITEL */}
         <h1 className="text-4xl md:text-5xl font-black mb-4 text-foreground text-center drop-shadow section-spacing">Trade Coach</h1>
         <div className="text-center text-lg text-muted-foreground mb-8">
           <span className="font-semibold">{selectedCrypto.name}</span> <span className="mx-1">•</span> <span>{selectedCrypto.pairSymbol}</span>
         </div>
 
-        {/* PÅGÅENDE TRADE */}
         {activeTrade && (
           <ActiveTradeStatus
             trade={activeTrade}
@@ -185,7 +182,6 @@ const TradingCoach: React.FC = () => {
         )}
 
         <div className="w-full flex flex-col gap-8">
-          {/* Steg 1 */}
           {step === 1 && !activeTrade && (
             <Card className="bg-card/80 shadow-xl border border-white/10 rounded-2xl px-0 pt-4 pb-8 backdrop-blur-md">
               <CardHeader className="pb-4">
@@ -216,7 +212,6 @@ const TradingCoach: React.FC = () => {
             </Card>
           )}
 
-          {/* Steg 2 */}
           {step === 2 && (
             <Card className="bg-card/80 shadow-xl border border-white/10 rounded-2xl backdrop-blur-md">
               <CardHeader>
@@ -248,7 +243,6 @@ const TradingCoach: React.FC = () => {
             </Card>
           )}
 
-          {/* Steg 3 */}
           {step === 3 && (
             <Card className="bg-card/80 shadow-xl border border-white/10 rounded-2xl backdrop-blur-md">
               <CardHeader>
@@ -298,7 +292,6 @@ const TradingCoach: React.FC = () => {
             </Card>
           )}
 
-          {/* Steg 4 */}
           {step === 4 && (
             <Card className="bg-card/80 shadow-xl border border-white/10 rounded-2xl backdrop-blur-md">
               <CardHeader>
@@ -354,7 +347,6 @@ const TradingCoach: React.FC = () => {
             </Card>
           )}
 
-          {/* Steg 5 */}
           {step === 5 && trade.entryPrice && trade.size && (
             <Card className="shadow-xl border-0 rounded-2xl bg-gradient-to-br from-slate-900/80 to-secondary/50 py-8 px-4 backdrop-blur-md">
               <CardHeader>

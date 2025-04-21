@@ -4,6 +4,7 @@ import { TransparentWhiteButton } from "@/components/ui/TransparentWhiteButton";
 import { cn } from "@/lib/utils";
 import { usePrice } from "@/hooks/usePrice";
 import { Badge } from "@/components/ui/badge";
+import { ArrowUp, ArrowDown, CircleCheck, CircleX, Info } from "lucide-react";
 
 type TradeType = "long" | "short";
 type Recommendation = "HODL" | "ADD" | "REMOVE";
@@ -73,7 +74,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
     const intervalId = setInterval(() => {
       loadPriceData(formattedSymbol);
       setTicking(prev => !prev); // Toggle to trigger animation
-    }, 5000); // Update every 5 seconds
+    }, 2000); // Update more frequently (every 2 seconds)
     
     return () => clearInterval(intervalId);
   }, [trade.pairSymbol, loadPriceData]);
@@ -95,16 +96,54 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
         background: getPnlGradient(pnlPct)
       }}
     >
-      <div className="flex flex-col items-center text-center gap-4">
-        <div className="flex items-center gap-2 text-lg font-bold text-white">
-          <span className={trade.type === "long" ? "text-green-400" : "text-red-400"}>
-            {trade.type === "long" ? "Long" : "Short"}
-          </span>
-          <span className="text-white/90">{trade.name} <span className="text-xs font-normal text-muted-foreground ml-1">({trade.pairSymbol})</span></span>
+      {/* Trade type and name - simpler and at the top */}
+      <div className="flex items-center justify-center gap-2 text-lg font-bold text-white">
+        <span className={trade.type === "long" ? "text-green-400" : "text-red-400"}>
+          {trade.type === "long" ? "Long" : "Short"}
+        </span>
+        <span className="text-white/90">{trade.name} <span className="text-xs font-normal text-muted-foreground ml-1">({trade.pairSymbol})</span></span>
+      </div>
+      
+      {/* Current price - LARGE and prominent */}
+      <div className="flex flex-col items-center">
+        <div className="text-xs text-muted-foreground mb-1">Nuvarande pris</div>
+        <div className={cn(
+          "text-4xl font-bold text-white transition-all duration-200 transform",
+          ticking ? "scale-110" : "scale-100"
+        )}>
+          {lastPrice.toLocaleString('sv-SE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+        </div>
+      </div>
+      
+      {/* P&L display - prominent and dynamic */}
+      <div className="grid grid-cols-2 gap-5 bg-slate-900/70 p-5 rounded-xl border border-slate-800">
+        <div className="flex flex-col items-center">
+          <div className="text-xs text-muted-foreground mb-1">P&amp;L %</div>
+          <div className={cn(
+            "flex items-center gap-1 text-2xl font-bold transition-all duration-200",
+            ticking ? "scale-105" : "scale-100",
+            pnlPct >= 0 ? "text-green-400" : "text-red-400"
+          )}>
+            {pnlPct >= 0 ? <ArrowUp className="h-5 w-5" /> : <ArrowDown className="h-5 w-5" />}
+            {pnlPct >= 0 ? "+" : ""}{pnlPct.toFixed(2)}%
+          </div>
         </div>
         
-        {/* AI Recommendation title */}
-        <h2 className="text-2xl font-extrabold text-white mt-2">AI Rekommendation</h2>
+        <div className="flex flex-col items-center">
+          <div className="text-xs text-muted-foreground mb-1">P&amp;L (val.)</div>
+          <div className={cn(
+            "text-2xl font-bold transition-all duration-200",
+            ticking ? "scale-105" : "scale-100",
+            pnlVal >= 0 ? "text-green-400" : "text-red-400"
+          )}>
+            {pnlVal >= 0 ? "+" : ""}{pnlVal.toFixed(2)}
+          </div>
+        </div>
+      </div>
+      
+      {/* AI Recommendation - centered and prominent */}
+      <div className="flex flex-col items-center text-center gap-2">
+        <h2 className="text-xl font-extrabold text-white">AI Rekommendation</h2>
         
         {/* Recommendation badge - centered and prominent */}
         <Badge 
@@ -115,12 +154,15 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
             "bg-blue-600"
           )}
         >
+          {rec === "ADD" && <CircleCheck className="mr-1 h-4 w-4" />}
+          {rec === "REMOVE" && <CircleX className="mr-1 h-4 w-4" />}
+          {rec === "HODL" && <Info className="mr-1 h-4 w-4" />}
           {rec}
         </Badge>
         
         {/* Recommendation reason */}
         <div className={cn(
-          "text-sm mb-3 max-w-md text-center",
+          "text-sm mb-2 max-w-md text-center",
           rec === "REMOVE" ? "text-red-300" : 
           rec === "ADD" ? "text-green-300" : 
           "text-blue-200"
@@ -128,51 +170,20 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
           {reason}
         </div>
       </div>
-
-      {/* Current price - large and centered */}
-      <div className="flex flex-col items-center">
-        <div className="text-xs text-muted-foreground mb-1">Nuvarande pris</div>
-        <div className={cn(
-          "text-3xl font-bold text-white transition-all",
-          ticking ? "scale-110" : "scale-100"
-        )}>
-          {lastPrice.toLocaleString('sv-SE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-        </div>
-      </div>
       
-      {/* Trade details grid */}
-      <div className="grid grid-cols-2 gap-4 bg-slate-900/70 p-4 rounded-lg border border-slate-800">
-        <div>
-          <div className="text-xs text-muted-foreground">Entry</div>
-          <div className="font-bold text-white text-lg">
-            {trade.entryPrice.toLocaleString('sv-SE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+      {/* Entry details - more subtle */}
+      <div className="bg-slate-900/50 p-3 rounded-lg border border-slate-800">
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <div className="text-xs text-muted-foreground">Entry</div>
+            <div className="font-bold text-white">
+              {trade.entryPrice.toLocaleString('sv-SE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </div>
           </div>
-        </div>
-        
-        <div>
-          <div className="text-xs text-muted-foreground">Storlek</div>
-          <div className="font-bold text-white text-lg">{trade.size}</div>
-        </div>
-        
-        <div>
-          <div className="text-xs text-muted-foreground">P&amp;L %</div>
-          <div className={cn(
-            "font-bold text-lg transition-all",
-            ticking ? "scale-105" : "scale-100",
-            pnlPct >= 0 ? "text-green-400" : "text-red-400"
-          )}>
-            {pnlPct >= 0 ? "+" : ""}{pnlPct.toFixed(2)}%
-          </div>
-        </div>
-        
-        <div>
-          <div className="text-xs text-muted-foreground">P&amp;L (val.)</div>
-          <div className={cn(
-            "font-bold text-lg transition-all",
-            ticking ? "scale-105" : "scale-100",
-            pnlVal >= 0 ? "text-green-400" : "text-red-400"
-          )}>
-            {pnlVal >= 0 ? "+" : ""}{pnlVal.toFixed(2)}
+          
+          <div>
+            <div className="text-xs text-muted-foreground">Storlek</div>
+            <div className="font-bold text-white">{trade.size}</div>
           </div>
         </div>
       </div>
