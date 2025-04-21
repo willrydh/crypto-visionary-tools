@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -112,7 +111,7 @@ const TradingCoach: React.FC = () => {
       setCoachHistory((old) => [
         {
           timestamp: new Date().toISOString().slice(0, 16).replace('T', ' '),
-          recommendation: rec,
+          recommendation: rec as Recommendation,
           reason,
           pnl
         },
@@ -401,4 +400,3 @@ const TradingCoach: React.FC = () => {
 };
 
 export default TradingCoach;
-
