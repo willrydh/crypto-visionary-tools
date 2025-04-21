@@ -62,7 +62,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
     const intervalId = setInterval(() => {
       loadPriceData(formattedSymbol);
       setTicking(prev => !prev);
-    }, 2000);
+    }, 1500); // Slightly faster updates for more real-time feel
     
     return () => clearInterval(intervalId);
   }, [trade.pairSymbol, loadPriceData, trade]);
@@ -97,9 +97,9 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
   // Determine the background color based on P&L
   const getBackgroundClass = () => {
     if (pnlPct > 0) {
-      return "bg-green-500 border-green-400";
+      return "bg-green-600 border-green-500/70 shadow-green-500/20 shadow-lg";
     } else if (pnlPct < 0) {
-      return "bg-red-600 border-red-500";
+      return "bg-red-600 border-red-500/70 shadow-red-500/20 shadow-lg";
     } else {
       return "bg-slate-900 border-slate-800";
     }
@@ -110,10 +110,26 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
       "relative rounded-xl p-6 border shadow-xl transition-colors duration-300", 
       getBackgroundClass()
     )}>
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold mb-4 text-white">AI Rekommendation</h2>
+      <div className="text-center mb-6">
+        <h2 className="text-2xl font-bold mb-2 text-white">AI Rekommendation</h2>
         
-        <div className="flex flex-col items-center gap-2">
+        {/* Display trade pair info */}
+        <div className="flex flex-col items-center gap-1 mb-3">
+          <div className="flex items-center gap-2 text-sm text-white">
+            <span>{trade.name}</span>
+            <span>•</span>
+            <span>{trade.pairSymbol}</span>
+            {trade.leverage > 1 && (
+              <>
+                <span>•</span>
+                <span className="font-medium text-orange-400">{trade.leverage}x</span>
+              </>
+            )}
+          </div>
+        </div>
+        
+        {/* Badge recommendation */}
+        <div className="flex justify-center mb-2">
           <Badge 
             className={cn(
               "text-base px-8 py-2 rounded-full font-bold",
@@ -127,30 +143,38 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
             {rec === "HODL" && <Info className="mr-1 h-4 w-4" />}
             {rec}
           </Badge>
-          
-          <div className="flex items-center gap-2 text-sm text-white">
-            <span>{trade.name}</span>
-            <span>•</span>
-            <span>{trade.pairSymbol}</span>
-            {trade.leverage > 1 && (
-              <>
-                <span>•</span>
-                <span className="font-medium text-orange-400">{trade.leverage}x</span>
-              </>
-            )}
-          </div>
-          
-          <p className="text-sm text-gray-200 mt-1 max-w-xs text-center">{reason}</p>
         </div>
+        
+        <p className="text-sm text-gray-200 mt-1 max-w-xs mx-auto">{reason}</p>
       </div>
       
-      <div className="flex flex-col items-center mb-8">
+      {/* Current price with animation */}
+      <div className="flex flex-col items-center mb-5 bg-black/20 rounded-xl py-4 mx-4">
         <div className="text-xs text-gray-200 mb-1">Nuvarande pris</div>
         <div className={cn(
-          "text-4xl font-bold text-white transition-all duration-200 transform",
+          "text-4xl font-bold text-white transition-all duration-300 transform",
           ticking ? "scale-110" : "scale-100"
         )}>
           {lastPrice.toLocaleString('sv-SE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+        </div>
+      </div>
+      
+      {/* PNL display - central and prominent */}
+      <div className="flex justify-center mb-6">
+        <div className={cn(
+          "flex items-center justify-center px-6 py-3 rounded-lg transition-colors", 
+          pnlPct >= 0 ? "bg-green-500/30" : "bg-red-500/30"
+        )}>
+          <div className="text-center">
+            <div className="text-xs text-gray-200 mb-1">P&amp;L %</div>
+            <div className={cn(
+              "flex items-center justify-center gap-1 font-bold text-2xl",
+              pnlPct >= 0 ? "text-green-400" : "text-red-400"
+            )}>
+              {pnlPct >= 0 ? <ArrowUp className="h-5 w-5" /> : <ArrowDown className="h-5 w-5" />}
+              {pnlPct.toFixed(2)}%
+            </div>
+          </div>
         </div>
       </div>
       
@@ -159,17 +183,6 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
           <div className="text-xs text-gray-200">Entry</div>
           <div className="font-bold text-white text-lg">
             {trade.entryPrice.toLocaleString('sv-SE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </div>
-        </div>
-        
-        <div className="bg-slate-800/50 p-3 rounded-lg">
-          <div className="text-xs text-gray-200">P&amp;L %</div>
-          <div className={cn(
-            "flex items-center gap-1 font-bold text-lg",
-            pnlPct >= 0 ? "text-green-400" : "text-red-400"
-          )}>
-            {pnlPct >= 0 ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
-            {pnlPct.toFixed(2)}%
           </div>
         </div>
         
@@ -190,6 +203,16 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
           <div className="font-bold text-white text-lg">
             {trade.size}
             {trade.leverage > 1 && <span className="text-orange-400 ml-2">{trade.leverage}x</span>}
+          </div>
+        </div>
+        
+        <div className="bg-slate-800/50 p-3 rounded-lg">
+          <div className="text-xs text-gray-200">Trade</div>
+          <div className={cn(
+            "font-bold text-lg",
+            trade.type === "long" ? "text-green-400" : "text-red-400"
+          )}>
+            {trade.type === "long" ? "LONG" : "SHORT"}
           </div>
         </div>
       </div>
