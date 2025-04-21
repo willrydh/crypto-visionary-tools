@@ -95,14 +95,21 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
   };
 
   // Determine the background color based on P&L
-  const bgColorClass = pnlPct > 0 
-    ? "bg-gradient-to-br from-green-950 to-green-900 border-green-800" 
-    : pnlPct < 0 
-      ? "bg-gradient-to-br from-red-950 to-red-900 border-red-800" 
-      : "bg-slate-900 border-slate-800";
+  const getBackgroundClass = () => {
+    if (pnlPct > 0) {
+      return "bg-green-600/90 border-green-500";
+    } else if (pnlPct < 0) {
+      return "bg-red-600/90 border-red-500";
+    } else {
+      return "bg-slate-900 border-slate-800";
+    }
+  };
 
   return (
-    <div className={cn("relative rounded-xl p-6 border shadow-xl transition-colors duration-500", bgColorClass)}>
+    <div className={cn(
+      "relative rounded-xl p-6 border shadow-xl transition-colors duration-500", 
+      getBackgroundClass()
+    )}>
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold mb-4 text-white">AI Rekommendation</h2>
         
@@ -110,8 +117,8 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
           <Badge 
             className={cn(
               "text-base px-8 py-2 rounded-full font-bold",
-              rec === "ADD" ? "bg-green-600 text-white" : 
-              rec === "REMOVE" ? "bg-red-600 text-white" : 
+              rec === "ADD" ? "bg-green-500 text-white" : 
+              rec === "REMOVE" ? "bg-red-500 text-white" : 
               "bg-yellow-500 text-black"
             )}
           >
@@ -121,7 +128,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
             {rec}
           </Badge>
           
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2 text-sm text-white">
             <span>{trade.name}</span>
             <span>•</span>
             <span>{trade.pairSymbol}</span>
@@ -133,12 +140,12 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
             )}
           </div>
           
-          <p className="text-sm text-gray-400 mt-1 max-w-xs text-center">{reason}</p>
+          <p className="text-sm text-gray-200 mt-1 max-w-xs text-center">{reason}</p>
         </div>
       </div>
       
       <div className="flex flex-col items-center mb-8">
-        <div className="text-xs text-muted-foreground mb-1">Nuvarande pris</div>
+        <div className="text-xs text-gray-200 mb-1">Nuvarande pris</div>
         <div className={cn(
           "text-4xl font-bold text-white transition-all duration-200 transform",
           ticking ? "scale-110" : "scale-100"
@@ -149,14 +156,14 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
       
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div className="bg-slate-800/50 p-3 rounded-lg">
-          <div className="text-xs text-muted-foreground">Entry</div>
+          <div className="text-xs text-gray-200">Entry</div>
           <div className="font-bold text-white text-lg">
             {trade.entryPrice.toLocaleString('sv-SE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </div>
         </div>
         
         <div className="bg-slate-800/50 p-3 rounded-lg">
-          <div className="text-xs text-muted-foreground">P&amp;L %</div>
+          <div className="text-xs text-gray-200">P&amp;L %</div>
           <div className={cn(
             "flex items-center gap-1 font-bold text-lg",
             pnlPct >= 0 ? "text-green-400" : "text-red-400"
@@ -167,7 +174,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
         </div>
         
         <div className="bg-slate-800/50 p-3 rounded-lg">
-          <div className="text-xs text-muted-foreground">P&amp;L (val.)</div>
+          <div className="text-xs text-gray-200">P&amp;L (val.)</div>
           <div className={cn(
             "font-bold text-lg",
             pnlVal >= 0 ? "text-green-400" : "text-red-400"
@@ -177,7 +184,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
         </div>
         
         <div className="bg-slate-800/50 p-3 rounded-lg">
-          <div className="text-xs text-muted-foreground">
+          <div className="text-xs text-gray-200">
             {trade.leverage > 1 ? "Storlek (hävstång)" : "Storlek"}
           </div>
           <div className="font-bold text-white text-lg">
