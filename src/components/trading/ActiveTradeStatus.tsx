@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { TransparentWhiteButton } from "@/components/ui/TransparentWhiteButton";
 import { cn } from "@/lib/utils";
@@ -5,6 +6,7 @@ import { usePrice } from "@/hooks/usePrice";
 import { Badge } from "@/components/ui/badge";
 import { ArrowUp, ArrowDown, CircleCheck, CircleX, Info } from "lucide-react";
 import { saveToStorage, getFromStorage, removeFromStorage } from "@/utils/storageUtils";
+import { toast } from "@/components/ui/use-toast";
 
 type TradeType = "long" | "short";
 type Recommendation = "HODL" | "ADD" | "REMOVE";
@@ -51,6 +53,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
   useEffect(() => {
     const formattedSymbol = trade.pairSymbol.replace('/', '');
     
+    // Save the trade to storage immediately when component mounts
     saveToStorage(ACTIVE_TRADE_STORAGE_KEY, trade);
     
     loadPriceData(formattedSymbol);
@@ -74,11 +77,19 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
 
   const handleEndTrade = () => {
     removeFromStorage(ACTIVE_TRADE_STORAGE_KEY);
+    toast({
+      title: "Trade avslutad",
+      description: "Din trade har avslutats.",
+    });
     onEnd();
   };
 
   const handleResetTrade = () => {
     removeFromStorage(ACTIVE_TRADE_STORAGE_KEY);
+    toast({
+      title: "Trade återställd",
+      description: "Din trade har återställts.",
+    });
     onEnd();
   };
 

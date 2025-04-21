@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -53,7 +52,7 @@ const getRecommendation = (entry: TradeEntry, current: number): { rec: Recommend
 
 const TradingCoach: React.FC = () => {
   const { selectedCrypto, setSelectedCrypto } = useCrypto();
-  const { priceData } = usePrice();
+  const { priceData, loadPriceData } = usePrice();
 
   const pairSymbol = selectedCrypto.pairSymbol;
   const priceKey = pairSymbol.replace('/', '');
@@ -70,31 +69,50 @@ const TradingCoach: React.FC = () => {
   const [coachHistory, setCoachHistory] = useState<CoachHistoryItem[]>([]);
   const [activeTrade, setActiveTrade] = useState<TradeEntry | null>(null);
 
-  // Load saved trade and history data on component mount
   useEffect(() => {
-    // Load active trade from localStorage
     const savedTrade = getFromStorage<TradeEntry | null>(ACTIVE_TRADE_STORAGE_KEY, null);
     if (savedTrade) {
       setActiveTrade(savedTrade);
+      
+      if (savedTrade.symbol && savedTrade.pairSymbol && savedTrade.name) {
+        setSelectedCrypto({
+          symbol: savedTrade.symbol,
+          pairSymbol: savedTrade.pairSymbol,
+          name: savedTrade.name
+        });
+      }
+      
+      if (savedTrade.pairSymbol) {
+        const formattedSymbol = savedTrade.pairSymbol.replace('/', '');
+        loadPriceData(formattedSymbol);
+      }
+      
       toast({
         title: "Aktiv trade laddad",
         description: `Fortsätter med din ${savedTrade.type} på ${savedTrade.name}`,
       });
     }
     
-    // Load coach history from localStorage
     const savedHistory = getFromStorage<CoachHistoryItem[]>(COACH_HISTORY_STORAGE_KEY, []);
     if (savedHistory && savedHistory.length > 0) {
       setCoachHistory(savedHistory);
     }
   }, []);
 
-  // Save coach history when it changes
   useEffect(() => {
     if (coachHistory.length > 0) {
       saveToStorage(COACH_HISTORY_STORAGE_KEY, coachHistory);
     }
   }, [coachHistory]);
+
+  useEffect(() => {
+    setTrade(prev => ({
+      ...prev,
+      symbol: selectedCrypto.symbol,
+      pairSymbol: selectedCrypto.pairSymbol,
+      name: selectedCrypto.name,
+    }));
+  }, [selectedCrypto]);
 
   function handleSelectCrypto() {
     setStep(2);
