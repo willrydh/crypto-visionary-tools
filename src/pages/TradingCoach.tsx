@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -9,6 +10,8 @@ import CryptoSelector from "@/components/crypto/CryptoSelector";
 import { usePrice } from "@/hooks/usePrice";
 import TransparentWhiteButton from "@/components/ui/TransparentWhiteButton";
 import ActiveTradeStatus from "@/components/trading/ActiveTradeStatus";
+import { getFromStorage, saveToStorage, removeFromStorage } from '@/utils/storageUtils';
+import { toast } from "@/components/ui/use-toast";
 
 type Step = 1 | 2 | 3 | 4 | 5;
 type TradeType = "long" | "short";
@@ -37,6 +40,9 @@ interface CoachHistoryItem {
   lastPrice: number;
 }
 
+const ACTIVE_TRADE_STORAGE_KEY = "activeTrade";
+const COACH_HISTORY_STORAGE_KEY = "coachHistory";
+
 const getRecommendation = (entry: TradeEntry, current: number): { rec: Recommendation; reason: string; pnl: number } => {
   if (!entry || !current) return { rec: 'HODL', reason: "Ingen data", pnl: 0 };
   const pnl = ((current - entry.entryPrice) * (entry.type === "long" ? 1 : -1)) / entry.entryPrice * 100;
@@ -63,6 +69,32 @@ const TradingCoach: React.FC = () => {
   });
   const [coachHistory, setCoachHistory] = useState<CoachHistoryItem[]>([]);
   const [activeTrade, setActiveTrade] = useState<TradeEntry | null>(null);
+
+  // Load saved trade and history data on component mount
+  useEffect(() => {
+    // Load active trade from localStorage
+    const savedTrade = getFromStorage<TradeEntry | null>(ACTIVE_TRADE_STORAGE_KEY, null);
+    if (savedTrade) {
+      setActiveTrade(savedTrade);
+      toast({
+        title: "Aktiv trade laddad",
+        description: `Fortsätter med din ${savedTrade.type} på ${savedTrade.name}`,
+      });
+    }
+    
+    // Load coach history from localStorage
+    const savedHistory = getFromStorage<CoachHistoryItem[]>(COACH_HISTORY_STORAGE_KEY, []);
+    if (savedHistory && savedHistory.length > 0) {
+      setCoachHistory(savedHistory);
+    }
+  }, []);
+
+  // Save coach history when it changes
+  useEffect(() => {
+    if (coachHistory.length > 0) {
+      saveToStorage(COACH_HISTORY_STORAGE_KEY, coachHistory);
+    }
+  }, [coachHistory]);
 
   function handleSelectCrypto() {
     setStep(2);
@@ -105,7 +137,7 @@ const TradingCoach: React.FC = () => {
   function handleAnalyse() {
     if (trade.entryPrice && trade.size && trade.type && trade.symbol && trade.pairSymbol && trade.name) {
       const { rec, reason, pnl } = getRecommendation(trade as TradeEntry, currentPrice);
-      setCoachHistory((old) => [
+      const newHistory = [
         {
           timestamp: new Date().toISOString().slice(0, 16).replace('T', ' '),
           recommendation: rec,
@@ -118,15 +150,27 @@ const TradingCoach: React.FC = () => {
           size: trade.size,
           lastPrice: currentPrice,
         },
-        ...old
-      ]);
-      setActiveTrade(trade as TradeEntry);
+        ...coachHistory
+      ];
+      
+      setCoachHistory(newHistory);
+      saveToStorage(COACH_HISTORY_STORAGE_KEY, newHistory);
+      
+      const newActiveTrade = trade as TradeEntry;
+      setActiveTrade(newActiveTrade);
+      saveToStorage(ACTIVE_TRADE_STORAGE_KEY, newActiveTrade);
+      
       setStep(1);
       setTrade({
         type: "long",
         symbol: selectedCrypto.symbol,
         pairSymbol: selectedCrypto.pairSymbol,
         name: selectedCrypto.name,
+      });
+      
+      toast({
+        title: "Trade sparad",
+        description: `Din ${trade.type} trade på ${trade.name} har sparats och är nu aktiv.`,
       });
     }
   }
@@ -143,11 +187,15 @@ const TradingCoach: React.FC = () => {
       pairSymbol: selectedCrypto.pairSymbol,
       name: selectedCrypto.name,
     });
-    setActiveTrade(null);
   }
 
   function endTrade() {
     setActiveTrade(null);
+    removeFromStorage(ACTIVE_TRADE_STORAGE_KEY);
+    toast({
+      title: "Trade avslutad",
+      description: "Din trade har avslutats och är inte längre aktiv.",
+    });
   }
 
   return (

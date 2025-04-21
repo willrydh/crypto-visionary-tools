@@ -1,10 +1,10 @@
-
 import React, { useEffect, useState } from "react";
 import { TransparentWhiteButton } from "@/components/ui/TransparentWhiteButton";
 import { cn } from "@/lib/utils";
 import { usePrice } from "@/hooks/usePrice";
 import { Badge } from "@/components/ui/badge";
 import { ArrowUp, ArrowDown, CircleCheck, CircleX, Info } from "lucide-react";
+import { saveToStorage, getFromStorage, removeFromStorage } from "@/utils/storageUtils";
 
 type TradeType = "long" | "short";
 type Recommendation = "HODL" | "ADD" | "REMOVE";
@@ -29,7 +29,6 @@ function getPnl(entry: number, current: number, size: number, type: TradeType) {
   return { pnlPct, pnlVal };
 }
 
-// Get recommendation based on PNL
 function getRecommendation(entry: number, current: number, type: TradeType): { rec: Recommendation; reason: string } {
   const { pnlPct } = getPnl(entry, current, 1, type);
   
@@ -38,34 +37,32 @@ function getRecommendation(entry: number, current: number, type: TradeType): { r
   return { rec: "HODL", reason: "Stabilitet - ingen tydlig vinst/förlust." };
 }
 
+const ACTIVE_TRADE_STORAGE_KEY = "activeTrade";
+
 const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice: initialPrice, onEnd }) => {
   const { loadPriceData, priceData } = usePrice();
   const [lastPrice, setLastPrice] = useState(initialPrice);
   const [ticking, setTicking] = useState(false);
   
-  // Calculate PNL based on the current price
   const { pnlPct, pnlVal } = getPnl(trade.entryPrice, lastPrice, trade.size, trade.type);
   
-  // Get recommendation based on current PNL
   const { rec, reason } = getRecommendation(trade.entryPrice, lastPrice, trade.type);
   
-  // Set up real-time price updates
   useEffect(() => {
     const formattedSymbol = trade.pairSymbol.replace('/', '');
     
-    // Initial load of price data
+    saveToStorage(ACTIVE_TRADE_STORAGE_KEY, trade);
+    
     loadPriceData(formattedSymbol);
     
-    // Set up interval for real-time updates
     const intervalId = setInterval(() => {
       loadPriceData(formattedSymbol);
-      setTicking(prev => !prev); // Toggle to trigger animation
-    }, 2000); // Update every 2 seconds
+      setTicking(prev => !prev);
+    }, 2000);
     
     return () => clearInterval(intervalId);
-  }, [trade.pairSymbol, loadPriceData]);
+  }, [trade.pairSymbol, loadPriceData, trade]);
   
-  // Update local price when priceData changes
   useEffect(() => {
     const formattedSymbol = trade.pairSymbol.replace('/', '');
     const currentPriceData = priceData[formattedSymbol];
@@ -75,9 +72,18 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
     }
   }, [priceData, trade.pairSymbol]);
 
+  const handleEndTrade = () => {
+    removeFromStorage(ACTIVE_TRADE_STORAGE_KEY);
+    onEnd();
+  };
+
+  const handleResetTrade = () => {
+    removeFromStorage(ACTIVE_TRADE_STORAGE_KEY);
+    onEnd();
+  };
+
   return (
     <div className="relative bg-slate-900 rounded-xl p-6 border border-slate-800 shadow-xl">
-      {/* AI Recommendation - centered and prominent */}
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold mb-4 text-white">AI Rekommendation</h2>
         
@@ -106,7 +112,6 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
         </div>
       </div>
       
-      {/* Current price - LARGE and prominent */}
       <div className="flex flex-col items-center mb-8">
         <div className="text-xs text-muted-foreground mb-1">Nuvarande pris</div>
         <div className={cn(
@@ -117,7 +122,6 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
         </div>
       </div>
       
-      {/* Trade details and P&L in grid layout */}
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div className="bg-slate-800 p-3 rounded-lg">
           <div className="text-xs text-muted-foreground">Entry</div>
@@ -153,20 +157,19 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
         </div>
       </div>
       
-      {/* Action buttons */}
       <div className="grid gap-3">
         <TransparentWhiteButton 
           className="w-full text-base font-bold"
-          onClick={() => {}}
+          onClick={handleResetTrade}
         >
           Börja om
         </TransparentWhiteButton>
         
         <TransparentWhiteButton 
           className="w-full text-base font-bold"
-          onClick={onEnd}
+          onClick={handleEndTrade}
         >
-          Spara & markera som aktiv trade
+          Avsluta trade
         </TransparentWhiteButton>
       </div>
     </div>
