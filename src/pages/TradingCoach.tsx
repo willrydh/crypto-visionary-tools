@@ -9,6 +9,7 @@ import { useCrypto } from "@/hooks/useCrypto";
 import CryptoSelector from "@/components/crypto/CryptoSelector";
 import { usePrice } from "@/hooks/usePrice";
 import TransparentWhiteButton from "@/components/ui/TransparentWhiteButton";
+import ActiveTradeStatus from "@/components/trading/ActiveTradeStatus";
 
 type Step = 1 | 2 | 3 | 4 | 5;
 type TradeType = "long" | "short";
@@ -36,55 +37,6 @@ interface CoachHistoryItem {
   size: number;
   lastPrice: number;
 }
-
-const ActiveTradeView: React.FC<{ trade: TradeEntry; lastPrice: number; onEnd: () => void; }> = ({ trade, lastPrice, onEnd }) => {
-  const pnl = ((lastPrice - trade.entryPrice) * (trade.type === "long" ? 1 : -1)) / trade.entryPrice * 100;
-
-  return (
-    <div className="relative rounded-2xl bg-gradient-to-br from-slate-900/90 to-secondary/60 p-7 md:p-10 shadow-xl border border-secondary mb-12 flex flex-col gap-6 glass">
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="text-lg font-bold text-white mb-1 flex items-center gap-2">
-            <span className={trade.type === "long" ? "text-green-400" : "text-red-400"}>
-              {trade.type === "long" ? "Long" : "Short"}
-            </span>
-            <span className="text-white/90">{trade.name} <span className="text-xs font-normal text-muted-foreground ml-1">({trade.pairSymbol})</span></span>
-          </div>
-          <div className="text-xs text-muted-foreground pb-1 font-semibold">Aktiv position</div>
-        </div>
-        <div>
-          <div className={"rounded-full py-1 px-4 font-black text-base shadow " + (pnl >= 0 ? "bg-green-600/90 text-white" : "bg-red-600/90 text-white")}>
-            {pnl >= 0 ? "+" : ""}
-            {pnl.toFixed(2)}%
-          </div>
-        </div>
-      </div>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
-        <div>
-          <div className="text-muted-foreground">Entrypris</div>
-          <div className="font-bold text-white">{trade.entryPrice}</div>
-        </div>
-        <div>
-          <div className="text-muted-foreground">Nuvarande pris</div>
-          <div className="font-bold text-white">{lastPrice}</div>
-        </div>
-        <div>
-          <div className="text-muted-foreground">Storlek</div>
-          <div className="font-bold text-white">{trade.size}</div>
-        </div>
-        <div>
-          <div className="text-muted-foreground">Symbol</div>
-          <div className="font-bold text-white">{trade.symbol}</div>
-        </div>
-      </div>
-      <div className="flex flex-col md:flex-row gap-3 justify-end mt-2">
-        <TransparentWhiteButton className="w-full md:w-auto" onClick={onEnd}>
-          Avsluta Trade
-        </TransparentWhiteButton>
-      </div>
-    </div>
-  );
-};
 
 const getRecommendation = (entry: TradeEntry, current: number): { rec: Recommendation; reason: string; pnl: number } => {
   if (!entry || !current) return { rec: 'HODL', reason: "Ingen data", pnl: 0 };
@@ -202,16 +154,16 @@ const TradingCoach: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-background to-secondary/40 pb-24 px-2 md:px-0 section-padding">
       <section className="max-w-2xl mx-auto py-12 sm:py-20 w-full fade-in">
-        <div className="flex gap-6 sm:gap-8 mb-8 items-center justify-center">
+        <div className="flex gap-8 sm:gap-12 mb-8 items-center justify-center">
           <Badge className="box-border whitespace-nowrap px-4 py-1 text-base border border-white/10 rounded-lg font-semibold bg-card/90 shadow"
             variant="outline"
           >AI Trading Assistant</Badge>
           <div className="flex gap-2 items-center">
             <CryptoSelector showDataSource label="" />
-            <span className="flex gap-1 items-center whitespace-nowrap ml-3 text-sm text-muted-foreground">
+            <span className="flex gap-1 items-center whitespace-nowrap ml-4 text-sm text-muted-foreground min-w-fit">
               <span className="flex items-center gap-1">
                 <span className="text-[10px] pr-1">●</span>
-                Bybit API
+                <span style={{whiteSpace:'nowrap'}}>Bybit API</span>
               </span>
             </span>
           </div>
@@ -222,7 +174,7 @@ const TradingCoach: React.FC = () => {
         </div>
 
         {activeTrade && (
-          <ActiveTradeView 
+          <ActiveTradeStatus
             trade={activeTrade}
             lastPrice={currentPrice}
             onEnd={endTrade}
@@ -238,6 +190,13 @@ const TradingCoach: React.FC = () => {
               </CardHeader>
               <CardContent className="flex flex-col gap-4 mt-2">
                 <CryptoSelector fullWidth showDataSource label="Kryptovaluta" />
+                <div className="flex flex-col gap-2 text-center text-muted-foreground text-base font-semibold">
+                  <span>
+                    Aktuellt val: <span className="text-white font-bold">{selectedCrypto.name}</span>
+                    &nbsp;
+                    <span className="text-xs text-muted-foreground">({selectedCrypto.pairSymbol})</span>
+                  </span>
+                </div>
                 <div className="flex justify-center mt-6">
                   <TransparentWhiteButton
                     className="w-full sm:max-w-xs text-base"
