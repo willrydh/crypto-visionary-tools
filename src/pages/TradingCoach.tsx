@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -190,16 +189,18 @@ const TradingCoach: React.FC = () => {
           {step === 1 && !activeTrade && (
             <Card className="bg-card/80 shadow-xl border border-white/10 rounded-2xl px-0 pt-4 pb-8 backdrop-blur-md">
               <CardHeader className="pb-4">
-                <CardTitle className="text-xl mb-1 font-extrabold">1. Välj kryptovaluta</CardTitle>
-                <CardDescription className="text-base">Vilken krypto vill du analysera?</CardDescription>
+                <CardTitle className="text-xl mb-1 font-extrabold">1. Skapa ny trade</CardTitle>
+                <CardDescription className="text-base">Starta en ny trade med den valda kryptovalutan</CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-4 mt-2">
-                <CryptoSelector fullWidth showDataSource label="Kryptovaluta" />
                 <div className="flex flex-col gap-2 text-center text-muted-foreground text-base font-semibold">
                   <span>
-                    Aktuellt val: <span className="text-white font-bold">{selectedCrypto.name}</span>
+                    Nuvarande val: <span className="text-white font-bold">{selectedCrypto.name}</span>
                     &nbsp;
                     <span className="text-xs text-muted-foreground">({selectedCrypto.pairSymbol})</span>
+                  </span>
+                  <span className="text-sm text-muted-foreground mt-2">
+                    Om du vill byta kryptovaluta, använd väljaren överst på sidan
                   </span>
                 </div>
                 <div className="flex justify-center mt-6">
@@ -447,4 +448,3 @@ const TradingCoach: React.FC = () => {
 };
 
 export default TradingCoach;
-
