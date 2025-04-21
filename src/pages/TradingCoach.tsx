@@ -1,10 +1,11 @@
 
 import React, { useState } from 'react';
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { cn } from '@/lib/utils';
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 type TradeType = "long" | "short";
 type Recommendation = "HODL" | "ADD" | "REMOVE";
@@ -16,7 +17,6 @@ interface TradeEntry {
   dateTime?: string;
   type: TradeType;
 }
-
 interface CoachHistoryItem {
   timestamp: string;
   recommendation: Recommendation;
@@ -39,11 +39,9 @@ const dummyIndicators = {
   volume: 320000,
   isUptrend: true
 };
-
 const dummyCurrentPrice = 72000;
 
 function getDummyRecommendation(entry: TradeEntry, cur: number): { rec: Recommendation, reason: string, pnl: number } {
-  // Dummy logic: profit/loss determines rec
   const pnl = ((cur - entry.entryPrice) * (entry.type === 'long' ? 1 : -1)) / entry.entryPrice * 100;
   if (pnl > 3) return { rec: "ADD", reason: "Trenden fortsatt stark: MA21 ovan, MACD positiv. → ADD", pnl };
   if (pnl < -2) return { rec: "REMOVE", reason: "Pris har brutit under MA50, RSI sjunker. → REMOVE", pnl };
@@ -61,7 +59,6 @@ const initialTrade: TradeEntry = {
 
 const TradingCoach: React.FC = () => {
   const [trade, setTrade] = useState<TradeEntry>(initialTrade);
-  const [mode, setMode] = useState<"api"|"manual">("manual");
   const [coachHistory, setCoachHistory] = useState<CoachHistoryItem[]>([
     {
       timestamp: "2024-04-19 20:01",
@@ -70,19 +67,8 @@ const TradingCoach: React.FC = () => {
       pnl: 1.5,
     }
   ]);
-  
-  // Skapa “analys”/rekommendation för aktiv trade
   const { rec, reason, pnl } = getDummyRecommendation(trade, dummyCurrentPrice);
 
-  // Soft glassmorphism background/overlay for the coach area
-  const bgOverlayStyle = {
-    background: "linear-gradient(180deg, rgba(38,38,61,0.55) 0%, rgba(32,34,44,0.88) 100%)",
-    // fallback for light mode
-    backdropFilter: 'blur(20px)',
-    WebkitBackdropFilter: 'blur(20px)'
-  } as React.CSSProperties;
-
-  // Hantera formulär
   function handleManualInput(e: React.FormEvent) {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
@@ -107,136 +93,187 @@ const TradingCoach: React.FC = () => {
   }
 
   return (
-    <div className={cn(
-      "min-h-screen flex flex-col items-center justify-center py-8 px-2 md:px-0 transition w-full bg-noise"
-    )} style={{background: "linear-gradient(120deg, #181928 0%, #22243D 100%)"}}>
-      <div className="w-full max-w-lg relative">
-        {/* Blurred glass effect behind all cards */}
-        <div className="absolute inset-0 z-0 pointer-events-none rounded-2xl" style={bgOverlayStyle}></div>
-
-        <h1 className="text-3xl font-bold mb-4 text-center z-10 relative text-white drop-shadow-md">Trading Coach</h1>
-        <Card className="mb-7 glass relative z-10 border-0 !p-0 shadow-none" style={{background: "rgba(255,255,255,0.08)", boxShadow: "0 12px 32px 0 rgba(52,64,102, 0.16)"}}>
-          <CardHeader className="pb-1">
-            <div className="flex gap-2 flex-col sm:flex-row items-center justify-center">
-              <Button 
-                variant={mode==="api" ? "default" : "outline"} 
-                onClick={() => setMode("api")}
-                className={mode==="api" ? "bg-white/90 text-[#222] shadow-md backdrop-blur-lg border-0" : "bg-transparent"}
-              >Importera från Bybit</Button>
-              <Button 
-                variant={mode==="manual" ? "default" : "outline"} 
-                onClick={() => setMode("manual")}
-                className={mode==="manual" ? "bg-primary text-white shadow-md backdrop-blur-lg border-0" : "bg-transparent"}
-              >Manuell inmatning</Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {mode === "manual" && (
-              <form 
-                className="w-full grid gap-3 mt-3"
-                onSubmit={handleManualInput}
-                autoComplete="off"
-              >
-                <div className="flex gap-3 w-full justify-between">
-                  <label className={cn("flex items-center gap-1 font-medium transition", trade.type === "long" ? "text-green-400" : "text-muted-foreground")}>
-                    <input type="radio" name="type" value="long" defaultChecked={trade.type === "long"} className="accent-green-400" /> Long
-                  </label>
-                  <label className={cn("flex items-center gap-1 font-medium transition", trade.type === "short" ? "text-red-400" : "text-muted-foreground")}>
-                    <input type="radio" name="type" value="short" defaultChecked={trade.type === "short"} className="accent-red-400" /> Short
-                  </label>
-                </div>
-                <Input type="number" name="entryPrice" placeholder="Entry price" step="0.01" required defaultValue={trade.entryPrice} className="glass !bg-opacity-60 text-white placeholder:text-slate-300" />
-                <Input type="number" name="size" placeholder="Size" step="0.0001" required defaultValue={trade.size} className="glass !bg-opacity-60 text-white placeholder:text-slate-300" />
-                <Input type="number" name="stopLoss" placeholder="Stop Loss (valfritt)" step="0.01" defaultValue={trade.stopLoss} className="glass !bg-opacity-60 text-white placeholder:text-slate-300" />
-                <Input type="number" name="takeProfit" placeholder="Take Profit (valfritt)" step="0.01" defaultValue={trade.takeProfit} className="glass !bg-opacity-60 text-white placeholder:text-slate-300" />
-                <Input type="datetime-local" name="dateTime" placeholder="Date/time (valfritt)" defaultValue={trade.dateTime} className="glass !bg-opacity-60 text-white placeholder:text-slate-300" />
-                <Button type="submit" className="w-full mt-3 bg-gradient-to-tr from-primary to-secondary/80 text-white shadow hover:from-primary/70 hover:to-secondary/70">Analysera trade</Button>
-              </form>
-            )}
-            {mode === "api" && (
-              <div className="p-2 text-center text-muted-foreground">API-integration kommer snart! Lägg till din Bybit-nyckel i inställningar för att automatiskt hämta öppna trades.</div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Analys-ruta */}
-        <Card className="mb-5 glass relative z-10 border-0 px-0 py-0 shadow-none" style={{background: "rgba(255,255,255,0.09)", boxShadow: "0 8px 22px 0 rgba(52,64,102,0.10)"}}>
-          <CardContent className="!p-5">
-            <div className="flex flex-col items-center py-2">
-              <div className="text-3xl font-bold mb-0 text-white tracking-tight">{rec}</div>
-              <Badge className={cn(
-                "text-base px-5 py-2 rounded-full mb-2 font-semibold shadow pulse-subtle backdrop-blur h-7 select-none border-0",
-                rec === "ADD" ? "bg-green-400/30 text-green-200" : 
-                rec === "REMOVE" ? "bg-red-400/30 text-red-200" : 
-                "bg-yellow-300/20 text-yellow-100"
-              )}>{rec}</Badge>
-              <div className="mb-2 text-sm text-center text-slate-200 drop-shadow">{reason}</div>
-            </div>
-            <div className="grid grid-cols-2 gap-3 mb-3">
-              <div>
-                <div className="text-xs text-muted-foreground">Entry</div>
-                <div className="font-semibold text-white">{trade.entryPrice}</div>
-              </div>
-              <div>
-                <div className="text-xs text-muted-foreground">Current</div>
-                <div className="font-semibold text-white">{dummyCurrentPrice}</div>
-              </div>
-              <div>
-                <div className="text-xs text-slate-200">P&amp;L %</div>
-                <div className={cn("font-semibold text-lg", pnl >= 0 ? "text-green-400" : "text-red-300")}>{pnl.toFixed(2)}%</div>
-              </div>
-              <div>
-                <div className="text-xs text-slate-200">P&amp;L (val)</div>
-                <div className={cn("font-semibold text-lg", pnl >= 0 ? "text-green-400" : "text-red-300")}>{((dummyCurrentPrice - trade.entryPrice) * trade.size * (trade.type === "long" ? 1 : -1)).toFixed(2)}</div>
-              </div>
-            </div>
-            <div className="flex flex-wrap gap-2 mb-2 justify-center">
-              <span className="rounded-full glass px-3 py-1 text-xs text-blue-100 border border-blue-200/20 backdrop-blur">{`MA21: ${dummyIndicators.ma21}`}</span>
-              <span className="rounded-full glass px-3 py-1 text-xs text-blue-100 border border-blue-200/20 backdrop-blur">{`MA50: ${dummyIndicators.ma50}`}</span>
-              <span className="rounded-full glass px-3 py-1 text-xs text-blue-100 border border-blue-200/20 backdrop-blur">{`MA100: ${dummyIndicators.ma100}`}</span>
-              <span className="rounded-full glass px-3 py-1 text-xs text-blue-100 border border-blue-200/20 backdrop-blur">{`MA200: ${dummyIndicators.ma200}`}</span>
-              <span className="rounded-full glass px-3 py-1 text-xs text-violet-100 border border-violet-200/20 backdrop-blur">{`EMA21: ${dummyIndicators.ema21}`}</span>
-            </div>
-            <div className="flex flex-wrap gap-2 mb-2 justify-center">
-              <span className="rounded-full glass px-3 py-1 text-xs text-cyan-100 border border-cyan-200/20 backdrop-blur">{`MACD: ${dummyIndicators.macd} (${dummyIndicators.macdSignal})`}</span>
-              <span className="rounded-full glass px-3 py-1 text-xs text-pink-100 border border-pink-200/20 backdrop-blur">{`RSI6: ${dummyIndicators.rsi6}`}</span>
-              <span className="rounded-full glass px-3 py-1 text-xs text-pink-100 border border-pink-200/20 backdrop-blur">{`RSI12: ${dummyIndicators.rsi12}`}</span>
-              <span className="rounded-full glass px-3 py-1 text-xs text-pink-100 border border-pink-200/20 backdrop-blur">{`RSI24: ${dummyIndicators.rsi24}`}</span>
-              <span className="rounded-full glass px-3 py-1 text-xs text-orange-100 border border-orange-200/20 backdrop-blur">{`Stoch RSI: ${dummyIndicators.stochRsi}`}</span>
-            </div>
-            <div className="flex flex-wrap gap-2 justify-center">
-              <span className="rounded-full glass px-3 py-1 text-xs text-slate-100 border border-slate-200/20 backdrop-blur">{`Volym: ${dummyIndicators.volume.toLocaleString()}`}</span>
-              <span className="rounded-full glass px-3 py-1 text-xs text-purple-100 border border-purple-200/20 backdrop-blur">{`Trend: ${dummyIndicators.isUptrend ? "Stark ↑" : "Svag ↓"}`}</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="glass relative z-10 border-0 shadow-menu mb-10" style={{background: "rgba(255,255,255,0.07)", boxShadow: "0 4px 16px 0 rgba(52,64,102, 0.09)"}}>
-          <CardHeader>
-            <span className="font-bold text-lg text-white">Rekommendations-historik</span>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col gap-3">
-              {coachHistory.map((item, i) => (
-                <div key={i} className="p-2 rounded-md glass border border-white/10 flex flex-col gap-1 shadow-sm">
-                  <div className="flex justify-between text-xs items-center">
-                    <span className="text-slate-200">{item.timestamp}</span>
-                    <Badge variant="outline" className={cn(
-                      "text-xs border-0",
-                      item.recommendation === "ADD" ? "text-green-300" : 
-                      item.recommendation === "REMOVE" ? "text-red-300" : "text-yellow-100"
-                    )}>{item.recommendation}</Badge>
-                  </div>
-                  <div className="text-xs text-slate-300">{item.reason}</div>
-                  <div className={cn("text-xs font-medium", item.pnl >= 0 ? "text-green-400" : "text-red-300")}>
-                    P&amp;L: {item.pnl.toFixed(2)}%
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+    <div className="w-full max-w-2xl mx-auto pt-6 pb-12 flex flex-col gap-8">
+      <div>
+        <h1 className="text-2xl font-bold mb-2">Trading Coach</h1>
+        <p className="text-muted-foreground max-w-xl">
+          Få coach-rekommendationer på din trade! Ange dina tradingparametrar för att analysera din position och se AI-coachens råd. Designen är nu lik inställningsvyn.
+        </p>
       </div>
+
+      <Card className="glass border-0 shadow-card">
+        <CardHeader>
+          <CardTitle>Analys av trade</CardTitle>
+          <CardDescription>
+            Mata in din öppna position för personlig AI-analys och strategi.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleManualInput} className="space-y-6 mt-2">
+            <div className="flex items-center justify-center gap-6">
+              <Label htmlFor="type-long" className={cn("cursor-pointer", trade.type === "long" ? "text-green-400" : "text-muted-foreground")}>
+                <input type="radio" name="type" id="type-long" value="long" defaultChecked={trade.type === "long"} className="accent-green-400 mr-2" />
+                Long
+              </Label>
+              <Label htmlFor="type-short" className={cn("cursor-pointer", trade.type === "short" ? "text-red-400" : "text-muted-foreground")}>
+                <input type="radio" name="type" id="type-short" value="short" defaultChecked={trade.type === "short"} className="accent-red-400 mr-2" />
+                Short
+              </Label>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="entryPrice">Entrypris</Label>
+              <Input
+                id="entryPrice"
+                name="entryPrice"
+                type="number"
+                required
+                defaultValue={trade.entryPrice}
+                step="0.01"
+                className="glass"
+                placeholder="Entryprice"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="size">Positionstorlek</Label>
+              <Input
+                id="size"
+                name="size"
+                type="number"
+                required
+                defaultValue={trade.size}
+                step="0.0001"
+                className="glass"
+                placeholder="Storlek"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="stopLoss">Stop Loss <span className="text-muted-foreground">(valfritt)</span></Label>
+              <Input
+                id="stopLoss"
+                name="stopLoss"
+                type="number"
+                defaultValue={trade.stopLoss}
+                step="0.01"
+                className="glass"
+                placeholder="Stop Loss"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="takeProfit">Take Profit <span className="text-muted-foreground">(valfritt)</span></Label>
+              <Input
+                id="takeProfit"
+                name="takeProfit"
+                type="number"
+                defaultValue={trade.takeProfit}
+                step="0.01"
+                className="glass"
+                placeholder="Take Profit"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="dateTime">Datum/tid <span className="text-muted-foreground">(valfritt)</span></Label>
+              <Input
+                id="dateTime"
+                name="dateTime"
+                type="datetime-local"
+                defaultValue={trade.dateTime}
+                className="glass"
+                placeholder="Datum/tid"
+              />
+            </div>
+            <Button type="submit" className="w-full bg-gradient-to-tr from-primary to-secondary/80 text-white shadow hover:from-primary/70 hover:to-secondary/70">
+              Analysera trade
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+
+      <Card className="glass border-0 shadow-card">
+        <CardHeader>
+          <CardTitle>Rekommendation</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col items-center gap-2 pb-4">
+            <div className={cn(
+              "text-3xl font-bold",
+              rec === "ADD" ? "text-green-300" : rec === "REMOVE" ? "text-red-300" : "text-yellow-200"
+            )}>{rec}</div>
+            <Badge className={cn(
+              "text-base px-6 py-2 rounded-full font-semibold shadow pulse-subtle backdrop-blur select-none border-0",
+              rec === "ADD" ? "bg-green-400/30 text-green-200" :
+                rec === "REMOVE" ? "bg-red-400/30 text-red-200" : "bg-yellow-300/20 text-yellow-100"
+            )}>{rec}</Badge>
+            <div className="mb-2 text-sm text-center text-slate-200">{reason}</div>
+          </div>
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <div>
+              <div className="text-xs text-muted-foreground">Entry</div>
+              <div className="font-semibold text-white">{trade.entryPrice}</div>
+            </div>
+            <div>
+              <div className="text-xs text-muted-foreground">Nuvarande pris</div>
+              <div className="font-semibold text-white">{dummyCurrentPrice}</div>
+            </div>
+            <div>
+              <div className="text-xs text-slate-200">P&amp;L %</div>
+              <div className={cn("font-semibold text-lg", pnl >= 0 ? "text-green-400" : "text-red-300")}>{pnl.toFixed(2)}%</div>
+            </div>
+            <div>
+              <div className="text-xs text-slate-200">P&amp;L (val)</div>
+              <div className={cn("font-semibold text-lg", pnl >= 0 ? "text-green-400" : "text-red-300")}>
+                {((dummyCurrentPrice - trade.entryPrice) * trade.size * (trade.type === "long" ? 1 : -1)).toFixed(2)}
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2 mb-1 justify-center">
+            <span className="rounded-full glass px-3 py-1 text-xs text-blue-100 border border-blue-200/20 backdrop-blur">{`MA21: ${dummyIndicators.ma21}`}</span>
+            <span className="rounded-full glass px-3 py-1 text-xs text-blue-100 border border-blue-200/20 backdrop-blur">{`MA50: ${dummyIndicators.ma50}`}</span>
+            <span className="rounded-full glass px-3 py-1 text-xs text-blue-100 border border-blue-200/20 backdrop-blur">{`MA100: ${dummyIndicators.ma100}`}</span>
+            <span className="rounded-full glass px-3 py-1 text-xs text-blue-100 border border-blue-200/20 backdrop-blur">{`MA200: ${dummyIndicators.ma200}`}</span>
+            <span className="rounded-full glass px-3 py-1 text-xs text-violet-100 border border-violet-200/20 backdrop-blur">{`EMA21: ${dummyIndicators.ema21}`}</span>
+          </div>
+          <div className="flex flex-wrap gap-2 mb-1 justify-center">
+            <span className="rounded-full glass px-3 py-1 text-xs text-cyan-100 border border-cyan-200/20 backdrop-blur">{`MACD: ${dummyIndicators.macd} (${dummyIndicators.macdSignal})`}</span>
+            <span className="rounded-full glass px-3 py-1 text-xs text-pink-100 border border-pink-200/20 backdrop-blur">{`RSI6: ${dummyIndicators.rsi6}`}</span>
+            <span className="rounded-full glass px-3 py-1 text-xs text-pink-100 border border-pink-200/20 backdrop-blur">{`RSI12: ${dummyIndicators.rsi12}`}</span>
+            <span className="rounded-full glass px-3 py-1 text-xs text-pink-100 border border-pink-200/20 backdrop-blur">{`RSI24: ${dummyIndicators.rsi24}`}</span>
+            <span className="rounded-full glass px-3 py-1 text-xs text-orange-100 border border-orange-200/20 backdrop-blur">{`Stoch RSI: ${dummyIndicators.stochRsi}`}</span>
+          </div>
+          <div className="flex flex-wrap gap-2 justify-center">
+            <span className="rounded-full glass px-3 py-1 text-xs text-slate-100 border border-slate-200/20 backdrop-blur">{`Volym: ${dummyIndicators.volume.toLocaleString()}`}</span>
+            <span className="rounded-full glass px-3 py-1 text-xs text-purple-100 border border-purple-200/20 backdrop-blur">{`Trend: ${dummyIndicators.isUptrend ? "Stark ↑" : "Svag ↓"}`}</span>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="glass border-0 shadow-card">
+        <CardHeader>
+          <CardTitle>Rekommendations-historik</CardTitle>
+          <CardDescription>
+            Tidigare AI-rekommendationer baserat på din trade-inmatning.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col gap-3">
+            {coachHistory.map((item, i) => (
+              <div key={i} className="p-2 rounded-md glass border border-white/10 flex flex-col gap-1 shadow-sm">
+                <div className="flex justify-between text-xs items-center">
+                  <span className="text-slate-200">{item.timestamp}</span>
+                  <Badge variant="outline" className={cn(
+                    "text-xs border-0",
+                    item.recommendation === "ADD" ? "text-green-300" : 
+                    item.recommendation === "REMOVE" ? "text-red-300" : "text-yellow-100"
+                  )}>{item.recommendation}</Badge>
+                </div>
+                <div className="text-xs text-slate-300">{item.reason}</div>
+                <div className={cn("text-xs font-medium", item.pnl >= 0 ? "text-green-400" : "text-red-300")}>
+                  P&amp;L: {item.pnl.toFixed(2)}%
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
