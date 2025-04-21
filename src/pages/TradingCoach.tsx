@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -207,7 +206,11 @@ const TradingCoach: React.FC = () => {
                   placeholder="Datum/tid"
                 />
               </div>
-              <Button type="submit" size="lg" className="w-full bg-gradient-to-tr from-primary to-secondary/80 text-white shadow hover:from-primary/70 hover:to-secondary/70">
+              <Button
+                type="submit"
+                size="lg"
+                className="w-full bg-gradient-to-tr from-primary to-secondary/80 text-white shadow hover:from-primary/70 hover:to-secondary/70"
+              >
                 Analysera
               </Button>
             </form>
