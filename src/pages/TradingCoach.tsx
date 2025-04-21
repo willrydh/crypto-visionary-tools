@@ -1,8 +1,8 @@
+
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useCrypto } from "@/hooks/useCrypto";
@@ -154,13 +154,14 @@ const TradingCoach: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-background to-secondary/40 pb-24 px-2 md:px-0 section-padding">
       <section className="max-w-2xl mx-auto py-12 sm:py-20 w-full fade-in">
-        <div className="flex gap-8 sm:gap-12 mb-8 items-center justify-center">
-          <Badge className="box-border whitespace-nowrap px-4 py-1 text-base border border-white/10 rounded-lg font-semibold bg-card/90 shadow"
+        {/* BYBIT NOTIS - placerad högst upp */}
+        <div className="flex flex-col items-center gap-3 mb-8">
+          <Badge className="box-border px-4 py-1 text-base border border-white/10 rounded-lg font-semibold bg-card/90 shadow"
             variant="outline"
           >AI Trading Assistant</Badge>
-          <div className="flex gap-2 items-center">
+          <div className="flex flex-col items-center gap-1">
             <CryptoSelector showDataSource label="" />
-            <span className="flex gap-1 items-center whitespace-nowrap ml-4 text-sm text-muted-foreground min-w-fit">
+            <span className="flex gap-1 items-center whitespace-nowrap text-sm text-muted-foreground min-w-fit">
               <span className="flex items-center gap-1">
                 <span className="text-[10px] pr-1">●</span>
                 <span style={{whiteSpace:'nowrap'}}>Bybit API</span>
@@ -168,11 +169,13 @@ const TradingCoach: React.FC = () => {
             </span>
           </div>
         </div>
+        {/* HUVUDTITEL */}
         <h1 className="text-4xl md:text-5xl font-black mb-4 text-foreground text-center drop-shadow section-spacing">Trade Coach</h1>
         <div className="text-center text-lg text-muted-foreground mb-8">
           <span className="font-semibold">{selectedCrypto.name}</span> <span className="mx-1">•</span> <span>{selectedCrypto.pairSymbol}</span>
         </div>
 
+        {/* PÅGÅENDE TRADE */}
         {activeTrade && (
           <ActiveTradeStatus
             trade={activeTrade}
@@ -182,6 +185,7 @@ const TradingCoach: React.FC = () => {
         )}
 
         <div className="w-full flex flex-col gap-8">
+          {/* Steg 1 */}
           {step === 1 && !activeTrade && (
             <Card className="bg-card shadow-lg border-0 rounded-2xl px-0 pt-4 pb-8 glass">
               <CardHeader className="pb-4">
@@ -210,6 +214,7 @@ const TradingCoach: React.FC = () => {
             </Card>
           )}
 
+          {/* Steg 2 */}
           {step === 2 && (
             <Card className="bg-card shadow-lg border-0 rounded-2xl glass">
               <CardHeader>
@@ -233,7 +238,7 @@ const TradingCoach: React.FC = () => {
                     onClick={() => handleTypeSelect("short")}
                   >Short</TransparentWhiteButton>
                 </div>
-                <div className="flex gap-3 justify-between mt-3">
+                <div className="flex flex-col gap-3 justify-between mt-3">
                   <TransparentWhiteButton onClick={() => backTo(1)} className="w-full">Tillbaka</TransparentWhiteButton>
                   <TransparentWhiteButton onClick={resetFlow} className="w-full">Börja om</TransparentWhiteButton>
                 </div>
@@ -241,6 +246,7 @@ const TradingCoach: React.FC = () => {
             </Card>
           )}
 
+          {/* Steg 3 */}
           {step === 3 && (
             <Card className="bg-card shadow-lg border-0 rounded-2xl glass">
               <CardHeader>
@@ -278,7 +284,7 @@ const TradingCoach: React.FC = () => {
                       placeholder="T.ex. 0.01"
                     />
                   </div>
-                  <div className="flex gap-3 pt-1">
+                  <div className="flex flex-col gap-3 pt-1">
                     <TransparentWhiteButton type="button" onClick={() => backTo(2)} className="w-full">Tillbaka</TransparentWhiteButton>
                     <TransparentWhiteButton
                       type="submit"
@@ -290,6 +296,7 @@ const TradingCoach: React.FC = () => {
             </Card>
           )}
 
+          {/* Steg 4 */}
           {step === 4 && (
             <Card className="bg-card shadow-lg border-0 rounded-2xl glass">
               <CardHeader>
@@ -333,7 +340,7 @@ const TradingCoach: React.FC = () => {
                       className="mt-1 bg-muted/40"
                     />
                   </div>
-                  <div className="flex gap-3">
+                  <div className="flex flex-col gap-3">
                     <TransparentWhiteButton type="button" onClick={() => backTo(3)} className="w-full">Tillbaka</TransparentWhiteButton>
                     <TransparentWhiteButton
                       type="submit"
@@ -345,6 +352,7 @@ const TradingCoach: React.FC = () => {
             </Card>
           )}
 
+          {/* Steg 5 */}
           {step === 5 && trade.entryPrice && trade.size && (
             <Card className="shadow-xl border-0 rounded-2xl bg-gradient-to-br from-slate-900/80 to-secondary/50 py-8 px-4 glass">
               <CardHeader>
@@ -385,7 +393,7 @@ const TradingCoach: React.FC = () => {
                           </div>
                         </div>
                       </div>
-                      <div className="flex gap-3 mt-2">
+                      <div className="flex flex-col gap-3 mt-2">
                         <TransparentWhiteButton className="w-full" onClick={resetFlow}>Börja om</TransparentWhiteButton>
                         <TransparentWhiteButton
                           className="w-full"
