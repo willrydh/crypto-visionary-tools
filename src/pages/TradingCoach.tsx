@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -9,8 +8,8 @@ import { cn } from "@/lib/utils";
 import { useCrypto } from "@/hooks/useCrypto";
 import CryptoSelector from "@/components/crypto/CryptoSelector";
 import { usePrice } from "@/hooks/usePrice";
+import TransparentWhiteButton from "@/components/ui/TransparentWhiteButton";
 
-// Step types
 type Step = 1 | 2 | 3 | 4 | 5;
 type TradeType = "long" | "short";
 type Recommendation = "HODL" | "ADD" | "REMOVE";
@@ -38,45 +37,55 @@ interface CoachHistoryItem {
   lastPrice: number;
 }
 
-// Skapa snygga status-vy för aktiv trade
 const ActiveTradeView: React.FC<{ trade: TradeEntry; lastPrice: number; onEnd: () => void; }> = ({ trade, lastPrice, onEnd }) => {
   const pnl = ((lastPrice - trade.entryPrice) * (trade.type === "long" ? 1 : -1)) / trade.entryPrice * 100;
+
   return (
-    <Card className="shadow-xl border-0 rounded-2xl bg-gradient-to-br from-gray-800/80 to-slate-800/70 py-6 px-4 mb-12">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold">Aktiv Trade</CardTitle>
-        <CardDescription>
-          {trade.name} ({trade.pairSymbol}) • {trade.type === "long" ? "Long" : "Short"}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-col md:flex-row md:items-start gap-8 pt-2">
-        <div className="flex-1 space-y-4">
-          <div className="flex justify-between">
-            <div>
-              <div className="text-xs text-muted-foreground">Entry</div>
-              <div className="font-semibold text-white">{trade.entryPrice}</div>
-            </div>
-            <div>
-              <div className="text-xs text-muted-foreground">Nuvarande pris</div>
-              <div className="font-semibold text-white">{lastPrice}</div>
-            </div>
-            <div>
-              <div className="text-xs text-muted-foreground">P&amp;L %</div>
-              <span className={cn("font-semibold text-lg", pnl >= 0 ? "text-green-400" : "text-red-400")}>{pnl.toFixed(2)}%</span>
-            </div>
+    <div className="relative rounded-2xl bg-gradient-to-br from-slate-900/90 to-secondary/60 p-7 md:p-10 shadow-xl border border-secondary mb-12 flex flex-col gap-6 glass">
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="text-lg font-bold text-white mb-1 flex items-center gap-2">
+            <span className={trade.type === "long" ? "text-green-400" : "text-red-400"}>
+              {trade.type === "long" ? "Long" : "Short"}
+            </span>
+            <span className="text-white/90">{trade.name} <span className="text-xs font-normal text-muted-foreground ml-1">({trade.pairSymbol})</span></span>
           </div>
-          <div className="flex flex-col md:flex-row md:items-end gap-3">
-            <Button variant="outline" className="w-full md:w-auto" onClick={onEnd}>
-              Avsluta Trade
-            </Button>
+          <div className="text-xs text-muted-foreground pb-1 font-semibold">Aktiv position</div>
+        </div>
+        <div>
+          <div className={"rounded-full py-1 px-4 font-black text-base shadow " + (pnl >= 0 ? "bg-green-600/90 text-white" : "bg-red-600/90 text-white")}>
+            {pnl >= 0 ? "+" : ""}
+            {pnl.toFixed(2)}%
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+        <div>
+          <div className="text-muted-foreground">Entrypris</div>
+          <div className="font-bold text-white">{trade.entryPrice}</div>
+        </div>
+        <div>
+          <div className="text-muted-foreground">Nuvarande pris</div>
+          <div className="font-bold text-white">{lastPrice}</div>
+        </div>
+        <div>
+          <div className="text-muted-foreground">Storlek</div>
+          <div className="font-bold text-white">{trade.size}</div>
+        </div>
+        <div>
+          <div className="text-muted-foreground">Symbol</div>
+          <div className="font-bold text-white">{trade.symbol}</div>
+        </div>
+      </div>
+      <div className="flex flex-col md:flex-row gap-3 justify-end mt-2">
+        <TransparentWhiteButton className="w-full md:w-auto" onClick={onEnd}>
+          Avsluta Trade
+        </TransparentWhiteButton>
+      </div>
+    </div>
   );
 };
 
-// Bybit API rekommendation byggd på riktig data
 const getRecommendation = (entry: TradeEntry, current: number): { rec: Recommendation; reason: string; pnl: number } => {
   if (!entry || !current) return { rec: 'HODL', reason: "Ingen data", pnl: 0 };
   const pnl = ((current - entry.entryPrice) * (entry.type === "long" ? 1 : -1)) / entry.entryPrice * 100;
@@ -89,13 +98,11 @@ const TradingCoach: React.FC = () => {
   const { selectedCrypto, setSelectedCrypto } = useCrypto();
   const { priceData } = usePrice();
 
-  // Price driven från riktig Bybit-data för valt par
   const pairSymbol = selectedCrypto.pairSymbol;
   const priceKey = pairSymbol.replace('/', '');
   const currentPriceObj = priceData[priceKey];
   const currentPrice = currentPriceObj?.price || 0;
 
-  // State
   const [step, setStep] = useState<Step>(1);
   const [trade, setTrade] = useState<Partial<TradeEntry>>({
     type: "long",
@@ -106,7 +113,6 @@ const TradingCoach: React.FC = () => {
   const [coachHistory, setCoachHistory] = useState<CoachHistoryItem[]>([]);
   const [activeTrade, setActiveTrade] = useState<TradeEntry | null>(null);
 
-  // Byt valuta, byt steg
   function handleSelectCrypto() {
     setStep(2);
     setTrade((old) => ({
@@ -116,10 +122,12 @@ const TradingCoach: React.FC = () => {
       name: selectedCrypto.name,
     }));
   }
+
   function handleTypeSelect(type: TradeType) {
     setTrade((old) => ({ ...old, type }));
     setStep(3);
   }
+
   function handleEntrySizeSubmit(e: React.FormEvent) {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
@@ -130,6 +138,7 @@ const TradingCoach: React.FC = () => {
     }));
     setStep(4);
   }
+
   function handleRiskSubmit(e: React.FormEvent) {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
@@ -141,6 +150,7 @@ const TradingCoach: React.FC = () => {
     }));
     setStep(5);
   }
+
   function handleAnalyse() {
     if (trade.entryPrice && trade.size && trade.type && trade.symbol && trade.pairSymbol && trade.name) {
       const { rec, reason, pnl } = getRecommendation(trade as TradeEntry, currentPrice);
@@ -169,11 +179,11 @@ const TradingCoach: React.FC = () => {
       });
     }
   }
-  // "Backa" steg
+
   function backTo(stepNum: Step) {
     setStep(stepNum);
   }
-  // "Börja om"
+
   function resetFlow() {
     setStep(1);
     setTrade({
@@ -184,25 +194,33 @@ const TradingCoach: React.FC = () => {
     });
     setActiveTrade(null);
   }
-  // Avsluta trade
+
   function endTrade() {
     setActiveTrade(null);
   }
 
-  // UI: Steg-wizard och status + knappjusteringar
   return (
-    <div className="min-h-screen flex flex-col bg-background pb-24 px-2 md:px-0">
-      <section className="max-w-2xl mx-auto py-10 sm:py-16 w-full fade-in">
-        <div className="flex gap-3 mb-6 items-center justify-center">
-          <Badge className="box-border whitespace-nowrap" variant="outline">AI Trading Assistant</Badge>
-          <span className="inline-block"><CryptoSelector showDataSource label="" /></span>
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-background to-secondary/40 pb-24 px-2 md:px-0 section-padding">
+      <section className="max-w-2xl mx-auto py-12 sm:py-20 w-full fade-in">
+        <div className="flex gap-6 sm:gap-8 mb-8 items-center justify-center">
+          <Badge className="box-border whitespace-nowrap px-4 py-1 text-base border border-white/10 rounded-lg font-semibold bg-card/90 shadow"
+            variant="outline"
+          >AI Trading Assistant</Badge>
+          <div className="flex gap-2 items-center">
+            <CryptoSelector showDataSource label="" />
+            <span className="flex gap-1 items-center whitespace-nowrap ml-3 text-sm text-muted-foreground">
+              <span className="flex items-center gap-1">
+                <span className="text-[10px] pr-1">●</span>
+                Bybit API
+              </span>
+            </span>
+          </div>
         </div>
-        <h1 className="text-4xl font-black mb-3 text-foreground text-center drop-shadow">Trade Coach</h1>
-        <div className="text-center text-lg text-muted-foreground mb-5">
-          {selectedCrypto.name} &bull; {selectedCrypto.pairSymbol}
+        <h1 className="text-4xl md:text-5xl font-black mb-4 text-foreground text-center drop-shadow section-spacing">Trade Coach</h1>
+        <div className="text-center text-lg text-muted-foreground mb-8">
+          <span className="font-semibold">{selectedCrypto.name}</span> <span className="mx-1">•</span> <span>{selectedCrypto.pairSymbol}</span>
         </div>
 
-        {/* Aktiv trade vy */}
         {activeTrade && (
           <ActiveTradeView 
             trade={activeTrade}
@@ -212,66 +230,66 @@ const TradingCoach: React.FC = () => {
         )}
 
         <div className="w-full flex flex-col gap-8">
-          {/* Steg 1: Välj Krypto */}
           {step === 1 && !activeTrade && (
-            <Card className="bg-card shadow-lg border-0 rounded-2xl px-0 pt-2 pb-7">
-              <CardHeader>
-                <CardTitle className="text-lg mb-1">1. Välj kryptovaluta</CardTitle>
-                <CardDescription>Vilken krypto vill du analysera?</CardDescription>
+            <Card className="bg-card shadow-lg border-0 rounded-2xl px-0 pt-4 pb-8 glass">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-xl mb-1 font-extrabold">1. Välj kryptovaluta</CardTitle>
+                <CardDescription className="text-base">Vilken krypto vill du analysera?</CardDescription>
               </CardHeader>
-              <CardContent className="flex flex-col gap-2">
+              <CardContent className="flex flex-col gap-4 mt-2">
                 <CryptoSelector fullWidth showDataSource label="Kryptovaluta" />
-                <Button
-                  size="lg"
-                  className="mt-6 w-full bg-gradient-to-r from-primary to-secondary/80 text-white shadow font-bold text-base"
-                  onClick={handleSelectCrypto}
-                  type="button"
-                >
-                  Nästa steg
-                </Button>
+                <div className="flex justify-center mt-6">
+                  <TransparentWhiteButton
+                    className="w-full sm:max-w-xs text-base"
+                    onClick={handleSelectCrypto}
+                    type="button"
+                  >
+                    Nästa steg
+                  </TransparentWhiteButton>
+                </div>
               </CardContent>
             </Card>
           )}
 
-          {/* Steg 2: Välj typ */}
           {step === 2 && (
-            <Card className="bg-card shadow-lg border-0 rounded-2xl">
+            <Card className="bg-card shadow-lg border-0 rounded-2xl glass">
               <CardHeader>
-                <CardTitle className="text-lg mb-1">2. Typ av trade</CardTitle>
-                <CardDescription>Long eller short?</CardDescription>
+                <CardTitle className="text-lg mb-1 font-extrabold">2. Typ av trade</CardTitle>
+                <CardDescription className="text-base">Long eller short på <span className="font-semibold">{selectedCrypto.name}</span>?</CardDescription>
               </CardHeader>
-              <CardContent className="flex flex-col gap-5">
-                <div className="flex items-center justify-center gap-8 mb-3">
-                  <Button
-                    variant={trade.type === "long" ? "default" : "outline"}
-                    size="lg"
-                    className={cn(trade.type === "long" ? "bg-gradient-to-r from-green-500 to-primary text-white shadow font-bold" : "")}
+              <CardContent className="flex flex-col gap-6 mt-2">
+                <div className="flex items-center justify-center gap-8">
+                  <TransparentWhiteButton
+                    className={cn(
+                      "w-32 py-3 font-bold text-lg",
+                      trade.type === "long" && "bg-green-500/30 border-green-400 text-green-100 shadow-md"
+                    )}
                     onClick={() => handleTypeSelect("long")}
-                  >Long</Button>
-                  <Button
-                    variant={trade.type === "short" ? "default" : "outline"}
-                    size="lg"
-                    className={cn(trade.type === "short" ? "bg-gradient-to-r from-red-500 to-primary text-white shadow font-bold" : "")}
+                  >Long</TransparentWhiteButton>
+                  <TransparentWhiteButton
+                    className={cn(
+                      "w-32 py-3 font-bold text-lg",
+                      trade.type === "short" && "bg-red-500/40 border-red-400 text-red-100 shadow-md"
+                    )}
                     onClick={() => handleTypeSelect("short")}
-                  >Short</Button>
+                  >Short</TransparentWhiteButton>
                 </div>
-                <div className="flex gap-3 justify-between">
-                  <Button variant="ghost" onClick={() => backTo(1)} className="w-full">Tillbaka</Button>
-                  <Button onClick={resetFlow} variant="outline" className="w-full">Börja om</Button>
+                <div className="flex gap-3 justify-between mt-3">
+                  <TransparentWhiteButton onClick={() => backTo(1)} className="w-full">Tillbaka</TransparentWhiteButton>
+                  <TransparentWhiteButton onClick={resetFlow} className="w-full">Börja om</TransparentWhiteButton>
                 </div>
               </CardContent>
             </Card>
           )}
 
-          {/* Steg 3: Entry & storlek */}
           {step === 3 && (
-            <Card className="bg-card shadow-lg border-0 rounded-2xl">
+            <Card className="bg-card shadow-lg border-0 rounded-2xl glass">
               <CardHeader>
-                <CardTitle className="text-lg mb-1">3. Skriv in position</CardTitle>
-                <CardDescription>Fyll i dina uppgifter för analys</CardDescription>
+                <CardTitle className="text-lg mb-1 font-extrabold">3. Skriv in position</CardTitle>
+                <CardDescription className="text-base">Uppgifter för <span className="font-semibold">{selectedCrypto.name}</span> / {selectedCrypto.pairSymbol}</CardDescription>
               </CardHeader>
               <CardContent>
-                <form className="flex flex-col gap-5" onSubmit={handleEntrySizeSubmit}>
+                <form className="flex flex-col gap-6 mt-2" onSubmit={handleEntrySizeSubmit}>
                   <div>
                     <Label htmlFor="entryPrice">Entrypris ({selectedCrypto.name})</Label>
                     <Input
@@ -283,7 +301,7 @@ const TradingCoach: React.FC = () => {
                       min="0"
                       step="0.01"
                       className="mt-1 bg-muted/40"
-                      placeholder={`T.ex. ${currentPrice}`}
+                      placeholder={currentPrice ? `T.ex. ${currentPrice}` : "Ex. 12345"}
                       autoFocus
                     />
                   </div>
@@ -301,28 +319,26 @@ const TradingCoach: React.FC = () => {
                       placeholder="T.ex. 0.01"
                     />
                   </div>
-                  <div className="flex gap-3">
-                    <Button variant="ghost" type="button" onClick={() => backTo(2)} className="w-full">Tillbaka</Button>
-                    <Button
+                  <div className="flex gap-3 pt-1">
+                    <TransparentWhiteButton type="button" onClick={() => backTo(2)} className="w-full">Tillbaka</TransparentWhiteButton>
+                    <TransparentWhiteButton
                       type="submit"
-                      size="lg"
-                      className="w-full bg-gradient-to-r from-primary to-secondary/80 text-white shadow font-bold"
-                    >Nästa steg</Button>
+                      className="w-full"
+                    >Nästa steg</TransparentWhiteButton>
                   </div>
                 </form>
               </CardContent>
             </Card>
           )}
 
-          {/* Steg 4: Risk */}
           {step === 4 && (
-            <Card className="bg-card shadow-lg border-0 rounded-2xl">
+            <Card className="bg-card shadow-lg border-0 rounded-2xl glass">
               <CardHeader>
-                <CardTitle className="text-lg mb-1">4. Stop-loss & take profit <span className="text-xs font-normal text-muted-foreground">(valfritt)</span></CardTitle>
-                <CardDescription>Ange nivåer eller fortsätt till analys</CardDescription>
+                <CardTitle className="text-lg mb-1 font-extrabold">4. Stop-loss & take profit <span className="text-xs font-normal text-muted-foreground">(valfritt)</span></CardTitle>
+                <CardDescription className="text-base">Riskhantering för <span className="font-semibold">{selectedCrypto.name}</span></CardDescription>
               </CardHeader>
               <CardContent>
-                <form className="flex flex-col gap-5" onSubmit={handleRiskSubmit}>
+                <form className="flex flex-col gap-6" onSubmit={handleRiskSubmit}>
                   <div>
                     <Label htmlFor="stopLoss">Stop Loss</Label>
                     <Input
@@ -359,21 +375,19 @@ const TradingCoach: React.FC = () => {
                     />
                   </div>
                   <div className="flex gap-3">
-                    <Button variant="ghost" type="button" onClick={() => backTo(3)} className="w-full">Tillbaka</Button>
-                    <Button
+                    <TransparentWhiteButton type="button" onClick={() => backTo(3)} className="w-full">Tillbaka</TransparentWhiteButton>
+                    <TransparentWhiteButton
                       type="submit"
-                      size="lg"
-                      className="w-full bg-gradient-to-r from-primary to-secondary/80 text-white shadow font-bold"
-                    >Gå till analys</Button>
+                      className="w-full"
+                    >Gå till analys</TransparentWhiteButton>
                   </div>
                 </form>
               </CardContent>
             </Card>
           )}
 
-          {/* Steg 5: Analys/resultat */}
           {step === 5 && trade.entryPrice && trade.size && (
-            <Card className="shadow-xl border-0 rounded-2xl bg-gradient-to-br from-slate-900/80 to-secondary/50 py-8 px-4">
+            <Card className="shadow-xl border-0 rounded-2xl bg-gradient-to-br from-slate-900/80 to-secondary/50 py-8 px-4 glass">
               <CardHeader>
                 <CardTitle className="text-2xl font-extrabold mb-1">AI Rekommendation</CardTitle>
               </CardHeader>
@@ -387,7 +401,7 @@ const TradingCoach: React.FC = () => {
                           "text-base px-8 py-2 rounded-full font-bold text-white border-0",
                           rec === "ADD" ? "bg-green-600" : rec === "REMOVE" ? "bg-red-600" : "bg-yellow-400 text-black"
                         )}>{rec}</Badge>
-                        <span className="text-base font-semibold text-gray-100 drop-shadow">
+                        <span className="text-base font-semibold text-gray-100 drop-shadow whitespace-nowrap">
                           {selectedCrypto.name} • {selectedCrypto.pairSymbol}
                         </span>
                       </div>
@@ -413,14 +427,13 @@ const TradingCoach: React.FC = () => {
                         </div>
                       </div>
                       <div className="flex gap-3 mt-2">
-                        <Button variant="ghost" className="w-full" onClick={resetFlow}>Börja om</Button>
-                        <Button
-                          size="lg"
-                          className="w-full bg-gradient-to-r from-primary to-secondary/80 text-white shadow font-bold"
+                        <TransparentWhiteButton className="w-full" onClick={resetFlow}>Börja om</TransparentWhiteButton>
+                        <TransparentWhiteButton
+                          className="w-full"
                           onClick={handleAnalyse}
                         >
                           Spara & markera som aktiv trade
-                        </Button>
+                        </TransparentWhiteButton>
                       </div>
                     </>
                   );
@@ -430,9 +443,8 @@ const TradingCoach: React.FC = () => {
           )}
         </div>
       </section>
-      {/* Historik */}
       <section className="max-w-2xl mx-auto w-full mb-8">
-        <Card className="bg-card/80 shadow-lg border-0 rounded-2xl">
+        <Card className="bg-card/80 shadow-lg border-0 rounded-2xl glass">
           <CardHeader>
             <CardTitle>Rekommendationshistorik</CardTitle>
             <CardDescription>
