@@ -76,8 +76,8 @@ const TradingCoach: React.FC = () => {
 
   // Bakgrundsfärg för profit/loss
   const bgGradient = pnl >= 0
-    ? "from-[#F2FCE2] to-[#e9f8ce]" // grön gradient
-    : "from-[#FFEBEE] to-[#f6e0e3]"; // röd gradient
+    ? "from-[#F2FCE2] to-[#e9f8ce]"
+    : "from-[#FFEBEE] to-[#f6e0e3]";
 
   // Hantera formulär
   function handleManualInput(e: React.FormEvent) {
@@ -104,10 +104,17 @@ const TradingCoach: React.FC = () => {
   }
 
   return (
-    <div className={cn("min-h-screen flex flex-col items-center py-8 px-2 md:px-0 transition bg-gradient-to-b w-full", bgGradient)}>
-      <div className="w-full max-w-lg">
-        <h1 className="text-3xl font-bold mb-4 text-center">Trading Coach</h1>
-        <Card className="mb-6">
+    <div className={cn(
+      "min-h-screen flex flex-col items-center py-8 px-2 md:px-0 transition bg-gradient-to-b w-full",
+      bgGradient
+    )}>
+      <div className="w-full max-w-lg relative">
+        {/* Frost blur bakgrund */}
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <div className="w-full h-full glass"></div>
+        </div>
+        <h1 className="text-3xl font-bold mb-4 text-center z-10 relative">Trading Coach</h1>
+        <Card className="mb-6 glass relative z-10 shadow-xl border-0">
           <CardHeader>
             <div className="flex gap-2 flex-col sm:flex-row items-center justify-center">
               <Button 
@@ -122,7 +129,11 @@ const TradingCoach: React.FC = () => {
           </CardHeader>
           <CardContent>
             {mode === "manual" && (
-              <form className="w-full grid gap-3" onSubmit={handleManualInput} autoComplete="off">
+              <form 
+                className="w-full grid gap-3"
+                onSubmit={handleManualInput}
+                autoComplete="off"
+              >
                 <div className="flex gap-2">
                   <label className="flex items-center gap-1 font-medium">
                     <input type="radio" name="type" value="long" defaultChecked={trade.type === "long"} /> Long
@@ -131,11 +142,11 @@ const TradingCoach: React.FC = () => {
                     <input type="radio" name="type" value="short" defaultChecked={trade.type === "short"} /> Short
                   </label>
                 </div>
-                <Input type="number" name="entryPrice" placeholder="Entry price" step="0.01" required defaultValue={trade.entryPrice} />
-                <Input type="number" name="size" placeholder="Size" step="0.0001" required defaultValue={trade.size} />
-                <Input type="number" name="stopLoss" placeholder="Stop Loss (valfritt)" step="0.01" defaultValue={trade.stopLoss} />
-                <Input type="number" name="takeProfit" placeholder="Take Profit (valfritt)" step="0.01" defaultValue={trade.takeProfit} />
-                <Input type="datetime-local" name="dateTime" placeholder="Date/time (valfritt)" defaultValue={trade.dateTime} />
+                <Input type="number" name="entryPrice" placeholder="Entry price" step="0.01" required defaultValue={trade.entryPrice} className="glass !bg-opacity-60" />
+                <Input type="number" name="size" placeholder="Size" step="0.0001" required defaultValue={trade.size} className="glass !bg-opacity-60" />
+                <Input type="number" name="stopLoss" placeholder="Stop Loss (valfritt)" step="0.01" defaultValue={trade.stopLoss} className="glass !bg-opacity-60" />
+                <Input type="number" name="takeProfit" placeholder="Take Profit (valfritt)" step="0.01" defaultValue={trade.takeProfit} className="glass !bg-opacity-60" />
+                <Input type="datetime-local" name="dateTime" placeholder="Date/time (valfritt)" defaultValue={trade.dateTime} className="glass !bg-opacity-60" />
                 <Button type="submit" className="w-full mt-2">Analysera trade</Button>
               </form>
             )}
@@ -146,7 +157,7 @@ const TradingCoach: React.FC = () => {
         </Card>
 
         {/* Analys-ruta */}
-        <Card className="mb-4 shadow-2xl">
+        <Card className="mb-4 glass relative z-10 shadow-xl border-0">
           <CardContent>
             <div className="flex flex-col items-center py-4">
               <div className="text-4xl font-bold mb-0">{rec}</div>
@@ -196,7 +207,7 @@ const TradingCoach: React.FC = () => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="glass relative z-10 shadow-lg border-0">
           <CardHeader>
             <span className="font-bold text-lg">Rekommendations-historik</span>
           </CardHeader>
