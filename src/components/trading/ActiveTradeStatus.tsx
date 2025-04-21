@@ -35,9 +35,9 @@ function getPnl(entry: number, current: number, size: number, leverage: number, 
 function getRecommendation(entry: number, current: number, type: TradeType): { rec: Recommendation; reason: string } {
   const { pnlPct } = getPnl(entry, current, 1, 1, type);
   
-  if (pnlPct > 3) return { rec: "ADD", reason: "Positiv trend, hög vinst sedan entry. Daten är realtidsdata." };
-  if (pnlPct < -2) return { rec: "REMOVE", reason: "Negativ utveckling, kritisk nivå passerad. Daten är realtidsdata." };
-  return { rec: "HODL", reason: "Stabilitet - ingen tydlig vinst/förlust." };
+  if (pnlPct > 3) return { rec: "ADD", reason: "Positive trend, high profit since entry. Data is real-time." };
+  if (pnlPct < -2) return { rec: "REMOVE", reason: "Negative development, critical level passed. Data is real-time." };
+  return { rec: "HODL", reason: "Stability - no clear profit/loss." };
 }
 
 const ACTIVE_TRADE_STORAGE_KEY = "activeTrade";
@@ -79,8 +79,8 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
   const handleEndTrade = () => {
     removeFromStorage(ACTIVE_TRADE_STORAGE_KEY);
     toast({
-      title: "Trade avslutad",
-      description: "Din trade har avslutats.",
+      title: "Trade ended",
+      description: "Your trade has been closed.",
     });
     onEnd();
   };
@@ -88,8 +88,8 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
   const handleResetTrade = () => {
     removeFromStorage(ACTIVE_TRADE_STORAGE_KEY);
     toast({
-      title: "Trade återställd",
-      description: "Din trade har återställts.",
+      title: "Trade reset",
+      description: "Your trade has been reset.",
     });
     onEnd();
   };
@@ -111,7 +111,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
       getBackgroundClass()
     )}>
       <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold mb-2 text-white">AI Rekommendation</h2>
+        <h2 className="text-2xl font-bold mb-2 text-white">AI Recommendation</h2>
         
         {/* Display trade pair info */}
         <div className="flex flex-col items-center gap-1 mb-3">
@@ -150,12 +150,12 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
       
       {/* Current price with animation */}
       <div className="flex flex-col items-center mb-5 bg-black/20 rounded-xl py-4 mx-4">
-        <div className="text-xs text-gray-200 mb-1">Nuvarande pris</div>
+        <div className="text-xs text-gray-200 mb-1">Current price</div>
         <div className={cn(
           "text-4xl font-bold text-white transition-all duration-300 transform",
           ticking ? "scale-110" : "scale-100"
         )}>
-          {lastPrice.toLocaleString('sv-SE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          {lastPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
         </div>
       </div>
       
@@ -182,7 +182,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
         <div className="bg-slate-800/50 p-3 rounded-lg">
           <div className="text-xs text-gray-200">Entry</div>
           <div className="font-bold text-white text-lg">
-            {trade.entryPrice.toLocaleString('sv-SE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            {trade.entryPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </div>
         </div>
         
@@ -198,7 +198,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
         
         <div className="bg-slate-800/50 p-3 rounded-lg">
           <div className="text-xs text-gray-200">
-            {trade.leverage > 1 ? "Storlek (hävstång)" : "Storlek"}
+            {trade.leverage > 1 ? "Size (leverage)" : "Size"}
           </div>
           <div className="font-bold text-white text-lg">
             {trade.size}
@@ -222,14 +222,14 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
           className="w-full text-base font-bold"
           onClick={handleResetTrade}
         >
-          Börja om
+          Start over
         </TransparentWhiteButton>
         
         <TransparentWhiteButton 
           className="w-full text-base font-bold"
           onClick={handleEndTrade}
         >
-          Avsluta trade
+          End trade
         </TransparentWhiteButton>
       </div>
     </div>

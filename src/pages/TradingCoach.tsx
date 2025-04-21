@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -46,11 +47,11 @@ const ACTIVE_TRADE_STORAGE_KEY = "activeTrade";
 const COACH_HISTORY_STORAGE_KEY = "coachHistory";
 
 const getRecommendation = (entry: TradeEntry, current: number): { rec: Recommendation; reason: string; pnl: number } => {
-  if (!entry || !current) return { rec: 'HODL', reason: "Ingen data", pnl: 0 };
+  if (!entry || !current) return { rec: 'HODL', reason: "No data", pnl: 0 };
   const pnl = ((current - entry.entryPrice) * (entry.type === "long" ? 1 : -1)) / entry.entryPrice * 100 * (entry.leverage || 1);
-  if (pnl > 3) return { rec: "ADD", reason: "Positiv trend, hög vinst sedan entry. Daten är realtidsdata.", pnl };
-  if (pnl < -2) return { rec: "REMOVE", reason: "Negativ utveckling, kritisk nivå passerad. Daten är realtidsdata.", pnl };
-  return { rec: "HODL", reason: "Stabilitet - ingen tydlig vinst/förlust.", pnl };
+  if (pnl > 3) return { rec: "ADD", reason: "Positive trend, high profit since entry. Data is real-time.", pnl };
+  if (pnl < -2) return { rec: "REMOVE", reason: "Negative development, critical level passed. Data is real-time.", pnl };
+  return { rec: "HODL", reason: "Stability - no clear profit/loss.", pnl };
 };
 
 const TradingCoach: React.FC = () => {
@@ -93,8 +94,8 @@ const TradingCoach: React.FC = () => {
       }
       
       toast({
-        title: "Aktiv trade laddad",
-        description: `Fortsätter med din ${savedTrade.type} på ${savedTrade.name}`,
+        title: "Active trade loaded",
+        description: `Continuing with your ${savedTrade.type} on ${savedTrade.name}`,
       });
     }
     
@@ -200,8 +201,8 @@ const TradingCoach: React.FC = () => {
       });
       
       toast({
-        title: "Trade sparad",
-        description: `Din ${trade.type} trade på ${trade.name} har sparats och är nu aktiv.`,
+        title: "Trade saved",
+        description: `Your ${trade.type} trade on ${trade.name} has been saved and is now active.`,
       });
     }
   }
@@ -225,8 +226,8 @@ const TradingCoach: React.FC = () => {
     setActiveTrade(null);
     removeFromStorage(ACTIVE_TRADE_STORAGE_KEY);
     toast({
-      title: "Trade avslutad",
-      description: "Din trade har avslutats och är inte längre aktiv.",
+      title: "Trade ended",
+      description: "Your trade has been ended and is no longer active.",
     });
   }
 
@@ -259,8 +260,8 @@ const TradingCoach: React.FC = () => {
           {step === 1 && !activeTrade && (
             <Card className="bg-slate-800 shadow-xl border-slate-700 rounded-xl">
               <CardHeader>
-                <CardTitle className="text-xl font-extrabold">1. Skapa ny trade</CardTitle>
-                <CardDescription className="text-base">Starta en ny trade med {selectedCrypto.name}</CardDescription>
+                <CardTitle className="text-xl font-extrabold">1. Create new trade</CardTitle>
+                <CardDescription className="text-base">Start a new trade with {selectedCrypto.name}</CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-4">
                 <TransparentWhiteButton
@@ -268,7 +269,7 @@ const TradingCoach: React.FC = () => {
                   onClick={handleSelectCrypto}
                   type="button"
                 >
-                  Nästa steg
+                  Next step
                 </TransparentWhiteButton>
               </CardContent>
             </Card>
@@ -277,8 +278,8 @@ const TradingCoach: React.FC = () => {
           {step === 2 && (
             <Card className="bg-slate-800 shadow-xl border-slate-700 rounded-xl">
               <CardHeader>
-                <CardTitle className="text-lg mb-1 font-extrabold">2. Typ av trade</CardTitle>
-                <CardDescription className="text-base">Long eller short på <span className="font-semibold">{selectedCrypto.name}</span>?</CardDescription>
+                <CardTitle className="text-lg mb-1 font-extrabold">2. Type of trade</CardTitle>
+                <CardDescription className="text-base">Long or short on <span className="font-semibold">{selectedCrypto.name}</span>?</CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-6 mt-2">
                 <div className="flex items-center justify-center gap-8">
@@ -298,8 +299,8 @@ const TradingCoach: React.FC = () => {
                   >Short</TransparentWhiteButton>
                 </div>
                 <div className="flex flex-col gap-3 justify-between mt-3">
-                  <TransparentWhiteButton onClick={() => backTo(1)} className="w-full">Tillbaka</TransparentWhiteButton>
-                  <TransparentWhiteButton onClick={resetFlow} className="w-full">Börja om</TransparentWhiteButton>
+                  <TransparentWhiteButton onClick={() => backTo(1)} className="w-full">Back</TransparentWhiteButton>
+                  <TransparentWhiteButton onClick={resetFlow} className="w-full">Start over</TransparentWhiteButton>
                 </div>
               </CardContent>
             </Card>
@@ -308,13 +309,13 @@ const TradingCoach: React.FC = () => {
           {step === 3 && (
             <Card className="bg-slate-800 shadow-xl border-slate-700 rounded-xl">
               <CardHeader>
-                <CardTitle className="text-lg mb-1 font-extrabold">3. Skriv in position</CardTitle>
-                <CardDescription className="text-base">Uppgifter för <span className="font-semibold">{selectedCrypto.name}</span> / {selectedCrypto.pairSymbol}</CardDescription>
+                <CardTitle className="text-lg mb-1 font-extrabold">3. Enter position</CardTitle>
+                <CardDescription className="text-base">Details for <span className="font-semibold">{selectedCrypto.name}</span> / {selectedCrypto.pairSymbol}</CardDescription>
               </CardHeader>
               <CardContent>
                 <form className="flex flex-col gap-6 mt-2" onSubmit={handleEntrySizeSubmit}>
                   <div>
-                    <Label htmlFor="entryPrice">Entrypris ({selectedCrypto.name})</Label>
+                    <Label htmlFor="entryPrice">Entry price ({selectedCrypto.name})</Label>
                     <Input
                       id="entryPrice"
                       name="entryPrice"
@@ -324,12 +325,12 @@ const TradingCoach: React.FC = () => {
                       min="0"
                       step="0.01"
                       className="mt-1 bg-muted/40"
-                      placeholder={currentPrice ? `T.ex. ${currentPrice}` : "Ex. 12345"}
+                      placeholder={currentPrice ? `E.g. ${currentPrice}` : "Ex. 12345"}
                       autoFocus
                     />
                   </div>
                   <div>
-                    <Label htmlFor="size">Positionstorlek</Label>
+                    <Label htmlFor="size">Position size</Label>
                     <Input
                       id="size"
                       name="size"
@@ -339,11 +340,11 @@ const TradingCoach: React.FC = () => {
                       min="0"
                       step="0.0001"
                       className="mt-1 bg-muted/40"
-                      placeholder="T.ex. 0.01"
+                      placeholder="E.g. 0.01"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="leverage">Hävstång (Leverage): {leverageValue[0]}x</Label>
+                    <Label htmlFor="leverage">Leverage: {leverageValue[0]}x</Label>
                     <input
                       type="hidden"
                       id="leverage"
@@ -359,14 +360,14 @@ const TradingCoach: React.FC = () => {
                       min={1}
                       step={1}
                     />
-                    <p className="text-xs text-muted-foreground mt-1">Justera hävstång: 1x (ingen hävstång) till 100x</p>
+                    <p className="text-xs text-muted-foreground mt-1">Adjust leverage: 1x (no leverage) to 100x</p>
                   </div>
                   <div className="flex flex-col gap-3 pt-1">
-                    <TransparentWhiteButton type="button" onClick={() => backTo(2)} className="w-full">Tillbaka</TransparentWhiteButton>
+                    <TransparentWhiteButton type="button" onClick={() => backTo(2)} className="w-full">Back</TransparentWhiteButton>
                     <TransparentWhiteButton
                       type="submit"
                       className="w-full"
-                    >Nästa steg</TransparentWhiteButton>
+                    >Next step</TransparentWhiteButton>
                   </div>
                 </form>
               </CardContent>
@@ -376,8 +377,8 @@ const TradingCoach: React.FC = () => {
           {step === 4 && (
             <Card className="bg-slate-800 shadow-xl border-slate-700 rounded-xl">
               <CardHeader>
-                <CardTitle className="text-lg mb-1 font-extrabold">4. Stop-loss & take profit <span className="text-xs font-normal text-muted-foreground">(valfritt)</span></CardTitle>
-                <CardDescription className="text-base">Riskhantering för <span className="font-semibold">{selectedCrypto.name}</span></CardDescription>
+                <CardTitle className="text-lg mb-1 font-extrabold">4. Stop-loss & take profit <span className="text-xs font-normal text-muted-foreground">(optional)</span></CardTitle>
+                <CardDescription className="text-base">Risk management for <span className="font-semibold">{selectedCrypto.name}</span></CardDescription>
               </CardHeader>
               <CardContent>
                 <form className="flex flex-col gap-6" onSubmit={handleRiskSubmit}>
@@ -391,7 +392,7 @@ const TradingCoach: React.FC = () => {
                       min="0"
                       step="0.01"
                       className="mt-1 bg-muted/40"
-                      placeholder="Stop-Loss nivå"
+                      placeholder="Stop-Loss level"
                     />
                   </div>
                   <div>
@@ -404,11 +405,11 @@ const TradingCoach: React.FC = () => {
                       min="0"
                       step="0.01"
                       className="mt-1 bg-muted/40"
-                      placeholder="Take-Profit nivå"
+                      placeholder="Take-Profit level"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="dateTime">Datum/tid <span className="text-muted-foreground">(valfritt)</span></Label>
+                    <Label htmlFor="dateTime">Date/time <span className="text-muted-foreground">(optional)</span></Label>
                     <Input
                       id="dateTime"
                       name="dateTime"
@@ -417,11 +418,11 @@ const TradingCoach: React.FC = () => {
                     />
                   </div>
                   <div className="flex flex-col gap-3">
-                    <TransparentWhiteButton type="button" onClick={() => backTo(3)} className="w-full">Tillbaka</TransparentWhiteButton>
+                    <TransparentWhiteButton type="button" onClick={() => backTo(3)} className="w-full">Back</TransparentWhiteButton>
                     <TransparentWhiteButton
                       type="submit"
                       className="w-full"
-                    >Gå till analys</TransparentWhiteButton>
+                    >Go to analysis</TransparentWhiteButton>
                   </div>
                 </form>
               </CardContent>
@@ -431,7 +432,7 @@ const TradingCoach: React.FC = () => {
           {step === 5 && trade.entryPrice && trade.size && (
             <Card className="shadow-xl border-0 rounded-2xl bg-gradient-to-br from-slate-900/80 to-secondary/50 py-8 px-4 backdrop-blur-md">
               <CardHeader>
-                <CardTitle className="text-2xl font-extrabold mb-1">AI Rekommendation</CardTitle>
+                <CardTitle className="text-2xl font-extrabold mb-1">AI Recommendation</CardTitle>
               </CardHeader>
               <CardContent className="flex flex-col gap-2">
                 {(() => {
@@ -458,7 +459,7 @@ const TradingCoach: React.FC = () => {
                           <div className="font-semibold text-white">{trade.entryPrice}</div>
                         </div>
                         <div>
-                          <div className="text-xs text-muted-foreground">Nuvarande pris</div>
+                          <div className="text-xs text-muted-foreground">Current price</div>
                           <div className="font-semibold text-white">{currentPrice}</div>
                         </div>
                         <div>
@@ -473,12 +474,12 @@ const TradingCoach: React.FC = () => {
                         </div>
                       </div>
                       <div className="flex flex-col gap-3 mt-2">
-                        <TransparentWhiteButton className="w-full" onClick={resetFlow}>Börja om</TransparentWhiteButton>
+                        <TransparentWhiteButton className="w-full" onClick={resetFlow}>Start over</TransparentWhiteButton>
                         <TransparentWhiteButton
                           className="w-full"
                           onClick={handleAnalyse}
                         >
-                          Spara & markera som aktiv trade
+                          Save & mark as active trade
                         </TransparentWhiteButton>
                       </div>
                     </>
@@ -492,9 +493,9 @@ const TradingCoach: React.FC = () => {
       <section className="max-w-2xl mx-auto w-full mb-8">
         <Card className="bg-slate-800 shadow-xl border-slate-700 rounded-xl">
           <CardHeader>
-            <CardTitle>Rekommendationshistorik</CardTitle>
+            <CardTitle>Recommendation History</CardTitle>
             <CardDescription>
-              Tidigare AI-rekommendationer för dina analyserade trades.
+              Previous AI recommendations for your analyzed trades.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -516,11 +517,11 @@ const TradingCoach: React.FC = () => {
                   </div>
                   <div className={cn("text-xs", item.recommendation === "REMOVE" ? "text-red-300" : item.recommendation === "ADD" ? "text-green-300" : "text-yellow-700")}>{item.reason}</div>
                   <div className={cn("text-xs font-medium", item.pnl >= 0 ? "text-green-400" : "text-red-400")}>
-                    P&amp;L: {item.pnl.toFixed(2)}% | Entry: {item.entry} | Size: {item.size} | Pris: {item.lastPrice}
+                    P&amp;L: {item.pnl.toFixed(2)}% | Entry: {item.entry} | Size: {item.size} | Price: {item.lastPrice}
                   </div>
                 </div>
               ))}
-              {coachHistory.length === 0 && <div className="text-muted-foreground text-sm text-center py-2">Ingen historik ännu.</div>}
+              {coachHistory.length === 0 && <div className="text-muted-foreground text-sm text-center py-2">No history yet.</div>}
             </div>
           </CardContent>
         </Card>
