@@ -169,6 +169,7 @@ const TradingCoach: React.FC = () => {
             </span>
           </div>
         </div>
+        
         {/* HUVUDTITEL */}
         <h1 className="text-4xl md:text-5xl font-black mb-4 text-foreground text-center drop-shadow section-spacing">Trade Coach</h1>
         <div className="text-center text-lg text-muted-foreground mb-8">
@@ -187,7 +188,7 @@ const TradingCoach: React.FC = () => {
         <div className="w-full flex flex-col gap-8">
           {/* Steg 1 */}
           {step === 1 && !activeTrade && (
-            <Card className="bg-card shadow-lg border-0 rounded-2xl px-0 pt-4 pb-8 glass">
+            <Card className="bg-card/80 shadow-xl border border-white/10 rounded-2xl px-0 pt-4 pb-8 backdrop-blur-md">
               <CardHeader className="pb-4">
                 <CardTitle className="text-xl mb-1 font-extrabold">1. Välj kryptovaluta</CardTitle>
                 <CardDescription className="text-base">Vilken krypto vill du analysera?</CardDescription>
@@ -216,7 +217,7 @@ const TradingCoach: React.FC = () => {
 
           {/* Steg 2 */}
           {step === 2 && (
-            <Card className="bg-card shadow-lg border-0 rounded-2xl glass">
+            <Card className="bg-card/80 shadow-xl border border-white/10 rounded-2xl backdrop-blur-md">
               <CardHeader>
                 <CardTitle className="text-lg mb-1 font-extrabold">2. Typ av trade</CardTitle>
                 <CardDescription className="text-base">Long eller short på <span className="font-semibold">{selectedCrypto.name}</span>?</CardDescription>
@@ -248,7 +249,7 @@ const TradingCoach: React.FC = () => {
 
           {/* Steg 3 */}
           {step === 3 && (
-            <Card className="bg-card shadow-lg border-0 rounded-2xl glass">
+            <Card className="bg-card/80 shadow-xl border border-white/10 rounded-2xl backdrop-blur-md">
               <CardHeader>
                 <CardTitle className="text-lg mb-1 font-extrabold">3. Skriv in position</CardTitle>
                 <CardDescription className="text-base">Uppgifter för <span className="font-semibold">{selectedCrypto.name}</span> / {selectedCrypto.pairSymbol}</CardDescription>
@@ -298,7 +299,7 @@ const TradingCoach: React.FC = () => {
 
           {/* Steg 4 */}
           {step === 4 && (
-            <Card className="bg-card shadow-lg border-0 rounded-2xl glass">
+            <Card className="bg-card/80 shadow-xl border border-white/10 rounded-2xl backdrop-blur-md">
               <CardHeader>
                 <CardTitle className="text-lg mb-1 font-extrabold">4. Stop-loss & take profit <span className="text-xs font-normal text-muted-foreground">(valfritt)</span></CardTitle>
                 <CardDescription className="text-base">Riskhantering för <span className="font-semibold">{selectedCrypto.name}</span></CardDescription>
@@ -354,7 +355,7 @@ const TradingCoach: React.FC = () => {
 
           {/* Steg 5 */}
           {step === 5 && trade.entryPrice && trade.size && (
-            <Card className="shadow-xl border-0 rounded-2xl bg-gradient-to-br from-slate-900/80 to-secondary/50 py-8 px-4 glass">
+            <Card className="shadow-xl border-0 rounded-2xl bg-gradient-to-br from-slate-900/80 to-secondary/50 py-8 px-4 backdrop-blur-md">
               <CardHeader>
                 <CardTitle className="text-2xl font-extrabold mb-1">AI Rekommendation</CardTitle>
               </CardHeader>
@@ -411,7 +412,7 @@ const TradingCoach: React.FC = () => {
         </div>
       </section>
       <section className="max-w-2xl mx-auto w-full mb-8">
-        <Card className="bg-card/80 shadow-lg border-0 rounded-2xl glass">
+        <Card className="bg-card/80 shadow-xl border border-white/10 rounded-2xl backdrop-blur-md">
           <CardHeader>
             <CardTitle>Rekommendationshistorik</CardTitle>
             <CardDescription>
@@ -446,3 +447,4 @@ const TradingCoach: React.FC = () => {
 };
 
 export default TradingCoach;
+
