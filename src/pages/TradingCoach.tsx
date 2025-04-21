@@ -7,6 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
+import { useCrypto } from "@/hooks/useCrypto";
+import CryptoSelector from "@/components/crypto/CryptoSelector";
+import { usePrice } from "@/hooks/usePrice";
+
+// Typdefinitioner
 type TradeType = "long" | "short";
 type Recommendation = "HODL" | "ADD" | "REMOVE";
 interface TradeEntry {
@@ -24,6 +29,7 @@ interface CoachHistoryItem {
   pnl: number;
 }
 
+// Dummyindikatorer kan senare ersättas med riktiga (här för demo)
 const dummyIndicators = {
   ma21: 71000,
   ma50: 70500,
@@ -39,8 +45,8 @@ const dummyIndicators = {
   volume: 320000,
   isUptrend: true
 };
-const dummyCurrentPrice = 72000;
 
+// BYT: Den här funktionen måste få in rätt symbol och nuvarande prisdata!
 function getDummyRecommendation(entry: TradeEntry, cur: number): { rec: Recommendation, reason: string, pnl: number } {
   const pnl = ((cur - entry.entryPrice) * (entry.type === 'long' ? 1 : -1)) / entry.entryPrice * 100;
   if (pnl > 3) return { rec: "ADD", reason: "Trenden fortsatt stark: MA21 ovan, MACD positiv. → ADD", pnl };
@@ -58,6 +64,21 @@ const initialTrade: TradeEntry = {
 };
 
 const TradingCoach: React.FC = () => {
+  // Lägg till stöd för att välja krypto
+  const { selectedCrypto } = useCrypto();
+  const { priceData } = usePrice();
+
+  // Bybit symbol utan /
+  const pairSymbol = selectedCrypto.pairSymbol;
+  const priceKey = pairSymbol.replace('/', '');
+  const currentPriceObj = priceData[priceKey];
+
+  // Om data saknas, defaulta till 0
+  const dummyCurrentPrice = currentPriceObj?.price || 0;
+
+  // TODO: Byt även indikatorvärden till rätt krypto (leave dummy tills vidare)
+  // Senare: Hämta och visa realtidsindikatorer per symbol
+
   const [trade, setTrade] = useState<TradeEntry>(initialTrade);
   const [coachHistory, setCoachHistory] = useState<CoachHistoryItem[]>([
     {
@@ -67,6 +88,8 @@ const TradingCoach: React.FC = () => {
       pnl: 1.5,
     }
   ]);
+
+  // Anpassa DUMMY-funktion om det behövs för andra coins
   const { rec, reason, pnl } = getDummyRecommendation(trade, dummyCurrentPrice);
 
   function handleManualInput(e: React.FormEvent) {
@@ -92,20 +115,26 @@ const TradingCoach: React.FC = () => {
     ]);
   }
 
+  // UI START — Settings/modern look
   return (
     <div className="w-full max-w-2xl mx-auto pt-6 pb-12 flex flex-col gap-8">
+      {/* Selector sektion överst LIKE i Settings */}
       <div>
         <h1 className="text-2xl font-bold mb-2">Trading Coach</h1>
         <p className="text-muted-foreground max-w-xl">
-          Få coach-rekommendationer på din trade! Ange dina tradingparametrar för att analysera din position och se AI-coachens råd. Designen är nu lik inställningsvyn.
+          Få coach-rekommendationer på din trade! Ange dina tradingparametrar för att analysera din position och se AI-coachens råd. <br />
+          <span className="hidden md:inline">Du kan välja kryptovaluta och analysen gäller alltid den du valt.</span>
         </p>
+      </div>
+      <div className="bg-card/80 rounded-xl border border-border p-4 mt-2 mb-2">
+        <CryptoSelector fullWidth={true} showDataSource={true} label="Välj kryptovaluta" />
       </div>
 
       <Card className="glass border-0 shadow-card">
         <CardHeader>
-          <CardTitle>Analys av trade</CardTitle>
+          <CardTitle>Analys av din {selectedCrypto.name}-trade</CardTitle>
           <CardDescription>
-            Mata in din öppna position för personlig AI-analys och strategi.
+            Mata in din position för personlig AI-analys och strategi.
           </CardDescription>
         </CardHeader>
         <CardContent>
