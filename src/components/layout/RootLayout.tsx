@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Outlet, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from "@/components/ui/toaster";
@@ -25,6 +24,7 @@ import PaymentPage from '@/pages/PaymentPage';
 import EasterEggDiscount from '@/pages/EasterEggDiscount';
 import ChartView from '@/pages/ChartView';
 import MarketDashboard from '@/pages/MarketDashboard';
+import TradingCoach from '@/pages/TradingCoach';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const RootLayout: React.FC = () => {
@@ -104,6 +104,7 @@ const RootLayout: React.FC = () => {
                 <Route path="/notifications" element={<Notifications />} />
                 <Route path="/education" element={<Education />} />
                 <Route path="/easter-egg" element={<EasterEggDiscount />} />
+                <Route path="/trading-coach" element={<TradingCoach />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </div>
