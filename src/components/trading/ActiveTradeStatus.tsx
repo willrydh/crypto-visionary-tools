@@ -38,20 +38,6 @@ function getRecommendation(entry: number, current: number, type: TradeType): { r
   return { rec: "HODL", reason: "Stabilitet - ingen tydlig vinst/förlust." };
 }
 
-// Färga bakgrund beroende på PNL (ju högre abs(vinst/förlust) desto starkare färg)
-function getPnlGradient(pnl: number) {
-  const capped = Math.min(Math.abs(pnl) / 10, 1); // 10% eller mer = max färg
-  if (pnl > 0) {
-    // Grönare: från mjukt till starkt
-    return `linear-gradient(95deg, rgba(34,197,94,${0.25 + capped*0.45}) 0%, rgba(34,197,94,${0.12 + capped*0.35}) 100%)`;
-  }
-  if (pnl < 0) {
-    // Rödare: från mjukt till starkt
-    return `linear-gradient(95deg, rgba(234,56,76,${0.20 + capped*0.5}) 0%, rgba(234,56,76,${0.05 + capped*0.16}) 100%)`;
-  }
-  return `linear-gradient(90deg, rgba(60,60,80,0.1) 0%, rgba(60,60,80,0.15) 100%)`; // neutral
-}
-
 const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice: initialPrice, onEnd }) => {
   const { loadPriceData, priceData } = usePrice();
   const [lastPrice, setLastPrice] = useState(initialPrice);
@@ -74,7 +60,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
     const intervalId = setInterval(() => {
       loadPriceData(formattedSymbol);
       setTicking(prev => !prev); // Toggle to trigger animation
-    }, 2000); // Update more frequently (every 2 seconds)
+    }, 2000); // Update every 2 seconds
     
     return () => clearInterval(intervalId);
   }, [trade.pairSymbol, loadPriceData]);
@@ -90,22 +76,38 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
   }, [priceData, trade.pairSymbol]);
 
   return (
-    <div
-      className="relative rounded-3xl p-8 border-2 border-white/25 shadow-2xl mb-14 flex flex-col gap-9 transition-all duration-300 animate-fade-in overflow-hidden backdrop-blur-md"
-      style={{
-        background: getPnlGradient(pnlPct)
-      }}
-    >
-      {/* Trade type and name - simpler and at the top */}
-      <div className="flex items-center justify-center gap-2 text-lg font-bold text-white">
-        <span className={trade.type === "long" ? "text-green-400" : "text-red-400"}>
-          {trade.type === "long" ? "Long" : "Short"}
-        </span>
-        <span className="text-white/90">{trade.name} <span className="text-xs font-normal text-muted-foreground ml-1">({trade.pairSymbol})</span></span>
+    <div className="relative bg-slate-900 rounded-xl p-6 border border-slate-800 shadow-xl">
+      {/* AI Recommendation - centered and prominent */}
+      <div className="text-center mb-8">
+        <h2 className="text-2xl font-bold mb-4 text-white">AI Rekommendation</h2>
+        
+        <div className="flex flex-col items-center gap-2">
+          <Badge 
+            className={cn(
+              "text-base px-8 py-2 rounded-full font-bold",
+              rec === "ADD" ? "bg-green-600 text-white" : 
+              rec === "REMOVE" ? "bg-red-600 text-white" : 
+              "bg-yellow-500 text-black"
+            )}
+          >
+            {rec === "ADD" && <CircleCheck className="mr-1 h-4 w-4" />}
+            {rec === "REMOVE" && <CircleX className="mr-1 h-4 w-4" />}
+            {rec === "HODL" && <Info className="mr-1 h-4 w-4" />}
+            {rec}
+          </Badge>
+          
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span>{trade.name}</span>
+            <span>•</span>
+            <span>{trade.pairSymbol}</span>
+          </div>
+          
+          <p className="text-sm text-gray-400 mt-1 max-w-xs text-center">{reason}</p>
+        </div>
       </div>
       
       {/* Current price - LARGE and prominent */}
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center mb-8">
         <div className="text-xs text-muted-foreground mb-1">Nuvarande pris</div>
         <div className={cn(
           "text-4xl font-bold text-white transition-all duration-200 transform",
@@ -115,90 +117,53 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
         </div>
       </div>
       
-      {/* P&L display - prominent and dynamic */}
-      <div className="grid grid-cols-2 gap-5 bg-slate-900/70 p-5 rounded-xl border border-slate-800">
-        <div className="flex flex-col items-center">
-          <div className="text-xs text-muted-foreground mb-1">P&amp;L %</div>
+      {/* Trade details and P&L in grid layout */}
+      <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="bg-slate-800 p-3 rounded-lg">
+          <div className="text-xs text-muted-foreground">Entry</div>
+          <div className="font-bold text-white text-lg">
+            {trade.entryPrice.toLocaleString('sv-SE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </div>
+        </div>
+        
+        <div className="bg-slate-800 p-3 rounded-lg">
+          <div className="text-xs text-muted-foreground">P&amp;L %</div>
           <div className={cn(
-            "flex items-center gap-1 text-2xl font-bold transition-all duration-200",
-            ticking ? "scale-105" : "scale-100",
+            "flex items-center gap-1 font-bold text-lg",
             pnlPct >= 0 ? "text-green-400" : "text-red-400"
           )}>
-            {pnlPct >= 0 ? <ArrowUp className="h-5 w-5" /> : <ArrowDown className="h-5 w-5" />}
-            {pnlPct >= 0 ? "+" : ""}{pnlPct.toFixed(2)}%
+            {pnlPct >= 0 ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
+            {pnlPct.toFixed(2)}%
           </div>
         </div>
         
-        <div className="flex flex-col items-center">
-          <div className="text-xs text-muted-foreground mb-1">P&amp;L (val.)</div>
+        <div className="bg-slate-800 p-3 rounded-lg">
+          <div className="text-xs text-muted-foreground">P&amp;L (val.)</div>
           <div className={cn(
-            "text-2xl font-bold transition-all duration-200",
-            ticking ? "scale-105" : "scale-100",
+            "font-bold text-lg",
             pnlVal >= 0 ? "text-green-400" : "text-red-400"
           )}>
-            {pnlVal >= 0 ? "+" : ""}{pnlVal.toFixed(2)}
+            {pnlVal.toFixed(2)}
           </div>
+        </div>
+        
+        <div className="bg-slate-800 p-3 rounded-lg">
+          <div className="text-xs text-muted-foreground">Storlek</div>
+          <div className="font-bold text-white text-lg">{trade.size}</div>
         </div>
       </div>
       
-      {/* AI Recommendation - centered and prominent */}
-      <div className="flex flex-col items-center text-center gap-2">
-        <h2 className="text-xl font-extrabold text-white">AI Rekommendation</h2>
-        
-        {/* Recommendation badge - centered and prominent */}
-        <Badge 
-          className={cn(
-            "text-base px-8 py-2 rounded-full font-bold text-white border-0 mb-1",
-            rec === "ADD" ? "bg-green-600" : 
-            rec === "REMOVE" ? "bg-red-600" : 
-            "bg-blue-600"
-          )}
-        >
-          {rec === "ADD" && <CircleCheck className="mr-1 h-4 w-4" />}
-          {rec === "REMOVE" && <CircleX className="mr-1 h-4 w-4" />}
-          {rec === "HODL" && <Info className="mr-1 h-4 w-4" />}
-          {rec}
-        </Badge>
-        
-        {/* Recommendation reason */}
-        <div className={cn(
-          "text-sm mb-2 max-w-md text-center",
-          rec === "REMOVE" ? "text-red-300" : 
-          rec === "ADD" ? "text-green-300" : 
-          "text-blue-200"
-        )}>
-          {reason}
-        </div>
-      </div>
-      
-      {/* Entry details - more subtle */}
-      <div className="bg-slate-900/50 p-3 rounded-lg border border-slate-800">
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <div className="text-xs text-muted-foreground">Entry</div>
-            <div className="font-bold text-white">
-              {trade.entryPrice.toLocaleString('sv-SE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </div>
-          </div>
-          
-          <div>
-            <div className="text-xs text-muted-foreground">Storlek</div>
-            <div className="font-bold text-white">{trade.size}</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Buttons - stacked vertically */}
-      <div className="flex flex-col gap-3 mt-2">
+      {/* Action buttons */}
+      <div className="grid gap-3">
         <TransparentWhiteButton 
-          className="w-full text-base font-bold backdrop-blur-md border-2"
+          className="w-full text-base font-bold"
           onClick={() => {}}
         >
           Börja om
         </TransparentWhiteButton>
         
         <TransparentWhiteButton 
-          className="w-full text-base font-bold backdrop-blur-md border-2"
+          className="w-full text-base font-bold"
           onClick={onEnd}
         >
           Spara & markera som aktiv trade

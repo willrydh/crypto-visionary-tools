@@ -151,24 +151,18 @@ const TradingCoach: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-background to-secondary/40 pb-24 px-2 md:px-0 section-padding">
-      <section className="max-w-2xl mx-auto py-12 sm:py-20 w-full fade-in">
-        <div className="flex flex-col items-center gap-3 mb-8">
-          <Badge className="box-border px-4 py-1 text-base border border-white/10 rounded-lg font-semibold bg-card/90 shadow"
+    <div className="min-h-screen flex flex-col bg-slate-900 pb-24 px-2 md:px-0 section-padding">
+      <section className="max-w-2xl mx-auto py-8 sm:py-12 w-full fade-in">
+        <div className="flex flex-col items-center gap-3 mb-6">
+          <Badge className="px-4 py-1 text-base bg-slate-800 shadow border-0"
             variant="outline"
           >AI Trading Assistant</Badge>
-          <div className="flex flex-col items-center gap-1">
+          <div className="flex flex-col items-center">
             <CryptoSelector showDataSource label="" />
-            <span className="flex gap-1 items-center whitespace-nowrap text-sm text-muted-foreground min-w-fit">
-              <span className="flex items-center gap-1">
-                <span className="text-[10px] pr-1">●</span>
-                <span style={{whiteSpace:'nowrap'}}>Bybit API</span>
-              </span>
-            </span>
           </div>
         </div>
         
-        <h1 className="text-4xl md:text-5xl font-black mb-4 text-foreground text-center drop-shadow section-spacing">Trade Coach</h1>
+        <h1 className="text-4xl md:text-5xl font-black mb-4 text-white text-center">Trade Coach</h1>
         <div className="text-center text-lg text-muted-foreground mb-8">
           <span className="font-semibold">{selectedCrypto.name}</span> <span className="mx-1">•</span> <span>{selectedCrypto.pairSymbol}</span>
         </div>
@@ -183,37 +177,25 @@ const TradingCoach: React.FC = () => {
 
         <div className="w-full flex flex-col gap-8">
           {step === 1 && !activeTrade && (
-            <Card className="bg-card/80 shadow-xl border border-white/10 rounded-2xl px-0 pt-4 pb-8 backdrop-blur-md">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-xl mb-1 font-extrabold">1. Skapa ny trade</CardTitle>
-                <CardDescription className="text-base">Starta en ny trade med den valda kryptovalutan</CardDescription>
+            <Card className="bg-slate-800 shadow-xl border-slate-700 rounded-xl">
+              <CardHeader>
+                <CardTitle className="text-xl font-extrabold">1. Skapa ny trade</CardTitle>
+                <CardDescription className="text-base">Starta en ny trade med {selectedCrypto.name}</CardDescription>
               </CardHeader>
-              <CardContent className="flex flex-col gap-4 mt-2">
-                <div className="flex flex-col gap-2 text-center text-muted-foreground text-base font-semibold">
-                  <span>
-                    Nuvarande val: <span className="text-white font-bold">{selectedCrypto.name}</span>
-                    &nbsp;
-                    <span className="text-xs text-muted-foreground">({selectedCrypto.pairSymbol})</span>
-                  </span>
-                  <span className="text-sm text-muted-foreground mt-2">
-                    Om du vill byta kryptovaluta, använd väljaren överst på sidan
-                  </span>
-                </div>
-                <div className="flex justify-center mt-6">
-                  <TransparentWhiteButton
-                    className="w-full sm:max-w-xs text-base"
-                    onClick={handleSelectCrypto}
-                    type="button"
-                  >
-                    Nästa steg
-                  </TransparentWhiteButton>
-                </div>
+              <CardContent className="flex flex-col gap-4">
+                <TransparentWhiteButton
+                  className="w-full text-base"
+                  onClick={handleSelectCrypto}
+                  type="button"
+                >
+                  Nästa steg
+                </TransparentWhiteButton>
               </CardContent>
             </Card>
           )}
 
           {step === 2 && (
-            <Card className="bg-card/80 shadow-xl border border-white/10 rounded-2xl backdrop-blur-md">
+            <Card className="bg-slate-800 shadow-xl border-slate-700 rounded-xl">
               <CardHeader>
                 <CardTitle className="text-lg mb-1 font-extrabold">2. Typ av trade</CardTitle>
                 <CardDescription className="text-base">Long eller short på <span className="font-semibold">{selectedCrypto.name}</span>?</CardDescription>
@@ -244,7 +226,7 @@ const TradingCoach: React.FC = () => {
           )}
 
           {step === 3 && (
-            <Card className="bg-card/80 shadow-xl border border-white/10 rounded-2xl backdrop-blur-md">
+            <Card className="bg-slate-800 shadow-xl border-slate-700 rounded-xl">
               <CardHeader>
                 <CardTitle className="text-lg mb-1 font-extrabold">3. Skriv in position</CardTitle>
                 <CardDescription className="text-base">Uppgifter för <span className="font-semibold">{selectedCrypto.name}</span> / {selectedCrypto.pairSymbol}</CardDescription>
@@ -293,7 +275,7 @@ const TradingCoach: React.FC = () => {
           )}
 
           {step === 4 && (
-            <Card className="bg-card/80 shadow-xl border border-white/10 rounded-2xl backdrop-blur-md">
+            <Card className="bg-slate-800 shadow-xl border-slate-700 rounded-xl">
               <CardHeader>
                 <CardTitle className="text-lg mb-1 font-extrabold">4. Stop-loss & take profit <span className="text-xs font-normal text-muted-foreground">(valfritt)</span></CardTitle>
                 <CardDescription className="text-base">Riskhantering för <span className="font-semibold">{selectedCrypto.name}</span></CardDescription>
@@ -405,7 +387,7 @@ const TradingCoach: React.FC = () => {
         </div>
       </section>
       <section className="max-w-2xl mx-auto w-full mb-8">
-        <Card className="bg-card/80 shadow-xl border border-white/10 rounded-2xl backdrop-blur-md">
+        <Card className="bg-slate-800 shadow-xl border-slate-700 rounded-xl">
           <CardHeader>
             <CardTitle>Rekommendationshistorik</CardTitle>
             <CardDescription>
