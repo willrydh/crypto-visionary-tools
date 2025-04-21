@@ -97,9 +97,9 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
   // Determine the background color based on P&L
   const getBackgroundClass = () => {
     if (pnlPct > 0) {
-      return "bg-green-600/90 border-green-500";
+      return "bg-green-500 border-green-400";
     } else if (pnlPct < 0) {
-      return "bg-red-600/90 border-red-500";
+      return "bg-red-600 border-red-500";
     } else {
       return "bg-slate-900 border-slate-800";
     }
@@ -107,7 +107,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
 
   return (
     <div className={cn(
-      "relative rounded-xl p-6 border shadow-xl transition-colors duration-500", 
+      "relative rounded-xl p-6 border shadow-xl transition-colors duration-300", 
       getBackgroundClass()
     )}>
       <div className="text-center mb-8">
