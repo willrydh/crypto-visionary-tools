@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -7,23 +6,18 @@ import { createUtcDate, getMarketTimeRemaining, getLocalTimeDisplay } from '@/ut
 
 const MARKET_EVENTS = [
   {
-    time: 7, // 09:00 Swedish time is 07:00 UTC (assuming UTC+2 for Sweden)
+    time: 7, // 09:00 Swedish time 
     name: "London Forex session opens",
     weekdaysOnly: true
   },
   {
-    time: 12, // 14:00 Swedish time is 12:00 UTC (assuming UTC+2 for Sweden)
-    name: "New York Forex session opens",
+    time: 12, // 14:00 Swedish time
+    name: "Forex pre-market opens (New York)",
     weekdaysOnly: true
   },
   {
-    time: 12, // 14:00 Swedish time is 12:00 UTC (assuming UTC+2 for Sweden)
-    name: "NASDAQ & NYSE pre-market opens",
-    weekdaysOnly: true
-  },
-  {
-    time: 13.5, // 15:30 Swedish time is 13:30 UTC (assuming UTC+2 for Sweden)
-    name: "NASDAQ & NYSE market opens (regular session)",
+    time: 13.5, // 15:30 Swedish time
+    name: "NYSE & NASDAQ market opens",
     weekdaysOnly: true
   }
 ];

@@ -1,4 +1,3 @@
-
 import { MarketSession } from '@/contexts/MarketsContext';
 import { 
   formatTimeUntil, 
@@ -64,7 +63,8 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
     
     // Asian markets
     tokyo: { open: 0, close: 6 },             // Local Japan time converted to CET/CEST
-    hongKong: { open: 3.5, close: 10 }        // Local Hong Kong time converted to CET/CEST
+    hongKong: { open: 3.5, close: 10 },        // Local Hong Kong time converted to CET/CEST
+    forexPreMarket: { open: 14, close: 15.5 }
   };
   
   // Convert local market hours to UTC for calculations
@@ -224,6 +224,41 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
       },
       timezone: userTimezone,
       marketCap: "$6.54T"
+    },
+    {
+      name: "Forex Pre-market",
+      status: isWeekend 
+        ? 'closed'
+        : isMarketOpen(
+          marketHours.forexPreMarket.open,
+          marketHours.forexPreMarket.close
+        )
+          ? 'open'
+          : isOpeningSoon(marketHours.forexPreMarket.open)
+          ? 'opening-soon'
+          : 'closed',
+      hours: formatMarketHours(
+        localMarketHours.forexPreMarket.open,
+        localMarketHours.forexPreMarket.close
+      ),
+      nextEvent: {
+        type: isWeekend
+          ? 'open'
+          : isMarketOpen(
+              marketHours.forexPreMarket.open,
+              marketHours.forexPreMarket.close
+            )
+          ? 'close'
+          : 'open',
+        time: calculateNextEvent(
+          marketHours.forexPreMarket,
+          isMarketOpen(
+            marketHours.forexPreMarket.open,
+            marketHours.forexPreMarket.close
+          )
+        )
+      },
+      timezone: userTimezone
     }
   ];
   
