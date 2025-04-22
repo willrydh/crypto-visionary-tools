@@ -11,12 +11,12 @@ import { cn } from '@/lib/utils';
 import { useMarkets } from '@/hooks/useMarkets';
 import { usePrice } from '@/hooks/usePrice';
 import { format } from 'date-fns';
-import { zonedTimeToUtc, utcToZonedTime, format as formatTz } from 'date-fns-tz';
+import { fromZonedTime, toZonedTime, format as formatTz } from 'date-fns-tz';
 
 const formatInStockholm = (utcDate) => {
   if (!utcDate) return '';
   const stockholmTz = 'Europe/Stockholm';
-  const localDate = utcToZonedTime(utcDate, stockholmTz);
+  const localDate = toZonedTime(utcDate, stockholmTz);
   return formatTz(localDate, "H:mm", { timeZone: stockholmTz });
 };
 
