@@ -8,22 +8,22 @@ import { createUtcDate, getMarketTimeRemaining, getLocalTimeDisplay } from '@/ut
 const MARKET_EVENTS = [
   {
     time: 7, // 09:00 Swedish time is 07:00 UTC (assuming UTC+2 for Sweden)
-    name: "London Forex-session öppnar",
+    name: "London Forex session opens",
     weekdaysOnly: true
   },
   {
     time: 12, // 14:00 Swedish time is 12:00 UTC (assuming UTC+2 for Sweden)
-    name: "New York Forex-session öppnar",
+    name: "New York Forex session opens",
     weekdaysOnly: true
   },
   {
     time: 12, // 14:00 Swedish time is 12:00 UTC (assuming UTC+2 for Sweden)
-    name: "NASDAQ & NYSE pre-market öppnar",
+    name: "NASDAQ & NYSE pre-market opens",
     weekdaysOnly: true
   },
   {
     time: 13.5, // 15:30 Swedish time is 13:30 UTC (assuming UTC+2 for Sweden)
-    name: "NASDAQ & NYSE öppnar (riktig börsöppning)",
+    name: "NASDAQ & NYSE market opens (regular session)",
     weekdaysOnly: true
   }
 ];
