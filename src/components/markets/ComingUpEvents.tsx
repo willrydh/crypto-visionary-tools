@@ -1,11 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Clock, ArrowDown, CheckCircle } from 'lucide-react';
 import { createUtcDate, getMarketTimeRemaining, getLocalTimeDisplay } from '@/utils/dateUtils';
 
-// Market events with their UTC times
 const MARKET_EVENTS = [
   {
     time: 7, // 09:00 Swedish time is 07:00 UTC (assuming UTC+2 for Sweden)
@@ -36,56 +34,43 @@ interface MarketEvent {
   localTime?: string;
   countdown?: string;
   isPassed?: boolean;
-  isNext?: boolean; // Added this property to fix the type error
+  isNext?: boolean;
   isToday?: boolean;
+  eventDate?: Date;
 }
 
 const ComingUpEvents = () => {
   const [events, setEvents] = useState<MarketEvent[]>([]);
   const [nextEventIndex, setNextEventIndex] = useState<number>(-1);
 
-  // Calculate and update events with local times and countdowns
   const updateEvents = () => {
     const now = new Date();
     const currentDay = now.getUTCDay();
-    const isWeekend = currentDay === 0 || currentDay === 6; // 0 = Sunday, 6 = Saturday
-    
-    // Process each event to add local time and countdown info
+    const isWeekend = currentDay === 0 || currentDay === 6;
+
     const processedEvents = MARKET_EVENTS.map(event => {
-      // Convert UTC hour to Date object
       const hour = Math.floor(event.time);
       const minute = Math.round((event.time - hour) * 60);
       
-      // Create today's date with this event's time
       let eventDate = new Date(now);
       eventDate.setUTCHours(hour, minute, 0, 0);
       
-      // Check if the event has already passed today
       const isPassed = eventDate <= now;
       
-      // If it's a weekend and the event is weekdays only, adjust to next Monday
       let isToday = true;
       if (isWeekend && event.weekdaysOnly) {
-        const daysUntilMonday = currentDay === 0 ? 1 : 2; // 1 day if Sunday, 2 days if Saturday
+        const daysUntilMonday = currentDay === 0 ? 1 : 2;
         eventDate.setUTCDate(eventDate.getUTCDate() + daysUntilMonday);
         isToday = false;
       }
       
-      // If the event has passed today but we need to show tomorrow's event
       if (isPassed && !isWeekend) {
-        // If we want to show history for today, don't adjust the date
-        // We'll set a marker that it's passed instead
       } else if (isPassed && !isToday) {
-        // For weekend + passed, we already set it to next Monday above
       } else if (isPassed) {
-        // If it's a regular day and event passed, we'd normally set it to tomorrow
-        // But for history showing, we'll keep it as today's passed event
         eventDate.setUTCDate(eventDate.getUTCDate() + 1);
         isToday = false;
       }
       
-      // Skip to next business day if the target day is a weekend
-      const targetDay = eventDate.getUTCDay();
       if (event.weekdaysOnly && (targetDay === 0 || targetDay === 6) && !isToday) {
         eventDate.setUTCDate(eventDate.getUTCDate() + (targetDay === 0 ? 1 : 2));
       }
@@ -94,34 +79,25 @@ const ComingUpEvents = () => {
         ...event,
         localTime: getLocalTimeDisplay(hour, minute),
         countdown: getMarketTimeRemaining(eventDate),
-        isPassed: isPassed && isToday, // Only mark as passed if it's today's event
+        isPassed: isPassed && isToday,
         isToday: isToday,
-        eventDate // Keep this for sorting
+        eventDate
       };
     });
-    
-    // Sort events by their time of day (not by date)
-    // This ensures consistent order regardless of which ones have passed
-    const sortedEvents = [...processedEvents].sort((a, b) => {
-      return a.time - b.time;
-    });
-    
-    // Find the next upcoming event
+
+    const sortedEvents = [...processedEvents].sort((a, b) => a.time - b.time);
     const nextIndex = sortedEvents.findIndex(event => !event.isPassed && event.isToday);
-    
-    // Mark the next event
+
     if (nextIndex !== -1) {
       sortedEvents[nextIndex].isNext = true;
     }
-    
-    // Remove the temporary eventDate property and isToday properties
-    const cleanedEvents = sortedEvents.map(({ eventDate, isToday, ...rest }) => rest);
-    
+
+    const cleanedEvents = sortedEvents.map(({ eventDate, ...rest }) => rest);
+
     setEvents(cleanedEvents);
     setNextEventIndex(nextIndex);
   };
 
-  // Update the countdowns every minute
   useEffect(() => {
     updateEvents();
     
@@ -142,7 +118,6 @@ const ComingUpEvents = () => {
       </CardHeader>
       <CardContent className="pb-6">
         <div className="relative">
-          {/* Timeline line */}
           <div className="absolute left-[22px] top-1 bottom-1 w-0.5 bg-purple-900/30"></div>
           
           <div className="space-y-4">
@@ -151,7 +126,6 @@ const ComingUpEvents = () => {
                 key={`${event.time}-${event.name}`} 
                 className={`flex items-start gap-3 ${event.isNext ? 'animate-pulse' : ''}`}
               >
-                {/* Timeline dot */}
                 <div className={`relative z-10 mt-1.5 h-3 w-3 rounded-full border-2 
                   ${event.isNext 
                     ? 'bg-purple-400 border-purple-300' 
