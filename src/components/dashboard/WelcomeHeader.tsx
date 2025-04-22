@@ -71,7 +71,8 @@ const WelcomeHeader = () => {
 
   return (
     <div className={cn(
-      "w-full rounded-lg border border-border/40 p-4 mb-4 mt-0 relative overflow-hidden",
+      "w-full rounded-lg border border-border/40 p-4 mb-4 mt-2",
+      "relative overflow-hidden shadow-sm",
       getModeLightBgClass(tradingMode)
     )}>
       <div className="relative z-10">
