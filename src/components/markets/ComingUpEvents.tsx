@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -51,30 +52,30 @@ const ComingUpEvents = () => {
     const processedEvents = MARKET_EVENTS.map(event => {
       const hour = Math.floor(event.time);
       const minute = Math.round((event.time - hour) * 60);
-      
+
       let eventDate = new Date(now);
       eventDate.setUTCHours(hour, minute, 0, 0);
-      
+
       const isPassed = eventDate <= now;
-      
+
       let isToday = true;
+      // If today is weekend and event is weekdays only, move event date to next Monday
       if (isWeekend && event.weekdaysOnly) {
         const daysUntilMonday = currentDay === 0 ? 1 : 2;
         eventDate.setUTCDate(eventDate.getUTCDate() + daysUntilMonday);
         isToday = false;
       }
-      
-      if (isPassed && !isWeekend) {
-      } else if (isPassed && !isToday) {
-      } else if (isPassed) {
+
+      // If event passed and today is not weekend
+      if (isPassed && !isWeekend && event.weekdaysOnly) {
         eventDate.setUTCDate(eventDate.getUTCDate() + 1);
+        // Check if the new eventDate is on a weekend; if so, advance to Monday
+        const newDay = eventDate.getUTCDay();
+        if (newDay === 0) eventDate.setUTCDate(eventDate.getUTCDate() + 1);
+        if (newDay === 6) eventDate.setUTCDate(eventDate.getUTCDate() + 2);
         isToday = false;
       }
-      
-      if (event.weekdaysOnly && (targetDay === 0 || targetDay === 6) && !isToday) {
-        eventDate.setUTCDate(eventDate.getUTCDate() + (targetDay === 0 ? 1 : 2));
-      }
-      
+
       return {
         ...event,
         localTime: getLocalTimeDisplay(hour, minute),
@@ -88,23 +89,23 @@ const ComingUpEvents = () => {
     const sortedEvents = [...processedEvents].sort((a, b) => a.time - b.time);
     const nextIndex = sortedEvents.findIndex(event => !event.isPassed && event.isToday);
 
-    if (nextIndex !== -1) {
-      sortedEvents[nextIndex].isNext = true;
-    }
+    // Set isNext for the next event
+    const displayEvents = sortedEvents.map((evt, idx) => ({
+      ...evt,
+      isNext: idx === nextIndex
+    }));
 
-    const cleanedEvents = sortedEvents.map(({ eventDate, ...rest }) => rest);
-
-    setEvents(cleanedEvents);
+    setEvents(displayEvents);
     setNextEventIndex(nextIndex);
   };
 
   useEffect(() => {
     updateEvents();
-    
+
     const interval = setInterval(() => {
       updateEvents();
     }, 60000);
-    
+
     return () => clearInterval(interval);
   }, []);
 
@@ -119,21 +120,21 @@ const ComingUpEvents = () => {
       <CardContent className="pb-6">
         <div className="relative">
           <div className="absolute left-[22px] top-1 bottom-1 w-0.5 bg-purple-900/30"></div>
-          
+
           <div className="space-y-4">
             {events.map((event, index) => (
-              <div 
-                key={`${event.time}-${event.name}`} 
+              <div
+                key={`${event.time}-${event.name}`}
                 className={`flex items-start gap-3 ${event.isNext ? 'animate-pulse' : ''}`}
               >
                 <div className={`relative z-10 mt-1.5 h-3 w-3 rounded-full border-2 
-                  ${event.isNext 
-                    ? 'bg-purple-400 border-purple-300' 
+                  ${event.isNext
+                    ? 'bg-purple-400 border-purple-300'
                     : event.isPassed
                       ? 'bg-green-500 border-green-400'
                       : 'bg-slate-700 border-slate-600'}`}>
                 </div>
-                
+
                 <div className="flex-1">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                     <div className="font-medium text-sm flex items-center gap-1.5">
@@ -143,11 +144,11 @@ const ComingUpEvents = () => {
                       )}
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <Badge 
-                        variant="outline" 
+                      <Badge
+                        variant="outline"
                         className={`text-xs px-1.5 ${
-                          event.isNext 
-                            ? 'border-purple-400/30 bg-purple-900/20 text-purple-300' 
+                          event.isNext
+                            ? 'border-purple-400/30 bg-purple-900/20 text-purple-300'
                             : event.isPassed
                               ? 'border-green-500/30 bg-green-950/20 text-green-400'
                               : 'border-border bg-card/80'
@@ -167,7 +168,7 @@ const ComingUpEvents = () => {
                       )}
                     </div>
                   </div>
-                  
+
                   {index < events.length - 1 && (
                     <div className="mt-0.5 flex justify-center pl-0">
                       <ArrowDown className="h-4 w-4 text-slate-600 mt-1 mb-1" />
