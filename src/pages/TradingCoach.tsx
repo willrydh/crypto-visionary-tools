@@ -238,9 +238,6 @@ const TradingCoach: React.FC = () => {
         <Badge className="px-4 py-1 text-base bg-slate-800 shadow border-0"
           variant="outline"
         >AI Trading Assistant</Badge>
-        <div className="flex flex-col items-center">
-          <CryptoSelector showDataSource label="" />
-        </div>
       </div>
       
       <h1 className="text-4xl md:text-5xl font-black mb-4 text-white text-center">Trade Coach</h1>
@@ -266,13 +263,16 @@ const TradingCoach: React.FC = () => {
               </CardHeader>
               <CardContent className="p-6 bg-gradient-to-br from-slate-900 to-slate-800/80">
                 <div className="py-4">
+                  <div className="flex flex-col items-center mb-4">
+                    <CryptoSelector showDataSource label="" />
+                  </div>
                   <p className="text-muted-foreground mb-6">Set up a new trade position for AI monitoring and recommendations.</p>
                 </div>
                 <button
                   className="w-full bg-slate-800 hover:bg-slate-700 text-white py-3 px-4 rounded-lg flex items-center justify-center transition-colors gap-2 font-medium"
                   onClick={handleSelectCrypto}
                 >
-                  <span>Next step</span>
+                  <span>Monitor trade</span>
                   <ArrowRight className="h-4 w-4" />
                 </button>
               </CardContent>
