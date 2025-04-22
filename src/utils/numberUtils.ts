@@ -1,4 +1,3 @@
-
 // Format a number to a fixed number of decimals
 export const formatDecimals = (value: number, decimals: number = 2): string => {
   return value.toFixed(decimals);
@@ -77,4 +76,11 @@ export const calculateATR = (candles: { high: number; low: number; close: number
   const atr = lastTrueRanges.reduce((sum, value) => sum + value, 0) / period;
   
   return atr;
+};
+
+// Formatter for Y-axis ticks: always show as $123,456 (integer, thousands-separated)
+export const formatYAxisCurrencyTick = (value: number): string => {
+  if (isNaN(value) || value === null || value === undefined) return '$0';
+  // Format as integer with commas, add $ sign
+  return '$' + Math.round(value).toLocaleString('en-US');
 };
