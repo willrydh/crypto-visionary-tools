@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -35,7 +36,7 @@ interface MarketEvent {
   localTime?: string;
   countdown?: string;
   isPassed?: boolean;
-  isNext?: boolean;
+  isNext?: boolean; // Added this property to fix the type error
   isToday?: boolean;
 }
 
