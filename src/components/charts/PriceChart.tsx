@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -11,14 +12,14 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
-  ReferenceLine
+  ResponsiveContainer
 } from 'recharts';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useCrypto } from '@/hooks/useCrypto';
 import { usePrice } from '@/hooks/usePrice';
+import { formatChartXAxisTick } from '@/utils/chartTimeUtils';
 
 interface PriceChartProps {
   symbol?: string;
@@ -29,10 +30,10 @@ interface PriceChartProps {
 }
 
 const TIMEFRAME_CONFIG = {
-  '1d': { interval: '60', limit: 24 },    // 1 dygn, hourly candles
-  '7d': { interval: '240', limit: 42 },   // 1 vecka, 4h candles
-  '30d': { interval: 'D', limit: 30 },    // 1 månad, daily candles
-  '90d': { interval: 'D', limit: 90 },    // 3 månader, daily candles
+  '1d': { interval: '60', limit: 24 },
+  '7d': { interval: '240', limit: 42 },
+  '30d': { interval: 'D', limit: 30 },
+  '90d': { interval: 'D', limit: 90 },
 };
 
 const PriceChart: React.FC<PriceChartProps> = ({
@@ -56,13 +57,14 @@ const PriceChart: React.FC<PriceChartProps> = ({
   const [lastUpdated, setLastUpdated] = useState<string>("");
   const [connectionStatus, setConnectionStatus] = useState<'connected' | 'disconnected' | 'connecting'>('connecting');
   const [lastFetchTime, setLastFetchTime] = useState<number>(0);
-  
+
   const { selectedCrypto } = useCrypto();
   const { loadPriceData, priceData } = usePrice();
-  
+
   const actualSymbol = symbol || `${selectedCrypto.symbol}/USDT`;
   const formattedSymbol = actualSymbol.replace('/', '');
-  
+
+  // Ladda diagramdata från API
   const loadChartData = useCallback(async () => {
     const config = TIMEFRAME_CONFIG[timeframe] || TIMEFRAME_CONFIG['1d'];
     const interval = config.interval;
@@ -72,23 +74,21 @@ const PriceChart: React.FC<PriceChartProps> = ({
     if (now - lastFetchTime < 30000 && processedData.length > 0) {
       return;
     }
-    
+
     setLastFetchTime(now);
     setIsLoading(true);
     setError(null);
     setConnectionStatus('connecting');
-    
+
     try {
-      console.log(`Loading chart data: ${formattedSymbol}, interval: ${interval}, limit: ${limit} (timeframe: ${timeframe})`);
       const candleData = await fetchHistoricalPrices(formattedSymbol, interval, limit);
-      console.log('Fetched candle data count:', candleData.length);
-      
+
       if (!candleData || candleData.length === 0) {
         throw new Error('No data returned from API');
       }
-      
+
       const sortedData = [...candleData].sort((a, b) => a.timestamp - b.timestamp);
-      
+
       const data = sortedData.map(candle => ({
         time: new Date(candle.timestamp).toLocaleString(),
         timestamp: candle.timestamp,
@@ -103,20 +103,18 @@ const PriceChart: React.FC<PriceChartProps> = ({
       }));
 
       setChartData(data);
-      
-      const lineData = data.map(item => ({
-        timestamp: item.timestamp,
-        price: item.price,
-        time: item.time
-      }));
-      
-      console.log('Processed chart data points:', lineData.length);
-      setProcessedData(lineData);
-      
+      // All dataformat för graf-linjen
+      setProcessedData(
+        data.map(item => ({
+          timestamp: item.timestamp,
+          price: item.price,
+          time: item.time
+        }))
+      );
+
       setLastUpdated(new Date().toLocaleString());
       setConnectionStatus('connected');
     } catch (error) {
-      console.error('Error loading chart data:', error);
       setError('Failed to load price data. Please try again later.');
       setConnectionStatus('disconnected');
     } finally {
@@ -124,6 +122,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
     }
   }, [timeframe, formattedSymbol, lastFetchTime, processedData.length]);
 
+  // Nuvarande pris-data
   const updateCurrentPrice = useCallback(async () => {
     try {
       if (priceData[formattedSymbol]) {
@@ -135,7 +134,6 @@ const PriceChart: React.FC<PriceChartProps> = ({
         });
         return;
       }
-      
       const freshData = await loadPriceData(formattedSymbol);
       if (freshData) {
         setCurrentPrice({
@@ -146,7 +144,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
         });
       }
     } catch (error) {
-      console.error('Failed to fetch current price:', error);
+      //
     }
   }, [priceData, formattedSymbol, loadPriceData]);
 
@@ -163,13 +161,11 @@ const PriceChart: React.FC<PriceChartProps> = ({
     };
   }, [timeframe, formattedSymbol, loadChartData, updateCurrentPrice]);
 
-  const formatXAxis = (timestamp: number) => {
-    const date = new Date(timestamp);
-    if (timeframe === '1d') {
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    }
-    return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
-  };
+  // Använd ny formatter för x-axeln:
+  const formatXAxis = useCallback(
+    (timestamp: number) => formatChartXAxisTick(timestamp, timeframe),
+    [timeframe]
+  );
 
   const renderLineChart = useMemo(() => {
     if (!processedData || processedData.length === 0) {
@@ -180,7 +176,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
         </div>
       );
     }
-    
+
     return (
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
@@ -196,7 +192,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
           <XAxis
             dataKey="timestamp"
             tickFormatter={formatXAxis}
-            tickCount={5}
+            tickCount={6}
             minTickGap={20}
             tick={{ fontSize: 10 }}
             type="number"
@@ -205,7 +201,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
           <YAxis
             domain={['auto', 'auto']}
             tick={{ fontSize: 10 }}
-            tickFormatter={(value) => formatCurrency(value)}
+            tickFormatter={formatCurrency}
             width={60}
           />
           <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
@@ -225,7 +221,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
         </AreaChart>
       </ResponsiveContainer>
     );
-  }, [processedData, timeframe]);
+  }, [processedData, formatXAxis, timeframe]);
 
   return (
     <Card className="rounded-lg border bg-card text-card-foreground shadow-sm">
@@ -234,7 +230,6 @@ const PriceChart: React.FC<PriceChartProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <h3 className="font-medium">{actualSymbol} Price Chart</h3>
-              
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="text-xs flex items-center gap-1">
                   <span>Bybit API</span>
@@ -253,7 +248,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
             <div className="text-xl font-bold">
               {currentPrice !== null ? formatCurrency(currentPrice.price) : 'Loading...'}
               {currentPrice && currentPrice.change24h !== 0 && (
-                <Badge 
+                <Badge
                   className={`ml-2 ${currentPrice.change24h > 0 ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}
                 >
                   {currentPrice.change24h > 0 ? (
@@ -266,7 +261,6 @@ const PriceChart: React.FC<PriceChartProps> = ({
               )}
             </div>
           </div>
-
           <div className="flex items-center gap-2">
             <Tabs value={timeframe} onValueChange={(value) => {
               setTimeframe(value);
@@ -279,10 +273,10 @@ const PriceChart: React.FC<PriceChartProps> = ({
                 <TabsTrigger value="90d" className="text-xs px-2 h-6">3M</TabsTrigger>
               </TabsList>
             </Tabs>
-            <Button 
-              variant="outline" 
-              size="icon" 
-              className="h-7 w-7" 
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-7 w-7"
               onClick={() => {
                 loadChartData();
                 updateCurrentPrice();
@@ -336,7 +330,6 @@ const PriceChart: React.FC<PriceChartProps> = ({
             </Popover>
           </div>
         </div>
-
         {isLoading && processedData.length === 0 ? (
           <div className="h-64 flex items-center justify-center">
             <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -360,7 +353,6 @@ const PriceChart: React.FC<PriceChartProps> = ({
             {renderLineChart}
           </div>
         )}
-        
         <div className="flex items-center text-muted-foreground text-xs mt-2 gap-1 justify-end">
           <Info className="h-3 w-3" />
           Updated: {lastUpdated}
@@ -371,3 +363,4 @@ const PriceChart: React.FC<PriceChartProps> = ({
 };
 
 export default PriceChart;
+
