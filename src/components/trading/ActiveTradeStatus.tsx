@@ -94,11 +94,11 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
     
     loadPriceData(formattedSymbol);
     
-    // Slow down the update interval to avoid too much jumping
+    // Slow down the update interval to reduce jumping - changed to 1000ms (1 second)
     const intervalId = setInterval(() => {
       loadPriceData(formattedSymbol);
       setTicking(prev => !prev);
-    }, 7000); // 7 seconds interval to reduce jitter
+    }, 1000); // 1 second interval to reduce jitter, changed from 7000
     
     return () => clearInterval(intervalId);
   }, [trade.pairSymbol, loadPriceData, trade]);
