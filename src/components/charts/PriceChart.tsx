@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -142,8 +141,8 @@ const PriceChart: React.FC<PriceChartProps> = ({
         setCurrentPrice({
           price: priceData[formattedSymbol].price,
           change24h: priceData[formattedSymbol].change24h,
-          volume24h: priceData[formattedSymbol].volume24h,
-          timestamp: priceData[formattedSymbol].timestamp
+          volume24h: priceData[formattedSymbol].volume24h || 0,
+          timestamp: priceData[formattedSymbol].timestamp || Date.now()
         });
         return;
       }
@@ -154,8 +153,8 @@ const PriceChart: React.FC<PriceChartProps> = ({
         setCurrentPrice({
           price: freshData.price,
           change24h: freshData.change24h,
-          volume24h: freshData.volume24h,
-          timestamp: freshData.timestamp
+          volume24h: freshData.volume24h || 0,
+          timestamp: freshData.timestamp || Date.now()
         });
       }
     } catch (error) {

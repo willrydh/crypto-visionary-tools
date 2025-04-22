@@ -30,7 +30,8 @@ const SignalsView = () => {
   const { fetchLevels, levels, structure } = useSupportResistance();
   const { tradingMode, getTimeframes, getIndicators, getVolatilityEvents } = useTradingMode();
   const { selectedCrypto } = useCrypto();
-  const { priceData, loadPriceData, isLoading: priceIsLoading } = usePrice();
+  const { priceData, loadPriceData } = usePrice();
+  const [isLoadingPrice, setIsLoadingPrice] = useState(false);
   const isMobile = useIsMobile();
   
   const { 
@@ -43,7 +44,7 @@ const SignalsView = () => {
     generateAnalysis 
   } = useTechnicalAnalysis();
 
-  const isLoading = priceIsLoading || analysisIsLoading;
+  const isLoading = isLoadingPrice || analysisIsLoading;
 
   useEffect(() => {
     if (indicators.length === 0) {
@@ -54,18 +55,25 @@ const SignalsView = () => {
     
     const formattedSymbol = selectedCrypto.pairSymbol.replace('/', '');
     if (!priceData[formattedSymbol]) {
-      loadPriceData(selectedCrypto.pairSymbol);
+      setIsLoadingPrice(true);
+      loadPriceData(selectedCrypto.pairSymbol).finally(() => {
+        setIsLoadingPrice(false);
+      });
     }
   }, [selectedCrypto]);
 
   useEffect(() => {
+    setIsLoadingPrice(true);
     generateAnalysis(selectedCrypto.pairSymbol, true);
     fetchLevels(selectedCrypto.pairSymbol);
-    loadPriceData(selectedCrypto.pairSymbol);
+    loadPriceData(selectedCrypto.pairSymbol).finally(() => {
+      setIsLoadingPrice(false);
+    });
   }, [tradingMode, selectedCrypto]);
 
   const handleRefresh = async () => {
     try {
+      setIsLoadingPrice(true);
       await generateAnalysis(selectedCrypto.pairSymbol, true);
       await fetchLevels(selectedCrypto.pairSymbol);
       await loadPriceData(selectedCrypto.pairSymbol);
@@ -81,6 +89,8 @@ const SignalsView = () => {
         description: "Could not update market data. Please try again.",
         variant: "destructive"
       });
+    } finally {
+      setIsLoadingPrice(false);
     }
   };
 
