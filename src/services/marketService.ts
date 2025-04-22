@@ -87,9 +87,17 @@ export const fetchMarketSessions = async (): Promise<MarketSession[]> => {
     const openHour = Math.floor(localOpen);
     const closeHour = Math.floor(localClose);
     
-    const timezoneAbbr = getTimezoneAbbreviation();
+    const stockholmTz = 'Europe/Stockholm';
+    const now = new Date();
+    // Hämta svensk tidszonskortnamn (t.ex. CEST/CET)
+    const options: Intl.DateTimeFormatOptions = {
+      timeZone: stockholmTz,
+      timeZoneName: 'short'
+    };
+    const parts = new Intl.DateTimeFormat('sv-SE', options).formatToParts(now);
+    const tzShort = parts.find(p => p.type === 'timeZoneName')?.value || 'CEST'; // fallback
     
-    return `${openHour.toString().padStart(2, '0')}:${openMinutes.toString().padStart(2, '0')}-${closeHour.toString().padStart(2, '0')}:${closeMinutes.toString().padStart(2, '0')} ${timezoneAbbr} (Mon-Fri)`;
+    return `${openHour.toString().padStart(2, '0')}:${openMinutes.toString().padStart(2, '0')}-${closeHour.toString().padStart(2, '0')}:${closeMinutes.toString().padStart(2, '0')} ${tzShort} (Mon-Fri)`;
   };
   
   // Calculate the next opening/closing time with precise timing
