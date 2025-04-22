@@ -94,29 +94,22 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
     onEnd();
   };
 
-  // Determine the background color based on P&L
-  const getBackgroundClass = () => {
-    if (pnlPct > 0) {
-      return "bg-green-600 border-green-500/70 shadow-green-500/20 shadow-lg";
-    } else if (pnlPct < 0) {
-      return "bg-red-600 border-red-500/70 shadow-red-500/20 shadow-lg";
-    } else {
-      return "bg-slate-900 border-slate-800";
-    }
-  };
-
   return (
     <div className={cn(
-      "relative rounded-xl p-6 border shadow-xl transition-colors duration-300", 
-      getBackgroundClass()
+      "relative rounded-xl overflow-hidden border shadow-xl",
+      pnlPct > 0 
+        ? "bg-gradient-to-br from-slate-900 to-green-900/30 border-green-700/30" 
+        : pnlPct < 0 
+        ? "bg-gradient-to-br from-slate-900 to-red-900/30 border-red-700/30" 
+        : "bg-gradient-to-br from-slate-900 to-slate-800 border-slate-700/30"
     )}>
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold mb-2 text-white">AI Recommendation</h2>
-        
-        {/* Display trade pair info */}
-        <div className="flex flex-col items-center gap-1 mb-3">
-          <div className="flex items-center gap-2 text-sm text-white">
-            <span>{trade.name}</span>
+      <div className="p-6">
+        <div className="text-center mb-6">
+          <h2 className="text-2xl font-bold mb-2 text-white">AI Recommendation</h2>
+          
+          {/* Display trade pair info */}
+          <div className="flex items-center justify-center gap-2 text-sm text-slate-300 mb-3">
+            <span className="font-medium">{trade.name}</span>
             <span>•</span>
             <span>{trade.pairSymbol}</span>
             {trade.leverage > 1 && (
@@ -126,111 +119,116 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
               </>
             )}
           </div>
+          
+          {/* Badge recommendation */}
+          <div className="flex justify-center mb-2">
+            <Badge 
+              className={cn(
+                "text-base px-6 py-2 rounded-full font-bold",
+                rec === "ADD" ? "bg-green-500/80 text-white border-0" : 
+                rec === "REMOVE" ? "bg-red-500/80 text-white border-0" : 
+                "bg-yellow-500/80 text-black border-0"
+              )}
+            >
+              {rec === "ADD" && <CircleCheck className="mr-1 h-4 w-4" />}
+              {rec === "REMOVE" && <CircleX className="mr-1 h-4 w-4" />}
+              {rec === "HODL" && <Info className="mr-1 h-4 w-4" />}
+              {rec}
+            </Badge>
+          </div>
+          
+          <p className="text-sm text-slate-300 mt-1 max-w-xs mx-auto">{reason}</p>
         </div>
         
-        {/* Badge recommendation */}
-        <div className="flex justify-center mb-2">
-          <Badge 
-            className={cn(
-              "text-base px-8 py-2 rounded-full font-bold",
-              rec === "ADD" ? "bg-green-500 text-white" : 
-              rec === "REMOVE" ? "bg-red-500 text-white" : 
-              "bg-yellow-500 text-black"
-            )}
-          >
-            {rec === "ADD" && <CircleCheck className="mr-1 h-4 w-4" />}
-            {rec === "REMOVE" && <CircleX className="mr-1 h-4 w-4" />}
-            {rec === "HODL" && <Info className="mr-1 h-4 w-4" />}
-            {rec}
-          </Badge>
+        {/* Current price with animation */}
+        <div className={cn(
+          "flex flex-col items-center my-5 py-4 rounded-lg", 
+          "bg-gradient-to-b from-slate-800/80 to-slate-900/80 border border-slate-700/30"
+        )}>
+          <div className="text-xs text-slate-400 mb-1">Current price</div>
+          <div className={cn(
+            "text-4xl font-bold text-white transition-all duration-300 transform",
+            ticking ? "scale-105" : "scale-100"
+          )}>
+            {lastPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </div>
         </div>
         
-        <p className="text-sm text-gray-200 mt-1 max-w-xs mx-auto">{reason}</p>
-      </div>
-      
-      {/* Current price with animation */}
-      <div className="flex flex-col items-center mb-5 bg-black/20 rounded-xl py-4 mx-4">
-        <div className="text-xs text-gray-200 mb-1">Current price</div>
-        <div className={cn(
-          "text-4xl font-bold text-white transition-all duration-300 transform",
-          ticking ? "scale-110" : "scale-100"
-        )}>
-          {lastPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-        </div>
-      </div>
-      
-      {/* PNL display - central and prominent */}
-      <div className="flex justify-center mb-6">
-        <div className={cn(
-          "flex items-center justify-center px-6 py-3 rounded-lg transition-colors", 
-          pnlPct >= 0 ? "bg-green-500/30" : "bg-red-500/30"
-        )}>
-          <div className="text-center">
-            <div className="text-xs text-gray-200 mb-1">P&amp;L %</div>
-            <div className={cn(
-              "flex items-center justify-center gap-1 font-bold text-2xl",
-              pnlPct >= 0 ? "text-green-400" : "text-red-400"
-            )}>
-              {pnlPct >= 0 ? <ArrowUp className="h-5 w-5" /> : <ArrowDown className="h-5 w-5" />}
-              {pnlPct.toFixed(2)}%
+        {/* PNL display - central and prominent */}
+        <div className="flex justify-center mb-5">
+          <div className={cn(
+            "flex items-center justify-center px-6 py-3 rounded-lg", 
+            pnlPct >= 0 
+              ? "bg-green-500/20 border border-green-500/30" 
+              : "bg-red-500/20 border border-red-500/30"
+          )}>
+            <div className="text-center">
+              <div className="text-xs text-slate-300 mb-1">P&amp;L %</div>
+              <div className={cn(
+                "flex items-center justify-center gap-1 font-bold text-2xl",
+                pnlPct >= 0 ? "text-green-400" : "text-red-400"
+              )}>
+                {pnlPct >= 0 ? <ArrowUp className="h-5 w-5" /> : <ArrowDown className="h-5 w-5" />}
+                {pnlPct.toFixed(2)}%
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      
-      <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="bg-slate-800/50 p-3 rounded-lg">
-          <div className="text-xs text-gray-200">Entry</div>
-          <div className="font-bold text-white text-lg">
-            {trade.entryPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+        
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="bg-slate-800/50 p-3 rounded-lg border border-slate-700/30">
+            <div className="text-xs text-slate-400">Entry</div>
+            <div className="font-bold text-white text-lg">
+              {trade.entryPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </div>
+          </div>
+          
+          <div className="bg-slate-800/50 p-3 rounded-lg border border-slate-700/30">
+            <div className="text-xs text-slate-400">P&amp;L (val.)</div>
+            <div className={cn(
+              "font-bold text-lg",
+              pnlVal >= 0 ? "text-green-400" : "text-red-400"
+            )}>
+              {pnlVal.toFixed(2)}
+            </div>
+          </div>
+          
+          <div className="bg-slate-800/50 p-3 rounded-lg border border-slate-700/30">
+            <div className="text-xs text-slate-400">
+              {trade.leverage > 1 ? "Size (leverage)" : "Size"}
+            </div>
+            <div className="font-bold text-white text-lg">
+              {trade.size}
+              {trade.leverage > 1 && <span className="text-orange-400 ml-2">{trade.leverage}x</span>}
+            </div>
+          </div>
+          
+          <div className="bg-slate-800/50 p-3 rounded-lg border border-slate-700/30">
+            <div className="text-xs text-slate-400">Trade</div>
+            <div className={cn(
+              "font-bold text-lg",
+              trade.type === "long" ? "text-green-400" : "text-red-400"
+            )}>
+              {trade.type === "long" ? "LONG" : "SHORT"}
+            </div>
           </div>
         </div>
         
-        <div className="bg-slate-800/50 p-3 rounded-lg">
-          <div className="text-xs text-gray-200">P&amp;L (val.)</div>
-          <div className={cn(
-            "font-bold text-lg",
-            pnlVal >= 0 ? "text-green-400" : "text-red-400"
-          )}>
-            {pnlVal.toFixed(2)}
-          </div>
+        <div className="grid gap-3">
+          <button 
+            className="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+            onClick={handleResetTrade}
+          >
+            Start over
+          </button>
+          
+          <button 
+            className="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+            onClick={handleEndTrade}
+          >
+            End trade
+          </button>
         </div>
-        
-        <div className="bg-slate-800/50 p-3 rounded-lg">
-          <div className="text-xs text-gray-200">
-            {trade.leverage > 1 ? "Size (leverage)" : "Size"}
-          </div>
-          <div className="font-bold text-white text-lg">
-            {trade.size}
-            {trade.leverage > 1 && <span className="text-orange-400 ml-2">{trade.leverage}x</span>}
-          </div>
-        </div>
-        
-        <div className="bg-slate-800/50 p-3 rounded-lg">
-          <div className="text-xs text-gray-200">Trade</div>
-          <div className={cn(
-            "font-bold text-lg",
-            trade.type === "long" ? "text-green-400" : "text-red-400"
-          )}>
-            {trade.type === "long" ? "LONG" : "SHORT"}
-          </div>
-        </div>
-      </div>
-      
-      <div className="grid gap-3">
-        <TransparentWhiteButton 
-          className="w-full text-base font-bold"
-          onClick={handleResetTrade}
-        >
-          Start over
-        </TransparentWhiteButton>
-        
-        <TransparentWhiteButton 
-          className="w-full text-base font-bold"
-          onClick={handleEndTrade}
-        >
-          End trade
-        </TransparentWhiteButton>
       </div>
     </div>
   );
