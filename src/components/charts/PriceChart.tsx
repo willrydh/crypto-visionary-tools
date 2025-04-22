@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RefreshCw, AlertTriangle, Info, ArrowUp, ArrowDown, CheckCircle } from 'lucide-react';
@@ -48,6 +49,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string>("");
   const [connectionStatus, setConnectionStatus] = useState<'connected' | 'disconnected' | 'connecting'>('connecting');
+  const [lastFetchTime, setLastFetchTime] = useState<number>(0);
   
   const { selectedCrypto } = useCrypto();
   const { loadPriceData, priceData } = usePrice();
@@ -55,7 +57,14 @@ const PriceChart: React.FC<PriceChartProps> = ({
   const actualSymbol = symbol || `${selectedCrypto.symbol}/USDT`;
   const formattedSymbol = actualSymbol.replace('/', '');
   
-  const loadChartData = async (days: number = 1) => {
+  const loadChartData = useCallback(async (days: number = 1) => {
+    // Prevent frequent re-fetching - only fetch if it's been at least 30 seconds
+    const now = Date.now();
+    if (now - lastFetchTime < 30000 && processedData.length > 0) {
+      return;
+    }
+    
+    setLastFetchTime(now);
     setIsLoading(true);
     setError(null);
     setConnectionStatus('connecting');
@@ -124,9 +133,9 @@ const PriceChart: React.FC<PriceChartProps> = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [timeframe, formattedSymbol, lastFetchTime, processedData.length]);
 
-  const updateCurrentPrice = async () => {
+  const updateCurrentPrice = useCallback(async () => {
     try {
       // First check if we already have price data in context
       if (priceData[formattedSymbol]) {
@@ -152,21 +161,22 @@ const PriceChart: React.FC<PriceChartProps> = ({
     } catch (error) {
       console.error('Failed to fetch current price:', error);
     }
-  };
+  }, [priceData, formattedSymbol, loadPriceData]);
 
   useEffect(() => {
     const days = timeframe === '1d' ? 1 : timeframe === '7d' ? 7 : timeframe === '30d' ? 30 : 90;
     loadChartData(days);
     updateCurrentPrice();
 
-    const chartInterval = setInterval(() => loadChartData(days), timeframe === '1d' ? 60000 : 300000);
-    const priceInterval = setInterval(updateCurrentPrice, 30000);
+    // Reduce the update frequency to prevent constant rerendering and blinking
+    const chartInterval = setInterval(() => loadChartData(days), 60000); // Once per minute
+    const priceInterval = setInterval(updateCurrentPrice, 30000); // Every 30 seconds
 
     return () => {
       clearInterval(chartInterval);
       clearInterval(priceInterval);
     };
-  }, [timeframe, formattedSymbol, priceData]);
+  }, [timeframe, formattedSymbol, loadChartData, updateCurrentPrice]);
 
   const formatXAxis = (timestamp: number) => {
     const date = new Date(timestamp);
@@ -176,7 +186,8 @@ const PriceChart: React.FC<PriceChartProps> = ({
     return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
   };
 
-  const renderLineChart = () => {
+  // Memoize chart to prevent unnecessary re-renders
+  const renderLineChart = useMemo(() => {
     if (!processedData || processedData.length === 0) {
       return (
         <div className="h-full flex items-center justify-center">
@@ -230,7 +241,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
         </AreaChart>
       </ResponsiveContainer>
     );
-  };
+  }, [processedData, timeframe]);
 
   return (
     <Card className="rounded-lg border bg-card text-card-foreground shadow-sm">
@@ -340,7 +351,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
           </div>
         </div>
 
-        {isLoading ? (
+        {isLoading && processedData.length === 0 ? (
           <div className="h-64 flex items-center justify-center">
             <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
           </div>
@@ -361,7 +372,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
           </div>
         ) : (
           <div className="h-64">
-            {renderLineChart()}
+            {renderLineChart}
           </div>
         )}
         
