@@ -4,7 +4,7 @@ import { TransparentWhiteButton } from "@/components/ui/TransparentWhiteButton";
 import { cn } from "@/lib/utils";
 import { usePrice } from "@/hooks/usePrice";
 import { Badge } from "@/components/ui/badge";
-import { ArrowUp, ArrowDown, CircleCheck, CircleX, Info } from "lucide-react";
+import { ArrowUp, ArrowDown, CircleCheck, CircleX, Info, Clock } from "lucide-react";
 import { saveToStorage, getFromStorage, removeFromStorage } from "@/utils/storageUtils";
 import { toast } from "@/components/ui/use-toast";
 
@@ -23,6 +23,7 @@ interface ActiveTradeStatusProps {
   };
   lastPrice: number;
   onEnd: () => void;
+  hideHeader?: boolean;
 }
 
 function getPnl(entry: number, current: number, size: number, leverage: number, type: TradeType) {
@@ -35,14 +36,28 @@ function getPnl(entry: number, current: number, size: number, leverage: number, 
 function getRecommendation(entry: number, current: number, type: TradeType): { rec: Recommendation; reason: string } {
   const { pnlPct } = getPnl(entry, current, 1, 1, type);
   
-  if (pnlPct > 3) return { rec: "ADD", reason: "Positive trend, high profit since entry. Data is real-time." };
-  if (pnlPct < -2) return { rec: "REMOVE", reason: "Negative development, critical level passed. Data is real-time." };
-  return { rec: "HODL", reason: "Stability - no clear profit/loss." };
+  if (pnlPct > 3) return { 
+    rec: "ADD", 
+    reason: "Positive trend, high profit since entry. Data is real-time." 
+  };
+  if (pnlPct < -2) return { 
+    rec: "REMOVE", 
+    reason: "Negative development, critical level passed. Data is real-time." 
+  };
+  return { 
+    rec: "HODL", 
+    reason: "Consolidation - Waiting for breakout confirmation. Price is currently consolidating after London open and a spike to the upside. Macd shows bullish conversion on over 5 timeframes, RSI shows momentum is gathering strength, Stochastics show slightly overbought territory. Analysis shows you should watch the trade and wait for a breakout confirmation before taking more action for now." 
+  };
 }
 
 const ACTIVE_TRADE_STORAGE_KEY = "activeTrade";
 
-const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice: initialPrice, onEnd }) => {
+const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ 
+  trade, 
+  lastPrice: initialPrice, 
+  onEnd,
+  hideHeader = false
+}) => {
   const { loadPriceData, priceData } = usePrice();
   const [lastPrice, setLastPrice] = useState(initialPrice);
   const [ticking, setTicking] = useState(false);
@@ -79,11 +94,11 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
     
     loadPriceData(formattedSymbol);
     
-    // More frequent updates for real-time feeling (3-5 seconds)
+    // Slow down the update interval to avoid too much jumping
     const intervalId = setInterval(() => {
       loadPriceData(formattedSymbol);
       setTicking(prev => !prev);
-    }, 3000); // 3 seconds interval for faster updates
+    }, 7000); // 7 seconds interval to reduce jitter
     
     return () => clearInterval(intervalId);
   }, [trade.pairSymbol, loadPriceData, trade]);
@@ -115,6 +130,16 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
     onEnd();
   };
 
+  // Create the price marker render function
+  const renderPriceMarker = (highPrice: number, lowPrice: number, currentPrice: number) => {
+    const range = highPrice - lowPrice;
+    if (range <= 0) return "50%"; // Default to middle if range is invalid
+    
+    const position = ((currentPrice - lowPrice) / range) * 100;
+    // Clamp between 10% and 90% for visibility
+    return `${Math.max(10, Math.min(90, position))}%`;
+  };
+
   return (
     <div className={cn(
       "relative rounded-xl overflow-hidden border shadow-xl",
@@ -122,7 +147,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
     )}>
       <div className="p-6">
         <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold mb-2 text-white">AI Recommendation</h2>
+          {!hideHeader && <h2 className="text-2xl font-bold mb-2 text-white">AI Recommendation</h2>}
           
           {/* Display trade pair info */}
           <div className="flex items-center justify-center gap-2 text-sm text-slate-300 mb-3">
@@ -137,7 +162,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
             )}
           </div>
           
-          {/* Badge recommendation */}
+          {/* Badge recommendation with app design */}
           <div className="flex justify-center mb-2">
             <Badge 
               className={cn(
@@ -149,12 +174,12 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
             >
               {rec === "ADD" && <CircleCheck className="mr-1 h-4 w-4" />}
               {rec === "REMOVE" && <CircleX className="mr-1 h-4 w-4" />}
-              {rec === "HODL" && <Info className="mr-1 h-4 w-4" />}
+              {rec === "HODL" && <Clock className="mr-1 h-4 w-4" />}
               {rec}
             </Badge>
           </div>
           
-          <p className="text-sm text-slate-300 mt-1 max-w-xs mx-auto">{reason}</p>
+          <p className="text-sm text-slate-300 mt-1 max-w-sm mx-auto">{reason}</p>
         </div>
         
         {/* Current price with animation */}
@@ -227,6 +252,86 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
               trade.type === "long" ? "text-green-400" : "text-red-400"
             )}>
               {trade.type === "long" ? "LONG" : "SHORT"}
+            </div>
+          </div>
+        </div>
+        
+        {/* New price range indicators section */}
+        <div className="space-y-4 mb-6 bg-slate-800/30 p-4 rounded-lg border border-slate-700/30">
+          <h3 className="text-xs uppercase text-slate-400 font-medium text-center mb-2">Price Ranges</h3>
+          
+          {/* Hourly range */}
+          <div className="space-y-1">
+            <div className="flex justify-between text-xs text-slate-400">
+              <span>Hourly (high/low)</span>
+            </div>
+            <div className="flex justify-between text-xs font-medium mb-1">
+              <span className="text-green-400">${priceData[trade.pairSymbol.replace('/', '')]?.hourlyHigh?.toFixed(2) || '-'}</span>
+              <span className="text-red-400">${priceData[trade.pairSymbol.replace('/', '')]?.hourlyLow?.toFixed(2) || '-'}</span>
+            </div>
+            <div className="h-1.5 bg-slate-700/50 rounded-full relative">
+              <div className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-white border-2 border-blue-500"
+                style={{
+                  left: renderPriceMarker(
+                    priceData[trade.pairSymbol.replace('/', '')]?.hourlyHigh || 0,
+                    priceData[trade.pairSymbol.replace('/', '')]?.hourlyLow || 0,
+                    lastPrice
+                  )
+                }}
+              ></div>
+            </div>
+            <div className="text-center text-xs text-slate-400 mt-1">
+              Market price: ${lastPrice.toFixed(2)}
+            </div>
+          </div>
+          
+          {/* Daily range */}
+          <div className="space-y-1">
+            <div className="flex justify-between text-xs text-slate-400">
+              <span>Daily (high/low)</span>
+            </div>
+            <div className="flex justify-between text-xs font-medium mb-1">
+              <span className="text-green-400">${priceData[trade.pairSymbol.replace('/', '')]?.dailyHigh?.toFixed(2) || '-'}</span>
+              <span className="text-red-400">${priceData[trade.pairSymbol.replace('/', '')]?.dailyLow?.toFixed(2) || '-'}</span>
+            </div>
+            <div className="h-1.5 bg-slate-700/50 rounded-full relative">
+              <div className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-white border-2 border-blue-500"
+                style={{
+                  left: renderPriceMarker(
+                    priceData[trade.pairSymbol.replace('/', '')]?.dailyHigh || 0,
+                    priceData[trade.pairSymbol.replace('/', '')]?.dailyLow || 0,
+                    lastPrice
+                  )
+                }}
+              ></div>
+            </div>
+            <div className="text-center text-xs text-slate-400 mt-1">
+              Market price: ${lastPrice.toFixed(2)}
+            </div>
+          </div>
+          
+          {/* Weekly range */}
+          <div className="space-y-1">
+            <div className="flex justify-between text-xs text-slate-400">
+              <span>Weekly (high/low)</span>
+            </div>
+            <div className="flex justify-between text-xs font-medium mb-1">
+              <span className="text-green-400">${priceData[trade.pairSymbol.replace('/', '')]?.weeklyHigh?.toFixed(2) || '-'}</span>
+              <span className="text-red-400">${priceData[trade.pairSymbol.replace('/', '')]?.weeklyLow?.toFixed(2) || '-'}</span>
+            </div>
+            <div className="h-1.5 bg-slate-700/50 rounded-full relative">
+              <div className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-white border-2 border-blue-500"
+                style={{
+                  left: renderPriceMarker(
+                    priceData[trade.pairSymbol.replace('/', '')]?.weeklyHigh || 0,
+                    priceData[trade.pairSymbol.replace('/', '')]?.weeklyLow || 0,
+                    lastPrice
+                  )
+                }}
+              ></div>
+            </div>
+            <div className="text-center text-xs text-slate-400 mt-1">
+              Market price: ${lastPrice.toFixed(2)}
             </div>
           </div>
         </div>

@@ -51,7 +51,11 @@ const getRecommendation = (entry: TradeEntry, current: number): { rec: Recommend
   const pnl = ((current - entry.entryPrice) * (entry.type === "long" ? 1 : -1)) / entry.entryPrice * 100 * (entry.leverage || 1);
   if (pnl > 3) return { rec: "ADD", reason: "Positive trend, high profit since entry. Data is real-time.", pnl };
   if (pnl < -2) return { rec: "REMOVE", reason: "Negative development, critical level passed. Data is real-time.", pnl };
-  return { rec: "HODL", reason: "Stability - no clear profit/loss.", pnl };
+  return { 
+    rec: "HODL", 
+    reason: "Consolidation - Waiting for breakout confirmation. Price is currently consolidating after London open and a spike to the upside. Macd shows bullish conversion on over 5 timeframes, RSI shows momentum is gathering strength, Stochastics show slightly overbought territory. Analysis shows you should watch the trade and wait for a breakout confirmation before taking more action for now.", 
+    pnl 
+  };
 };
 
 const TradingCoach: React.FC = () => {
@@ -232,22 +236,28 @@ const TradingCoach: React.FC = () => {
 
   return (
     <div className="space-y-6 mt-6 animate-fade-in pb-20">
-      <div className="flex flex-col items-center gap-3 mb-6">
-        <Badge className="px-4 py-1 text-base bg-slate-800 shadow border-0"
-          variant="outline"
-        >AI Trading Assistant</Badge>
-      </div>
-      
-      <h1 className="text-4xl md:text-5xl font-black mb-4 text-white text-center">Trade Coach</h1>
-      <div className="text-center text-lg text-muted-foreground mb-8">
-        <span className="font-semibold">{selectedCrypto.name}</span> <span className="mx-1">•</span> <span>{selectedCrypto.pairSymbol}</span>
-      </div>
+      {/* Show headers only when not monitoring a trade */}
+      {!activeTrade && (
+        <>
+          <div className="flex flex-col items-center gap-3 mb-6">
+            <Badge className="px-4 py-1 text-base bg-slate-800 shadow border-0"
+              variant="outline"
+            >AI Trading Assistant</Badge>
+          </div>
+          
+          <h1 className="text-4xl md:text-5xl font-black mb-4 text-white text-center">Trade Coach</h1>
+          <div className="text-center text-lg text-muted-foreground mb-8">
+            <span className="font-semibold">{selectedCrypto.name}</span> <span className="mx-1">•</span> <span>{selectedCrypto.pairSymbol}</span>
+          </div>
+        </>
+      )}
 
       {activeTrade && (
         <ActiveTradeStatus
           trade={activeTrade}
           lastPrice={currentPrice}
           onEnd={endTrade}
+          hideHeader={true}
         />
       )}
 
@@ -567,55 +577,57 @@ const TradingCoach: React.FC = () => {
           )}
         </div>
         
-        <div className="space-y-6">
-          <Card className="bg-slate-900 shadow-xl border-slate-700/50 rounded-xl overflow-hidden">
-            <CardHeader className="border-b border-slate-700/50 bg-slate-800/50">
-              <CardTitle className="text-lg font-bold">Recommendation History</CardTitle>
-              <CardDescription>Previous AI recommendations</CardDescription>
-            </CardHeader>
-            <CardContent className="p-4 max-h-[500px] overflow-y-auto custom-scrollbar">
-              <div className="flex flex-col gap-2">
-                {coachHistory.map((item, i) => (
-                  <div key={i} className="p-3 rounded-lg bg-slate-800/50 border border-slate-700/30 flex flex-col gap-1">
-                    <div className="flex justify-between text-xs items-center flex-wrap gap-1">
-                      <span className="text-slate-300">
-                        {item.timestamp} 
-                        <span className="ml-2 bg-slate-700/50 px-2 py-0.5 rounded text-xs">{item.symbol}</span> 
-                        <span className="text-slate-400">({item.pairSymbol})</span>
-                        {item.leverage > 1 && <span className="text-orange-400 ml-1">{item.leverage}x</span>}
-                      </span>
-                      <Badge variant="outline" className={cn(
-                        "text-xs border-0",
-                        item.recommendation === "ADD" ? "text-green-400 bg-green-500/10" :
-                          item.recommendation === "REMOVE" ? "text-red-400 bg-red-500/10" : 
-                          "text-yellow-400 bg-yellow-500/10"
-                      )}>{item.recommendation}</Badge>
+        {!activeTrade && (
+          <div className="space-y-6">
+            <Card className="bg-slate-900 shadow-xl border-slate-700/50 rounded-xl overflow-hidden">
+              <CardHeader className="border-b border-slate-700/50 bg-slate-800/50">
+                <CardTitle className="text-lg font-bold">Recommendation History</CardTitle>
+                <CardDescription>Previous AI recommendations</CardDescription>
+              </CardHeader>
+              <CardContent className="p-4 max-h-[500px] overflow-y-auto custom-scrollbar">
+                <div className="flex flex-col gap-2">
+                  {coachHistory.map((item, i) => (
+                    <div key={i} className="p-3 rounded-lg bg-slate-800/50 border border-slate-700/30 flex flex-col gap-1">
+                      <div className="flex justify-between text-xs items-center flex-wrap gap-1">
+                        <span className="text-slate-300">
+                          {item.timestamp} 
+                          <span className="ml-2 bg-slate-700/50 px-2 py-0.5 rounded text-xs">{item.symbol}</span> 
+                          <span className="text-slate-400">({item.pairSymbol})</span>
+                          {item.leverage > 1 && <span className="text-orange-400 ml-1">{item.leverage}x</span>}
+                        </span>
+                        <Badge variant="outline" className={cn(
+                          "text-xs border-0",
+                          item.recommendation === "ADD" ? "text-green-400 bg-green-500/10" :
+                            item.recommendation === "REMOVE" ? "text-red-400 bg-red-500/10" : 
+                            "text-yellow-400 bg-yellow-500/10"
+                        )}>{item.recommendation}</Badge>
+                      </div>
+                      <div className={cn(
+                        "text-xs",
+                        item.recommendation === "REMOVE" ? "text-red-300" : 
+                        item.recommendation === "ADD" ? "text-green-300" : 
+                        "text-yellow-300"
+                      )}>
+                        {item.reason}
+                      </div>
+                      <div className={cn("text-xs font-medium mt-1", item.pnl >= 0 ? "text-green-400" : "text-red-400")}>
+                        P&amp;L: {item.pnl.toFixed(2)}% | Entry: {item.entry} | Size: {item.size}
+                      </div>
                     </div>
-                    <div className={cn(
-                      "text-xs",
-                      item.recommendation === "REMOVE" ? "text-red-300" : 
-                      item.recommendation === "ADD" ? "text-green-300" : 
-                      "text-yellow-300"
-                    )}>
-                      {item.reason}
+                  ))}
+                  {coachHistory.length === 0 && (
+                    <div className="text-slate-400 text-sm text-center py-8 flex flex-col items-center gap-2">
+                      <Badge variant="outline" className="bg-slate-800 border-slate-700">No history yet</Badge>
+                      <p className="text-xs text-slate-500 max-w-[200px] mx-auto mt-2">
+                        Your trading history and AI recommendations will appear here
+                      </p>
                     </div>
-                    <div className={cn("text-xs font-medium mt-1", item.pnl >= 0 ? "text-green-400" : "text-red-400")}>
-                      P&amp;L: {item.pnl.toFixed(2)}% | Entry: {item.entry} | Size: {item.size}
-                    </div>
-                  </div>
-                ))}
-                {coachHistory.length === 0 && (
-                  <div className="text-slate-400 text-sm text-center py-8 flex flex-col items-center gap-2">
-                    <Badge variant="outline" className="bg-slate-800 border-slate-700">No history yet</Badge>
-                    <p className="text-xs text-slate-500 max-w-[200px] mx-auto mt-2">
-                      Your trading history and AI recommendations will appear here
-                    </p>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   );
