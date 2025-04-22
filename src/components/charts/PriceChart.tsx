@@ -28,6 +28,13 @@ interface PriceChartProps {
   excludeTimeframes?: string[];
 }
 
+const TIMEFRAME_CONFIG = {
+  '1d': { interval: '60', limit: 24 },    // 1 dygn, hourly candles
+  '7d': { interval: '240', limit: 42 },   // 1 vecka, 4h candles
+  '30d': { interval: 'D', limit: 30 },    // 1 månad, daily candles
+  '90d': { interval: 'D', limit: 90 },    // 3 månader, daily candles
+};
+
 const PriceChart: React.FC<PriceChartProps> = ({
   symbol = 'BTC/USDT',
   coinId = 'bitcoin',
@@ -56,8 +63,11 @@ const PriceChart: React.FC<PriceChartProps> = ({
   const actualSymbol = symbol || `${selectedCrypto.symbol}/USDT`;
   const formattedSymbol = actualSymbol.replace('/', '');
   
-  const loadChartData = useCallback(async (days: number = 1) => {
-    // Prevent frequent re-fetching - only fetch if it's been at least 30 seconds
+  const loadChartData = useCallback(async () => {
+    const config = TIMEFRAME_CONFIG[timeframe] || TIMEFRAME_CONFIG['1d'];
+    const interval = config.interval;
+    const limit = config.limit;
+
     const now = Date.now();
     if (now - lastFetchTime < 30000 && processedData.length > 0) {
       return;
@@ -69,25 +79,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
     setConnectionStatus('connecting');
     
     try {
-      // Convert timeframe to match the expected format for the API
-      let interval;
-      let limit = 100;
-      
-      if (timeframe === '1d') {
-        interval = '60'; // hourly candles for 1 day view
-        limit = 24;
-      } else if (timeframe === '7d') {
-        interval = '240'; // 4-hour candles for 1 week view
-        limit = 42;
-      } else if (timeframe === '30d') {
-        interval = 'D'; // daily candles for 1 month view
-        limit = 30;
-      } else {
-        interval = 'D'; // daily candles for 3 months view
-        limit = 90;
-      }
-      
-      console.log(`Loading chart data: ${formattedSymbol}, interval: ${interval}, limit: ${limit}`);
+      console.log(`Loading chart data: ${formattedSymbol}, interval: ${interval}, limit: ${limit} (timeframe: ${timeframe})`);
       const candleData = await fetchHistoricalPrices(formattedSymbol, interval, limit);
       console.log('Fetched candle data count:', candleData.length);
       
@@ -95,7 +87,6 @@ const PriceChart: React.FC<PriceChartProps> = ({
         throw new Error('No data returned from API');
       }
       
-      // Sort by timestamp ascending (oldest to newest)
       const sortedData = [...candleData].sort((a, b) => a.timestamp - b.timestamp);
       
       const data = sortedData.map(candle => ({
@@ -113,7 +104,6 @@ const PriceChart: React.FC<PriceChartProps> = ({
 
       setChartData(data);
       
-      // Process data for chart display
       const lineData = data.map(item => ({
         timestamp: item.timestamp,
         price: item.price,
@@ -136,7 +126,6 @@ const PriceChart: React.FC<PriceChartProps> = ({
 
   const updateCurrentPrice = useCallback(async () => {
     try {
-      // First check if we already have price data in context
       if (priceData[formattedSymbol]) {
         setCurrentPrice({
           price: priceData[formattedSymbol].price,
@@ -147,7 +136,6 @@ const PriceChart: React.FC<PriceChartProps> = ({
         return;
       }
       
-      // Otherwise, load fresh data
       const freshData = await loadPriceData(formattedSymbol);
       if (freshData) {
         setCurrentPrice({
@@ -163,13 +151,11 @@ const PriceChart: React.FC<PriceChartProps> = ({
   }, [priceData, formattedSymbol, loadPriceData]);
 
   useEffect(() => {
-    const days = timeframe === '1d' ? 1 : timeframe === '7d' ? 7 : timeframe === '30d' ? 30 : 90;
-    loadChartData(days);
+    loadChartData();
     updateCurrentPrice();
 
-    // Reduce the update frequency to prevent constant rerendering and blinking
-    const chartInterval = setInterval(() => loadChartData(days), 60000); // Once per minute
-    const priceInterval = setInterval(updateCurrentPrice, 30000); // Every 30 seconds
+    const chartInterval = setInterval(() => loadChartData(), 60000);
+    const priceInterval = setInterval(updateCurrentPrice, 30000);
 
     return () => {
       clearInterval(chartInterval);
@@ -185,7 +171,6 @@ const PriceChart: React.FC<PriceChartProps> = ({
     return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
   };
 
-  // Memoize chart to prevent unnecessary re-renders
   const renderLineChart = useMemo(() => {
     if (!processedData || processedData.length === 0) {
       return (
@@ -283,7 +268,10 @@ const PriceChart: React.FC<PriceChartProps> = ({
           </div>
 
           <div className="flex items-center gap-2">
-            <Tabs value={timeframe} onValueChange={setTimeframe} className="w-auto">
+            <Tabs value={timeframe} onValueChange={(value) => {
+              setTimeframe(value);
+              setIsLoading(true);
+            }} className="w-auto">
               <TabsList className="h-7">
                 <TabsTrigger value="1d" className="text-xs px-2 h-6">1D</TabsTrigger>
                 <TabsTrigger value="7d" className="text-xs px-2 h-6">1W</TabsTrigger>
@@ -296,8 +284,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
               size="icon" 
               className="h-7 w-7" 
               onClick={() => {
-                const days = timeframe === '1d' ? 1 : timeframe === '7d' ? 7 : timeframe === '30d' ? 30 : 90;
-                loadChartData(days);
+                loadChartData();
                 updateCurrentPrice();
               }}
             >
@@ -324,13 +311,13 @@ const PriceChart: React.FC<PriceChartProps> = ({
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Status:</span>
                       <span className={
-                        connectionStatus === 'connected' ? 'text-green-500' : 
-                        connectionStatus === 'connecting' ? 'text-yellow-500' : 
-                        'text-red-500'
+                        connectionStatus === 'connected' ? 'text-green-500' :
+                          connectionStatus === 'connecting' ? 'text-yellow-500' :
+                            'text-red-500'
                       }>
-                        {connectionStatus === 'connected' ? 'Connected' : 
-                         connectionStatus === 'connecting' ? 'Connecting' : 
-                         'Disconnected'}
+                        {connectionStatus === 'connected' ? 'Connected' :
+                          connectionStatus === 'connecting' ? 'Connecting' :
+                            'Disconnected'}
                       </span>
                     </div>
                     <div className="flex justify-between">
@@ -362,8 +349,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
               variant="ghost"
               size="sm"
               onClick={() => {
-                const days = timeframe === '1d' ? 1 : timeframe === '7d' ? 7 : timeframe === '30d' ? 30 : 90;
-                loadChartData(days);
+                loadChartData();
               }}
             >
               Try again
