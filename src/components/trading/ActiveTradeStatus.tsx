@@ -51,6 +51,26 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
   
   const { rec, reason } = getRecommendation(trade.entryPrice, lastPrice, trade.type);
   
+  // Calculate intensity for background colors based on PnL
+  const getIntensity = (pnl: number) => {
+    const absValue = Math.abs(pnl);
+    // Cap at 30% for visual effect, scale from 5% to 40%
+    if (absValue > 30) return 40;
+    if (absValue < 1) return 5;
+    return Math.floor(5 + (absValue / 30) * 35);
+  };
+  
+  // Background gradient classes based on PnL
+  const getBgGradient = () => {
+    const intensity = getIntensity(pnlPct);
+    if (pnlPct > 0) {
+      return `bg-gradient-to-br from-slate-900 to-green-900/${intensity} border-green-700/${intensity}`;
+    } else if (pnlPct < 0) {
+      return `bg-gradient-to-br from-slate-900 to-red-900/${intensity} border-red-700/${intensity}`;
+    }
+    return "bg-gradient-to-br from-slate-900 to-slate-800 border-slate-700/30";
+  };
+  
   useEffect(() => {
     const formattedSymbol = trade.pairSymbol.replace('/', '');
     
@@ -59,10 +79,11 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
     
     loadPriceData(formattedSymbol);
     
+    // More frequent updates for real-time feeling (3-5 seconds)
     const intervalId = setInterval(() => {
       loadPriceData(formattedSymbol);
       setTicking(prev => !prev);
-    }, 1500); // Slightly faster updates for more real-time feel
+    }, 3000); // 3 seconds interval for faster updates
     
     return () => clearInterval(intervalId);
   }, [trade.pairSymbol, loadPriceData, trade]);
@@ -74,7 +95,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
     if (currentPriceData && currentPriceData.price) {
       setLastPrice(currentPriceData.price);
     }
-  }, [priceData, trade.pairSymbol]);
+  }, [priceData, trade.pairSymbol, ticking]); // Added ticking dependency to force re-render
 
   const handleEndTrade = () => {
     removeFromStorage(ACTIVE_TRADE_STORAGE_KEY);
@@ -97,11 +118,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({ trade, lastPrice:
   return (
     <div className={cn(
       "relative rounded-xl overflow-hidden border shadow-xl",
-      pnlPct > 0 
-        ? "bg-gradient-to-br from-slate-900 to-green-900/30 border-green-700/30" 
-        : pnlPct < 0 
-        ? "bg-gradient-to-br from-slate-900 to-red-900/30 border-red-700/30" 
-        : "bg-gradient-to-br from-slate-900 to-slate-800 border-slate-700/30"
+      getBgGradient()
     )}>
       <div className="p-6">
         <div className="text-center mb-6">

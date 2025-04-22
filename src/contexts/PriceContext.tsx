@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { fetchCurrentPrice, fetchHighLowData } from '@/services/priceDataService';
 import { useCrypto } from '@/hooks/useCrypto';
@@ -34,7 +35,7 @@ interface PriceProviderProps {
 
 export const PriceProvider: React.FC<PriceProviderProps> = ({ 
   children, 
-  refreshInterval = 15000 // 15 seconds for more frequent updates
+  refreshInterval = 5000 // 5 seconds for more frequent updates (changed from 15000)
 }) => {
   const [priceData, setPriceData] = useState<Record<string, PriceData>>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);

@@ -24,7 +24,6 @@ interface TradeEntry {
   leverage: number;
   stopLoss?: number;
   takeProfit?: number;
-  dateTime?: string;
   type: TradeType;
   symbol: string;
   pairSymbol: string;
@@ -155,7 +154,6 @@ const TradingCoach: React.FC = () => {
       ...old,
       stopLoss: form.stopLoss.value ? Number(form.stopLoss.value) : undefined,
       takeProfit: form.takeProfit.value ? Number(form.takeProfit.value) : undefined,
-      dateTime: form.dateTime.value || undefined
     }));
     setStep(5);
   }
@@ -448,16 +446,6 @@ const TradingCoach: React.FC = () => {
                       step="0.01"
                       className="bg-slate-800 border-slate-700 text-white"
                       placeholder="Take-Profit level"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="dateTime" className="text-sm text-slate-300 mb-1 block">Date/time <span className="text-slate-400">(optional)</span></Label>
-                    <Input
-                      id="dateTime"
-                      name="dateTime"
-                      type="datetime-local"
-                      className="bg-slate-800 border-slate-700 text-white"
                     />
                   </div>
                   
