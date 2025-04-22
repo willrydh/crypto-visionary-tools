@@ -71,7 +71,7 @@ const WelcomeHeader = () => {
 
   return (
     <div className={cn(
-      "w-full rounded-lg border border-border/40 p-4 mb-4 mt-2",
+      "w-full rounded-lg border border-border/40 p-4 mb-4 mt-6",
       "relative overflow-hidden shadow-sm",
       getModeLightBgClass(tradingMode)
     )}>

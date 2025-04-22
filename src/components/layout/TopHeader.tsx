@@ -139,7 +139,7 @@ const TopHeader = () => {
       
       {/* Trading mode selector - show on specific pages - with improved spacing */}
       {showTradingBar && (
-        <div className={cn("border-b border-border/40 trading-selector-container", getModeHeaderBgClass(tradingMode))}>
+        <div className={cn("border-b border-border/40 trading-selector-container pb-2", getModeHeaderBgClass(tradingMode))}>
           <div className="max-w-7xl mx-auto px-4 sm:px-5 md:px-6 md:ml-64">
             <div className="flex items-center justify-between py-2">
               <div className="flex-grow">
