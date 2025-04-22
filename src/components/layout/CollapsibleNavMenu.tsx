@@ -43,6 +43,14 @@ const CollapsibleNavMenu = () => {
               Psychology
             </Link>
           </li>
+          <li>
+            <Link 
+              to="/trading-coach" 
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground py-1.5 px-3 rounded-md hover:bg-muted transition-colors"
+            >
+              Trading Coach
+            </Link>
+          </li>
         </ul>
       </CollapsibleContent>
     </Collapsible>
