@@ -11,6 +11,7 @@ import PriceRangeIndicator from '@/components/charts/PriceRangeIndicator';
 import PriceChart from '@/components/charts/PriceChart';
 import CoinInfo from '@/components/crypto/CoinInfo';
 import WelcomeHeader from '@/components/dashboard/WelcomeHeader';
+import ComingUpEvents from '@/components/markets/ComingUpEvents';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { TrendingUp, TrendingDown, ArrowRight, Zap, Sun, Moon } from 'lucide-react';
@@ -216,7 +217,7 @@ const Dashboard = () => {
         
         <div className="space-y-6">
           <PriceRangeIndicator title="Price Ranges" symbol="BTCUSDT" />
-          {/* Removed the duplicate MarketStatus component */}
+          <ComingUpEvents />
         </div>
       </div>
     </div>
