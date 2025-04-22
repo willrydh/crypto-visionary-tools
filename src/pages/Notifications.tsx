@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -12,13 +11,19 @@ import { cn } from '@/lib/utils';
 import { useMarkets } from '@/hooks/useMarkets';
 import { usePrice } from '@/hooks/usePrice';
 import { format } from 'date-fns';
+import { zonedTimeToUtc, utcToZonedTime, format as formatTz } from 'date-fns-tz';
 
-// Helper to generate notifications based on actual market data
+const formatInStockholm = (utcDate) => {
+  if (!utcDate) return '';
+  const stockholmTz = 'Europe/Stockholm';
+  const localDate = utcToZonedTime(utcDate, stockholmTz);
+  return formatTz(localDate, "H:mm", { timeZone: stockholmTz });
+};
+
 const generateMarketNotifications = (marketSessions, priceData) => {
   const notifications = [];
   let id = 1;
   
-  // Market sessions notifications
   marketSessions?.forEach(market => {
     if (market.status === 'open') {
       notifications.push({
@@ -44,11 +49,22 @@ const generateMarketNotifications = (marketSessions, priceData) => {
       const eventTime = market.nextEvent.time instanceof Date 
         ? market.nextEvent.time 
         : new Date(market.nextEvent.time);
-        
+
+      let showZoneTime = false;
+      if (
+        market.name.toLowerCase().includes('london') ||
+        market.name.toLowerCase().includes('new york') ||
+        market.name.toLowerCase().includes('forex')
+      ) {
+        showZoneTime = true;
+      }
+
       notifications.push({
         id: id++,
         title: `${market.name} Market ${market.nextEvent.type === 'open' ? 'Opens' : 'Closes'} Soon`,
-        description: `Scheduled for ${format(eventTime, 'h:mm a')} (${format(eventTime, 'E, MMM d')})`,
+        description: showZoneTime
+          ? `Scheduled for ${formatInStockholm(eventTime)} (SWE time) (${format(eventTime, 'E, MMM d')})`
+          : `Scheduled for ${format(eventTime, 'h:mm a')} (${format(eventTime, 'E, MMM d')})`,
         time: "Scheduled",
         category: "market",
         isRead: true,
@@ -57,7 +73,6 @@ const generateMarketNotifications = (marketSessions, priceData) => {
     }
   });
   
-  // Price notifications for BTC and ETH
   if (priceData && priceData['BTCUSDT']) {
     const btcData = priceData['BTCUSDT'];
     
@@ -110,7 +125,6 @@ const generateMarketNotifications = (marketSessions, priceData) => {
     });
   }
   
-  // Add some scheduled notifications
   notifications.push({
     id: id++,
     title: "Daily Market Recap",
@@ -124,7 +138,6 @@ const generateMarketNotifications = (marketSessions, priceData) => {
   return notifications;
 };
 
-// Helper to generate activity logs based on actual data
 const generateActivityLogs = (marketSessions, priceData) => {
   const now = new Date();
   const activityLogs = [
@@ -144,7 +157,6 @@ const generateActivityLogs = (marketSessions, priceData) => {
     }
   ];
   
-  // Add market-related activities
   let id = 3;
   marketSessions?.forEach(market => {
     if (market.status === 'open') {
@@ -158,7 +170,6 @@ const generateActivityLogs = (marketSessions, priceData) => {
     }
   });
   
-  // Add price check activities
   if (priceData && priceData['BTCUSDT']) {
     activityLogs.push({
       id: id++,
@@ -179,7 +190,6 @@ const generateActivityLogs = (marketSessions, priceData) => {
     });
   }
   
-  // Add login activity
   activityLogs.push({
     id: id++,
     action: "Login Detected",
@@ -202,7 +212,6 @@ const Notifications = () => {
   const { priceData, loadPriceData } = usePrice();
   
   useEffect(() => {
-    // Load price data if not already loaded
     if (!priceData['BTCUSDT']) {
       loadPriceData('BTCUSDT');
     }
@@ -211,21 +220,17 @@ const Notifications = () => {
       loadPriceData('ETHUSDT');
     }
     
-    // Generate notifications based on real data
     const generatedNotifications = generateMarketNotifications(marketSessions, priceData);
     setNotifications(generatedNotifications);
     
-    // Generate activity logs
     const generatedLogs = generateActivityLogs(marketSessions, priceData);
     setActivityLogs(generatedLogs);
   }, [marketSessions, priceData, loadPriceData]);
   
   const handleRefresh = () => {
-    // Regenerate notifications with latest data
     const generatedNotifications = generateMarketNotifications(marketSessions, priceData);
     setNotifications(generatedNotifications);
     
-    // Regenerate activity logs
     const generatedLogs = generateActivityLogs(marketSessions, priceData);
     setActivityLogs(generatedLogs);
     
@@ -302,7 +307,6 @@ const Notifications = () => {
     }
   };
   
-  // Render notifications with loading state
   if (marketsLoading && notifications.length === 0) {
     return (
       <div className="space-y-6 animate-fade-in mt-2">
@@ -326,7 +330,6 @@ const Notifications = () => {
   
   return (
     <div className="space-y-6 animate-fade-in mt-2">
-      {/* Improved header with better alignment */}
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold">Notifications</h1>
@@ -402,7 +405,6 @@ const Notifications = () => {
             </Card>
           ) : (
             <div className="space-y-3">
-              {/* Pinned notifications first */}
               {notifications.some(n => n.isPinned) && (
                 <div className="space-y-2">
                   <h3 className="text-sm font-medium text-muted-foreground flex items-center">
@@ -474,7 +476,6 @@ const Notifications = () => {
                 </div>
               )}
               
-              {/* Other notifications */}
               {notifications.some(n => !n.isPinned) && (
                 <div className="space-y-2">
                   {notifications.some(n => n.isPinned) && (
