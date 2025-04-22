@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -78,7 +78,9 @@ const TradingCoach: React.FC = () => {
   const [coachHistory, setCoachHistory] = useState<CoachHistoryItem[]>([]);
   const [activeTrade, setActiveTrade] = useState<TradeEntry | null>(null);
   const [leverageValue, setLeverageValue] = useState([1]);
+  const [lastPriceUpdate, setLastPriceUpdate] = useState(0);
 
+  // Load active trade and history from storage when component mounts
   useEffect(() => {
     const savedTrade = getFromStorage<TradeEntry | null>(ACTIVE_TRADE_STORAGE_KEY, null);
     if (savedTrade) {
@@ -109,12 +111,36 @@ const TradingCoach: React.FC = () => {
     }
   }, []);
 
+  // Set up regular price updates (once per second)
+  useEffect(() => {
+    if (activeTrade && activeTrade.pairSymbol) {
+      const formattedSymbol = activeTrade.pairSymbol.replace('/', '');
+      
+      // Initial load
+      loadPriceData(formattedSymbol);
+      
+      // Regular update interval (1 second)
+      const intervalId = setInterval(() => {
+        const now = Date.now();
+        // Only update if at least 1000ms has passed
+        if (now - lastPriceUpdate >= 1000) {
+          loadPriceData(formattedSymbol);
+          setLastPriceUpdate(now);
+        }
+      }, 1000);
+      
+      return () => clearInterval(intervalId);
+    }
+  }, [activeTrade, loadPriceData, lastPriceUpdate]);
+
+  // Save coach history when it changes
   useEffect(() => {
     if (coachHistory.length > 0) {
       saveToStorage(COACH_HISTORY_STORAGE_KEY, coachHistory);
     }
   }, [coachHistory]);
 
+  // Update trade when selected crypto changes
   useEffect(() => {
     setTrade(prev => ({
       ...prev,
@@ -634,3 +660,4 @@ const TradingCoach: React.FC = () => {
 };
 
 export default TradingCoach;
+

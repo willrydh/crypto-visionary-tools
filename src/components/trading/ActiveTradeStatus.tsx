@@ -61,6 +61,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
   const { loadPriceData, priceData } = usePrice();
   const [lastPrice, setLastPrice] = useState(initialPrice);
   const [ticking, setTicking] = useState(false);
+  const [lastUpdateTime, setLastUpdateTime] = useState(0);
   
   const { pnlPct, pnlVal } = getPnl(trade.entryPrice, lastPrice, trade.size, trade.leverage || 1, trade.type);
   
@@ -94,11 +95,11 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
     
     loadPriceData(formattedSymbol);
     
-    // Slow down the update interval to reduce jumping - changed to 1000ms (1 second)
+    // Update price data on a regular interval (1 second)
     const intervalId = setInterval(() => {
       loadPriceData(formattedSymbol);
       setTicking(prev => !prev);
-    }, 1000); // 1 second interval to reduce jitter, changed from 7000
+    }, 1000); // 1 second interval
     
     return () => clearInterval(intervalId);
   }, [trade.pairSymbol, loadPriceData, trade]);
@@ -106,11 +107,14 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
   useEffect(() => {
     const formattedSymbol = trade.pairSymbol.replace('/', '');
     const currentPriceData = priceData[formattedSymbol];
+    const now = Date.now();
     
-    if (currentPriceData && currentPriceData.price) {
+    // Only update price if data exists and at least 1000ms has passed since last update
+    if (currentPriceData && currentPriceData.price && (now - lastUpdateTime >= 1000)) {
       setLastPrice(currentPriceData.price);
+      setLastUpdateTime(now);
     }
-  }, [priceData, trade.pairSymbol, ticking]); // Added ticking dependency to force re-render
+  }, [priceData, trade.pairSymbol, ticking, lastUpdateTime]); // Added lastUpdateTime dependency
 
   const handleEndTrade = () => {
     removeFromStorage(ACTIVE_TRADE_STORAGE_KEY);
@@ -357,3 +361,4 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
 };
 
 export default ActiveTradeStatus;
+
