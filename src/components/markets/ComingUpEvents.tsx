@@ -1,11 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Clock, ArrowDown, CheckCircle } from 'lucide-react';
+import { Clock, ArrowDown, CheckCircle, Timer } from 'lucide-react';
 import { createUtcDate, getMarketTimeRemaining, getLocalTimeDisplay } from '@/utils/dateUtils';
 
-// Tider i UTC
 const MARKET_EVENTS = [
   {
     time: 7, // 09:00 Swedish time (London Forex öppnar), UTC+2
@@ -44,6 +42,7 @@ interface MarketEvent {
   eventDate?: Date;
   isOpenNow?: boolean;
   opensTomorrow?: boolean;
+  openingInLessThanHour?: boolean;
 }
 
 const ComingUpEvents = () => {
@@ -56,17 +55,14 @@ const ComingUpEvents = () => {
     const currentTime = now.getUTCHours() + now.getUTCMinutes() / 60;
 
     const processedEvents: MarketEvent[] = MARKET_EVENTS.map(event => {
-      // Räkna ut dagens session-starter och -slut
       const hour = Math.floor(event.time);
       const minute = Math.round((event.time - hour) * 60);
 
-      // Sessionens öppnings- & stängnings-tider för idag (UTC)
       let eventOpenDate = new Date(now);
       eventOpenDate.setUTCHours(Math.floor(event.open), Math.round((event.open % 1) * 60), 0, 0);
       let eventCloseDate = new Date(now);
       eventCloseDate.setUTCHours(Math.floor(event.close), Math.round((event.close % 1) * 60), 0, 0);
 
-      // Är det helg, lägg till till måndag
       let eventDate = new Date(now);
       let isToday = true;
       if (isWeekend && event.weekdaysOnly) {
@@ -77,33 +73,28 @@ const ComingUpEvents = () => {
         isToday = false;
       }
 
-      // Om redan passerat, slå över till nästa vardag (för "opens imorgon")
       let opensTomorrow = false;
       if (currentTime > event.close && event.weekdaysOnly && !isWeekend) {
         isToday = false;
         opensTomorrow = true;
         eventDate.setUTCDate(eventDate.getUTCDate() + 1);
 
-        // Korrigera till måndag om imorgon är helg
         let newDay = eventDate.getUTCDay();
         if (newDay === 0) eventDate.setUTCDate(eventDate.getUTCDate() + 1);
         if (newDay === 6) eventDate.setUTCDate(eventDate.getUTCDate() + 2);
 
-        // Sätt även eventOpenDate/eventCloseDate till rätt dag
         eventOpenDate = new Date(eventDate);
         eventOpenDate.setUTCHours(Math.floor(event.open), Math.round((event.open % 1) * 60), 0, 0);
         eventCloseDate = new Date(eventDate);
         eventCloseDate.setUTCHours(Math.floor(event.close), Math.round((event.close % 1) * 60), 0, 0);
       }
 
-      // Är sessionen öppen nu?
       const isOpenNow =
         !isWeekend &&
         currentTime >= event.open &&
         currentTime < event.close &&
         event.weekdaysOnly;
 
-      // "Opening soon": Marknad öppnar inom 1h
       const isOpeningSoon =
         !isOpenNow &&
         !isWeekend &&
@@ -111,8 +102,14 @@ const ComingUpEvents = () => {
         event.open - currentTime <= 1 &&
         event.weekdaysOnly;
 
-      // Har eventet redan passerats idag (stängd, snart öppnar imorgon)?
       const isPassed = (!isOpenNow && currentTime > event.close) || opensTomorrow;
+
+      const openingInLessThanHour =
+        !isOpenNow &&
+        !isWeekend &&
+        currentTime < event.open &&
+        event.open - currentTime < 1 &&
+        event.weekdaysOnly;
 
       return {
         ...event,
@@ -125,23 +122,19 @@ const ComingUpEvents = () => {
         opensTomorrow,
         isOpenNow,
         eventDate: eventOpenDate,
-        isNext: false // Vi sätter detta separat nedan
+        isNext: false,
+        openingInLessThanHour,
       };
     });
 
-    // Sortera, hitta nästa event inför öppning eller öppen
     const sortedEvents = processedEvents.sort((a, b) => a.time - b.time);
-    // "Next" är antingen den som är närmast öppnar snart ELLER öppen session just nu
     const nextIndex = sortedEvents.findIndex(
       event => (event.isOpenNow && event.isToday) || (!event.isOpenNow && !event.isPassed && event.isToday)
     );
-
-    // Sätt isNext för highlight
     const finalEvents = sortedEvents.map((evt, idx) => ({
       ...evt,
       isNext: idx === nextIndex
     }));
-
     setEvents(finalEvents);
   };
 
@@ -163,80 +156,98 @@ const ComingUpEvents = () => {
         <div className="relative">
           <div className="absolute left-[22px] top-1 bottom-1 w-0.5 bg-purple-900/30"></div>
           <div className="space-y-4">
-            {events.map((event, index) => (
-              <div
-                key={`${event.time}-${event.name}`}
-                className={`flex items-start gap-3 ${event.isNext ? 'animate-pulse' : ''}`}
-              >
+            {events.map((event, index) => {
+              const showOpensPulse = event.openingInLessThanHour && !event.isOpenNow && event.isNext;
+
+              return (
                 <div
-                  className={`relative z-10 mt-1.5 h-3 w-3 rounded-full border-2 
-                    ${event.isNext
-                      ? 'bg-purple-400 border-purple-300'
-                      : event.isOpenNow
-                        ? 'bg-green-500 border-green-400'
-                        : event.isPassed
-                          ? 'bg-slate-700 border-slate-600'
+                  key={`${event.time}-${event.name}`}
+                  className={`flex items-start gap-3 ${event.isNext && !event.isOpenNow ? 'animate-pulse-moderate' : ''}`}
+                >
+                  <div
+                    className={`relative z-10 mt-1.5 h-3 w-3 rounded-full border-2 
+                      ${event.isNext
+                        ? showOpensPulse
+                          ? 'bg-purple-500 border-purple-300 shadow-glow'
+                          : 'bg-purple-400 border-purple-300'
+                        : event.isOpenNow
+                          ? 'bg-green-500 border-green-400 shadow-glow'
                           : 'bg-slate-700 border-slate-600'}`} />
 
-                <div className="flex-1">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                    <div className="font-medium text-sm flex items-center gap-1.5">
-                      {event.isOpenNow && event.isToday ? (
-                        <>
-                          {event.name} <span className="font-bold text-green-500">is OPEN</span>
-                        </>
-                      ) : event.opensTomorrow ? (
-                        <>
-                          {event.name} <span className="font-bold text-blue-500">opens</span> <span>{event.localTime}</span>
-                        </>
-                      ) : (
-                        <>
-                          {event.name}
-                          {(event.isPassed && !event.isToday) && (
-                            <span className="text-xs text-muted-foreground ml-1">(next day)</span>
-                          )}
-                        </>
-                      )}
-                      {event.isOpenNow && <CheckCircle className="h-4 w-4 text-green-500" />}
+                  <div className="flex-1">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                      <div className="font-medium text-sm flex items-center gap-1.5">
+                        {event.isOpenNow && event.isToday ? (
+                          <>
+                            {event.name}
+                            <span className="font-bold text-green-500 ml-1">is OPEN</span>
+                            <CheckCircle className="h-4 w-4 text-green-500 ml-1" />
+                          </>
+                        ) : event.openingInLessThanHour && event.isNext ? (
+                          <>
+                            <Timer className="h-4 w-4 text-purple-400" />
+                            {event.name}
+                            <span className="font-bold text-purple-400 ml-1">opens</span>
+                            <span className="ml-1">{event.localTime}</span>
+                          </>
+                        ) : event.opensTomorrow ? (
+                          <>
+                            {event.name}
+                            <span className="font-bold text-blue-500 ml-1">opens</span>
+                            <span className="ml-1">{event.localTime}</span>
+                          </>
+                        ) : (
+                          <>
+                            {event.name}
+                            {(event.isPassed && !event.isToday) && (
+                              <span className="text-xs text-muted-foreground ml-1">(next day)</span>
+                            )}
+                          </>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        {event.isOpenNow && event.isToday ? (
+                          <Badge
+                            variant="outline"
+                            className="text-xs px-1.5 border-green-500 bg-green-950 text-green-400 font-bold"
+                          >
+                            OPEN
+                          </Badge>
+                        ) : event.openingInLessThanHour && event.isNext ? (
+                          <Badge
+                            className="animate-pulse-moderate bg-purple-500/30 border-purple-400/60 text-purple-100 font-semibold text-xs flex items-center gap-1"
+                          >
+                            <Timer className="inline-block h-3 w-3 mr-1 text-purple-200" />
+                            opens {event.countdown}
+                          </Badge>
+                        ) : event.opensTomorrow ? (
+                          <Badge
+                            variant="outline"
+                            className="text-xs px-1.5 border-blue-500 bg-blue-950 text-blue-300 font-semibold"
+                          >
+                            opens
+                          </Badge>
+                        ) : (
+                          (!event.isPassed && event.countdown) && (
+                            <Badge
+                              variant="outline"
+                              className="text-xs px-1.5 border-border bg-card/80"
+                            >
+                              {event.countdown}
+                            </Badge>
+                          )
+                        )}
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <Badge
-                        variant="outline"
-                        className={`text-xs px-1.5 ${
-                          event.isOpenNow && event.isToday
-                            ? 'border-green-500 bg-green-950 text-green-400 font-bold'
-                            : event.isNext && !event.isOpenNow 
-                              ? 'border-purple-400/30 bg-purple-900/20 text-purple-300'
-                              : event.isPassed
-                                ? 'border-border bg-card/80'
-                                : 'border-border bg-card/80'
-                        }`}
-                      >
-                        {event.isOpenNow && event.isToday
-                          ? "OPEN"
-                          : event.opensTomorrow
-                            ? "opens"
-                            : event.isNext && !event.isOpenNow
-                              ? "opens"
-                              : event.countdown
-                        }
-                      </Badge>
-                      {/* Countdown endast inför öppning */}
-                      {event.isNext && !event.isOpenNow && (
-                        <Badge className="bg-purple-500/20 text-purple-300 border-purple-500/30 text-xs">
-                          {event.countdown}
-                        </Badge>
-                      )}
-                    </div>
+                    {index < events.length - 1 && (
+                      <div className="mt-0.5 flex justify-center pl-0">
+                        <ArrowDown className="h-4 w-4 text-slate-600 mt-1 mb-1" />
+                      </div>
+                    )}
                   </div>
-                  {index < events.length - 1 && (
-                    <div className="mt-0.5 flex justify-center pl-0">
-                      <ArrowDown className="h-4 w-4 text-slate-600 mt-1 mb-1" />
-                    </div>
-                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </CardContent>
@@ -245,4 +256,3 @@ const ComingUpEvents = () => {
 };
 
 export default ComingUpEvents;
-
