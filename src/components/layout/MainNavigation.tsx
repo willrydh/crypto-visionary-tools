@@ -5,9 +5,9 @@ import {
   BarChart3, 
   Calendar, 
   Settings,
-  Zap,
   Radar,
-  LineChart
+  LineChart,
+  Brain
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Logo from '@/assets/logo.svg';
@@ -17,7 +17,7 @@ import CollapsibleNavMenu from './CollapsibleNavMenu';
 const navItems = [
   { path: '/', label: 'Dashboard', icon: <BarChart3 className="h-5 w-5" /> },
   { path: '/signals', label: 'Signals', icon: <Radar className="h-5 w-5" /> },
-  { path: '/trade', label: 'Trade', icon: <Zap className="h-5 w-5" /> },
+  { path: '/trading-coach', label: 'AI', icon: <Brain className="h-5 w-5" /> },
   { path: '/calendar', label: 'Calendar', icon: <Calendar className="h-5 w-5" /> },
   { path: '/chart', label: 'Chart', icon: <LineChart className="h-5 w-5" /> },
   { path: '/settings', label: 'Settings', icon: <Settings className="h-5 w-5" /> },

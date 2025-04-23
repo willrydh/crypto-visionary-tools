@@ -8,7 +8,7 @@ import {
   Bell, 
   Activity,
   BookOpen,
-  Lightbulb
+  Brain
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -49,14 +49,14 @@ const MobileNavigation = () => {
         </Link>
         
         <Link 
-          to="/trade" 
+          to="/trading-coach" 
           className={cn(
             "flex flex-col items-center justify-center w-full h-full text-[10px]",
-            isActive('/trade') ? "text-primary" : "text-muted-foreground"
+            isActive('/trading-coach') ? "text-primary" : "text-muted-foreground"
           )}
         >
-          <Lightbulb className="h-5 w-5 mb-0.5" />
-          <span>Trade</span>
+          <Brain className="h-5 w-5 mb-0.5" />
+          <span>AI</span>
         </Link>
         
         <Link 

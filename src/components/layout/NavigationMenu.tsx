@@ -9,8 +9,8 @@ import {
   Calendar,
   Settings,
   LayoutDashboard,
-  Lightbulb,
   Activity,
+  Brain
 } from 'lucide-react';
 
 interface NavigationMenuProps {
@@ -48,9 +48,9 @@ export default function NavigationMenu({ className }: NavigationMenuProps) {
       variant: 'ghost',
     },
     {
-      href: '/trade',
-      label: 'Trade',
-      icon: <Lightbulb className="w-5 h-5" />,
+      href: '/trading-coach',
+      label: 'AI',
+      icon: <Brain className="w-5 h-5" />,
       variant: 'ghost',
     },
     {
