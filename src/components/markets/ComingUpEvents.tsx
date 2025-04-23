@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -155,58 +156,73 @@ const ComingUpEvents = () => {
       <CardContent className="pb-6">
         <div className="relative">
           <div className="absolute left-[22px] top-1 bottom-1 w-0.5 bg-purple-900/30"></div>
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4"> 
             {events.map((event, index) => {
               const showOpensPulse = event.openingInLessThanHour && !event.isOpenNow && event.isNext;
 
               return (
                 <div
                   key={`${event.time}-${event.name}`}
-                  className={`flex items-start gap-3 ${event.isNext && !event.isOpenNow ? 'animate-pulse-moderate' : ''}`}
+                  className={`flex items-start gap-2 sm:gap-3
+                    ${event.isNext && !event.isOpenNow ? 'animate-pulse-moderate' : ''}
+                    py-1.5 px-0 sm:py-2 sm:px-2
+                  `}
+                  style={{
+                    minHeight: '34px',
+                  }}
                 >
                   <div
-                    className={`relative z-10 mt-1.5 h-3 w-3 rounded-full border-2 
+                    className={`
+                      relative z-10 mt-2 sm:mt-1.5
                       ${event.isNext
                         ? showOpensPulse
                           ? 'bg-purple-500 border-purple-300 shadow-glow'
                           : 'bg-purple-400 border-purple-300'
                         : event.isOpenNow
                           ? 'bg-green-500 border-green-400 shadow-glow'
-                          : 'bg-slate-700 border-slate-600'}`} />
+                          : 'bg-slate-700 border-slate-600'}
+                      rounded-full border-2
+                      h-3.5 w-3.5 sm:h-3 w-3
+                      transition-all
+                    `}
+                  />
 
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                      <div className="font-medium text-sm flex items-center gap-1.5">
+                      <div
+                        className="font-medium text-sm flex flex-col xs:flex-row xs:items-center gap-1.5 min-w-0 break-words"
+                      >
+                        {/* Event title & OPEN styling */}
                         {event.isOpenNow && event.isToday ? (
-                          <>
-                            {event.name}
-                            <span className="font-bold text-green-500 ml-1 flex items-center gap-0.5">
+                          <span className="flex flex-col xs:flex-row xs:items-center gap-0.5 min-w-0">
+                            <span className="truncate">{event.name}</span>
+                            <span className="flex items-center gap-1 font-bold text-green-500 ml-0 xs:ml-1 mt-0.5 xs:mt-0">
                               is OPEN <CheckCircle className="h-4 w-4 text-green-500 ml-1" />
                             </span>
-                          </>
+                          </span>
                         ) : event.openingInLessThanHour && event.isNext ? (
                           <>
-                            <Timer className="h-4 w-4 text-purple-400" />
-                            {event.name}
+                            <Timer className="h-4 w-4 text-purple-400 flex-shrink-0" />
+                            <span className="truncate">{event.name}</span>
                             <span className="font-bold text-purple-400 ml-1">opens</span>
                             <span className="ml-1">{event.localTime}</span>
                           </>
                         ) : event.opensTomorrow ? (
                           <>
-                            {event.name}
+                            <span className="truncate">{event.name}</span>
                             <span className="font-bold text-blue-500 ml-1">opens</span>
                             <span className="ml-1">{event.localTime}</span>
                           </>
                         ) : (
                           <>
-                            {event.name}
+                            <span className="truncate">{event.name}</span>
                             {(event.isPassed && !event.isToday) && (
                               <span className="text-xs text-muted-foreground ml-1">(next day)</span>
                             )}
                           </>
                         )}
                       </div>
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-1.5 mt-1 sm:mt-0">
                         {event.openingInLessThanHour && event.isNext && !event.isOpenNow ? (
                           <Badge
                             className="animate-pulse-moderate bg-purple-500/30 border-purple-400/60 text-purple-100 font-semibold text-xs flex items-center gap-1"
@@ -250,3 +266,4 @@ const ComingUpEvents = () => {
 };
 
 export default ComingUpEvents;
+
