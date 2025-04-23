@@ -180,8 +180,9 @@ const ComingUpEvents = () => {
                         {event.isOpenNow && event.isToday ? (
                           <>
                             {event.name}
-                            <span className="font-bold text-green-500 ml-1">is OPEN</span>
-                            <CheckCircle className="h-4 w-4 text-green-500 ml-1" />
+                            <span className="font-bold text-green-500 ml-1 flex items-center gap-0.5">
+                              is OPEN <CheckCircle className="h-4 w-4 text-green-500 ml-1" />
+                            </span>
                           </>
                         ) : event.openingInLessThanHour && event.isNext ? (
                           <>
@@ -206,14 +207,7 @@ const ComingUpEvents = () => {
                         )}
                       </div>
                       <div className="flex items-center gap-1.5">
-                        {event.isOpenNow && event.isToday ? (
-                          <Badge
-                            variant="outline"
-                            className="text-xs px-1.5 border-green-500 bg-green-950 text-green-400 font-bold"
-                          >
-                            OPEN
-                          </Badge>
-                        ) : event.openingInLessThanHour && event.isNext ? (
+                        {event.openingInLessThanHour && event.isNext && !event.isOpenNow ? (
                           <Badge
                             className="animate-pulse-moderate bg-purple-500/30 border-purple-400/60 text-purple-100 font-semibold text-xs flex items-center gap-1"
                           >
@@ -228,7 +222,7 @@ const ComingUpEvents = () => {
                             opens
                           </Badge>
                         ) : (
-                          (!event.isPassed && event.countdown) && (
+                          (!event.isPassed && event.countdown && !event.isOpenNow && !event.openingInLessThanHour) && (
                             <Badge
                               variant="outline"
                               className="text-xs px-1.5 border-border bg-card/80"
