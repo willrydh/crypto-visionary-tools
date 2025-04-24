@@ -25,6 +25,7 @@ interface CryptoSelectorProps {
   showDataSource?: boolean;
   label?: string;
   fullWidth?: boolean;
+  onSymbolChange?: (symbol: string) => void;
 }
 
 export const cryptoOptions: CryptoOption[] = [
@@ -82,7 +83,8 @@ export const CryptoSelector: React.FC<CryptoSelectorProps> = ({
   className,
   showDataSource = false,
   label = "", // Default to empty string instead of "Select cryptocurrency"
-  fullWidth = false
+  fullWidth = false,
+  onSymbolChange
 }) => {
   const { selectedCrypto, setSelectedCrypto } = useCrypto();
   
@@ -90,6 +92,10 @@ export const CryptoSelector: React.FC<CryptoSelectorProps> = ({
     const selected = cryptoOptions.find(crypto => crypto.pairSymbol === value);
     if (selected) {
       setSelectedCrypto(selected);
+      // Call the onSymbolChange callback if provided
+      if (onSymbolChange) {
+        onSymbolChange(selected.pairSymbol);
+      }
     }
   };
 
