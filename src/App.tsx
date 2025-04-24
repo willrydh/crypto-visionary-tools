@@ -14,6 +14,8 @@ import { TradingModeProvider } from './contexts/TradingModeContext';
 import { TechnicalAnalysisProvider } from './contexts/TechnicalAnalysisContext';
 import { CryptoProvider } from './contexts/CryptoContext';
 import EntryScanner from "@/pages/EntryScanner";
+import Dashboard from './pages/Dashboard';
+import NotFound from './pages/NotFound';
 
 // Create a simple AuthContext
 import { createContext } from 'react';
@@ -28,11 +30,7 @@ const SiteFooter = () => {
   return <footer className="border-t p-4 text-center text-sm text-muted-foreground">© 2025 ProfitPilot</footer>;
 };
 
-// Create simple Dashboard, Login and Register pages
-const Home = () => {
-  return <div className="container py-8">Dashboard Content</div>;
-};
-
+// Create simple Login and Register pages
 const Login = () => {
   return <div className="container py-8">Login Form</div>;
 };
@@ -49,7 +47,11 @@ const App = () => {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: isLoggedIn ? <Home /> : <Navigate to="/login" />,
+      element: isLoggedIn ? <Dashboard /> : <Navigate to="/login" />,
+    },
+    {
+      path: "/dashboard",
+      element: isLoggedIn ? <Dashboard /> : <Navigate to="/login" />,
     },
     {
       path: "/calendar",
@@ -71,6 +73,10 @@ const App = () => {
       path: "/entry-scanner",
       element: <EntryScanner />,
     },
+    {
+      path: "*",
+      element: <NotFound />,
+    }
   ]);
 
   return (
