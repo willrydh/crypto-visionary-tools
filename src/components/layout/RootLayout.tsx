@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Outlet, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from "@/components/ui/toaster";
@@ -25,6 +26,7 @@ import EasterEggDiscount from '@/pages/EasterEggDiscount';
 import ChartView from '@/pages/ChartView';
 import MarketDashboard from '@/pages/MarketDashboard';
 import TradingCoach from '@/pages/TradingCoach';
+import TradeEntry from '@/pages/TradeEntry';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const RootLayout: React.FC = () => {
@@ -62,7 +64,7 @@ const RootLayout: React.FC = () => {
                        location.pathname === '/easter-egg';
 
   // Determine if the current page has tabs (trading mode selector)
-  const hasTabsBar = ['/', '/dashboard', '/trade-suggestion', '/trade', '/signals', '/calendar'].includes(location.pathname);
+  const hasTabsBar = ['/', '/dashboard', '/trade-suggestion', '/trade', '/trade-entry', '/signals', '/calendar'].includes(location.pathname);
 
   // Get iOS-specific classes
   const getIOSClasses = () => {
@@ -90,6 +92,7 @@ const RootLayout: React.FC = () => {
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/signals" element={<SignalsView />} />
                 <Route path="/trade" element={<TradeSuggestion />} />
+                <Route path="/trade-entry" element={<TradeEntry />} />
                 <Route path="/chart" element={<ChartView />} />
                 <Route path="/market-dashboard" element={<MarketDashboard />} />
                 <Route path="/calendar" element={<CalendarView />} />

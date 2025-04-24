@@ -199,7 +199,7 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
                 </div>
                 <Badge 
                   variant={market.status === "closed" ? "outline" : "default"}
-                  className={getStatusBadgeStyle(market.status)}
+                  className={`px-2.5 py-1 ${getStatusBadgeStyle(market.status)}`}
                 >
                   {market.status === "opening-soon" ? "OPENING SOON" : market.status.toUpperCase()}
                 </Badge>
