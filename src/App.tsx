@@ -9,6 +9,7 @@ import { TimeframeProvider } from './contexts/TimeframeContext';
 import { TradingModeProvider } from './contexts/TradingModeContext';
 import { TechnicalAnalysisProvider } from './contexts/TechnicalAnalysisContext';
 import { CryptoProvider } from './contexts/CryptoContext';
+import { MarketsProvider } from './contexts/MarketsContext';
 import RootLayout from './components/layout/RootLayout';
 
 // Create a simple AuthContext
@@ -40,9 +41,11 @@ const App = () => {
             <TradingModeProvider>
               <CryptoProvider>
                 <TechnicalAnalysisProvider>
-                  <BrowserRouter>
-                    <RootLayout />
-                  </BrowserRouter>
+                  <MarketsProvider>
+                    <BrowserRouter>
+                      <RootLayout />
+                    </BrowserRouter>
+                  </MarketsProvider>
                 </TechnicalAnalysisProvider>
               </CryptoProvider>
             </TradingModeProvider>
