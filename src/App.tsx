@@ -76,8 +76,7 @@ const App = () => {
   return (
     <ThemeProvider
       defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
+      storageKey="profit-pilot-theme"
     >
       <AuthContext.Provider value={authContextValue}>
         <PriceProvider>
