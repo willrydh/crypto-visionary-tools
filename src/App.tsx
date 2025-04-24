@@ -10,6 +10,7 @@ import { TradingModeProvider } from './contexts/TradingModeContext';
 import { TechnicalAnalysisProvider } from './contexts/TechnicalAnalysisContext';
 import { CryptoProvider } from './contexts/CryptoContext';
 import { MarketsProvider } from './contexts/MarketsContext';
+import { SupportResistanceProvider } from './contexts/SupportResistanceContext';
 import RootLayout from './components/layout/RootLayout';
 
 // Create a simple AuthContext
@@ -42,9 +43,11 @@ const App = () => {
               <CryptoProvider>
                 <TechnicalAnalysisProvider>
                   <MarketsProvider>
-                    <BrowserRouter>
-                      <RootLayout />
-                    </BrowserRouter>
+                    <SupportResistanceProvider>
+                      <BrowserRouter>
+                        <RootLayout />
+                      </BrowserRouter>
+                    </SupportResistanceProvider>
                   </MarketsProvider>
                 </TechnicalAnalysisProvider>
               </CryptoProvider>
