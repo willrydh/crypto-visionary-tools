@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { getNextMajorEvent } from "@/services/calendarService";
 import { Timer } from "lucide-react";
 import { format } from "date-fns";
-import { en } from "date-fns/locale";
+import { enUS } from "date-fns/locale";
 import { formatTimeUntil } from "@/utils/dateUtils";
 import { ExternalLink } from "lucide-react";
 
@@ -42,7 +42,7 @@ export const NextMajorEventCountdown: React.FC = () => {
             {event.title}
           </span>
           <span className="hidden xs:inline text-xs text-purple-200 ml-1">
-            ({format(event.date, "HH:mm", { locale: en })})
+            ({format(event.date, "HH:mm", { locale: enUS })})
           </span>
         </div>
         <span className={`ml-auto px-2 py-0.5 rounded text-xs font-semibold
@@ -54,7 +54,7 @@ export const NextMajorEventCountdown: React.FC = () => {
       <div className="pl-8 mt-1 flex flex-col gap-2">
         <div className="text-xs mb-1 text-purple-200">
           <span className="text-white font-semibold">Time:</span>{" "}
-          <b>{format(event.date, "EEEE d MMMM 'at' HH:mm", { locale: en })}</b>
+          <b>{format(event.date, "EEEE d MMMM 'at' HH:mm", { locale: enUS })}</b>
         </div>
         <div className="text-sm mb-2 text-white">
           {event.description || "No description available."}
