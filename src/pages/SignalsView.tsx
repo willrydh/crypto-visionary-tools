@@ -129,6 +129,22 @@ const SignalsView = () => {
 
   return (
     <div className="space-y-6 animate-fade-in mt-2">
+      <div className="flex flex-col gap-3">
+        <div className="w-full">
+          <div className="bg-card/60 p-4 rounded-lg border border-border w-full">
+            <CryptoSelector showDataSource={true} label="" fullWidth={true} />
+          </div>
+        </div>
+        
+        <CoinInfo 
+          symbol={`${selectedCrypto.symbol}/USDT`}
+          name={selectedCrypto.name}
+          price={currentPrice}
+          change24h={change24h}
+          description={selectedCrypto.description}
+        />
+      </div>
+
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold">Signals</h1>
@@ -147,22 +163,6 @@ const SignalsView = () => {
           <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
           <span>Refresh</span>
         </Button>
-      </div>
-
-      <div className="flex flex-col gap-3">
-        <div className="w-full">
-          <div className="bg-card/60 p-4 rounded-lg border border-border w-full">
-            <CryptoSelector showDataSource={true} label="" fullWidth={true} />
-          </div>
-        </div>
-        
-        <CoinInfo 
-          symbol={`${selectedCrypto.symbol}/USDT`}
-          name={selectedCrypto.name}
-          price={currentPrice}
-          change24h={change24h}
-          description={selectedCrypto.description}
-        />
       </div>
 
       <div className="space-y-4">
