@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { TransparentWhiteButton } from "@/components/ui/TransparentWhiteButton";
 import { cn } from "@/lib/utils";
@@ -28,7 +27,6 @@ interface ActiveTradeStatusProps {
   hideHeader?: boolean;
 }
 
-// Define an interface for price range data to avoid TypeScript errors
 interface PriceRangeData {
   price?: number;
   change24h?: number;
@@ -128,7 +126,6 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
   }, [priceData, trade.pairSymbol, ticking, lastUpdateTime]);
   
   useEffect(() => {
-    // Load high/low data for price ranges
     const formattedSymbol = trade.pairSymbol.replace('/', '');
     loadPriceData(formattedSymbol);
   }, [trade.pairSymbol, loadPriceData]);
@@ -159,21 +156,31 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
     return `${Math.max(10, Math.min(90, position))}%`;
   };
   
-  // Format size with appropriate precision
-  const formatSize = (size: number) => {
-    if (size >= 1) {
-      return size.toFixed(2);
-    } else {
-      // For smaller sizes, show more decimal places
-      return size.toFixed(6).replace(/\.?0+$/, "");
+  const formatPositionSize = (size: number, symbol: string) => {
+    if (symbol.toUpperCase().includes('ETH')) {
+      return `${size.toFixed(8)} ETH`;
     }
+    return formatCurrency(size, 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 8 });
+  };
+
+  const formatPnLValue = (pnlVal: number, symbol: string) => {
+    if (symbol.toUpperCase().includes('ETH')) {
+      const ethValue = pnlVal / lastPrice; // Convert to ETH
+      const sekValue = pnlVal * 11.5; // Approximate SEK conversion (you might want to use a real exchange rate)
+      return (
+        <>
+          {ethValue.toFixed(8)} ETH
+          <br />
+          <span className="text-sm">≈ {sekValue.toFixed(2)} SEK</span>
+        </>
+      );
+    }
+    return formatCurrency(Math.abs(pnlVal), 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
   const formattedSymbol = trade.pairSymbol.replace('/', '');
-  // Explicitly cast to PriceRangeData to avoid TypeScript errors
   const priceRangeData: PriceRangeData = priceData[formattedSymbol] || {};
 
-  // Set default values for high/low data to prevent errors
   const hourlyHigh = priceRangeData.hourlyHigh || lastPrice * 1.01;
   const hourlyLow = priceRangeData.hourlyLow || lastPrice * 0.99;
   const dailyHigh = priceRangeData.dailyHigh || lastPrice * 1.02;
@@ -272,12 +279,12 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
           </div>
           
           <div className="bg-slate-800/50 p-3 rounded-lg border border-slate-700/30">
-            <div className="text-xs text-slate-400">P&amp;L (val.)</div>
+            <div className="text-xs text-slate-400">P&amp;L</div>
             <div className={cn(
               "font-bold text-lg",
               pnlVal >= 0 ? "text-green-400" : "text-red-400"
             )}>
-              {formatCurrency(pnlVal, 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              {formatPnLValue(pnlVal, trade.symbol)}
             </div>
           </div>
           
@@ -286,7 +293,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
               {trade.leverage > 1 ? "Size (leverage)" : "Size"}
             </div>
             <div className="font-bold text-white text-lg flex items-center">
-              <span>{formatSize(trade.size)}</span>
+              <span>{formatPositionSize(trade.size, trade.symbol)}</span>
               {trade.leverage > 1 && <span className="text-orange-400 ml-2">{trade.leverage}x</span>}
             </div>
           </div>
@@ -305,7 +312,6 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
         <div className="space-y-4 mb-6 bg-slate-800/30 p-4 rounded-lg border border-slate-700/30">
           <h3 className="text-xs uppercase text-slate-400 font-medium text-center mb-2">PRICE RANGES</h3>
           
-          {/* Hourly Range */}
           <div className="space-y-1">
             <div className="flex justify-between text-xs text-slate-400">
               <span>Hourly (high/low)</span>
@@ -334,7 +340,6 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
             </div>
           </div>
           
-          {/* Daily Range */}
           <div className="space-y-1">
             <div className="flex justify-between text-xs text-slate-400">
               <span>Daily (high/low)</span>
@@ -363,7 +368,6 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
             </div>
           </div>
           
-          {/* Weekly Range */}
           <div className="space-y-1">
             <div className="flex justify-between text-xs text-slate-400">
               <span>Weekly (high/low)</span>
