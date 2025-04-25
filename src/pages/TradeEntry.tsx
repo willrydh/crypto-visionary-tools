@@ -10,11 +10,12 @@ import { useCrypto } from "@/hooks/useCrypto";
 import { usePrice } from "@/hooks/usePrice";
 import { useTradingMode } from '@/hooks/useTradingMode';
 import CryptoSelector from "@/components/crypto/CryptoSelector";
-import { ArrowRight, TrendingUp, TrendingDown, Timer } from "lucide-react";
+import { ArrowRight, TrendingUp, TrendingDown, Timer, DollarSign } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ActiveTradeStatus from "@/components/trading/ActiveTradeStatus";
 import { getFromStorage, saveToStorage } from "@/utils/storageUtils";
 import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
+import { formatCurrency } from "@/utils/numberUtils";
 
 const ACTIVE_TRADE_STORAGE_KEY = "activeTrade";
 
@@ -36,7 +37,7 @@ const TradeEntry = () => {
   const { tradingMode } = useTradingMode();
   
   const [entryPrice, setEntryPrice] = useState('');
-  const [tradeSize, setTradeSize] = useState('');
+  const [dollarSize, setDollarSize] = useState('');
   const [tradeType, setTradeType] = useState<'long' | 'short'>('long');
   const [leverage, setLeverage] = useState('1');
   const [stopLoss, setStopLoss] = useState('');
@@ -59,12 +60,21 @@ const TradeEntry = () => {
     }
   }, [selectedCrypto, formattedSymbol, loadPriceData, priceData]);
   
+  const calculateCryptoSize = (dollars: number, price: number) => {
+    return dollars / price;
+  };
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    const entryPriceNum = parseFloat(entryPrice || String(cryptoPrice));
+    const dollarSizeNum = parseFloat(dollarSize);
+    const cryptoSize = calculateCryptoSize(dollarSizeNum, entryPriceNum);
+    
     const newTrade = {
-      entryPrice: parseFloat(entryPrice || String(cryptoPrice)),
-      size: parseFloat(tradeSize),
+      entryPrice: entryPriceNum,
+      size: cryptoSize,
+      dollarSize: dollarSizeNum,
       leverage: parseInt(leverage),
       type: tradeType,
       symbol: selectedCrypto.symbol,
@@ -79,11 +89,11 @@ const TradeEntry = () => {
     
     toast({
       title: "Trade Entry Saved",
-      description: `Your ${tradeType} position for ${selectedCrypto.name} has been recorded. Expected duration: ${getTradingTimeframe(tradingMode)}.`,
+      description: `Your ${tradeType} ${formatCurrency(dollarSizeNum)} position for ${selectedCrypto.name} has been recorded. Expected duration: ${getTradingTimeframe(tradingMode)}.`,
     });
     
     setEntryPrice('');
-    setTradeSize('');
+    setDollarSize('');
     setStopLoss('');
     setTakeProfit('');
     setLeverage('1');
@@ -233,7 +243,7 @@ const TradeEntry = () => {
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div className="space-y-2">
-                  <Label htmlFor="entryPrice">Entry Price</Label>
+                  <Label htmlFor="entryPrice">Entry Price ({selectedCrypto.name})</Label>
                   <Input
                     id="entryPrice"
                     placeholder={cryptoPrice ? `Current: ${cryptoPrice}` : "Enter entry price"}
@@ -246,16 +256,19 @@ const TradeEntry = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="tradeSize">Position Size</Label>
-                  <Input
-                    id="tradeSize"
-                    placeholder="Amount to trade"
-                    className="bg-slate-800 border-slate-700 text-white"
-                    value={tradeSize}
-                    onChange={(e) => setTradeSize(e.target.value)}
-                    type="number"
-                    step="0.0000001"
-                  />
+                  <Label htmlFor="dollarSize">Position Size (USD)</Label>
+                  <div className="relative">
+                    <DollarSign className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                    <Input
+                      id="dollarSize"
+                      placeholder="Enter amount in USD"
+                      className="bg-slate-800 border-slate-700 text-white pl-9"
+                      value={dollarSize}
+                      onChange={(e) => setDollarSize(e.target.value)}
+                      type="number"
+                      step="0.01"
+                    />
+                  </div>
                 </div>
               </div>
               
@@ -302,7 +315,7 @@ const TradeEntry = () => {
               <CardTitle className="text-lg">Position Summary</CardTitle>
             </CardHeader>
             <CardContent className="p-5">
-              {entryPrice && tradeSize ? (
+              {entryPrice && dollarSize ? (
                 <div className="space-y-4">
                   <div className="flex justify-between items-center border-b border-slate-800 pb-2">
                     <span className="text-slate-400">Asset</span>
@@ -320,7 +333,13 @@ const TradeEntry = () => {
                   </div>
                   <div className="flex justify-between items-center border-b border-slate-800 pb-2">
                     <span className="text-slate-400">Position Size</span>
-                    <span className="font-medium">{tradeSize}</span>
+                    <span className="font-medium">{formatCurrency(parseFloat(dollarSize))}</span>
+                  </div>
+                  <div className="flex justify-between items-center border-b border-slate-800 pb-2">
+                    <span className="text-slate-400">Crypto Amount</span>
+                    <span className="font-medium">
+                      {calculateCryptoSize(parseFloat(dollarSize), parseFloat(entryPrice || String(cryptoPrice))).toFixed(8)}
+                    </span>
                   </div>
                   {stopLoss && (
                     <div className="flex justify-between items-center border-b border-slate-800 pb-2">
