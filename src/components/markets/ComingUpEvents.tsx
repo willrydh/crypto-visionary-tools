@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -43,6 +44,7 @@ interface MarketEvent {
   isOpenNow?: boolean;
   opensTomorrow?: boolean;
   openingInLessThanHour?: boolean;
+  marketCap?: string; // Add this missing property
 }
 
 const ComingUpEvents = () => {
@@ -221,9 +223,9 @@ const ComingUpEvents = () => {
                     </div>
 
                     <div className="mt-1 text-xs text-muted-foreground flex items-center gap-2">
-                      <span>{event.marketCap}</span>
+                      {event.marketCap && <span>{event.marketCap}</span>}
                       <span className="w-1 h-1 rounded-full bg-muted-foreground/30"></span>
-                      <span>{event.time}</span>
+                      <span>{event.localTime}</span>
                     </div>
 
                     {index < events.length - 1 && (
