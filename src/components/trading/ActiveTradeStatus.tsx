@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { TransparentWhiteButton } from "@/components/ui/TransparentWhiteButton";
 import { cn } from "@/lib/utils";
@@ -73,7 +74,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
   onEnd,
   hideHeader = false
 }) => {
-  const { loadPriceData, priceData } = usePrice();
+  const { loadPriceData, priceData, loadHighLowData } = usePrice();
   const [lastPrice, setLastPrice] = useState(initialPrice);
   const [ticking, setTicking] = useState(false);
   const [lastUpdateTime, setLastUpdateTime] = useState(0);
@@ -105,14 +106,16 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
     saveToStorage(ACTIVE_TRADE_STORAGE_KEY, trade);
     
     loadPriceData(formattedSymbol);
+    loadHighLowData(formattedSymbol);
     
     const intervalId = setInterval(() => {
       loadPriceData(formattedSymbol);
+      loadHighLowData(formattedSymbol);
       setTicking(prev => !prev);
     }, 1000);
     
     return () => clearInterval(intervalId);
-  }, [trade.pairSymbol, loadPriceData, trade]);
+  }, [trade.pairSymbol, loadPriceData, loadHighLowData, trade]);
   
   useEffect(() => {
     const formattedSymbol = trade.pairSymbol.replace('/', '');
@@ -124,11 +127,6 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
       setLastUpdateTime(now);
     }
   }, [priceData, trade.pairSymbol, ticking, lastUpdateTime]);
-  
-  useEffect(() => {
-    const formattedSymbol = trade.pairSymbol.replace('/', '');
-    loadPriceData(formattedSymbol);
-  }, [trade.pairSymbol, loadPriceData]);
   
   const handleEndTrade = () => {
     removeFromStorage(ACTIVE_TRADE_STORAGE_KEY);
@@ -207,12 +205,21 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
   const formattedSymbol = trade.pairSymbol.replace('/', '');
   const priceRangeData: PriceRangeData = priceData[formattedSymbol] || {};
 
+  // Use actual high/low data from price API when available
   const hourlyHigh = priceRangeData.hourlyHigh || lastPrice * 1.01;
   const hourlyLow = priceRangeData.hourlyLow || lastPrice * 0.99;
   const dailyHigh = priceRangeData.dailyHigh || lastPrice * 1.02;
   const dailyLow = priceRangeData.dailyLow || lastPrice * 0.98;
   const weeklyHigh = priceRangeData.weeklyHigh || lastPrice * 1.05;
   const weeklyLow = priceRangeData.weeklyLow || lastPrice * 0.95;
+
+  // Format price values according to type (ETH or other)
+  const formatPriceValue = (value: number) => {
+    if (trade.symbol.toUpperCase().includes('ETH')) {
+      return value.toFixed(2);
+    }
+    return value.toFixed(2);
+  };
 
   return (
     <div className={cn(
@@ -322,10 +329,10 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
             </div>
             <div className="flex justify-between text-xs font-medium mb-1">
               <span className="text-green-400">
-                ${hourlyHigh.toFixed(2)}
+                ${formatPriceValue(hourlyHigh)}
               </span>
               <span className="text-red-400">
-                ${hourlyLow.toFixed(2)}
+                ${formatPriceValue(hourlyLow)}
               </span>
             </div>
             <div className="h-1.5 bg-slate-700/50 rounded-full relative">
@@ -350,10 +357,10 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
             </div>
             <div className="flex justify-between text-xs font-medium mb-1">
               <span className="text-green-400">
-                ${dailyHigh.toFixed(2)}
+                ${formatPriceValue(dailyHigh)}
               </span>
               <span className="text-red-400">
-                ${dailyLow.toFixed(2)}
+                ${formatPriceValue(dailyLow)}
               </span>
             </div>
             <div className="h-1.5 bg-slate-700/50 rounded-full relative">
@@ -378,10 +385,10 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
             </div>
             <div className="flex justify-between text-xs font-medium mb-1">
               <span className="text-green-400">
-                ${weeklyHigh.toFixed(2)}
+                ${formatPriceValue(weeklyHigh)}
               </span>
               <span className="text-red-400">
-                ${weeklyLow.toFixed(2)}
+                ${formatPriceValue(weeklyLow)}
               </span>
             </div>
             <div className="h-1.5 bg-slate-700/50 rounded-full relative">
