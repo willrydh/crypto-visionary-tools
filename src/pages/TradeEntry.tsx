@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -9,19 +8,32 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { useCrypto } from "@/hooks/useCrypto";
 import { usePrice } from "@/hooks/usePrice";
+import { useTradingMode } from '@/hooks/useTradingMode';
 import CryptoSelector from "@/components/crypto/CryptoSelector";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowRight, TrendingUp, TrendingDown } from "lucide-react";
+import { ArrowRight, TrendingUp, TrendingDown, Timer } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ActiveTradeStatus from "@/components/trading/ActiveTradeStatus";
 import { getFromStorage, saveToStorage } from "@/utils/storageUtils";
+import { TradingModeSelector } from '@/components/trading/TradingModeSelector';
 
 const ACTIVE_TRADE_STORAGE_KEY = "activeTrade";
+
+const getTradingTimeframe = (mode: 'scalp' | 'day' | 'night') => {
+  switch (mode) {
+    case 'scalp':
+      return '15-60 minutes';
+    case 'day':
+      return '1-6 hours';
+    case 'night':
+      return '6-12 hours';
+  }
+};
 
 const TradeEntry = () => {
   const { toast } = useToast();
   const { selectedCrypto } = useCrypto();
   const { priceData, loadPriceData } = usePrice();
+  const { tradingMode } = useTradingMode();
   
   const [entryPrice, setEntryPrice] = useState('');
   const [tradeSize, setTradeSize] = useState('');
@@ -34,7 +46,6 @@ const TradeEntry = () => {
   const formattedSymbol = selectedCrypto.pairSymbol.replace('/', '');
   const cryptoPrice = priceData[formattedSymbol]?.price || 0;
   
-  // Load any active trade from storage on component mount
   useEffect(() => {
     const savedTrade = getFromStorage(ACTIVE_TRADE_STORAGE_KEY, null);
     if (savedTrade) {
@@ -42,7 +53,6 @@ const TradeEntry = () => {
     }
   }, []);
   
-  // Load price data for the selected crypto
   useEffect(() => {
     if (!priceData[formattedSymbol]) {
       loadPriceData(formattedSymbol);
@@ -52,7 +62,6 @@ const TradeEntry = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Create the active trade object
     const newTrade = {
       entryPrice: parseFloat(entryPrice || String(cryptoPrice)),
       size: parseFloat(tradeSize),
@@ -60,7 +69,9 @@ const TradeEntry = () => {
       type: tradeType,
       symbol: selectedCrypto.symbol,
       name: selectedCrypto.name,
-      pairSymbol: selectedCrypto.pairSymbol
+      pairSymbol: selectedCrypto.pairSymbol,
+      tradingMode: tradingMode,
+      expectedDuration: getTradingTimeframe(tradingMode)
     };
     
     setActiveTrade(newTrade);
@@ -68,10 +79,9 @@ const TradeEntry = () => {
     
     toast({
       title: "Trade Entry Saved",
-      description: `Your ${tradeType} position for ${selectedCrypto.name} has been recorded.`,
+      description: `Your ${tradeType} position for ${selectedCrypto.name} has been recorded. Expected duration: ${getTradingTimeframe(tradingMode)}.`,
     });
     
-    // Reset form fields after submission
     setEntryPrice('');
     setTradeSize('');
     setStopLoss('');
@@ -105,7 +115,6 @@ const TradeEntry = () => {
   
   const riskReward = calculateRiskReward();
   
-  // If there's an active trade, show the monitoring view
   if (activeTrade) {
     return (
       <div className="space-y-6 mt-6 animate-fade-in">
@@ -137,6 +146,24 @@ const TradeEntry = () => {
           </p>
         </div>
       </div>
+      
+      <Card className="bg-slate-900 shadow-xl border-slate-700/50 rounded-xl overflow-hidden mb-6">
+        <CardHeader className="border-b border-slate-700/50 bg-slate-800/50">
+          <CardTitle className="text-lg">Trading Mode</CardTitle>
+          <CardDescription>Select your trading timeframe</CardDescription>
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            <TradingModeSelector />
+            <div className="flex items-center gap-2 mt-4 p-3 bg-slate-800/50 rounded-lg border border-slate-700/30">
+              <Timer className="h-4 w-4 text-blue-400" />
+              <span className="text-sm text-slate-300">
+                Expected trade duration: <span className="text-white font-medium">{getTradingTimeframe(tradingMode)}</span>
+              </span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="md:col-span-2 bg-slate-900 shadow-xl border-slate-700/50 rounded-xl overflow-hidden">
