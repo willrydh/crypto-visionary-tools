@@ -6,15 +6,17 @@ import { Badge } from "@/components/ui/badge";
 import { RefreshCw, ArrowDown, ArrowUp, AlertCircle } from 'lucide-react';
 import { useSupportResistance } from '@/hooks/useSupportResistance';
 import { formatCurrency } from '@/utils/numberUtils';
+import { useCrypto } from '@/hooks/useCrypto';
 
 export const SupportResistanceLevels = () => {
   const { levels, structure, isLoading, error, lastUpdated, fetchLevels } = useSupportResistance();
+  const { selectedCrypto } = useCrypto();
   
   useEffect(() => {
     if (levels.length === 0) {
-      fetchLevels('BTC/USDT');
+      fetchLevels(selectedCrypto.pairSymbol);
     }
-  }, [levels.length, fetchLevels]);
+  }, [levels.length, fetchLevels, selectedCrypto]);
   
   const getLevelColor = (type: string, strength: string) => {
     if (type === 'support') {
@@ -44,7 +46,7 @@ export const SupportResistanceLevels = () => {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => fetchLevels('BTC/USDT')}
+            onClick={() => fetchLevels(selectedCrypto.pairSymbol)}
             disabled={isLoading}
             className="bg-white/5 border-white/10 hover:bg-white/10 text-white"
           >
@@ -65,7 +67,7 @@ export const SupportResistanceLevels = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => fetchLevels('BTC/USDT')}
+              onClick={() => fetchLevels(selectedCrypto.pairSymbol)}
               className="mt-2 hover:bg-white/10 text-white"
             >
               Try again

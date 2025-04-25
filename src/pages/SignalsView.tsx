@@ -52,6 +52,7 @@ const SignalsView = () => {
       generateAnalysis(selectedCrypto.pairSymbol, true);
     }
     
+    // Always fetch fresh support/resistance levels when component mounts
     fetchLevels(selectedCrypto.pairSymbol);
     
     const formattedSymbol = selectedCrypto.pairSymbol.replace('/', '');
