@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -80,7 +79,6 @@ const TradingCoach: React.FC = () => {
   const [leverageValue, setLeverageValue] = useState([1]);
   const [lastPriceUpdate, setLastPriceUpdate] = useState(0);
 
-  // Load active trade and history from storage when component mounts
   useEffect(() => {
     const savedTrade = getFromStorage<TradeEntry | null>(ACTIVE_TRADE_STORAGE_KEY, null);
     if (savedTrade) {
@@ -111,18 +109,14 @@ const TradingCoach: React.FC = () => {
     }
   }, []);
 
-  // Set up regular price updates (once per second)
   useEffect(() => {
     if (activeTrade && activeTrade.pairSymbol) {
       const formattedSymbol = activeTrade.pairSymbol.replace('/', '');
       
-      // Initial load
       loadPriceData(formattedSymbol);
       
-      // Regular update interval (1 second)
       const intervalId = setInterval(() => {
         const now = Date.now();
-        // Only update if at least 1000ms has passed
         if (now - lastPriceUpdate >= 1000) {
           loadPriceData(formattedSymbol);
           setLastPriceUpdate(now);
@@ -133,14 +127,12 @@ const TradingCoach: React.FC = () => {
     }
   }, [activeTrade, loadPriceData, lastPriceUpdate]);
 
-  // Save coach history when it changes
   useEffect(() => {
     if (coachHistory.length > 0) {
       saveToStorage(COACH_HISTORY_STORAGE_KEY, coachHistory);
     }
   }, [coachHistory]);
 
-  // Update trade when selected crypto changes
   useEffect(() => {
     setTrade(prev => ({
       ...prev,
@@ -262,7 +254,6 @@ const TradingCoach: React.FC = () => {
 
   return (
     <div className="space-y-6 mt-6 animate-fade-in pb-20">
-      {/* Show headers only when not monitoring a trade */}
       {!activeTrade && (
         <>
           <div className="flex flex-col items-center gap-3 mb-6">
@@ -506,11 +497,11 @@ const TradingCoach: React.FC = () => {
           )}
 
           {step === 5 && trade.entryPrice && trade.size && (
-            <Card className="bg-slate-900 shadow-xl border-slate-700/50 rounded-xl overflow-hidden">
-              <CardHeader className="border-b border-slate-700/50 bg-slate-800/50">
+            <Card className="bg-slate-900/95 shadow-2xl border-slate-700/50 backdrop-blur-sm rounded-xl overflow-hidden">
+              <CardHeader className="border-b border-slate-700/50 bg-gradient-to-r from-slate-800/50 to-slate-900/50">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-xl font-bold">AI Recommendation</CardTitle>
-                  <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30">
+                  <Badge className="bg-blue-500 text-white border-0 shadow-glow-sm">
                     <span className="flex items-center gap-1">
                       <Zap className="h-3 w-3" /> Live Analysis
                     </span>
@@ -525,17 +516,18 @@ const TradingCoach: React.FC = () => {
                   
                   return (
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between">
+                      <div className="flex flex-col gap-3 items-center">
                         <Badge 
                           className={cn(
-                            "px-4 py-1.5 rounded-full font-bold text-white border-0",
-                            rec === "ADD" ? "bg-green-500/80" : 
-                            rec === "REMOVE" ? "bg-red-500/80" : 
-                            "bg-yellow-500/80 text-slate-900"
+                            "px-6 py-2 text-lg font-bold rounded-full border-0 shadow-glow",
+                            rec === "ADD" ? "bg-green-500 text-white" : 
+                            rec === "REMOVE" ? "bg-red-500 text-white" : 
+                            "bg-yellow-500 text-slate-900"
                           )}
                         >
                           {rec}
                         </Badge>
+                        
                         <div className="flex items-center gap-2 text-sm text-slate-300">
                           <span className="font-medium">{selectedCrypto.name}</span>
                           <span>•</span>
@@ -550,7 +542,7 @@ const TradingCoach: React.FC = () => {
                       </div>
                       
                       <div className={cn(
-                        "text-sm p-3 rounded-lg bg-slate-800/40 border",
+                        "text-sm p-4 rounded-lg bg-slate-800/40 border backdrop-blur-sm",
                         rec === "REMOVE" ? "border-red-500/20 text-red-300" : 
                         rec === "ADD" ? "border-green-500/20 text-green-300" : 
                         "border-yellow-500/20 text-yellow-300"
@@ -558,25 +550,31 @@ const TradingCoach: React.FC = () => {
                         {reason}
                       </div>
                       
-                      <div className="grid grid-cols-2 gap-3 bg-slate-800/30 rounded-lg p-3 border border-slate-700/30">
+                      <div className="grid grid-cols-2 gap-3 bg-slate-800/30 rounded-lg p-4 border border-slate-700/30">
                         <div>
                           <div className="text-xs text-slate-400">Entry</div>
-                          <div className="font-medium text-white">{trade.entryPrice}</div>
+                          <div className="font-medium text-white">${trade.entryPrice?.toLocaleString()}</div>
                         </div>
                         <div>
                           <div className="text-xs text-slate-400">Current price</div>
-                          <div className="font-medium text-white">{currentPrice}</div>
+                          <div className="font-medium text-white">${currentPrice.toLocaleString()}</div>
                         </div>
                         <div>
                           <div className="text-xs text-slate-400">P&amp;L %</div>
-                          <div className={cn("font-medium", pnl >= 0 ? "text-green-400" : "text-red-400")}>
+                          <div className={cn(
+                            "font-medium",
+                            pnl >= 0 ? "text-green-400" : "text-red-400"
+                          )}>
                             {pnl.toFixed(2)}%
                           </div>
                         </div>
                         <div>
-                          <div className="text-xs text-slate-400">P&amp;L (val.)</div>
-                          <div className={cn("font-medium", pnl >= 0 ? "text-green-400" : "text-red-400")}>
-                            {((currentPrice - (trade.entryPrice as number)) * (trade.size as number) * (trade.type === "long" ? 1 : -1) * leverageMultiplier).toFixed(2)}
+                          <div className="text-xs text-slate-400">P&amp;L (USD)</div>
+                          <div className={cn(
+                            "font-medium",
+                            pnl >= 0 ? "text-green-400" : "text-red-400"
+                          )}>
+                            ${Math.abs((currentPrice - (trade.entryPrice as number)) * (trade.size as number) * (trade.type === "long" ? 1 : -1) * leverageMultiplier).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </div>
                         </div>
                       </div>
@@ -660,4 +658,3 @@ const TradingCoach: React.FC = () => {
 };
 
 export default TradingCoach;
-

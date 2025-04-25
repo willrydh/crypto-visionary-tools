@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { TransparentWhiteButton } from "@/components/ui/TransparentWhiteButton";
 import { cn } from "@/lib/utils";
@@ -67,16 +66,13 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
   
   const { rec, reason } = getRecommendation(trade.entryPrice, lastPrice, trade.type);
   
-  // Calculate intensity for background colors based on PnL
   const getIntensity = (pnl: number) => {
     const absValue = Math.abs(pnl);
-    // Cap at 30% for visual effect, scale from 5% to 40%
     if (absValue > 30) return 40;
     if (absValue < 1) return 5;
     return Math.floor(5 + (absValue / 30) * 35);
   };
   
-  // Background gradient classes based on PnL
   const getBgGradient = () => {
     const intensity = getIntensity(pnlPct);
     if (pnlPct > 0) {
@@ -90,16 +86,14 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
   useEffect(() => {
     const formattedSymbol = trade.pairSymbol.replace('/', '');
     
-    // Save the trade to storage immediately when component mounts
     saveToStorage(ACTIVE_TRADE_STORAGE_KEY, trade);
     
     loadPriceData(formattedSymbol);
     
-    // Update price data on a regular interval (1 second)
     const intervalId = setInterval(() => {
       loadPriceData(formattedSymbol);
       setTicking(prev => !prev);
-    }, 1000); // 1 second interval
+    }, 1000);
     
     return () => clearInterval(intervalId);
   }, [trade.pairSymbol, loadPriceData, trade]);
@@ -109,13 +103,12 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
     const currentPriceData = priceData[formattedSymbol];
     const now = Date.now();
     
-    // Only update price if data exists and at least 1000ms has passed since last update
     if (currentPriceData && currentPriceData.price && (now - lastUpdateTime >= 1000)) {
       setLastPrice(currentPriceData.price);
       setLastUpdateTime(now);
     }
-  }, [priceData, trade.pairSymbol, ticking, lastUpdateTime]); // Added lastUpdateTime dependency
-
+  }, [priceData, trade.pairSymbol, ticking, lastUpdateTime]);
+  
   const handleEndTrade = () => {
     removeFromStorage(ACTIVE_TRADE_STORAGE_KEY);
     toast({
@@ -134,13 +127,11 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
     onEnd();
   };
 
-  // Create the price marker render function
   const renderPriceMarker = (highPrice: number, lowPrice: number, currentPrice: number) => {
     const range = highPrice - lowPrice;
-    if (range <= 0) return "50%"; // Default to middle if range is invalid
+    if (range <= 0) return "50%";
     
     const position = ((currentPrice - lowPrice) / range) * 100;
-    // Clamp between 10% and 90% for visibility
     return `${Math.max(10, Math.min(90, position))}%`;
   };
 
@@ -150,215 +141,210 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
       getBgGradient()
     )}>
       <div className="p-6">
-        <div className="text-center mb-6">
-          {!hideHeader && <h2 className="text-2xl font-bold mb-2 text-white">AI Recommendation</h2>}
-          
-          {/* Display trade pair info */}
-          <div className="flex items-center justify-center gap-2 text-sm text-slate-300 mb-3">
-            <span className="font-medium">{trade.name}</span>
-            <span>•</span>
-            <span>{trade.pairSymbol}</span>
-            {trade.leverage > 1 && (
-              <>
-                <span>•</span>
-                <span className="font-medium text-orange-400">{trade.leverage}x</span>
-              </>
-            )}
-          </div>
-          
-          {/* Badge recommendation with app design */}
-          <div className="flex justify-center mb-2">
-            <Badge 
-              className={cn(
-                "text-base px-6 py-2 rounded-full font-bold",
-                rec === "ADD" ? "bg-green-500/80 text-white border-0" : 
-                rec === "REMOVE" ? "bg-red-500/80 text-white border-0" : 
-                "bg-yellow-500/80 text-black border-0"
-              )}
-            >
-              {rec === "ADD" && <CircleCheck className="mr-1 h-4 w-4" />}
-              {rec === "REMOVE" && <CircleX className="mr-1 h-4 w-4" />}
-              {rec === "HODL" && <Clock className="mr-1 h-4 w-4" />}
-              {rec}
-            </Badge>
-          </div>
-          
-          <p className="text-sm text-slate-300 mt-1 max-w-sm mx-auto">{reason}</p>
+        {!hideHeader && <h2 className="text-2xl font-bold mb-2 text-white">AI Recommendation</h2>}
+        
+        <div className="flex items-center justify-center gap-2 text-sm text-slate-300 mb-3">
+          <span className="font-medium">{trade.name}</span>
+          <span>•</span>
+          <span>{trade.pairSymbol}</span>
+          {trade.leverage > 1 && (
+            <>
+              <span>•</span>
+              <span className="font-medium text-orange-400">{trade.leverage}x</span>
+            </>
+          )}
         </div>
         
-        {/* Current price with animation */}
-        <div className={cn(
-          "flex flex-col items-center my-5 py-4 rounded-lg", 
+        <div className="flex justify-center mb-2">
+          <Badge 
+            className={cn(
+              "text-base px-6 py-2 rounded-full font-bold",
+              rec === "ADD" ? "bg-green-500/80 text-white border-0" : 
+              rec === "REMOVE" ? "bg-red-500/80 text-white border-0" : 
+              "bg-yellow-500/80 text-black border-0"
+            )}
+          >
+            {rec === "ADD" && <CircleCheck className="mr-1 h-4 w-4" />}
+            {rec === "REMOVE" && <CircleX className="mr-1 h-4 w-4" />}
+            {rec === "HODL" && <Clock className="mr-1 h-4 w-4" />}
+            {rec}
+          </Badge>
+        </div>
+        
+        <p className="text-sm text-slate-300 mt-1 max-w-sm mx-auto">{reason}</p>
+      </div>
+      
+      <div className="flex flex-col items-center my-5 py-4 rounded-lg" 
+        className={cn(
           "bg-gradient-to-b from-slate-800/80 to-slate-900/80 border border-slate-700/30"
         )}>
-          <div className="text-xs text-slate-400 mb-1">Current price</div>
-          <div className={cn(
-            "text-4xl font-bold text-white transition-all duration-300 transform",
-            ticking ? "scale-105" : "scale-100"
-          )}>
-            {lastPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </div>
+        <div className="text-xs text-slate-400 mb-1">Current price</div>
+        <div className={cn(
+          "text-4xl font-bold text-white transition-all duration-300 transform",
+          ticking ? "scale-105" : "scale-100"
+        )}>
+          ${lastPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
         </div>
-        
-        {/* PNL display - central and prominent */}
-        <div className="flex justify-center mb-5">
-          <div className={cn(
-            "flex items-center justify-center px-6 py-3 rounded-lg", 
-            pnlPct >= 0 
-              ? "bg-green-500/20 border border-green-500/30" 
-              : "bg-red-500/20 border border-red-500/30"
-          )}>
-            <div className="text-center">
-              <div className="text-xs text-slate-300 mb-1">P&amp;L %</div>
-              <div className={cn(
-                "flex items-center justify-center gap-1 font-bold text-2xl",
-                pnlPct >= 0 ? "text-green-400" : "text-red-400"
-              )}>
-                {pnlPct >= 0 ? <ArrowUp className="h-5 w-5" /> : <ArrowDown className="h-5 w-5" />}
-                {pnlPct.toFixed(2)}%
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="bg-slate-800/50 p-3 rounded-lg border border-slate-700/30">
-            <div className="text-xs text-slate-400">Entry</div>
-            <div className="font-bold text-white text-lg">
-              {trade.entryPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </div>
-          </div>
-          
-          <div className="bg-slate-800/50 p-3 rounded-lg border border-slate-700/30">
-            <div className="text-xs text-slate-400">P&amp;L (val.)</div>
+      </div>
+      
+      <div className="w-full mb-5">
+        <div className={cn(
+          "w-full px-6 py-3 rounded-lg", 
+          pnlPct >= 0 
+            ? "bg-green-500/20 border border-green-500/30" 
+            : "bg-red-500/20 border border-red-500/30"
+        )}>
+          <div className="text-center">
+            <div className="text-xs text-slate-300 mb-1">P&amp;L %</div>
             <div className={cn(
-              "font-bold text-lg",
+              "flex items-center justify-center gap-1 font-bold text-2xl",
+              pnlPct >= 0 ? "text-green-400" : "text-red-400"
+            )}>
+              {pnlPct >= 0 ? <ArrowUp className="h-5 w-5" /> : <ArrowDown className="h-5 w-5" />}
+              {pnlPct.toFixed(2)}%
+            </div>
+            <div className={cn(
+              "text-lg mt-1",
               pnlVal >= 0 ? "text-green-400" : "text-red-400"
             )}>
-              {pnlVal.toFixed(2)}
+              ${Math.abs(pnlVal).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
           </div>
-          
-          <div className="bg-slate-800/50 p-3 rounded-lg border border-slate-700/30">
-            <div className="text-xs text-slate-400">
-              {trade.leverage > 1 ? "Size (leverage)" : "Size"}
-            </div>
-            <div className="font-bold text-white text-lg">
-              {trade.size}
-              {trade.leverage > 1 && <span className="text-orange-400 ml-2">{trade.leverage}x</span>}
-            </div>
-          </div>
-          
-          <div className="bg-slate-800/50 p-3 rounded-lg border border-slate-700/30">
-            <div className="text-xs text-slate-400">Trade</div>
-            <div className={cn(
-              "font-bold text-lg",
-              trade.type === "long" ? "text-green-400" : "text-red-400"
-            )}>
-              {trade.type === "long" ? "LONG" : "SHORT"}
-            </div>
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="bg-slate-800/50 p-3 rounded-lg border border-slate-700/30">
+          <div className="text-xs text-slate-400">Entry</div>
+          <div className="font-bold text-white text-lg">
+            {trade.entryPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </div>
         </div>
         
-        {/* New price range indicators section */}
-        <div className="space-y-4 mb-6 bg-slate-800/30 p-4 rounded-lg border border-slate-700/30">
-          <h3 className="text-xs uppercase text-slate-400 font-medium text-center mb-2">Price Ranges</h3>
-          
-          {/* Hourly range */}
-          <div className="space-y-1">
-            <div className="flex justify-between text-xs text-slate-400">
-              <span>Hourly (high/low)</span>
-            </div>
-            <div className="flex justify-between text-xs font-medium mb-1">
-              <span className="text-green-400">${priceData[trade.pairSymbol.replace('/', '')]?.hourlyHigh?.toFixed(2) || '-'}</span>
-              <span className="text-red-400">${priceData[trade.pairSymbol.replace('/', '')]?.hourlyLow?.toFixed(2) || '-'}</span>
-            </div>
-            <div className="h-1.5 bg-slate-700/50 rounded-full relative">
-              <div className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-white border-2 border-blue-500"
-                style={{
-                  left: renderPriceMarker(
-                    priceData[trade.pairSymbol.replace('/', '')]?.hourlyHigh || 0,
-                    priceData[trade.pairSymbol.replace('/', '')]?.hourlyLow || 0,
-                    lastPrice
-                  )
-                }}
-              ></div>
-            </div>
-            <div className="text-center text-xs text-slate-400 mt-1">
-              Market price: ${lastPrice.toFixed(2)}
-            </div>
-          </div>
-          
-          {/* Daily range */}
-          <div className="space-y-1">
-            <div className="flex justify-between text-xs text-slate-400">
-              <span>Daily (high/low)</span>
-            </div>
-            <div className="flex justify-between text-xs font-medium mb-1">
-              <span className="text-green-400">${priceData[trade.pairSymbol.replace('/', '')]?.dailyHigh?.toFixed(2) || '-'}</span>
-              <span className="text-red-400">${priceData[trade.pairSymbol.replace('/', '')]?.dailyLow?.toFixed(2) || '-'}</span>
-            </div>
-            <div className="h-1.5 bg-slate-700/50 rounded-full relative">
-              <div className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-white border-2 border-blue-500"
-                style={{
-                  left: renderPriceMarker(
-                    priceData[trade.pairSymbol.replace('/', '')]?.dailyHigh || 0,
-                    priceData[trade.pairSymbol.replace('/', '')]?.dailyLow || 0,
-                    lastPrice
-                  )
-                }}
-              ></div>
-            </div>
-            <div className="text-center text-xs text-slate-400 mt-1">
-              Market price: ${lastPrice.toFixed(2)}
-            </div>
-          </div>
-          
-          {/* Weekly range */}
-          <div className="space-y-1">
-            <div className="flex justify-between text-xs text-slate-400">
-              <span>Weekly (high/low)</span>
-            </div>
-            <div className="flex justify-between text-xs font-medium mb-1">
-              <span className="text-green-400">${priceData[trade.pairSymbol.replace('/', '')]?.weeklyHigh?.toFixed(2) || '-'}</span>
-              <span className="text-red-400">${priceData[trade.pairSymbol.replace('/', '')]?.weeklyLow?.toFixed(2) || '-'}</span>
-            </div>
-            <div className="h-1.5 bg-slate-700/50 rounded-full relative">
-              <div className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-white border-2 border-blue-500"
-                style={{
-                  left: renderPriceMarker(
-                    priceData[trade.pairSymbol.replace('/', '')]?.weeklyHigh || 0,
-                    priceData[trade.pairSymbol.replace('/', '')]?.weeklyLow || 0,
-                    lastPrice
-                  )
-                }}
-              ></div>
-            </div>
-            <div className="text-center text-xs text-slate-400 mt-1">
-              Market price: ${lastPrice.toFixed(2)}
-            </div>
+        <div className="bg-slate-800/50 p-3 rounded-lg border border-slate-700/30">
+          <div className="text-xs text-slate-400">P&amp;L (val.)</div>
+          <div className={cn(
+            "font-bold text-lg",
+            pnlVal >= 0 ? "text-green-400" : "text-red-400"
+          )}>
+            {pnlVal.toFixed(2)}
           </div>
         </div>
         
-        <div className="grid gap-3">
-          <button 
-            className="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
-            onClick={handleResetTrade}
-          >
-            Start over
-          </button>
-          
-          <button 
-            className="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
-            onClick={handleEndTrade}
-          >
-            End trade
-          </button>
+        <div className="bg-slate-800/50 p-3 rounded-lg border border-slate-700/30">
+          <div className="text-xs text-slate-400">
+            {trade.leverage > 1 ? "Size (leverage)" : "Size"}
+          </div>
+          <div className="font-bold text-white text-lg">
+            {trade.size}
+            {trade.leverage > 1 && <span className="text-orange-400 ml-2">{trade.leverage}x</span>}
+          </div>
         </div>
+        
+        <div className="bg-slate-800/50 p-3 rounded-lg border border-slate-700/30">
+          <div className="text-xs text-slate-400">Trade</div>
+          <div className={cn(
+            "font-bold text-lg",
+            trade.type === "long" ? "text-green-400" : "text-red-400"
+          )}>
+            {trade.type === "long" ? "LONG" : "SHORT"}
+          </div>
+        </div>
+      </div>
+      
+      <div className="space-y-4 mb-6 bg-slate-800/30 p-4 rounded-lg border border-slate-700/30">
+        <h3 className="text-xs uppercase text-slate-400 font-medium text-center mb-2">Price Ranges</h3>
+        
+        <div className="space-y-1">
+          <div className="flex justify-between text-xs text-slate-400">
+            <span>Hourly (high/low)</span>
+          </div>
+          <div className="flex justify-between text-xs font-medium mb-1">
+            <span className="text-green-400">${priceData[trade.pairSymbol.replace('/', '')]?.hourlyHigh?.toFixed(2) || '-'}</span>
+            <span className="text-red-400">${priceData[trade.pairSymbol.replace('/', '')]?.hourlyLow?.toFixed(2) || '-'}</span>
+          </div>
+          <div className="h-1.5 bg-slate-700/50 rounded-full relative">
+            <div className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-white border-2 border-blue-500"
+              style={{
+                left: renderPriceMarker(
+                  priceData[trade.pairSymbol.replace('/', '')]?.hourlyHigh || 0,
+                  priceData[trade.pairSymbol.replace('/', '')]?.hourlyLow || 0,
+                  lastPrice
+                )
+              }}
+            ></div>
+          </div>
+          <div className="text-center text-xs text-slate-400 mt-1">
+            Market price: ${lastPrice.toFixed(2)}
+          </div>
+        </div>
+        
+        <div className="space-y-1">
+          <div className="flex justify-between text-xs text-slate-400">
+            <span>Daily (high/low)</span>
+          </div>
+          <div className="flex justify-between text-xs font-medium mb-1">
+            <span className="text-green-400">${priceData[trade.pairSymbol.replace('/', '')]?.dailyHigh?.toFixed(2) || '-'}</span>
+            <span className="text-red-400">${priceData[trade.pairSymbol.replace('/', '')]?.dailyLow?.toFixed(2) || '-'}</span>
+          </div>
+          <div className="h-1.5 bg-slate-700/50 rounded-full relative">
+            <div className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-white border-2 border-blue-500"
+              style={{
+                left: renderPriceMarker(
+                  priceData[trade.pairSymbol.replace('/', '')]?.dailyHigh || 0,
+                  priceData[trade.pairSymbol.replace('/', '')]?.dailyLow || 0,
+                  lastPrice
+                )
+              }}
+            ></div>
+          </div>
+          <div className="text-center text-xs text-slate-400 mt-1">
+            Market price: ${lastPrice.toFixed(2)}
+          </div>
+        </div>
+        
+        <div className="space-y-1">
+          <div className="flex justify-between text-xs text-slate-400">
+            <span>Weekly (high/low)</span>
+          </div>
+          <div className="flex justify-between text-xs font-medium mb-1">
+            <span className="text-green-400">${priceData[trade.pairSymbol.replace('/', '')]?.weeklyHigh?.toFixed(2) || '-'}</span>
+            <span className="text-red-400">${priceData[trade.pairSymbol.replace('/', '')]?.weeklyLow?.toFixed(2) || '-'}</span>
+          </div>
+          <div className="h-1.5 bg-slate-700/50 rounded-full relative">
+            <div className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-white border-2 border-blue-500"
+              style={{
+                left: renderPriceMarker(
+                  priceData[trade.pairSymbol.replace('/', '')]?.weeklyHigh || 0,
+                  priceData[trade.pairSymbol.replace('/', '')]?.weeklyLow || 0,
+                  lastPrice
+                )
+              }}
+            ></div>
+          </div>
+          <div className="text-center text-xs text-slate-400 mt-1">
+            Market price: ${lastPrice.toFixed(2)}
+          </div>
+        </div>
+      </div>
+      
+      <div className="grid gap-3">
+        <button 
+          className="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+          onClick={handleResetTrade}
+        >
+          Start over
+        </button>
+        
+        <button 
+          className="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+          onClick={handleEndTrade}
+        >
+          End trade
+        </button>
       </div>
     </div>
   );
 };
 
 export default ActiveTradeStatus;
-
