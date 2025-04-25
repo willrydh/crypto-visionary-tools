@@ -123,11 +123,16 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
   };
 
   const getBackgroundGradient = () => {
-    const isOverbought = hourlyZone === "Overbought" && dailyZone === "Overbought";
-    const isOversold = hourlyZone === "Oversold" && dailyZone === "Oversold";
-    if (isOverbought) {
+    // Count overbought and oversold zones
+    const zones = [hourlyZone, dailyZone, weeklyZone];
+    const overboughtCount = zones.filter(z => z === "Overbought").length;
+    const oversoldCount = zones.filter(z => z === "Oversold").length;
+    const neutralCount = zones.filter(z => z === "Neutral").length;
+
+    // Change background if at least one indicator shows overbought/oversold
+    if (overboughtCount >= 1 && oversoldCount === 0) {
       return "bg-gradient-to-b from-green-950/30 via-green-900/20 to-green-900/5";
-    } else if (isOversold) {
+    } else if (oversoldCount >= 1 && overboughtCount === 0) {
       return "bg-gradient-to-b from-red-950/30 via-red-900/20 to-red-900/5";
     } else {
       return "bg-gradient-to-b from-blue-950/20 via-blue-900/10 to-blue-900/5";
