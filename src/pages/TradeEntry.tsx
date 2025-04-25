@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,10 @@ import CryptoSelector from "@/components/crypto/CryptoSelector";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowRight, TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import ActiveTradeStatus from "@/components/trading/ActiveTradeStatus";
+import { getFromStorage } from "@/utils/storageUtils";
+
+const ACTIVE_TRADE_STORAGE_KEY = "activeTrade";
 
 const TradeEntry = () => {
   const { toast } = useToast();
@@ -25,12 +29,21 @@ const TradeEntry = () => {
   const [leverage, setLeverage] = useState('1');
   const [stopLoss, setStopLoss] = useState('');
   const [takeProfit, setTakeProfit] = useState('');
+  const [activeTrade, setActiveTrade] = useState<any>(null);
   
   const formattedSymbol = selectedCrypto.pairSymbol.replace('/', '');
   const cryptoPrice = priceData[formattedSymbol]?.price || 0;
   
+  // Load any active trade from storage on component mount
+  useEffect(() => {
+    const savedTrade = getFromStorage(ACTIVE_TRADE_STORAGE_KEY);
+    if (savedTrade) {
+      setActiveTrade(savedTrade);
+    }
+  }, []);
+  
   // Load price data for the selected crypto
-  React.useEffect(() => {
+  useEffect(() => {
     if (!priceData[formattedSymbol]) {
       loadPriceData(formattedSymbol);
     }
@@ -39,17 +52,34 @@ const TradeEntry = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Create the active trade object
+    const newTrade = {
+      entryPrice: parseFloat(entryPrice || String(cryptoPrice)),
+      size: parseFloat(tradeSize),
+      leverage: parseInt(leverage),
+      type: tradeType,
+      symbol: selectedCrypto.symbol,
+      name: selectedCrypto.name,
+      pairSymbol: selectedCrypto.pairSymbol
+    };
+    
+    setActiveTrade(newTrade);
+    
     toast({
       title: "Trade Entry Saved",
       description: `Your ${tradeType} position for ${selectedCrypto.name} has been recorded.`,
     });
     
-    // Reset the form
+    // Reset form fields after submission
     setEntryPrice('');
     setTradeSize('');
     setStopLoss('');
     setTakeProfit('');
     setLeverage('1');
+  };
+  
+  const resetActiveTrade = () => {
+    setActiveTrade(null);
   };
   
   const calculateRiskReward = () => {
@@ -73,6 +103,28 @@ const TradeEntry = () => {
   };
   
   const riskReward = calculateRiskReward();
+  
+  // If there's an active trade, show the monitoring view
+  if (activeTrade) {
+    return (
+      <div className="space-y-6 mt-6 animate-fade-in">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+          <div>
+            <h1 className="text-2xl font-bold">Active Trade</h1>
+            <p className="text-muted-foreground">
+              Monitor your current position and check performance
+            </p>
+          </div>
+        </div>
+        
+        <ActiveTradeStatus 
+          trade={activeTrade} 
+          lastPrice={cryptoPrice || activeTrade.entryPrice}
+          onEnd={resetActiveTrade}
+        />
+      </div>
+    );
+  }
   
   return (
     <div className="space-y-6 mt-6 animate-fade-in">
