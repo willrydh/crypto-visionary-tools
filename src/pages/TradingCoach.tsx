@@ -13,6 +13,7 @@ import { getFromStorage, saveToStorage, removeFromStorage } from '@/utils/storag
 import { toast } from "@/components/ui/use-toast";
 import { Slider } from "@/components/ui/slider";
 import { ArrowRight, TrendingUp, TrendingDown, Zap } from "lucide-react";
+import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
 
 type Step = 1 | 2 | 3 | 4 | 5;
 type TradeType = "long" | "short";
@@ -517,16 +518,26 @@ const TradingCoach: React.FC = () => {
                   return (
                     <div className="space-y-4">
                       <div className="flex flex-col gap-3 items-center">
-                        <Badge 
-                          className={cn(
-                            "px-6 py-2 text-lg font-bold rounded-full border-0 shadow-glow",
-                            rec === "ADD" ? "bg-green-500 text-white" : 
-                            rec === "REMOVE" ? "bg-red-500 text-white" : 
-                            "bg-yellow-500 text-slate-900"
-                          )}
-                        >
-                          {rec}
-                        </Badge>
+                        <HoverCard>
+                          <HoverCardTrigger asChild>
+                            <Badge 
+                              className={cn(
+                                "px-6 py-2 text-lg font-bold rounded-full border-0 shadow-glow cursor-pointer",
+                                rec === "ADD" ? "bg-green-500 text-white" : 
+                                rec === "REMOVE" ? "bg-red-500 text-white" : 
+                                "bg-yellow-500 text-slate-900"
+                              )}
+                            >
+                              {rec}
+                            </Badge>
+                          </HoverCardTrigger>
+                          <HoverCardContent 
+                            className="w-80 p-4 bg-slate-800 border-slate-700 text-white"
+                            side="right"
+                          >
+                            <p className="text-sm">{reason}</p>
+                          </HoverCardContent>
+                        </HoverCard>
                         
                         <div className="flex items-center gap-2 text-sm text-slate-300">
                           <span className="font-medium">{selectedCrypto.name}</span>
@@ -541,14 +552,6 @@ const TradingCoach: React.FC = () => {
                         </div>
                       </div>
                       
-                      <div className={cn(
-                        "text-sm p-4 rounded-lg bg-slate-800/40 border backdrop-blur-sm",
-                        rec === "REMOVE" ? "border-red-500/20 text-red-300" : 
-                        rec === "ADD" ? "border-green-500/20 text-green-300" : 
-                        "border-yellow-500/20 text-yellow-300"
-                      )}>
-                        {reason}
-                      </div>
                       
                       <div className="grid grid-cols-2 gap-3 bg-slate-800/30 rounded-lg p-4 border border-slate-700/30">
                         <div>
