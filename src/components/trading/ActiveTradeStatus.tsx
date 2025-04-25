@@ -219,16 +219,16 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
       "relative rounded-xl overflow-hidden border shadow-xl",
       getBgGradient()
     )}>
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         {!hideHeader && <h2 className="text-2xl font-bold mb-2 text-white">AI Recommendation</h2>}
         
-        <div className="flex items-center justify-center gap-2 text-sm text-slate-300 mb-3">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-sm text-slate-300 mb-3">
           <span className="font-medium">{trade.name}</span>
-          <span>•</span>
+          <span className="hidden sm:block">•</span>
           <span>{trade.pairSymbol}</span>
           {trade.leverage > 1 && (
             <>
-              <span>•</span>
+              <span className="hidden sm:block">•</span>
               <span className="font-medium text-orange-400">{trade.leverage}x</span>
             </>
           )}
@@ -260,24 +260,24 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
           </HoverCard>
         </div>
         
-        <div className="flex flex-col items-center my-5 py-4 rounded-lg">
+        <div className="flex flex-col items-center my-4 py-3 rounded-lg">
           <div className="text-xs text-slate-400 mb-1">Current price</div>
           <div className={cn(
-            "text-4xl font-bold text-white transition-all duration-300 transform",
+            "text-3xl sm:text-4xl font-bold text-white transition-all duration-300 transform",
             ticking ? "scale-105" : "scale-100"
           )}>
             ${lastPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </div>
         </div>
         
-        <div className="w-full mb-5">
+        <div className="w-full mb-4 sm:mb-5">
           {formatPnLPercentage(pnlPct)}
         </div>
         
-        <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
           <div className="bg-slate-800/50 p-3 rounded-lg border border-slate-700/30">
             <div className="text-xs text-slate-400">Entry</div>
-            <div className="font-bold text-white text-lg">
+            <div className="font-bold text-white text-base sm:text-lg">
               {trade.entryPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
           </div>
@@ -285,7 +285,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
           <div className="bg-slate-800/50 p-3 rounded-lg border border-slate-700/30">
             <div className="text-xs text-slate-400">P&amp;L</div>
             <div className={cn(
-              "font-bold text-lg",
+              "font-bold text-base sm:text-lg",
               trade.symbol.toUpperCase().includes('ETH') ? "text-[#9b87f5]" : pnlVal >= 0 ? "text-green-400" : "text-red-400"
             )}>
               {formatPnLValue(pnlVal, trade.symbol)}
@@ -296,16 +296,16 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
             <div className="text-xs text-slate-400">
               {trade.leverage > 1 ? "Size (leverage)" : "Size"}
             </div>
-            <div className="font-bold text-white text-lg flex items-center">
+            <div className="font-bold text-white text-base sm:text-lg flex items-center gap-2">
               <span>{formatPositionSize(trade.size, trade.symbol)}</span>
-              {trade.leverage > 1 && <span className="text-orange-400 ml-2">{trade.leverage}x</span>}
+              {trade.leverage > 1 && <span className="text-orange-400">{trade.leverage}x</span>}
             </div>
           </div>
           
           <div className="bg-slate-800/50 p-3 rounded-lg border border-slate-700/30">
             <div className="text-xs text-slate-400">Trade</div>
             <div className={cn(
-              "font-bold text-lg",
+              "font-bold text-base sm:text-lg",
               trade.type === "long" ? "text-green-400" : "text-red-400"
             )}>
               {trade.type === "long" ? "LONG" : "SHORT"}
@@ -313,7 +313,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
           </div>
         </div>
         
-        <div className="space-y-4 mb-6 bg-slate-800/30 p-4 rounded-lg border border-slate-700/30">
+        <div className="space-y-4 mb-4 sm:mb-6 bg-slate-800/30 p-3 sm:p-4 rounded-lg border border-slate-700/30">
           <h3 className="text-xs uppercase text-slate-400 font-medium text-center mb-2">PRICE RANGES</h3>
           
           <div className="space-y-1">
@@ -401,7 +401,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
           </div>
         </div>
         
-        <div className="grid gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <button 
             className="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
             onClick={handleResetTrade}
