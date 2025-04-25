@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import PriceChart from '@/components/charts/PriceChart';
 import { IndicatorBreakdown } from '@/components/analysis/IndicatorBreakdown';
@@ -128,7 +129,7 @@ const SignalsView = () => {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in mt-2">
+    <div className="space-y-6 animate-fade-in mt-8 pt-6"> {/* Added more top margin and padding */}
       <div className="flex flex-col gap-3">
         <div className="w-full">
           <div className="bg-card/60 p-4 rounded-lg border border-border w-full">
@@ -145,7 +146,7 @@ const SignalsView = () => {
         />
       </div>
 
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mt-4"> {/* Added extra top margin here */}
         <div>
           <h1 className="text-2xl font-bold">Signals</h1>
           <p className="text-muted-foreground">
