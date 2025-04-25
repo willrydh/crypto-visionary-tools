@@ -158,7 +158,8 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
   
   const formatPositionSize = (size: number, symbol: string) => {
     if (symbol.toUpperCase().includes('ETH')) {
-      return `${size.toFixed(8)} ETH`;
+      const ethSize = size / lastPrice; // Convert to ETH
+      return `${ethSize.toFixed(8)} ETH`;
     }
     return formatCurrency(size, 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 8 });
   };
@@ -166,16 +167,41 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
   const formatPnLValue = (pnlVal: number, symbol: string) => {
     if (symbol.toUpperCase().includes('ETH')) {
       const ethValue = pnlVal / lastPrice; // Convert to ETH
-      const sekValue = pnlVal * 11.5; // Approximate SEK conversion (you might want to use a real exchange rate)
+      const sekValue = pnlVal * 11.5; // Approximate SEK conversion
       return (
-        <>
-          {ethValue.toFixed(8)} ETH
-          <br />
-          <span className="text-sm">≈ {sekValue.toFixed(2)} SEK</span>
-        </>
+        <div className="space-y-1">
+          <div>{ethValue.toFixed(8)} ETH</div>
+          <div className="text-sm text-slate-300">≈ {formatCurrency(sekValue, 'SEK', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+        </div>
       );
     }
     return formatCurrency(Math.abs(pnlVal), 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
+
+  const formatPnLPercentage = (pct: number) => {
+    return (
+      <div className={cn(
+        "w-full px-6 py-4 rounded-lg text-center",
+        pct >= 0 
+          ? "bg-green-500/30 border border-green-500/40" 
+          : "bg-red-500/30 border border-red-500/40"
+      )}>
+        <div className="text-xs text-slate-200 mb-1">P&amp;L %</div>
+        <div className={cn(
+          "flex items-center justify-center gap-1 font-bold text-2xl",
+          pct >= 0 ? "text-green-400" : "text-red-400"
+        )}>
+          {pct >= 0 ? <ArrowUp className="h-5 w-5" /> : <ArrowDown className="h-5 w-5" />}
+          {Math.abs(pct).toFixed(2)}%
+        </div>
+        <div className={cn(
+          "text-lg mt-1 font-semibold",
+          trade.symbol.toUpperCase().includes('ETH') ? "text-[#9b87f5]" : pnlVal >= 0 ? "text-green-300" : "text-red-300"
+        )}>
+          {formatPnLValue(pnlVal, trade.symbol)}
+        </div>
+      </div>
+    );
   };
 
   const formattedSymbol = trade.pairSymbol.replace('/', '');
@@ -245,29 +271,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
         </div>
         
         <div className="w-full mb-5">
-          <div className={cn(
-            "w-full px-6 py-4 rounded-lg", 
-            pnlPct >= 0 
-              ? "bg-green-500/30 border border-green-500/40" 
-              : "bg-red-500/30 border border-red-500/40"
-          )}>
-            <div className="text-center">
-              <div className="text-xs text-slate-200 mb-1">P&amp;L %</div>
-              <div className={cn(
-                "flex items-center justify-center gap-1 font-bold text-2xl",
-                pnlPct >= 0 ? "text-green-400" : "text-red-400"
-              )}>
-                {pnlPct >= 0 ? <ArrowUp className="h-5 w-5" /> : <ArrowDown className="h-5 w-5" />}
-                {Math.abs(pnlPct).toFixed(2)}%
-              </div>
-              <div className={cn(
-                "text-lg mt-1 font-semibold",
-                pnlVal >= 0 ? "text-green-300" : "text-red-300"
-              )}>
-                ${Math.abs(pnlVal).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </div>
-            </div>
-          </div>
+          {formatPnLPercentage(pnlPct)}
         </div>
         
         <div className="grid grid-cols-2 gap-4 mb-6">
@@ -282,7 +286,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
             <div className="text-xs text-slate-400">P&amp;L</div>
             <div className={cn(
               "font-bold text-lg",
-              pnlVal >= 0 ? "text-green-400" : "text-red-400"
+              trade.symbol.toUpperCase().includes('ETH') ? "text-[#9b87f5]" : pnlVal >= 0 ? "text-green-400" : "text-red-400"
             )}>
               {formatPnLValue(pnlVal, trade.symbol)}
             </div>
