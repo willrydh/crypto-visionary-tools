@@ -1,14 +1,14 @@
-
 import React, { useEffect, useState } from "react";
 import { TransparentWhiteButton } from "@/components/ui/TransparentWhiteButton";
 import { cn } from "@/lib/utils";
 import { usePrice } from "@/hooks/usePrice";
 import { Badge } from "@/components/ui/badge";
-import { ArrowUp, ArrowDown, CircleCheck, CircleX, Info, Clock } from "lucide-react";
+import { ArrowUp, ArrowDown, CircleCheck, CircleX, Info, Clock, Maximize2 } from "lucide-react";
 import { saveToStorage, getFromStorage, removeFromStorage } from "@/utils/storageUtils";
 import { toast } from "@/components/ui/use-toast";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
 import { formatCurrency } from "@/utils/numberUtils";
+import FullscreenTradeMonitor from "./FullscreenTradeMonitor";
 
 type TradeType = "long" | "short";
 type Recommendation = "HODL" | "ADD" | "REMOVE";
@@ -78,7 +78,8 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
   const [lastPrice, setLastPrice] = useState(initialPrice);
   const [ticking, setTicking] = useState(false);
   const [lastUpdateTime, setLastUpdateTime] = useState(0);
-  
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
   const { pnlPct, pnlVal } = getPnl(trade.entryPrice, lastPrice, trade.size, trade.leverage || 1, trade.type);
   
   const { rec, reason } = getRecommendation(trade.entryPrice, lastPrice, trade.type);
@@ -205,7 +206,6 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
   const formattedSymbol = trade.pairSymbol.replace('/', '');
   const priceRangeData: PriceRangeData = priceData[formattedSymbol] || {};
 
-  // Use actual high/low data from price API when available
   const hourlyHigh = priceRangeData.hourlyHigh || lastPrice * 1.01;
   const hourlyLow = priceRangeData.hourlyLow || lastPrice * 0.99;
   const dailyHigh = priceRangeData.dailyHigh || lastPrice * 1.02;
@@ -213,7 +213,6 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
   const weeklyHigh = priceRangeData.weeklyHigh || lastPrice * 1.05;
   const weeklyLow = priceRangeData.weeklyLow || lastPrice * 0.95;
 
-  // Format price values according to type (ETH or other)
   const formatPriceValue = (value: number) => {
     if (trade.symbol.toUpperCase().includes('ETH')) {
       return value.toFixed(2);
@@ -221,13 +220,33 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
     return value.toFixed(2);
   };
 
+  if (isFullscreen) {
+    return (
+      <FullscreenTradeMonitor
+        trade={trade}
+        lastPrice={lastPrice}
+        onExit={() => setIsFullscreen(false)}
+      />
+    );
+  }
+
   return (
     <div className={cn(
       "relative rounded-xl overflow-hidden border shadow-xl",
       getBgGradient()
     )}>
       <div className="p-4 sm:p-6">
-        {!hideHeader && <h2 className="text-2xl font-bold mb-2 text-white">AI Recommendation</h2>}
+        {!hideHeader && (
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-2xl font-bold text-white">AI Recommendation</h2>
+            <button
+              onClick={() => setIsFullscreen(true)}
+              className="p-2 hover:bg-slate-700/50 rounded-lg transition-colors"
+            >
+              <Maximize2 className="h-5 w-5 text-slate-300" />
+            </button>
+          </div>
+        )}
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-sm text-slate-300 mb-3">
           <span className="font-medium">{trade.name}</span>
