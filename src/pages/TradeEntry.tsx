@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowRight, TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ActiveTradeStatus from "@/components/trading/ActiveTradeStatus";
-import { getFromStorage } from "@/utils/storageUtils";
+import { getFromStorage, saveToStorage } from "@/utils/storageUtils";
 
 const ACTIVE_TRADE_STORAGE_KEY = "activeTrade";
 
@@ -36,7 +36,7 @@ const TradeEntry = () => {
   
   // Load any active trade from storage on component mount
   useEffect(() => {
-    const savedTrade = getFromStorage(ACTIVE_TRADE_STORAGE_KEY);
+    const savedTrade = getFromStorage(ACTIVE_TRADE_STORAGE_KEY, null);
     if (savedTrade) {
       setActiveTrade(savedTrade);
     }
@@ -64,6 +64,7 @@ const TradeEntry = () => {
     };
     
     setActiveTrade(newTrade);
+    saveToStorage(ACTIVE_TRADE_STORAGE_KEY, newTrade);
     
     toast({
       title: "Trade Entry Saved",
