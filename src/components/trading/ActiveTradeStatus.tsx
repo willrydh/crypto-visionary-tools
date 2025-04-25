@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { TransparentWhiteButton } from "@/components/ui/TransparentWhiteButton";
 import { cn } from "@/lib/utils";
@@ -7,6 +8,7 @@ import { ArrowUp, ArrowDown, CircleCheck, CircleX, Info, Clock } from "lucide-re
 import { saveToStorage, getFromStorage, removeFromStorage } from "@/utils/storageUtils";
 import { toast } from "@/components/ui/use-toast";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
+import { formatCurrency } from "@/utils/numberUtils";
 
 type TradeType = "long" | "short";
 type Recommendation = "HODL" | "ADD" | "REMOVE";
@@ -110,6 +112,12 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
     }
   }, [priceData, trade.pairSymbol, ticking, lastUpdateTime]);
   
+  useEffect(() => {
+    // Load high/low data for price ranges
+    const formattedSymbol = trade.pairSymbol.replace('/', '');
+    loadPriceData(formattedSymbol);
+  }, [trade.pairSymbol, loadPriceData]);
+  
   const handleEndTrade = () => {
     removeFromStorage(ACTIVE_TRADE_STORAGE_KEY);
     toast({
@@ -135,6 +143,19 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
     const position = ((currentPrice - lowPrice) / range) * 100;
     return `${Math.max(10, Math.min(90, position))}%`;
   };
+  
+  // Format size with appropriate precision
+  const formatSize = (size: number) => {
+    if (size >= 1) {
+      return size.toFixed(2);
+    } else {
+      // For smaller sizes, show more decimal places
+      return size.toFixed(6).replace(/\.?0+$/, "");
+    }
+  };
+
+  const formattedSymbol = trade.pairSymbol.replace('/', '');
+  const priceRangeData = priceData[formattedSymbol] || {};
 
   return (
     <div className={cn(
@@ -194,23 +215,23 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
         
         <div className="w-full mb-5">
           <div className={cn(
-            "w-full px-6 py-3 rounded-lg", 
+            "w-full px-6 py-4 rounded-lg", 
             pnlPct >= 0 
-              ? "bg-green-500/20 border border-green-500/30" 
-              : "bg-red-500/20 border border-red-500/30"
+              ? "bg-green-500/30 border border-green-500/40" 
+              : "bg-red-500/30 border border-red-500/40"
           )}>
             <div className="text-center">
-              <div className="text-xs text-slate-300 mb-1">P&amp;L %</div>
+              <div className="text-xs text-slate-200 mb-1">P&amp;L %</div>
               <div className={cn(
                 "flex items-center justify-center gap-1 font-bold text-2xl",
                 pnlPct >= 0 ? "text-green-400" : "text-red-400"
               )}>
                 {pnlPct >= 0 ? <ArrowUp className="h-5 w-5" /> : <ArrowDown className="h-5 w-5" />}
-                {pnlPct.toFixed(2)}%
+                {Math.abs(pnlPct).toFixed(2)}%
               </div>
               <div className={cn(
-                "text-lg mt-1",
-                pnlVal >= 0 ? "text-green-400" : "text-red-400"
+                "text-lg mt-1 font-semibold",
+                pnlVal >= 0 ? "text-green-300" : "text-red-300"
               )}>
                 ${Math.abs(pnlVal).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
@@ -232,7 +253,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
               "font-bold text-lg",
               pnlVal >= 0 ? "text-green-400" : "text-red-400"
             )}>
-              {pnlVal.toFixed(2)}
+              {formatCurrency(pnlVal, 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
           </div>
           
@@ -240,8 +261,8 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
             <div className="text-xs text-slate-400">
               {trade.leverage > 1 ? "Size (leverage)" : "Size"}
             </div>
-            <div className="font-bold text-white text-lg">
-              {trade.size}
+            <div className="font-bold text-white text-lg flex items-center">
+              <span>{formatSize(trade.size)}</span>
               {trade.leverage > 1 && <span className="text-orange-400 ml-2">{trade.leverage}x</span>}
             </div>
           </div>
@@ -258,74 +279,95 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
         </div>
         
         <div className="space-y-4 mb-6 bg-slate-800/30 p-4 rounded-lg border border-slate-700/30">
-          <h3 className="text-xs uppercase text-slate-400 font-medium text-center mb-2">Price Ranges</h3>
+          <h3 className="text-xs uppercase text-slate-400 font-medium text-center mb-2">PRICE RANGES</h3>
           
+          {/* Hourly Range */}
           <div className="space-y-1">
             <div className="flex justify-between text-xs text-slate-400">
               <span>Hourly (high/low)</span>
             </div>
             <div className="flex justify-between text-xs font-medium mb-1">
-              <span className="text-green-400">${priceData[trade.pairSymbol.replace('/', '')]?.hourlyHigh?.toFixed(2) || '-'}</span>
-              <span className="text-red-400">${priceData[trade.pairSymbol.replace('/', '')]?.hourlyLow?.toFixed(2) || '-'}</span>
+              <span className="text-green-400">
+                ${priceRangeData.hourlyHigh ? priceRangeData.hourlyHigh.toFixed(2) : '-'}
+              </span>
+              <span className="text-red-400">
+                ${priceRangeData.hourlyLow ? priceRangeData.hourlyLow.toFixed(2) : '-'}
+              </span>
             </div>
             <div className="h-1.5 bg-slate-700/50 rounded-full relative">
-              <div className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-white border-2 border-blue-500"
-                style={{
-                  left: renderPriceMarker(
-                    priceData[trade.pairSymbol.replace('/', '')]?.hourlyHigh || 0,
-                    priceData[trade.pairSymbol.replace('/', '')]?.hourlyLow || 0,
-                    lastPrice
-                  )
-                }}
-              ></div>
+              {priceRangeData.hourlyHigh && priceRangeData.hourlyLow && (
+                <div className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-white border-2 border-blue-500"
+                  style={{
+                    left: renderPriceMarker(
+                      priceRangeData.hourlyHigh,
+                      priceRangeData.hourlyLow,
+                      lastPrice
+                    )
+                  }}
+                ></div>
+              )}
             </div>
             <div className="text-center text-xs text-slate-400 mt-1">
               Market price: ${lastPrice.toFixed(2)}
             </div>
           </div>
           
+          {/* Daily Range */}
           <div className="space-y-1">
             <div className="flex justify-between text-xs text-slate-400">
               <span>Daily (high/low)</span>
             </div>
             <div className="flex justify-between text-xs font-medium mb-1">
-              <span className="text-green-400">${priceData[trade.pairSymbol.replace('/', '')]?.dailyHigh?.toFixed(2) || '-'}</span>
-              <span className="text-red-400">${priceData[trade.pairSymbol.replace('/', '')]?.dailyLow?.toFixed(2) || '-'}</span>
+              <span className="text-green-400">
+                ${priceRangeData.dailyHigh ? priceRangeData.dailyHigh.toFixed(2) : '-'}
+              </span>
+              <span className="text-red-400">
+                ${priceRangeData.dailyLow ? priceRangeData.dailyLow.toFixed(2) : '-'}
+              </span>
             </div>
             <div className="h-1.5 bg-slate-700/50 rounded-full relative">
-              <div className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-white border-2 border-blue-500"
-                style={{
-                  left: renderPriceMarker(
-                    priceData[trade.pairSymbol.replace('/', '')]?.dailyHigh || 0,
-                    priceData[trade.pairSymbol.replace('/', '')]?.dailyLow || 0,
-                    lastPrice
-                  )
-                }}
-              ></div>
+              {priceRangeData.dailyHigh && priceRangeData.dailyLow && (
+                <div className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-white border-2 border-blue-500"
+                  style={{
+                    left: renderPriceMarker(
+                      priceRangeData.dailyHigh,
+                      priceRangeData.dailyLow,
+                      lastPrice
+                    )
+                  }}
+                ></div>
+              )}
             </div>
             <div className="text-center text-xs text-slate-400 mt-1">
               Market price: ${lastPrice.toFixed(2)}
             </div>
           </div>
           
+          {/* Weekly Range */}
           <div className="space-y-1">
             <div className="flex justify-between text-xs text-slate-400">
               <span>Weekly (high/low)</span>
             </div>
             <div className="flex justify-between text-xs font-medium mb-1">
-              <span className="text-green-400">${priceData[trade.pairSymbol.replace('/', '')]?.weeklyHigh?.toFixed(2) || '-'}</span>
-              <span className="text-red-400">${priceData[trade.pairSymbol.replace('/', '')]?.weeklyLow?.toFixed(2) || '-'}</span>
+              <span className="text-green-400">
+                ${priceRangeData.weeklyHigh ? priceRangeData.weeklyHigh.toFixed(2) : '-'}
+              </span>
+              <span className="text-red-400">
+                ${priceRangeData.weeklyLow ? priceRangeData.weeklyLow.toFixed(2) : '-'}
+              </span>
             </div>
             <div className="h-1.5 bg-slate-700/50 rounded-full relative">
-              <div className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-white border-2 border-blue-500"
-                style={{
-                  left: renderPriceMarker(
-                    priceData[trade.pairSymbol.replace('/', '')]?.weeklyHigh || 0,
-                    priceData[trade.pairSymbol.replace('/', '')]?.weeklyLow || 0,
-                    lastPrice
-                  )
-                }}
-              ></div>
+              {priceRangeData.weeklyHigh && priceRangeData.weeklyLow && (
+                <div className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-white border-2 border-blue-500"
+                  style={{
+                    left: renderPriceMarker(
+                      priceRangeData.weeklyHigh,
+                      priceRangeData.weeklyLow,
+                      lastPrice
+                    )
+                  }}
+                ></div>
+              )}
             </div>
             <div className="text-center text-xs text-slate-400 mt-1">
               Market price: ${lastPrice.toFixed(2)}
