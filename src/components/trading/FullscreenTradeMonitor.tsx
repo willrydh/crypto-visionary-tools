@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Maximize2, Minimize2 } from 'lucide-react';
+import { Minimize2 } from 'lucide-react';
 import ActiveTradeStatus from './ActiveTradeStatus';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { usePrice } from '@/hooks/usePrice';
@@ -23,6 +23,14 @@ const FullscreenTradeMonitor: React.FC<FullscreenTradeMonitorProps> = ({
   const formattedSymbol = trade.pairSymbol.replace('/', '');
 
   useEffect(() => {
+    // Request fullscreen when component mounts
+    const element = document.documentElement;
+    if (element.requestFullscreen) {
+      element.requestFullscreen().catch(err => {
+        console.error(`Error attempting to enable fullscreen: ${err.message}`);
+      });
+    }
+
     const intervalId = setInterval(() => {
       loadPriceData(formattedSymbol);
       setPriceData(prev => {
@@ -39,11 +47,24 @@ const FullscreenTradeMonitor: React.FC<FullscreenTradeMonitorProps> = ({
       });
     }, 1000);
 
-    return () => clearInterval(intervalId);
+    return () => {
+      clearInterval(intervalId);
+      // Exit fullscreen when component unmounts
+      if (document.exitFullscreen && document.fullscreenElement) {
+        document.exitFullscreen().catch(err => {
+          console.error(`Error attempting to exit fullscreen: ${err.message}`);
+        });
+      }
+    };
   }, [formattedSymbol, loadPriceData, currentPrice]);
 
   useEffect(() => {
     if (clickCount === 3) {
+      if (document.exitFullscreen && document.fullscreenElement) {
+        document.exitFullscreen().catch(err => {
+          console.error(`Error attempting to exit fullscreen: ${err.message}`);
+        });
+      }
       onExit();
       setClickCount(0);
     }
@@ -61,6 +82,20 @@ const FullscreenTradeMonitor: React.FC<FullscreenTradeMonitorProps> = ({
       className="fixed inset-0 bg-slate-900 text-white z-50 p-4"
       onClick={handleScreenClick}
     >
+      <div className="absolute top-2 right-2">
+        <button 
+          className="p-2 rounded-full bg-slate-800/50 hover:bg-slate-700/50"
+          onClick={() => {
+            if (document.exitFullscreen && document.fullscreenElement) {
+              document.exitFullscreen();
+            }
+            onExit();
+          }}
+        >
+          <Minimize2 className="h-5 w-5 text-slate-300" />
+        </button>
+      </div>
+
       <div className="h-full flex flex-col gap-4">
         <div className="flex-none">
           <ActiveTradeStatus 
@@ -98,6 +133,10 @@ const FullscreenTradeMonitor: React.FC<FullscreenTradeMonitorProps> = ({
             </LineChart>
           </ResponsiveContainer>
         </div>
+      </div>
+
+      <div className="text-center text-xs text-slate-400 mt-2 absolute bottom-2 left-0 right-0">
+        Triple-click anywhere to exit fullscreen
       </div>
     </div>
   );
