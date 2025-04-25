@@ -127,16 +127,7 @@ const TradeEntry = () => {
   
   if (activeTrade) {
     return (
-      <div className="space-y-6 mt-6 animate-fade-in">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-          <div>
-            <h1 className="text-2xl font-bold">Active Trade</h1>
-            <p className="text-muted-foreground">
-              Monitor your current position and check performance
-            </p>
-          </div>
-        </div>
-        
+      <div className="space-y-6 mt-4 animate-fade-in">
         <ActiveTradeStatus 
           trade={activeTrade} 
           lastPrice={cryptoPrice || activeTrade.entryPrice}
@@ -147,8 +138,8 @@ const TradeEntry = () => {
   }
   
   return (
-    <div className="space-y-6 mt-6 animate-fade-in">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+    <div className="space-y-4 mt-4 animate-fade-in">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 mb-2">
         <div>
           <h1 className="text-2xl font-bold">Trade Entry</h1>
           <p className="text-muted-foreground">
@@ -157,7 +148,7 @@ const TradeEntry = () => {
         </div>
       </div>
       
-      <Card className="bg-slate-900 shadow-xl border-slate-700/50 rounded-xl overflow-hidden mb-6">
+      <Card className="bg-slate-900 shadow-xl border-slate-700/50 rounded-xl overflow-hidden mb-4">
         <CardHeader className="border-b border-slate-700/50 bg-slate-800/50">
           <CardTitle className="text-lg">Trading Mode</CardTitle>
           <CardDescription>Select your trading timeframe</CardDescription>
@@ -165,7 +156,7 @@ const TradeEntry = () => {
         <CardContent className="p-6">
           <div className="space-y-4">
             <TradingModeSelector />
-            <div className="flex items-center gap-2 mt-4 p-3 bg-slate-800/50 rounded-lg border border-slate-700/30">
+            <div className="flex items-center gap-2 mt-2 p-3 bg-slate-800/50 rounded-lg border border-slate-700/30">
               <Timer className="h-4 w-4 text-blue-400" />
               <span className="text-sm text-slate-300">
                 Expected trade duration: <span className="text-white font-medium">{getTradingTimeframe(tradingMode)}</span>
