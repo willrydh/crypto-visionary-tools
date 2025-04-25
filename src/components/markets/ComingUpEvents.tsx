@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -146,34 +145,32 @@ const ComingUpEvents = () => {
   }, []);
 
   return (
-    <Card className="bg-card/60 border-border/60 overflow-hidden">
-      <CardHeader className="pb-3 pt-6">
-        <CardTitle className="text-xl flex items-center gap-2">
-          <Clock className="h-5 w-5 text-purple-400" />
+    <Card className="bg-card/60 backdrop-blur-sm border-border/40 overflow-hidden">
+      <CardHeader className="pb-3 pt-5">
+        <CardTitle className="text-lg font-medium flex items-center gap-2">
+          <Clock className="h-4 w-4 text-purple-400" />
           Coming up
         </CardTitle>
       </CardHeader>
-      <CardContent className="pb-6">
+      <CardContent className="pb-4">
         <div className="relative">
-          <div className="absolute left-[22px] top-1 bottom-1 w-0.5 bg-purple-900/30"></div>
-          <div className="space-y-3 sm:space-y-4"> 
+          <div className="absolute left-[22px] top-1 bottom-1 w-0.5 bg-purple-900/20 dark:bg-purple-400/10"></div>
+          <div className="space-y-3"> 
             {events.map((event, index) => {
               const showOpensPulse = event.openingInLessThanHour && !event.isOpenNow && event.isNext;
 
               return (
                 <div
                   key={`${event.time}-${event.name}`}
-                  className={`flex items-start gap-2 sm:gap-3
+                  className={`flex items-start gap-3
                     ${event.isNext && !event.isOpenNow ? 'animate-pulse-moderate' : ''}
-                    py-1.5 px-0 sm:py-2 sm:px-2
+                    py-2 px-2 rounded-lg transition-colors
+                    ${event.isNext ? 'bg-purple-500/5 dark:bg-purple-950/30' : 'hover:bg-muted/30'}
                   `}
-                  style={{
-                    minHeight: '34px',
-                  }}
                 >
                   <div
                     className={`
-                      relative z-10 mt-2 sm:mt-1.5
+                      relative z-10 mt-1.5
                       ${event.isNext
                         ? showOpensPulse
                           ? 'bg-purple-500 border-purple-300 shadow-glow'
@@ -182,76 +179,56 @@ const ComingUpEvents = () => {
                           ? 'bg-green-500 border-green-400 shadow-glow'
                           : 'bg-slate-700 border-slate-600'}
                       rounded-full border-2
-                      h-3.5 w-3.5 sm:h-3 w-3
+                      h-3 w-3
                       transition-all
                     `}
                   />
 
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                      <div
-                        className="font-medium text-sm flex flex-col xs:flex-row xs:items-center gap-1.5 min-w-0 break-words"
-                      >
-                        {/* Event title & OPEN styling */}
+                      <div className="font-medium text-sm flex items-center gap-1.5 min-w-0">
                         {event.isOpenNow && event.isToday ? (
-                          <span className="flex flex-col xs:flex-row xs:items-center gap-0.5 min-w-0">
+                          <span className="flex items-center gap-1">
                             <span className="truncate">{event.name}</span>
-                            <span className="flex items-center gap-1 font-bold text-green-500 ml-0 xs:ml-1 mt-0.5 xs:mt-0">
-                              is OPEN <CheckCircle className="h-4 w-4 text-green-500 ml-1" />
-                            </span>
+                            <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/30 ml-2">
+                              LIVE <span className="ml-1 h-2 w-2 rounded-full bg-green-500 inline-block animate-pulse"></span>
+                            </Badge>
                           </span>
                         ) : event.openingInLessThanHour && event.isNext ? (
-                          <>
-                            <Timer className="h-4 w-4 text-purple-400 flex-shrink-0" />
+                          <span className="flex items-center gap-2">
                             <span className="truncate">{event.name}</span>
-                            <span className="font-bold text-purple-400 ml-1">opens</span>
-                            <span className="ml-1">{event.localTime}</span>
-                          </>
-                        ) : event.opensTomorrow ? (
-                          <>
-                            <span className="truncate">{event.name}</span>
-                            <span className="font-bold text-blue-500 ml-1">opens</span>
-                            <span className="ml-1">{event.localTime}</span>
-                          </>
+                            <Badge variant="outline" className="bg-purple-500/10 text-purple-400 border-purple-400/30">
+                              Opening Soon
+                            </Badge>
+                          </span>
                         ) : (
-                          <>
-                            <span className="truncate">{event.name}</span>
-                            {(event.isPassed && !event.isToday) && (
-                              <span className="text-xs text-muted-foreground ml-1">(next day)</span>
-                            )}
-                          </>
+                          <span className="truncate">{event.name}</span>
                         )}
                       </div>
-                      <div className="flex items-center gap-1.5 mt-1 sm:mt-0">
-                        {event.openingInLessThanHour && event.isNext && !event.isOpenNow ? (
-                          <Badge
-                            className="animate-pulse-moderate bg-purple-500/30 border-purple-400/60 text-purple-100 font-semibold text-xs flex items-center gap-1"
-                          >
-                            <Timer className="inline-block h-3 w-3 mr-1 text-purple-200" />
-                            opens {event.countdown}
+                      
+                      <div className="flex items-center gap-1.5">
+                        {event.openingInLessThanHour && event.isNext ? (
+                          <Badge variant="outline" className="animate-pulse-slow bg-purple-500/10 text-purple-400 border-purple-400/30">
+                            <Timer className="inline-block h-3 w-3 mr-1" />
+                            {event.countdown}
                           </Badge>
-                        ) : event.opensTomorrow ? (
-                          <Badge
-                            variant="outline"
-                            className="text-xs px-1.5 border-blue-500 bg-blue-950 text-blue-300 font-semibold"
-                          >
-                            opens
-                          </Badge>
-                        ) : (
-                          (!event.isPassed && event.countdown && !event.isOpenNow && !event.openingInLessThanHour) && (
-                            <Badge
-                              variant="outline"
-                              className="text-xs px-1.5 border-border bg-card/80"
-                            >
-                              {event.countdown}
-                            </Badge>
-                          )
+                        ) : !event.isOpenNow && event.countdown && (
+                          <span className="text-xs text-muted-foreground font-medium">
+                            {event.countdown}
+                          </span>
                         )}
                       </div>
                     </div>
+
+                    <div className="mt-1 text-xs text-muted-foreground flex items-center gap-2">
+                      <span>{event.marketCap}</span>
+                      <span className="w-1 h-1 rounded-full bg-muted-foreground/30"></span>
+                      <span>{event.time}</span>
+                    </div>
+
                     {index < events.length - 1 && (
-                      <div className="mt-0.5 flex justify-center pl-0">
-                        <ArrowDown className="h-4 w-4 text-slate-600 mt-1 mb-1" />
+                      <div className="mt-2 flex justify-center">
+                        <ArrowDown className="h-3 w-3 text-muted-foreground/30" />
                       </div>
                     )}
                   </div>
@@ -266,4 +243,3 @@ const ComingUpEvents = () => {
 };
 
 export default ComingUpEvents;
-
