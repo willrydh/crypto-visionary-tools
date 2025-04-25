@@ -174,10 +174,10 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
         <p className="text-sm text-slate-300 mt-1 max-w-sm mx-auto">{reason}</p>
       </div>
       
-      <div className="flex flex-col items-center my-5 py-4 rounded-lg" 
-        className={cn(
-          "bg-gradient-to-b from-slate-800/80 to-slate-900/80 border border-slate-700/30"
-        )}>
+      <div className={cn(
+        "flex flex-col items-center my-5 py-4 rounded-lg",
+        "bg-gradient-to-b from-slate-800/80 to-slate-900/80 border border-slate-700/30"
+      )}>
         <div className="text-xs text-slate-400 mb-1">Current price</div>
         <div className={cn(
           "text-4xl font-bold text-white transition-all duration-300 transform",
