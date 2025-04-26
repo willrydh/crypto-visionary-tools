@@ -22,7 +22,7 @@ const FullscreenTradeMonitor: React.FC<FullscreenTradeMonitorProps> = ({
   const { loadPriceData, priceData: currentPrice } = usePrice();
   const formattedSymbol = trade.pairSymbol.replace('/', '');
 
-  // Create a separate div for fullscreen content, not using document.fullscreenElement
+  // Add escape key handler
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -95,7 +95,7 @@ const FullscreenTradeMonitor: React.FC<FullscreenTradeMonitorProps> = ({
           <ActiveTradeStatus 
             trade={trade} 
             lastPrice={lastPrice} 
-            onEnd={handleExit}
+            onExit={handleExit}
             hideHeader={true}
           />
         </div>
