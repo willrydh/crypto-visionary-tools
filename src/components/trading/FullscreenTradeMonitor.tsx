@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { Minimize2 } from 'lucide-react';
 import ActiveTradeStatus from './ActiveTradeStatus';
@@ -20,49 +19,23 @@ const FullscreenTradeMonitor: React.FC<FullscreenTradeMonitorProps> = ({
 }) => {
   const [priceData, setPriceData] = useState<any[]>([]);
   const [clickCount, setClickCount] = useState(0);
-  const [isFullscreenActive, setIsFullscreenActive] = useState(false);
   const { loadPriceData, priceData: currentPrice } = usePrice();
   const formattedSymbol = trade.pairSymbol.replace('/', '');
 
-  // Handle fullscreen change events
-  const handleFullscreenChange = useCallback(() => {
-    setIsFullscreenActive(!!document.fullscreenElement);
-  }, []);
-
-  // Initialize fullscreen and setup listeners
+  // Create a separate div for fullscreen content, not using document.fullscreenElement
   useEffect(() => {
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    
-    try {
-      // Try to request fullscreen on component mount
-      const containerElement = document.documentElement;
-      if (containerElement && containerElement.requestFullscreen) {
-        containerElement.requestFullscreen().catch(err => {
-          console.error(`Error attempting to enable fullscreen: ${err.message}`);
-          // Continue even if fullscreen fails - this allows the monitor to work on iOS
-          setIsFullscreenActive(true);
-        });
-      } else {
-        // Fallback for devices that don't support fullscreen API
-        setIsFullscreenActive(true);
-      }
-    } catch (error) {
-      console.error("Fullscreen error:", error);
-      // Fallback - continue in "pseudo-fullscreen" mode
-      setIsFullscreenActive(true);
-    }
-    
-    return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-      
-      // Try to exit fullscreen on unmount if it's active
-      if (document.exitFullscreen && document.fullscreenElement) {
-        document.exitFullscreen().catch(err => {
-          console.error(`Error attempting to exit fullscreen: ${err.message}`);
-        });
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        handleExit();
       }
     };
-  }, [handleFullscreenChange]);
+
+    document.addEventListener('keydown', handleEscKey);
+    
+    return () => {
+      document.removeEventListener('keydown', handleEscKey);
+    };
+  }, []);
 
   // Update price data at regular intervals
   useEffect(() => {
@@ -100,25 +73,12 @@ const FullscreenTradeMonitor: React.FC<FullscreenTradeMonitorProps> = ({
   };
 
   const handleExit = () => {
-    // Exit fullscreen if active
-    if (document.exitFullscreen && document.fullscreenElement) {
-      document.exitFullscreen().catch(err => {
-        console.error(`Error attempting to exit fullscreen: ${err.message}`);
-      });
-    }
-    // Ensure we call the parent's exit handler
-    setIsFullscreenActive(false);
     onExit();
   };
 
-  // If not in fullscreen mode (either real or simulated), don't render
-  if (!isFullscreenActive) {
-    return null;
-  }
-
   return (
     <div 
-      className="fixed inset-0 bg-slate-900 text-white z-[9999] p-4 overflow-hidden"
+      className="fixed inset-0 bg-slate-900 text-white z-[9999] flex flex-col p-4 overflow-hidden"
       onClick={handleScreenClick}
     >
       <div className="absolute top-2 right-2 z-10">
