@@ -30,18 +30,17 @@ const FullscreenTradeMonitor: React.FC<FullscreenTradeMonitorProps> = ({
     return pnlPct;
   };
   
-  // Get background color based on PnL
+  // Enhanced background color based on PnL with stronger intensity
   const getBackgroundGradient = () => {
     const pnl = getPnl();
     
-    // Stronger intensity for better visibility
     if (pnl > 0) {
-      const intensity = Math.min(80, Math.max(20, Math.floor(pnl * 3))); // Increase intensity factor from 2 to 3
-      return `bg-gradient-to-br from-slate-900 via-slate-900 to-green-800/${intensity} border-green-600/${intensity}`;
+      // Much more visible green gradient for profit with higher opacity
+      return "bg-gradient-to-br from-slate-900 via-slate-900/90 to-green-700/60 border-green-500/50";
     } 
     else if (pnl < 0) {
-      const intensity = Math.min(80, Math.max(20, Math.floor(Math.abs(pnl) * 3))); // Increase intensity factor
-      return `bg-gradient-to-br from-slate-900 via-slate-900 to-red-800/${intensity} border-red-600/${intensity}`;
+      // More visible red gradient for loss with higher opacity
+      return "bg-gradient-to-br from-slate-900 via-slate-900/90 to-red-700/60 border-red-500/50";
     }
     
     return "bg-gradient-to-br from-slate-900 to-slate-800 border-slate-700/30";
@@ -97,9 +96,9 @@ const FullscreenTradeMonitor: React.FC<FullscreenTradeMonitorProps> = ({
     setClickCount(prev => prev + 1);
   };
 
-  const handleExit = () => {
+  const handleExit = useCallback(() => {
     onExit();
-  };
+  }, [onExit]);
 
   return (
     <div 
@@ -108,6 +107,15 @@ const FullscreenTradeMonitor: React.FC<FullscreenTradeMonitorProps> = ({
         getBackgroundGradient()
       )}
       onClick={handleScreenClick}
+      style={{
+        position: 'fixed', // Ensure fixed positioning for iOS/Mac
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        WebkitBackfaceVisibility: 'hidden', // Fix for iOS rendering
+        WebkitTransform: 'translateZ(0)', // Promote to GPU on iOS
+      }}
     >
       <div className="absolute top-2 right-2 z-10">
         <button 
