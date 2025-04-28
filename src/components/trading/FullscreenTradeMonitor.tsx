@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { Minimize2 } from 'lucide-react';
 import ActiveTradeStatus from './ActiveTradeStatus';
@@ -21,6 +22,30 @@ const FullscreenTradeMonitor: React.FC<FullscreenTradeMonitorProps> = ({
   const [clickCount, setClickCount] = useState(0);
   const { loadPriceData, priceData: currentPrice } = usePrice();
   const formattedSymbol = trade.pairSymbol.replace('/', '');
+  
+  // Calculate PnL for background color
+  const getPnl = () => {
+    const direction = trade.type === "long" ? 1 : -1;
+    const pnlPct = ((lastPrice - trade.entryPrice) * direction) / trade.entryPrice * 100 * (trade.leverage || 1);
+    return pnlPct;
+  };
+  
+  // Get background color based on PnL
+  const getBackgroundGradient = () => {
+    const pnl = getPnl();
+    
+    // Stronger intensity for better visibility
+    if (pnl > 0) {
+      const intensity = Math.min(80, Math.max(20, Math.floor(pnl * 3))); // Increase intensity factor from 2 to 3
+      return `bg-gradient-to-br from-slate-900 via-slate-900 to-green-800/${intensity} border-green-600/${intensity}`;
+    } 
+    else if (pnl < 0) {
+      const intensity = Math.min(80, Math.max(20, Math.floor(Math.abs(pnl) * 3))); // Increase intensity factor
+      return `bg-gradient-to-br from-slate-900 via-slate-900 to-red-800/${intensity} border-red-600/${intensity}`;
+    }
+    
+    return "bg-gradient-to-br from-slate-900 to-slate-800 border-slate-700/30";
+  };
 
   // Add escape key handler
   useEffect(() => {
@@ -78,12 +103,15 @@ const FullscreenTradeMonitor: React.FC<FullscreenTradeMonitorProps> = ({
 
   return (
     <div 
-      className="fixed inset-0 bg-slate-900 text-white z-[9999] flex flex-col p-4 overflow-hidden"
+      className={cn(
+        "fixed inset-0 text-white z-[9999] flex flex-col p-4 overflow-hidden",
+        getBackgroundGradient()
+      )}
       onClick={handleScreenClick}
     >
       <div className="absolute top-2 right-2 z-10">
         <button 
-          className="p-2 rounded-full bg-slate-800/50 hover:bg-slate-700/50"
+          className="p-2 rounded-full bg-slate-800/70 hover:bg-slate-700/70 shadow-lg"
           onClick={handleExit}
         >
           <Minimize2 className="h-5 w-5 text-slate-300" />
@@ -100,7 +128,7 @@ const FullscreenTradeMonitor: React.FC<FullscreenTradeMonitorProps> = ({
           />
         </div>
         
-        <div className="flex-1 bg-slate-800/50 rounded-lg border border-slate-700/50 p-4">
+        <div className="flex-1 bg-slate-800/70 rounded-lg border border-slate-700/50 p-4 shadow-lg">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={priceData}>
               <XAxis 
