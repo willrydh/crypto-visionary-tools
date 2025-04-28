@@ -95,7 +95,7 @@ const FullscreenTradeMonitor: React.FC<FullscreenTradeMonitorProps> = ({
           <ActiveTradeStatus 
             trade={trade} 
             lastPrice={lastPrice} 
-            onExit={handleExit}
+            onEnd={handleExit}
             hideHeader={true}
           />
         </div>
