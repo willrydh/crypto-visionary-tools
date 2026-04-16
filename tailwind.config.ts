@@ -63,16 +63,59 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-        // Custom colors for our trading app
-        bullish: '#22c55e',
-        bearish: '#ef4444',
-        neutral: '#94a3b8',
-        profit: '#22c55e',
-        loss: '#ef4444',
+        // Trading semantic tokens (HSL via CSS variables)
+        bullish: {
+          DEFAULT: 'hsl(var(--bullish))',
+          foreground: 'hsl(var(--bullish-foreground))'
+        },
+        bearish: {
+          DEFAULT: 'hsl(var(--bearish))',
+          foreground: 'hsl(var(--bearish-foreground))'
+        },
+        profit: {
+          DEFAULT: 'hsl(var(--profit))',
+          foreground: 'hsl(var(--profit-foreground))'
+        },
+        loss: {
+          DEFAULT: 'hsl(var(--loss))',
+          foreground: 'hsl(var(--loss-foreground))'
+        },
+        'neutral-trade': {
+          DEFAULT: 'hsl(var(--neutral-trade))',
+          foreground: 'hsl(var(--neutral-trade-foreground))'
+        },
+        warning: {
+          DEFAULT: 'hsl(var(--warning))',
+          foreground: 'hsl(var(--warning-foreground))'
+        },
+        info: {
+          DEFAULT: 'hsl(var(--info))',
+          foreground: 'hsl(var(--info-foreground))'
+        },
+        'mode-scalp': {
+          DEFAULT: 'hsl(var(--mode-scalp))',
+          foreground: 'hsl(var(--mode-scalp-foreground))'
+        },
+        'mode-day': {
+          DEFAULT: 'hsl(var(--mode-day))',
+          foreground: 'hsl(var(--mode-day-foreground))'
+        },
+        'mode-night': {
+          DEFAULT: 'hsl(var(--mode-night))',
+          foreground: 'hsl(var(--mode-night-foreground))'
+        },
+        surface: {
+          1: 'hsl(var(--surface-1))',
+          2: 'hsl(var(--surface-2))',
+          3: 'hsl(var(--surface-3))',
+          foreground: 'hsl(var(--surface-foreground))'
+        },
         chart: {
-          bg: '#0c0e14',
-          grid: '#1a1e2b',
-          line: '#4264d5'
+          bg: 'hsl(var(--chart-bg))',
+          grid: 'hsl(var(--chart-grid))',
+          line: 'hsl(var(--chart-line))',
+          up: 'hsl(var(--chart-up))',
+          down: 'hsl(var(--chart-down))'
         }
 			},
 			borderRadius: {
