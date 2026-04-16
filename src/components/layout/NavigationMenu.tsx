@@ -12,6 +12,7 @@ import {
   Activity,
   Brain
 } from 'lucide-react';
+import { useTradingMode } from '@/hooks/useTradingMode';
 
 interface NavigationMenuProps {
   className?: string;
@@ -19,14 +20,12 @@ interface NavigationMenuProps {
 
 export default function NavigationMenu({ className }: NavigationMenuProps) {
   const location = useLocation();
-  
+
   // Safely use the trading mode hook, with fallbacks for when we're not in a provider context
-  let tradingMode = 'day';
-  let getDescription = () => 'Select a trading mode to see details.';
-  
+  let tradingMode: string = 'day';
+  let getDescription: () => string = () => 'Select a trading mode to see details.';
+
   try {
-    // Try to import and use the hook safely
-    const { useTradingMode } = require('@/hooks/useTradingMode');
     const tradingModeContext = useTradingMode();
     tradingMode = tradingModeContext.tradingMode;
     getDescription = tradingModeContext.getDescription;

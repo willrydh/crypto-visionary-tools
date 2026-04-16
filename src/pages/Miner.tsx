@@ -25,7 +25,7 @@ const Miner = () => {
   const consoleRef = useRef<HTMLDivElement>(null);
   
   // Intervals reference to clear them when stopping
-  const intervalsRef = useRef<{[key: string]: NodeJS.Timeout}>({});
+  const intervalsRef = useRef<{[key: string]: ReturnType<typeof setInterval>}>({});
   
   // Sample crypto names for mining simulation
   const cryptoNames = [
