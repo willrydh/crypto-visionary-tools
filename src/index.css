@@ -24,6 +24,43 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
+
+    /* Trading semantic tokens */
+    --bullish: 142 71% 45%;
+    --bullish-foreground: 0 0% 100%;
+    --bearish: 0 84% 60%;
+    --bearish-foreground: 0 0% 100%;
+    --profit: 142 71% 45%;
+    --profit-foreground: 0 0% 100%;
+    --loss: 0 84% 60%;
+    --loss-foreground: 0 0% 100%;
+    --neutral-trade: 215 16% 65%;
+    --neutral-trade-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --info: 199 89% 48%;
+    --info-foreground: 0 0% 100%;
+
+    /* Trading mode tokens */
+    --mode-scalp: 217 91% 60%;
+    --mode-scalp-foreground: 0 0% 100%;
+    --mode-day: 45 93% 47%;
+    --mode-day-foreground: 0 0% 100%;
+    --mode-night: 239 84% 67%;
+    --mode-night-foreground: 0 0% 100%;
+
+    /* Chart tokens */
+    --chart-bg: 222 28% 6%;
+    --chart-grid: 222 24% 14%;
+    --chart-line: 224 65% 55%;
+    --chart-up: 142 71% 45%;
+    --chart-down: 0 84% 60%;
+
+    /* Surface tokens (for dark cards on light bg) */
+    --surface-1: 222 47% 11%;
+    --surface-2: 217 33% 17%;
+    --surface-3: 215 28% 25%;
+    --surface-foreground: 210 40% 98%;
   }
 
   .dark {
@@ -46,6 +83,43 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 224.3 76.3% 48%;
+
+    /* Trading semantic tokens (dark) */
+    --bullish: 142 71% 45%;
+    --bullish-foreground: 0 0% 100%;
+    --bearish: 0 72% 51%;
+    --bearish-foreground: 0 0% 100%;
+    --profit: 142 71% 45%;
+    --profit-foreground: 0 0% 100%;
+    --loss: 0 72% 51%;
+    --loss-foreground: 0 0% 100%;
+    --neutral-trade: 215 20% 65%;
+    --neutral-trade-foreground: 222 47% 11%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 222 47% 11%;
+    --info: 199 89% 48%;
+    --info-foreground: 0 0% 100%;
+
+    /* Trading mode tokens (dark) */
+    --mode-scalp: 217 91% 60%;
+    --mode-scalp-foreground: 0 0% 100%;
+    --mode-day: 45 93% 58%;
+    --mode-day-foreground: 222 47% 11%;
+    --mode-night: 239 84% 67%;
+    --mode-night-foreground: 0 0% 100%;
+
+    /* Chart tokens (dark) */
+    --chart-bg: 222 28% 6%;
+    --chart-grid: 222 24% 14%;
+    --chart-line: 224 65% 55%;
+    --chart-up: 142 71% 45%;
+    --chart-down: 0 72% 51%;
+
+    /* Surface tokens (dark - same as base, since app is mostly dark) */
+    --surface-1: 222 47% 8%;
+    --surface-2: 217 33% 14%;
+    --surface-3: 215 28% 22%;
+    --surface-foreground: 210 40% 98%;
   }
 }
 
