@@ -71,9 +71,9 @@ const DataInsights = () => {
     
     const getColor = () => {
       switch(type) {
-        case 'pumps': return 'bg-green-500/10 text-green-500 border-green-500/20';
-        case 'dumps': return 'bg-red-500/10 text-red-500 border-red-500/20';
-        case 'flat': return 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20';
+        case 'pumps': return 'bg-bullish/10 text-bullish border-bullish/20';
+        case 'dumps': return 'bg-bearish/10 text-bearish border-bearish/20';
+        case 'flat': return 'bg-warning/10 text-warning border-warning/20';
       }
     };
     

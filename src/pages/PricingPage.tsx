@@ -125,7 +125,7 @@ const PricingPage = () => {
                   <TabsTrigger value="monthly">Monthly</TabsTrigger>
                   <TabsTrigger value="yearly">
                     Yearly
-                    <Badge variant="secondary" className="ml-2 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
+                    <Badge variant="secondary" className="ml-2 bg-bullish/10 text-green-800 dark:bg-green-900 dark:text-green-100">
                       Save {savingsPercentage}%
                     </Badge>
                   </TabsTrigger>
@@ -170,9 +170,9 @@ const PricingPage = () => {
                     {plan.features.map((feature, index) => (
                       <li key={index} className="flex items-center">
                         {feature.included ? (
-                          <CheckCircle className="h-4 w-4 mr-2 text-green-500" />
+                          <CheckCircle className="h-4 w-4 mr-2 text-bullish" />
                         ) : (
-                          <X className="h-4 w-4 mr-2 text-gray-300" />
+                          <X className="h-4 w-4 mr-2 text-muted-foreground" />
                         )}
                         <span className={!feature.included ? "text-muted-foreground" : ""}>
                           {feature.name}
@@ -199,7 +199,7 @@ const PricingPage = () => {
             <Card className="backdrop-blur-sm bg-card/80 border-dashed border-muted">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Star className="h-5 w-5 text-amber-500" />
+                  <Star className="h-5 w-5 text-warning" />
                   <span>Guru Plan - Coming Soon</span>
                 </CardTitle>
                 <CardDescription>
@@ -222,7 +222,7 @@ const PricingPage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
                   {comingSoonFeatures.map((feature, index) => (
                     <div key={index} className="flex items-center gap-2">
-                      <Zap className="h-4 w-4 text-amber-500" />
+                      <Zap className="h-4 w-4 text-warning" />
                       <span>{feature}</span>
                     </div>
                   ))}

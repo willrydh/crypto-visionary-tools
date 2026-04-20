@@ -63,13 +63,13 @@ export const TradingModeSelector = ({ displayLabel = true, compact = false }) =>
               className={cn(
                 "flex items-center gap-2 px-3 py-2 rounded-md transition-all shadow-sm flex-1",
                 isActive 
-                  ? getModeBgClass(mode.id, true) + " text-white" 
+                  ? getModeBgClass(mode.id, true) + " text-primary-foreground" 
                   : getModeBgClass(mode.id, false)
               )}
             >
               <span className={cn(
                 "flex items-center justify-center",
-                isActive ? "text-white" : mode.color
+                isActive ? "text-primary-foreground" : mode.color
               )}>
                 {mode.icon}
               </span>
@@ -85,7 +85,7 @@ export const TradingModeSelector = ({ displayLabel = true, compact = false }) =>
     <div className="relative w-full">
       {displayLabel && (
         <div className="flex items-center gap-1.5 mb-3">
-          <span className="text-sm font-medium flex items-center gap-1.5 text-gray-300">
+          <span className="text-sm font-medium flex items-center gap-1.5 text-muted-foreground">
             Select Trading Mode
             <TooltipProvider>
               <Tooltip>
@@ -115,7 +115,7 @@ export const TradingModeSelector = ({ displayLabel = true, compact = false }) =>
                       "relative flex flex-col items-center justify-center rounded-lg transition-all duration-300 w-full",
                       "py-3 px-2 border shadow-md",
                       isActive 
-                        ? `${getModeGradientClass(mode.id)} border-white/10 shadow-lg` 
+                        ? `${getModeGradientClass(mode.id)} border-border/10 shadow-lg` 
                         : `${getModeBgClass(mode.id, false)} ${getModeBorderClass(mode.id)} hover:bg-card/50`
                     )}
                   >
@@ -127,14 +127,14 @@ export const TradingModeSelector = ({ displayLabel = true, compact = false }) =>
                       "flex items-center justify-center rounded-full p-1.5 mb-2",
                       isActive ? "" : getModeIconBgClass(mode.id)
                     )}>
-                      <span className={isActive ? "text-white" : ""}>
+                      <span className={isActive ? "text-primary-foreground" : ""}>
                         {mode.icon}
                       </span>
                     </div>
                     
                     <span className={cn(
                       "text-xs font-semibold",
-                      isActive ? "text-white" : ""
+                      isActive ? "text-primary-foreground" : ""
                     )}>
                       {mode.label}
                     </span>

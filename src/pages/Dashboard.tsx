@@ -98,60 +98,60 @@ const Dashboard = () => {
         bullish: {
           title: "Quick Scalp Long",
           description: "Look for minor pullbacks to support levels for quick long entries with tight stops.",
-          icon: <Zap className="h-5 w-5 text-blue-500" />,
-          color: "bg-blue-500/10 text-blue-500 border-blue-500/20"
+          icon: <Zap className="h-5 w-5 text-info" />,
+          color: "bg-info/10 text-info border-info/20"
         },
         bearish: {
           title: "Quick Scalp Short",
           description: "Watch for rejection at resistance levels for rapid short opportunities.",
-          icon: <Zap className="h-5 w-5 text-blue-500" />,
-          color: "bg-blue-500/10 text-blue-500 border-blue-500/20"
+          icon: <Zap className="h-5 w-5 text-info" />,
+          color: "bg-info/10 text-info border-info/20"
         },
         neutral: {
           title: "Range Scalping",
           description: "Focus on trading within established ranges, taking profits quickly.",
-          icon: <Zap className="h-5 w-5 text-blue-500" />,
-          color: "bg-blue-500/10 text-blue-500 border-blue-500/20"
+          icon: <Zap className="h-5 w-5 text-info" />,
+          color: "bg-info/10 text-info border-info/20"
         }
       },
       day: {
         bullish: {
           title: "Intraday Uptrend",
           description: "Look for higher lows forming during the session for swing long positions.",
-          icon: <Sun className="h-5 w-5 text-amber-500" />,
-          color: "bg-amber-500/10 text-amber-500 border-amber-500/20"
+          icon: <Sun className="h-5 w-5 text-warning" />,
+          color: "bg-warning/10 text-warning border-warning/20"
         },
         bearish: {
           title: "Intraday Downtrend",
           description: "Monitor lower highs for short entries with targets at support levels.",
-          icon: <Sun className="h-5 w-5 text-amber-500" />,
-          color: "bg-amber-500/10 text-amber-500 border-amber-500/20"
+          icon: <Sun className="h-5 w-5 text-warning" />,
+          color: "bg-warning/10 text-warning border-warning/20"
         },
         neutral: {
           title: "Consolidation Pattern",
           description: "Watch for breakouts from intraday consolidation patterns.",
-          icon: <Sun className="h-5 w-5 text-amber-500" />,
-          color: "bg-amber-500/10 text-amber-500 border-amber-500/20"
+          icon: <Sun className="h-5 w-5 text-warning" />,
+          color: "bg-warning/10 text-warning border-warning/20"
         }
       },
       night: {
         bullish: {
           title: "Overnight Long",
           description: "Consider overnight positions that target the next day's opening range.",
-          icon: <Moon className="h-5 w-5 text-indigo-500" />,
-          color: "bg-indigo-500/10 text-indigo-500 border-indigo-500/20"
+          icon: <Moon className="h-5 w-5 text-mode-night" />,
+          color: "bg-mode-night/10 text-mode-night border-mode-night/20"
         },
         bearish: {
           title: "Overnight Short",
           description: "Look for evening reversals that may continue through Asian trading hours.",
-          icon: <Moon className="h-5 w-5 text-indigo-500" />,
-          color: "bg-indigo-500/10 text-indigo-500 border-indigo-500/20"
+          icon: <Moon className="h-5 w-5 text-mode-night" />,
+          color: "bg-mode-night/10 text-mode-night border-mode-night/20"
         },
         neutral: {
           title: "Overnight Range",
           description: "Prepare for potential breakouts during overnight sessions.",
-          icon: <Moon className="h-5 w-5 text-indigo-500" />,
-          color: "bg-indigo-500/10 text-indigo-500 border-indigo-500/20"
+          icon: <Moon className="h-5 w-5 text-mode-night" />,
+          color: "bg-mode-night/10 text-mode-night border-mode-night/20"
         }
       }
     };
@@ -174,9 +174,9 @@ const Dashboard = () => {
       <Alert 
         className={cn(
           "border-0",
-          tradingMode === 'scalp' ? 'bg-blue-500/5' : 
-          tradingMode === 'day' ? 'bg-amber-500/5' : 
-          'bg-indigo-500/5'
+          tradingMode === 'scalp' ? 'bg-info/5' : 
+          tradingMode === 'day' ? 'bg-warning/5' : 
+          'bg-mode-night/5'
         )}
       >
         <div className="flex items-center gap-2">

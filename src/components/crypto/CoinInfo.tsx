@@ -54,7 +54,7 @@ const CoinInfo: React.FC<CoinInfoProps> = ({
             <h3 className="font-bold text-lg">{name}</h3>
             <Badge variant="outline" className="text-xs">{symbol}</Badge>
           </div>
-          <Badge className={isPositive ? "bg-green-500 text-white" : "bg-red-500 text-white"}>
+          <Badge className={isPositive ? "bg-bullish text-primary-foreground" : "bg-bearish text-primary-foreground"}>
             {isPositive ? <TrendingUp className="h-3.5 w-3.5 mr-1" /> : <TrendingDown className="h-3.5 w-3.5 mr-1" />}
             {isPositive ? '+' : ''}{change24h.toFixed(2)}%
           </Badge>

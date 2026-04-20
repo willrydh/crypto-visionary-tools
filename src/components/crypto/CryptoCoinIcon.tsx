@@ -28,13 +28,13 @@ const CryptoCoinIcon: React.FC<CryptoCoinIconProps> = ({
   };
 
   const colorMap: Record<SupportedCoin, string> = {
-    BTC: 'text-amber-500',
+    BTC: 'text-warning',
     ETH: 'text-indigo-400',
-    XRP: 'text-blue-500',
-    SOL: 'text-purple-500',
-    DOGE: 'text-yellow-400',
-    WLD: 'text-green-400',
-    LTC: 'text-slate-400',
+    XRP: 'text-info',
+    SOL: 'text-mode-night',
+    DOGE: 'text-warning',
+    WLD: 'text-bullish',
+    LTC: 'text-muted-foreground',
     SUI: 'text-blue-300'
   };
 

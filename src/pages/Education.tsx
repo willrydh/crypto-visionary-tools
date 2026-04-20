@@ -326,30 +326,30 @@ const Education = () => {
               </div>
               
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <Card className="bg-blue-50 dark:bg-blue-950/20 border-blue-100 dark:border-blue-900">
+                <Card className="bg-info/10 dark:bg-info/20 border-blue-100 dark:border-blue-900">
                   <CardContent className="p-4 flex flex-col items-center text-center">
-                    <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-3">
-                      <BookOpen className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-info/30 flex items-center justify-center mb-3">
+                      <BookOpen className="h-5 w-5 text-info dark:text-info" />
                     </div>
                     <h3 className="font-medium">Beginner</h3>
                     <p className="text-sm text-muted-foreground">3 Courses</p>
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-green-50 dark:bg-green-950/20 border-green-100 dark:border-green-900">
+                <Card className="bg-bullish/10 dark:bg-green-950/20 border-green-100 dark:border-green-900">
                   <CardContent className="p-4 flex flex-col items-center text-center">
-                    <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-3">
-                      <LineChart className="h-5 w-5 text-green-600 dark:text-green-400" />
+                    <div className="w-10 h-10 rounded-full bg-bullish/10 dark:bg-bullish/30 flex items-center justify-center mb-3">
+                      <LineChart className="h-5 w-5 text-bullish dark:text-bullish" />
                     </div>
                     <h3 className="font-medium">Intermediate</h3>
                     <p className="text-sm text-muted-foreground">3 Courses</p>
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-purple-50 dark:bg-purple-950/20 border-purple-100 dark:border-purple-900">
+                <Card className="bg-purple-50 dark:bg-purple-950/20 border-purple-100 dark:border-mode-night/30">
                   <CardContent className="p-4 flex flex-col items-center text-center">
                     <div className="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mb-3">
-                      <BrainCircuit className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                      <BrainCircuit className="h-5 w-5 text-purple-600 dark:text-mode-night" />
                     </div>
                     <h3 className="font-medium">Advanced</h3>
                     <p className="text-sm text-muted-foreground">2 Courses</p>
@@ -358,8 +358,8 @@ const Education = () => {
                 
                 <Card className="bg-amber-50 dark:bg-amber-950/20 border-amber-100 dark:border-amber-900">
                   <CardContent className="p-4 flex flex-col items-center text-center">
-                    <div className="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center mb-3">
-                      <BookMarked className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                    <div className="w-10 h-10 rounded-full bg-warning/10 dark:bg-amber-900/30 flex items-center justify-center mb-3">
+                      <BookMarked className="h-5 w-5 text-warning dark:text-warning" />
                     </div>
                     <h3 className="font-medium">Completed</h3>
                     <p className="text-sm text-muted-foreground">{completedCount} Lessons</p>

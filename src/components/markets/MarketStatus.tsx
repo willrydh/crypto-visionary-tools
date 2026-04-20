@@ -45,9 +45,9 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
   const getStatusBadgeStyle = (status: string) => {
     switch(status) {
       case 'open':
-        return "bg-green-500/20 text-green-600 border-green-500";
+        return "bg-bullish/20 text-bullish border-bullish";
       case 'opening-soon':
-        return "bg-amber-500/20 text-amber-600 border-amber-500";
+        return "bg-warning/20 text-warning border-amber-500";
       default:
         return "";
     }

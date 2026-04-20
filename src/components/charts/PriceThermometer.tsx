@@ -46,7 +46,7 @@ const PriceThermometer = () => {
   };
 
   return (
-    <Card className="border-border/30 bg-[#0f1729]">
+    <Card className="border-border/30 bg-surface-1">
       <CardHeader>
         <CardTitle>Price Range</CardTitle>
       </CardHeader>
@@ -59,7 +59,7 @@ const PriceThermometer = () => {
           
           {/* Red indicator circle positioned based on price */}
           <div 
-            className="absolute w-6 h-6 bg-red-500 rounded-full shadow-md border-2 border-background z-10 transform -translate-x-1/2 -translate-y-1/2"
+            className="absolute w-6 h-6 bg-bearish rounded-full shadow-md border-2 border-background z-10 transform -translate-x-1/2 -translate-y-1/2"
             style={{ 
               left: '50%',
               top: `${100 - (dailyPricePosition * 100)}%` 

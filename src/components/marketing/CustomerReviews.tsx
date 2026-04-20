@@ -20,9 +20,9 @@ const Review: React.FC<ReviewProps> = ({ name, role, rating, comment, date }) =>
       <CardContent className="p-6">
         <div className="flex items-center mb-2">
           {[...Array(fullStars)].map((_, i) => (
-            <Star key={`star-${i}`} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+            <Star key={`star-${i}`} className="h-4 w-4 fill-warning text-warning" />
           ))}
-          {hasHalfStar && <StarHalf className="h-4 w-4 fill-yellow-400 text-yellow-400" />}
+          {hasHalfStar && <StarHalf className="h-4 w-4 fill-warning text-warning" />}
           <span className="text-sm text-muted-foreground ml-2">{rating.toFixed(1)}</span>
         </div>
         <p className="mb-4 text-sm italic">"{comment}"</p>

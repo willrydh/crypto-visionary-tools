@@ -109,26 +109,26 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({ className }) => {
               <h3 className="text-lg font-medium mb-4">Potential Monthly Returns</h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 relative overflow-hidden">
+                <div className="bg-info/10 dark:bg-blue-900/20 rounded-lg p-4 relative overflow-hidden">
                   <div className="relative z-10">
                     <div className="flex items-center gap-2 mb-1">
-                      <BarChart3 className="h-4 w-4 text-blue-500" />
+                      <BarChart3 className="h-4 w-4 text-info" />
                       <h4 className="font-medium">Standard Trading</h4>
                     </div>
                     <p className="text-sm text-muted-foreground mb-3">Without ProfitPilot</p>
-                    <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                    <div className="text-2xl font-bold text-info dark:text-info">
                       {formatCurrency(standardEarnings)}
                       <span className="text-sm font-normal text-muted-foreground ml-1">/mo</span>
                     </div>
                   </div>
                   <div className="absolute bottom-0 right-0 opacity-10">
-                    <BarChart3 className="h-24 w-24 text-blue-500" />
+                    <BarChart3 className="h-24 w-24 text-info" />
                   </div>
                 </div>
                 
                 <div className="bg-primary/10 dark:bg-primary/20 rounded-lg p-4 relative overflow-hidden border border-primary/20">
                   <div className="absolute top-1 right-2">
-                    <span className="bg-primary text-white text-xs px-2 py-1 rounded-full">
+                    <span className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">
                       Recommended
                     </span>
                   </div>
@@ -154,14 +154,14 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({ className }) => {
               
               <div className="mt-4 p-4 bg-card border rounded-lg">
                 <div className="flex items-center gap-2 mb-3">
-                  <DollarSign className="h-5 w-5 text-green-500" />
+                  <DollarSign className="h-5 w-5 text-bullish" />
                   <h4 className="font-medium">Daily Goal Achievement</h4>
                 </div>
                 
                 <div className="flex items-center gap-4 mb-2">
-                  <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
                     <div 
-                      className="h-full bg-green-500" 
+                      className="h-full bg-bullish" 
                       style={{ width: `${goalPercentage}%` }}
                     ></div>
                   </div>
@@ -180,7 +180,7 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({ className }) => {
                       <h5 className="font-medium">Potential Annual Growth</h5>
                       <p className="text-sm text-muted-foreground">With compound returns</p>
                     </div>
-                    <div className="text-xl font-bold text-green-600 dark:text-green-400">
+                    <div className="text-xl font-bold text-bullish dark:text-bullish">
                       {formatCurrency(annualEarnings)}
                     </div>
                   </div>

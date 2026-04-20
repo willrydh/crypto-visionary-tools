@@ -16,18 +16,18 @@ interface CryptoData {
 }
 
 const cryptoList = [
-  { symbol: 'BTC', name: 'Bitcoin', color: 'hsl(39, 100%, 50%)' },
-  { symbol: 'ETH', name: 'Ethereum', color: 'hsl(203, 89%, 53%)' },
-  { symbol: 'SOL', name: 'Solana', color: 'hsl(282, 83%, 52%)' },
-  { symbol: 'XRP', name: 'Ripple', color: 'hsl(207, 48%, 43%)' },
-  { symbol: 'DOGE', name: 'Dogecoin', color: 'hsl(46, 100%, 50%)' },
-  { symbol: 'ADA', name: 'Cardano', color: 'hsl(208, 100%, 43%)' },
-  { symbol: 'DOT', name: 'Polkadot', color: 'hsl(326, 100%, 50%)' },
-  { symbol: 'AVAX', name: 'Avalanche', color: 'hsl(1, 100%, 51%)' },
-  { symbol: 'MATIC', name: 'Polygon', color: 'hsl(262, 100%, 62%)' },
-  { symbol: 'LINK', name: 'Chainlink', color: 'hsl(210, 100%, 57%)' },
-  { symbol: 'UNI', name: 'Uniswap', color: 'hsl(327, 80%, 59%)' },
-  { symbol: 'AAVE', name: 'Aave', color: 'hsl(283, 39%, 53%)' },
+  { symbol: 'BTC', name: 'Bitcoin', color: 'hsl(var(--warning))' },
+  { symbol: 'ETH', name: 'Ethereum', color: 'hsl(var(--info))' },
+  { symbol: 'SOL', name: 'Solana', color: 'hsl(var(--mode-night))' },
+  { symbol: 'XRP', name: 'Ripple', color: 'hsl(var(--primary))' },
+  { symbol: 'DOGE', name: 'Dogecoin', color: 'hsl(var(--warning))' },
+  { symbol: 'ADA', name: 'Cardano', color: 'hsl(var(--info))' },
+  { symbol: 'DOT', name: 'Polkadot', color: 'hsl(var(--mode-night))' },
+  { symbol: 'AVAX', name: 'Avalanche', color: 'hsl(var(--bearish))' },
+  { symbol: 'MATIC', name: 'Polygon', color: 'hsl(var(--mode-night))' },
+  { symbol: 'LINK', name: 'Chainlink', color: 'hsl(var(--info))' },
+  { symbol: 'UNI', name: 'Uniswap', color: 'hsl(var(--mode-night))' },
+  { symbol: 'AAVE', name: 'Aave', color: 'hsl(var(--mode-night))' },
 ];
 
 // Mock data generator - in a real app, this would be replaced by an API call
@@ -145,7 +145,7 @@ const CryptoBubbles: React.FC = () => {
   
   const getCryptoColor = (symbol: string) => {
     const crypto = cryptoList.find(c => c.symbol === symbol);
-    return crypto?.color || 'hsl(210, 100%, 50%)';
+    return crypto?.color || 'hsl(var(--info))';
   };
   
   if (isLoading) {
@@ -214,10 +214,10 @@ const CryptoBubbles: React.FC = () => {
               <span className="font-bold">{crypto.symbol}</span>
               <div className="flex items-center text-xs">
                 {isPositive ? 
-                  <TrendingUp className="h-3 w-3 text-green-500 mr-1" /> : 
-                  <TrendingDown className="h-3 w-3 text-red-500 mr-1" />
+                  <TrendingUp className="h-3 w-3 text-bullish mr-1" /> : 
+                  <TrendingDown className="h-3 w-3 text-bearish mr-1" />
                 }
-                <span className={isPositive ? "text-green-500" : "text-red-500"}>
+                <span className={isPositive ? "text-bullish" : "text-bearish"}>
                   {crypto.change24h.toFixed(2)}%
                 </span>
               </div>
@@ -264,7 +264,7 @@ const CryptoBubbles: React.FC = () => {
               </div>
               <div>
                 <p className="text-muted-foreground">24h Change</p>
-                <p className={`font-bold ${selectedCrypto.change24h > 0 ? 'text-green-500' : 'text-red-500'}`}>
+                <p className={`font-bold ${selectedCrypto.change24h > 0 ? 'text-bullish' : 'text-bearish'}`}>
                   {selectedCrypto.change24h > 0 ? '+' : ''}{selectedCrypto.change24h.toFixed(2)}%
                 </p>
               </div>

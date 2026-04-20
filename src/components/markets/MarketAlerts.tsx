@@ -80,7 +80,7 @@ const MarketAlerts: React.FC<MarketAlertsProps> = ({ soundEnabled = true }) => {
       audioRef.current.play().catch(e => console.log("Audio playback error:", e));
     }
     
-    let icon = event.type === 'open' ? <ArrowUpRight className="h-4 w-4 text-green-500" /> : <ArrowDownRight className="h-4 w-4 text-red-500" />;
+    let icon = event.type === 'open' ? <ArrowUpRight className="h-4 w-4 text-bullish" /> : <ArrowDownRight className="h-4 w-4 text-bearish" />;
     let title = `${event.name} Market ${event.type === 'open' ? 'Opening' : 'Closing'}`;
     let description = `${event.name} market is now ${event.type === 'open' ? 'open' : 'closing'} at ${event.time}. ${event.impact === 'high' ? 'Expect high volatility' : event.impact === 'medium' ? 'Moderate volatility expected' : 'Low volatility expected'}.`;
     

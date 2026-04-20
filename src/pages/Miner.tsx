@@ -204,7 +204,7 @@ const Miner = () => {
             <CardContent>
               <div 
                 ref={consoleRef}
-                className="h-10 flex items-center bg-black/80 text-green-400 font-mono text-xs p-4 rounded-md"
+                className="h-10 flex items-center bg-foreground/80 text-bullish font-mono text-xs p-4 rounded-md"
               >
                 <div className={isMining ? 'animate-pulse' : ''}>
                   {consoleOutput}
@@ -260,7 +260,7 @@ const Miner = () => {
               <div>
                 <div className="text-sm text-muted-foreground mb-1">Network Status</div>
                 <div className="flex items-center">
-                  <div className="h-2 w-2 rounded-full bg-green-500 mr-2"></div>
+                  <div className="h-2 w-2 rounded-full bg-bullish mr-2"></div>
                   <span>Connected (42 peers)</span>
                 </div>
               </div>
@@ -289,7 +289,7 @@ const Miner = () => {
                         </div>
                         <div className="text-right">
                           <div>${value}</div>
-                          <div className="text-xs text-green-500">+{(Math.random() * 5).toFixed(2)}%</div>
+                          <div className="text-xs text-bullish">+{(Math.random() * 5).toFixed(2)}%</div>
                         </div>
                       </div>
                     );

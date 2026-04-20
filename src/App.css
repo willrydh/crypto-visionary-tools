@@ -23,7 +23,7 @@
 
 .data-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 10px 25px -5px hsl(var(--foreground) / 0.1), 0 10px 10px -5px hsl(var(--foreground) / 0.04);
 }
 
 /* Subtle pulse animation for loading states */
@@ -77,7 +77,7 @@
 
 /* Shadow glow for indicator dots */
 .shadow-glow {
-  box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 8px 2px hsl(var(--primary-foreground) / 0.3);
 }
 
 /* Background noise texture */
@@ -118,11 +118,11 @@
   bottom: 0;
   background: linear-gradient(
     135deg,
-    rgba(32, 87, 100, 0.15) 0%,
-    rgba(23, 92, 61, 0.15) 25%,
-    rgba(67, 97, 157, 0.15) 50%,
-    rgba(114, 59, 143, 0.15) 75%,
-    rgba(17, 75, 95, 0.15) 100%
+    hsl(var(--info) / 0.15) 0%,
+    hsl(var(--bullish) / 0.15) 25%,
+    hsl(var(--primary) / 0.15) 50%,
+    hsl(var(--mode-night) / 0.15) 75%,
+    hsl(var(--info) / 0.12) 100%
   );
   opacity: 0.7;
   animation: northern-lights 45s ease-in-out infinite;
@@ -144,8 +144,8 @@
   background: radial-gradient(
     circle at 50% 50%,
     transparent 50%,
-    rgba(67, 97, 157, 0.15) 75%,
-    rgba(32, 87, 100, 0.15) 100%
+    hsl(var(--primary) / 0.15) 75%,
+    hsl(var(--info) / 0.15) 100%
   );
   animation: pulse-subtle 10s ease-in-out infinite;
   pointer-events: none;
@@ -164,8 +164,8 @@
   bottom: 0;
   background: linear-gradient(
     135deg,
-    rgba(45, 55, 72, 0.15) 0%,
-    rgba(45, 55, 72, 0.15) 100%
+    hsl(var(--muted-foreground) / 0.15) 0%,
+    hsl(var(--muted-foreground) / 0.15) 100%
   );
   animation: pulse-subtle 10s ease-in-out infinite;
   pointer-events: none;
@@ -185,8 +185,8 @@
   bottom: 0;
   background: linear-gradient(
     135deg,
-    rgba(23, 92, 61, 0.15) 0%,
-    rgba(32, 128, 80, 0.15) 100%
+    hsl(var(--bullish) / 0.15) 0%,
+    hsl(var(--bullish) / 0.12) 100%
   );
   animation: pulse-subtle 10s ease-in-out infinite;
   pointer-events: none;
@@ -206,8 +206,8 @@
   bottom: 0;
   background: linear-gradient(
     135deg,
-    rgba(128, 32, 32, 0.15) 0%,
-    rgba(160, 40, 40, 0.15) 100%
+    hsl(var(--bearish) / 0.12) 0%,
+    hsl(var(--bearish) / 0.18) 100%
   );
   animation: pulse-subtle 10s ease-in-out infinite;
   pointer-events: none;
@@ -248,7 +248,7 @@
 
 /* Consistent card shadows */
 .shadow-card {
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 3px 0 hsl(var(--foreground) / 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 }
 
 /* Consistent button transitions */
@@ -258,7 +258,7 @@ button {
 
 /* Frosted glass effect */
 .frost-blur {
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: hsl(var(--foreground) / 0.3);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }

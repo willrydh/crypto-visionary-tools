@@ -70,7 +70,7 @@ const EasterEggDiscount = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-black/20">
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-foreground/20">
       <BlurredBackground imageSrc={backgroundImages} className="opacity-80" />
       
       <div className="absolute top-4 left-4 z-20">
@@ -89,7 +89,7 @@ const EasterEggDiscount = () => {
             <Card className="backdrop-blur-lg bg-card/50 border-primary/50">
               <CardHeader>
                 <CardTitle className="text-center text-2xl">
-                  <Sparkles className="h-6 w-6 text-yellow-500 inline-block mb-1 mr-2" />
+                  <Sparkles className="h-6 w-6 text-warning inline-block mb-1 mr-2" />
                   You Found Something Special!
                 </CardTitle>
                 <CardDescription className="text-center">
@@ -149,7 +149,7 @@ const EasterEggDiscount = () => {
                     <span className="text-muted-foreground ml-2">/year</span>
                   </div>
                   <CardDescription className="mt-2">
-                    <span className="text-green-500 font-medium">Save over 45%</span> with this special discount!
+                    <span className="text-bullish font-medium">Save over 45%</span> with this special discount!
                   </CardDescription>
                 </div>
               </CardHeader>
@@ -167,7 +167,7 @@ const EasterEggDiscount = () => {
                       className="h-8"
                     >
                       {copied ? (
-                        <Check className="h-4 w-4 text-green-500" />
+                        <Check className="h-4 w-4 text-bullish" />
                       ) : (
                         <Copy className="h-4 w-4" />
                       )}

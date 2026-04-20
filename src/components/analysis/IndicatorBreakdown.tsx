@@ -258,11 +258,11 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
   const getBackgroundGradient = () => {
     switch (overallSentiment) {
       case 'bullish':
-        return 'from-green-950/30 via-green-900/20 to-green-900/5';
+        return 'from-bullish/20 via-bullish/10 to-transparent';
       case 'bearish':
-        return 'from-red-950/30 via-red-900/20 to-red-900/5';
+        return 'from-bearish/20 via-bearish/10 to-transparent';
       default:
-        return 'from-blue-950/20 via-blue-900/10 to-blue-900/5';
+        return 'from-info/20 via-info/10 to-transparent';
     }
   };
 
@@ -276,7 +276,7 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
             transition={{ duration: 0.3 }}
           >
             <Badge 
-              className="flex items-center gap-1 bg-green-500/90 hover:bg-green-500 transition-colors text-white"
+              className="flex items-center gap-1 bg-bullish/90 hover:bg-bullish transition-colors text-primary-foreground"
             >
               <CheckCircle2 className="h-3 w-3" />
               <span>Bullish</span>
@@ -291,7 +291,7 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
             transition={{ duration: 0.3 }}
           >
             <Badge 
-              className="flex items-center gap-1 bg-red-500/90 hover:bg-red-500 transition-colors text-white"
+              className="flex items-center gap-1 bg-bearish/90 hover:bg-bearish transition-colors text-primary-foreground"
             >
               <XCircle className="h-3 w-3" />
               <span>Bearish</span>
@@ -341,17 +341,17 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
     
     const getBarColor = () => {
       switch(signal) {
-        case 'bullish': return 'bg-green-500';
-        case 'bearish': return 'bg-red-500';
-        default: return 'bg-yellow-500';
+        case 'bullish': return 'bg-bullish';
+        case 'bearish': return 'bg-bearish';
+        default: return 'bg-warning';
       }
     };
 
     const getTrackColor = () => {
       switch(signal) {
-        case 'bullish': return 'bg-green-900/20';
-        case 'bearish': return 'bg-red-900/20';
-        default: return 'bg-yellow-900/20';
+        case 'bullish': return 'bg-bullish/20';
+        case 'bearish': return 'bg-bearish/20';
+        default: return 'bg-warning/20';
       }
     };
     
@@ -480,11 +480,11 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
   const getInsightIcon = (type: 'info' | 'warning' | 'success') => {
     switch(type) {
       case 'info':
-        return <Info className="h-4 w-4 text-blue-500" />;
+        return <Info className="h-4 w-4 text-info" />;
       case 'warning':
-        return <AlertTriangle className="h-4 w-4 text-amber-500" />;
+        return <AlertTriangle className="h-4 w-4 text-warning" />;
       case 'success':
-        return <Lightbulb className="h-4 w-4 text-green-500" />;
+        return <Lightbulb className="h-4 w-4 text-bullish" />;
       default:
         return <Info className="h-4 w-4" />;
     }
@@ -500,14 +500,14 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
             <circle 
               cx="60" cy="60" r="48" 
               fill="transparent" 
-              stroke="#374151" 
+              stroke="hsl(var(--border))" 
               strokeWidth="12" 
               strokeLinecap="round"
             />
             <motion.circle 
               cx="60" cy="60" r="48" 
               fill="transparent" 
-              stroke="#10b981" 
+              stroke="hsl(var(--bullish))" 
               strokeWidth="12" 
               strokeLinecap="round"
               strokeDasharray={circumference} 
@@ -520,7 +520,7 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
             <motion.circle 
               cx="60" cy="60" r="48" 
               fill="transparent" 
-              stroke="#ef4444" 
+              stroke="hsl(var(--bearish))" 
               strokeWidth="12" 
               strokeLinecap="round"
               strokeDasharray={circumference} 
@@ -533,7 +533,7 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
             <motion.circle 
               cx="60" cy="60" r="48" 
               fill="transparent" 
-              stroke="#f59e0b" 
+              stroke="hsl(var(--warning))" 
               strokeWidth="12" 
               strokeLinecap="round"
               strokeDasharray={circumference} 
@@ -545,7 +545,7 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
             />
             <circle 
               cx="60" cy="60" r="36" 
-              fill="#111827" 
+              fill="hsl(var(--surface-1))" 
             />
           </svg>
           <motion.div 
@@ -609,9 +609,9 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
           <motion.div 
             key={index}
             className={`p-3 rounded-lg border ${
-              indicator.signal === 'bullish' ? 'border-green-500/30 bg-green-950/10' : 
-              indicator.signal === 'bearish' ? 'border-red-500/30 bg-red-950/10' : 
-              'border-yellow-500/30 bg-yellow-950/10'
+              indicator.signal === 'bullish' ? 'border-bullish/30 bg-bullish/10' : 
+              indicator.signal === 'bearish' ? 'border-bearish/30 bg-bearish/10' : 
+              'border-warning/30 bg-warning/10'
             }`}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -629,9 +629,9 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
               <div className="flex items-center justify-between mb-1">
                 <span className={cn(
                   "text-sm font-mono",
-                  indicator.signal === 'bullish' ? 'text-green-400' : 
-                  indicator.signal === 'bearish' ? 'text-red-400' : 
-                  'text-yellow-400'
+                  indicator.signal === 'bullish' ? 'text-bullish' : 
+                  indicator.signal === 'bearish' ? 'text-bearish' : 
+                  'text-warning'
                 )}>
                   {indicator.value.toString()}
                 </span>
@@ -662,7 +662,7 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
     return (
       <div className="mt-4 space-y-3">
         <h3 className="font-medium text-sm flex items-center gap-1.5">
-          <Lightbulb className="h-4 w-4 text-blue-500" />
+          <Lightbulb className="h-4 w-4 text-info" />
           <span>Detected Patterns & Insights</span>
         </h3>
         
@@ -672,9 +672,9 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
               <motion.div 
                 key={index}
                 className={`p-3 rounded-lg border ${
-                  pattern.type === 'success' ? 'border-green-500/30 bg-green-950/10' : 
-                  pattern.type === 'warning' ? 'border-amber-500/30 bg-amber-950/10' : 
-                  'border-blue-500/30 bg-blue-950/10'
+                  pattern.type === 'success' ? 'border-bullish/30 bg-bullish/10' : 
+                  pattern.type === 'warning' ? 'border-warning/30 bg-warning/10' : 
+                  'border-info/30 bg-info/10'
                 }`}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -696,9 +696,9 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
           </p>
         )}
         
-        <div className="p-3 rounded-lg border border-blue-500/30 bg-blue-950/10 mt-4">
+        <div className="p-3 rounded-lg border border-info/30 bg-info/10 mt-4">
           <div className="flex items-center gap-1.5 mb-1">
-            <Info className="h-4 w-4 text-blue-500" />
+            <Info className="h-4 w-4 text-info" />
             <h4 className="font-medium text-sm">Technical Summary</h4>
           </div>
           <p className="text-xs text-muted-foreground">
@@ -713,7 +713,7 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
     return (
       <div className="mt-4 space-y-3">
         <h3 className="font-medium text-sm flex items-center gap-1.5">
-          <Calendar className="h-4 w-4 text-blue-500" />
+          <Calendar className="h-4 w-4 text-info" />
           <span>Technical Analysis Guide</span>
         </h3>
         
@@ -749,9 +749,9 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
           <span>Indicator Breakdown</span>
           <Badge className={cn(
             "transition-colors duration-300",
-            overallSentiment === 'bullish' && "bg-green-500",
-            overallSentiment === 'bearish' && "bg-red-500",
-            overallSentiment === 'neutral' && "bg-blue-500"
+            overallSentiment === 'bullish' && "bg-bullish",
+            overallSentiment === 'bearish' && "bg-bearish",
+            overallSentiment === 'neutral' && "bg-info"
           )}>
             {overallSentiment.charAt(0).toUpperCase() + overallSentiment.slice(1)}
           </Badge>
@@ -786,37 +786,37 @@ export const IndicatorBreakdown: React.FC<IndicatorBreakdownProps> = ({ indicato
                 
                 <div className="grid grid-cols-3 gap-2 text-center">
                   <motion.div 
-                    className="bg-black/20 rounded-md p-2 border border-green-500/30"
+                    className="bg-foreground/20 rounded-md p-2 border border-bullish/30"
                     initial={{ scale: 0.95, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: 0.1, duration: 0.3 }}
                   >
-                    <span className="text-green-500 text-sm font-medium">{getBullishCount()}</span>
+                    <span className="text-bullish text-sm font-medium">{getBullishCount()}</span>
                     <p className="text-xs text-muted-foreground">Bullish</p>
                   </motion.div>
                   <motion.div 
-                    className="bg-black/20 rounded-md p-2 border border-yellow-500/30"
+                    className="bg-foreground/20 rounded-md p-2 border border-warning/30"
                     initial={{ scale: 0.95, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: 0.2, duration: 0.3 }}
                   >
-                    <span className="text-yellow-500 text-sm font-medium">{getNeutralCount()}</span>
+                    <span className="text-warning text-sm font-medium">{getNeutralCount()}</span>
                     <p className="text-xs text-muted-foreground">Neutral</p>
                   </motion.div>
                   <motion.div 
-                    className="bg-black/20 rounded-md p-2 border border-red-500/30"
+                    className="bg-foreground/20 rounded-md p-2 border border-bearish/30"
                     initial={{ scale: 0.95, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: 0.3, duration: 0.3 }}
                   >
-                    <span className="text-red-500 text-sm font-medium">{getBearishCount()}</span>
+                    <span className="text-bearish text-sm font-medium">{getBearishCount()}</span>
                     <p className="text-xs text-muted-foreground">Bearish</p>
                   </motion.div>
                 </div>
                 
-                <div className="p-3 rounded-lg border border-blue-500/30 bg-blue-950/10">
+                <div className="p-3 rounded-lg border border-info/30 bg-info/10">
                   <div className="flex items-center gap-1.5 mb-1">
-                    <Info className="h-4 w-4 text-blue-500" />
+                    <Info className="h-4 w-4 text-info" />
                     <h4 className="font-medium text-sm">Technical Analysis Summary</h4>
                   </div>
                   <p className="text-xs text-muted-foreground">

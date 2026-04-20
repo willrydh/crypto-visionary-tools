@@ -248,19 +248,19 @@ const MarketSessionStats = ({
   const getImpactColor = (impact: string) => {
     switch (impact.toLowerCase()) {
       case 'high':
-        return 'bg-red-500/10 text-red-500 border-red-200/20';
+        return 'bg-bearish/10 text-bearish border-red-200/20';
       case 'medium':
-        return 'bg-amber-500/10 text-amber-500 border-amber-200/20';
+        return 'bg-warning/10 text-warning border-amber-200/20';
       case 'low':
-        return 'bg-green-500/10 text-green-500 border-green-200/20';
+        return 'bg-bullish/10 text-bullish border-green-200/20';
       default:
-        return 'bg-blue-500/10 text-blue-500 border-blue-200/20';
+        return 'bg-info/10 text-info border-blue-200/20';
     }
   };
 
   const getStatusIndicator = (session: any) => {
     if (session.status === 'active') {
-      return <span className="flex items-center gap-1 text-green-500 text-xs font-medium"><span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Live</span>;
+      return <span className="flex items-center gap-1 text-bullish text-xs font-medium"><span className="w-2 h-2 bg-bullish rounded-full animate-pulse"></span> Live</span>;
     }
     return (
       <span className="flex items-center gap-1 text-muted-foreground text-xs">
@@ -289,7 +289,7 @@ const MarketSessionStats = ({
             >
               <div className="flex items-center">
                 <p>Source: {dataSource === 'alpha-vantage' ? 'Alpha Vantage' : 'Internal'}</p>
-                <span className="ml-1.5 inline-block h-2 w-2 rounded-full bg-green-500 group-hover:animate-pulse"></span>
+                <span className="ml-1.5 inline-block h-2 w-2 rounded-full bg-bullish group-hover:animate-pulse"></span>
               </div>
               <p className="mt-1">Market impact data calculated from historical patterns</p>
             </MarketDataTooltip>
@@ -333,7 +333,7 @@ const MarketSessionStats = ({
                   <div className="space-y-1">
                     <div className="flex justify-between items-center text-xs">
                       <div className="flex items-center gap-1">
-                        <TrendingUp className="h-3.5 w-3.5 text-green-500" />
+                        <TrendingUp className="h-3.5 w-3.5 text-bullish" />
                         <span>Pump Frequency</span>
                       </div>
                       <span className="font-medium">{session.pumpFrequency}%</span>
@@ -349,7 +349,7 @@ const MarketSessionStats = ({
                   <div className="space-y-1">
                     <div className="flex justify-between items-center text-xs">
                       <div className="flex items-center gap-1">
-                        <TrendingDown className="h-3.5 w-3.5 text-red-500" />
+                        <TrendingDown className="h-3.5 w-3.5 text-bearish" />
                         <span>Dump Frequency</span>
                       </div>
                       <span className="font-medium">{session.dumpFrequency}%</span>

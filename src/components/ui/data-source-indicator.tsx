@@ -27,7 +27,7 @@ export const DataSourceIndicator: React.FC<DataSourceIndicatorProps> = ({
             <span>{source}</span>
             <span 
               className={`inline-block h-2 w-2 rounded-full ${
-                isLive ? 'bg-green-500' : 'bg-amber-500'
+                isLive ? 'bg-bullish' : 'bg-warning'
               }`}
             />
           </div>
@@ -38,7 +38,7 @@ export const DataSourceIndicator: React.FC<DataSourceIndicatorProps> = ({
             <div className="flex items-center">
               <span 
                 className={`inline-block h-2 w-2 rounded-full mr-1.5 ${
-                  isLive ? 'bg-green-500' : 'bg-amber-500'
+                  isLive ? 'bg-bullish' : 'bg-warning'
                 }`}
               />
               <span>{isLive ? 'Live data' : 'Simulated data'}</span>

@@ -22,8 +22,8 @@ interface EconomicEvent {
 }
 
 const getImportanceBadge = (importance: number) => {
-  if (importance === 3) return <Badge className="bg-red-500">High</Badge>;
-  if (importance === 2) return <Badge className="bg-yellow-500">Medium</Badge>;
+  if (importance === 3) return <Badge className="bg-bearish">High</Badge>;
+  if (importance === 2) return <Badge className="bg-warning">Medium</Badge>;
   return <Badge variant="outline">Low</Badge>;
 };
 

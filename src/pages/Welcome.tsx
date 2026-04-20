@@ -65,7 +65,7 @@ const Welcome = () => {
             <span className="font-bold text-lg">ProfitPilot</span>
           </Link>
           <div className="flex items-center gap-3">
-            <Button onClick={() => navigate('/pricing')} className="flex items-center gap-2 text-white">
+            <Button onClick={() => navigate('/pricing')} className="flex items-center gap-2 text-primary-foreground">
               <BarChart3 className="h-4 w-4" />
               Get TradePilot
             </Button>
@@ -88,7 +88,7 @@ const Welcome = () => {
             ProfitPilot uses advanced artificial intelligence to analyze market data and provide real-time trading signals, support & resistance levels, and market insights.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Button size="lg" onClick={() => navigate('/pricing')} className="flex items-center gap-2 text-white">
+            <Button size="lg" onClick={() => navigate('/pricing')} className="flex items-center gap-2 text-primary-foreground">
               Get Started <ArrowRight className="ml-2" />
             </Button>
             <Button variant="outline" size="lg" onClick={() => navigate('/signals')}>
@@ -100,7 +100,7 @@ const Welcome = () => {
             <Card className="bg-card/50 backdrop-blur">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Lightbulb className="h-5 w-5 text-yellow-500" /> AI Signals
+                  <Lightbulb className="h-5 w-5 text-warning" /> AI Signals
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -113,7 +113,7 @@ const Welcome = () => {
             <Card className="bg-card/50 backdrop-blur">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-green-500" /> Market Analysis
+                  <TrendingUp className="h-5 w-5 text-bullish" /> Market Analysis
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -126,7 +126,7 @@ const Welcome = () => {
             <Card className="bg-card/50 backdrop-blur">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <GraduationCap className="h-5 w-5 text-blue-500" /> Trading Education
+                  <GraduationCap className="h-5 w-5 text-info" /> Trading Education
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -223,7 +223,7 @@ const Welcome = () => {
             Join ProfitPilot AI today and start making smarter trading decisions.
           </p>
           <div className="flex justify-center">
-            <Button size="lg" onClick={() => navigate('/pricing')} className="flex items-center gap-2 text-white">
+            <Button size="lg" onClick={() => navigate('/pricing')} className="flex items-center gap-2 text-primary-foreground">
               Get TradePilot <ArrowRight className="ml-2" />
             </Button>
           </div>
@@ -234,15 +234,15 @@ const Welcome = () => {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-wrap justify-center gap-6 mb-6">
             <div className="flex items-center gap-2 px-4 py-2 bg-card/50 backdrop-blur-sm rounded-full">
-              <Award className="h-5 w-5 text-amber-500" />
+              <Award className="h-5 w-5 text-warning" />
               <span className="text-sm font-medium">Best Trading App 2024</span>
             </div>
             <div className="flex items-center gap-2 px-4 py-2 bg-card/50 backdrop-blur-sm rounded-full">
-              <Trophy className="h-5 w-5 text-cyan-500" />
+              <Trophy className="h-5 w-5 text-info" />
               <span className="text-sm font-medium">FinTech Innovation Award</span>
             </div>
             <div className="flex items-center gap-2 px-4 py-2 bg-card/50 backdrop-blur-sm rounded-full">
-              <Medal className="h-5 w-5 text-purple-500" />
+              <Medal className="h-5 w-5 text-mode-night" />
               <span className="text-sm font-medium">Top AI Trading Solution</span>
             </div>
           </div>

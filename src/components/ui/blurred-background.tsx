@@ -68,19 +68,19 @@ export const BlurredBackground: React.FC<BlurredBackgroundProps> = ({
   const getNorthernLightsColor = () => {
     const themes = {
       green: [
-        'rgba(23, 92, 61, 0.15)',
-        'rgba(32, 128, 80, 0.15)',
+        'hsl(var(--bullish) / 0.15)',
+        'hsl(var(--bullish) / 0.12)',
         'rgba(40, 160, 100, 0.15)',
         'rgba(20, 80, 50, 0.15)'
       ],
       red: [
-        'rgba(128, 32, 32, 0.15)',
-        'rgba(160, 40, 40, 0.15)',
+        'hsl(var(--bearish) / 0.12)',
+        'hsl(var(--bearish) / 0.18)',
         'rgba(140, 30, 30, 0.15)',
         'rgba(110, 25, 25, 0.15)'
       ],
       neutral: [
-        'rgba(45, 55, 72, 0.15)',
+        'hsl(var(--muted-foreground) / 0.15)',
         'rgba(50, 60, 80, 0.15)',
         'rgba(40, 50, 70, 0.15)',
         'rgba(55, 65, 85, 0.15)'

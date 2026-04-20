@@ -82,8 +82,8 @@ const ForgotPassword: React.FC = () => {
             </>
           ) : (
             <div className="flex flex-col items-center text-center space-y-4 py-4">
-              <div className="h-12 w-12 rounded-full bg-green-500/10 flex items-center justify-center">
-                <CheckCircle className="h-6 w-6 text-green-500" />
+              <div className="h-12 w-12 rounded-full bg-bullish/10 flex items-center justify-center">
+                <CheckCircle className="h-6 w-6 text-bullish" />
               </div>
               <div className="space-y-2">
                 <h3 className="text-lg font-medium">Email sent successfully</h3>

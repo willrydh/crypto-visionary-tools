@@ -294,15 +294,15 @@ const Notifications = () => {
   
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case "alert": return "bg-orange-500/10 text-orange-500 border-orange-500/20";
-      case "signal": return "bg-green-500/10 text-green-500 border-green-500/20";
-      case "market": return "bg-blue-500/10 text-blue-500 border-blue-500/20";
-      case "report": return "bg-purple-500/10 text-purple-500 border-purple-500/20";
-      case "settings": return "bg-slate-500/10 text-slate-500 border-slate-500/20";
-      case "analysis": return "bg-cyan-500/10 text-cyan-500 border-cyan-500/20";
-      case "navigation": return "bg-amber-500/10 text-amber-500 border-amber-500/20";
-      case "security": return "bg-red-500/10 text-red-500 border-red-500/20";
-      case "price": return "bg-green-500/10 text-green-500 border-green-500/20";
+      case "alert": return "bg-warning/10 text-warning border-orange-500/20";
+      case "signal": return "bg-bullish/10 text-bullish border-bullish/20";
+      case "market": return "bg-info/10 text-info border-info/20";
+      case "report": return "bg-mode-night/10 text-mode-night border-purple-500/20";
+      case "settings": return "bg-slate-500/10 text-muted-foreground border-slate-500/20";
+      case "analysis": return "bg-cyan-500/10 text-info border-cyan-500/20";
+      case "navigation": return "bg-warning/10 text-warning border-warning/20";
+      case "security": return "bg-bearish/10 text-bearish border-bearish/20";
+      case "price": return "bg-bullish/10 text-bullish border-bullish/20";
       default: return "bg-gray-500/10 text-gray-500 border-gray-500/20";
     }
   };

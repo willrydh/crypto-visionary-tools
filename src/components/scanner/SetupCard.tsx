@@ -17,21 +17,21 @@ export const SetupCard: React.FC<SetupCardProps> = ({ setup }) => {
   const getSetupIcon = () => {
     switch (setup.type) {
       case 'BullFlag':
-        return <Flag className="h-5 w-5 text-green-500" />;
+        return <Flag className="h-5 w-5 text-bullish" />;
       case 'BearFlag':
-        return <Flag className="h-5 w-5 text-red-500" />;
+        return <Flag className="h-5 w-5 text-bearish" />;
       case 'BullishRetest':
-        return <Repeat className="h-5 w-5 text-green-500" />;
+        return <Repeat className="h-5 w-5 text-bullish" />;
       case 'BearishRetest':
-        return <Repeat className="h-5 w-5 text-red-500" />;
+        return <Repeat className="h-5 w-5 text-bearish" />;
       case 'Reversal':
         return setup.entryPrice > setup.price 
-          ? <CornerRightDown className="h-5 w-5 text-green-500" /> 
-          : <CornerLeftDown className="h-5 w-5 text-red-500" />;
+          ? <CornerRightDown className="h-5 w-5 text-bullish" /> 
+          : <CornerLeftDown className="h-5 w-5 text-bearish" />;
       case 'BOM':
         return setup.entryPrice > setup.price 
-          ? <TrendingUp className="h-5 w-5 text-green-500" /> 
-          : <TrendingDown className="h-5 w-5 text-red-500" />;
+          ? <TrendingUp className="h-5 w-5 text-bullish" /> 
+          : <TrendingDown className="h-5 w-5 text-bearish" />;
       default:
         return null;
     }
@@ -43,9 +43,9 @@ export const SetupCard: React.FC<SetupCardProps> = ({ setup }) => {
       (setup.type === 'BOM' && setup.entryPrice > setup.price);
     
     if (isBullish) {
-      return "bg-green-500/20 text-green-600 border-green-600/30";
+      return "bg-bullish/20 text-bullish border-bullish/30";
     } else {
-      return "bg-red-500/20 text-red-600 border-red-600/30";
+      return "bg-bearish/20 text-red-600 border-bearish/30";
     }
   };
   
@@ -101,11 +101,11 @@ export const SetupCard: React.FC<SetupCardProps> = ({ setup }) => {
           <div className="grid grid-cols-2 gap-2">
             <div className="flex items-center justify-between">
               <span className="text-xs text-muted-foreground">Stop Loss</span>
-              <span className="text-xs font-mono text-red-500">{setup.stopLoss.toFixed(2)}</span>
+              <span className="text-xs font-mono text-bearish">{setup.stopLoss.toFixed(2)}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-xs text-muted-foreground">Take Profit</span>
-              <span className="text-xs font-mono text-green-500">{setup.takeProfit.toFixed(2)}</span>
+              <span className="text-xs font-mono text-bullish">{setup.takeProfit.toFixed(2)}</span>
             </div>
           </div>
         </div>

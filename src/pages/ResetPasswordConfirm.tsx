@@ -58,10 +58,10 @@ const ResetPasswordConfirm: React.FC = () => {
   
   const getStrengthColor = () => {
     if (passwordStrength === 0) return "bg-muted";
-    if (passwordStrength <= 25) return "bg-red-500";
-    if (passwordStrength <= 50) return "bg-yellow-500";
-    if (passwordStrength <= 75) return "bg-blue-500";
-    return "bg-green-500";
+    if (passwordStrength <= 25) return "bg-bearish";
+    if (passwordStrength <= 50) return "bg-warning";
+    if (passwordStrength <= 75) return "bg-info";
+    return "bg-bullish";
   };
   
   const handleSubmit = async (e: React.FormEvent) => {
@@ -120,14 +120,14 @@ const ResetPasswordConfirm: React.FC = () => {
           {!resetSuccess ? (
             <>
               {error && (
-                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-md text-red-500 text-sm flex items-start">
+                <div className="p-3 bg-bearish/10 border border-bearish/20 rounded-md text-bearish text-sm flex items-start">
                   <XCircle className="h-4 w-4 mt-0.5 mr-2 shrink-0" />
                   <span>{error}</span>
                 </div>
               )}
               
               {!token && (
-                <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-md text-yellow-500 text-sm">
+                <div className="p-3 bg-warning/10 border border-warning/20 rounded-md text-warning text-sm">
                   This reset link appears to be invalid or expired. Please request a new password reset.
                 </div>
               )}
@@ -159,10 +159,10 @@ const ResetPasswordConfirm: React.FC = () => {
                       <span>Password strength:</span>
                       <span className={
                         passwordStrength === 0 ? "text-muted-foreground" :
-                        passwordStrength <= 25 ? "text-red-500" :
-                        passwordStrength <= 50 ? "text-yellow-500" :
-                        passwordStrength <= 75 ? "text-blue-500" :
-                        "text-green-500"
+                        passwordStrength <= 25 ? "text-bearish" :
+                        passwordStrength <= 50 ? "text-warning" :
+                        passwordStrength <= 75 ? "text-info" :
+                        "text-bullish"
                       }>
                         {getStrengthText()}
                       </span>
@@ -194,8 +194,8 @@ const ResetPasswordConfirm: React.FC = () => {
             </>
           ) : (
             <div className="flex flex-col items-center text-center space-y-4 py-6">
-              <div className="h-12 w-12 rounded-full bg-green-500/10 flex items-center justify-center">
-                <CheckCircle className="h-6 w-6 text-green-500" />
+              <div className="h-12 w-12 rounded-full bg-bullish/10 flex items-center justify-center">
+                <CheckCircle className="h-6 w-6 text-bullish" />
               </div>
               <div className="space-y-2">
                 <h3 className="text-lg font-medium">Password Successfully Reset</h3>

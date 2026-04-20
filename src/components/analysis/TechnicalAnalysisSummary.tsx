@@ -37,11 +37,11 @@ export const TechnicalAnalysisSummary: React.FC<TechnicalAnalysisSummaryProps> =
   const getBiasColor = (bias: MarketBias) => {
     switch(bias) {
       case 'bullish':
-        return 'bg-green-500 text-white';
+        return 'bg-bullish text-primary-foreground';
       case 'bearish':
-        return 'bg-red-500 text-white';
+        return 'bg-bearish text-primary-foreground';
       case 'neutral':
-        return 'bg-yellow-500 text-white';
+        return 'bg-warning text-primary-foreground';
       default:
         return 'bg-muted';
     }
@@ -106,9 +106,9 @@ export const TechnicalAnalysisSummary: React.FC<TechnicalAnalysisSummaryProps> =
               <span className="text-sm">Confidence</span>
               <span 
                 className={`font-medium ${
-                  displayConfidence >= 70 ? 'text-green-500' : 
-                  displayConfidence >= 50 ? 'text-yellow-500' : 
-                  'text-red-500'
+                  displayConfidence >= 70 ? 'text-bullish' : 
+                  displayConfidence >= 50 ? 'text-warning' : 
+                  'text-bearish'
                 }`}
               >
                 {displayConfidence}%
@@ -123,15 +123,15 @@ export const TechnicalAnalysisSummary: React.FC<TechnicalAnalysisSummaryProps> =
           <div className="grid grid-cols-3 gap-2 text-center text-sm">
             <div className="space-y-1 bg-muted/30 rounded p-2">
               <p className="text-xs text-muted-foreground">Bullish</p>
-              <p className="font-semibold text-green-500">{bullishCount || 0}</p>
+              <p className="font-semibold text-bullish">{bullishCount || 0}</p>
             </div>
             <div className="space-y-1 bg-muted/30 rounded p-2">
               <p className="text-xs text-muted-foreground">Neutral</p>
-              <p className="font-semibold text-yellow-500">{neutralCount || 0}</p>
+              <p className="font-semibold text-warning">{neutralCount || 0}</p>
             </div>
             <div className="space-y-1 bg-muted/30 rounded p-2">
               <p className="text-xs text-muted-foreground">Bearish</p>
-              <p className="font-semibold text-red-500">{bearishCount || 0}</p>
+              <p className="font-semibold text-bearish">{bearishCount || 0}</p>
             </div>
           </div>
         </div>

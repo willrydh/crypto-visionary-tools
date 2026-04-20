@@ -75,9 +75,9 @@ export const EconomicCalendar: React.FC<EconomicCalendarProps> = ({ compact = fa
   const getImpactBadge = (impact: 'low' | 'medium' | 'high') => {
     switch(impact) {
       case 'high':
-        return <Badge className="bg-red-500 text-white">High</Badge>;
+        return <Badge className="bg-bearish text-primary-foreground">High</Badge>;
       case 'medium':
-        return <Badge className="bg-yellow-500 text-white">Medium</Badge>;
+        return <Badge className="bg-warning text-primary-foreground">Medium</Badge>;
       case 'low':
         return <Badge variant="outline">Low</Badge>;
       default:
