@@ -20,26 +20,26 @@ export const SupportResistanceLevels = () => {
   
   const getLevelColor = (type: string, strength: string) => {
     if (type === 'support') {
-      return strength === 'strong' ? 'bg-green-500 text-white' : 'bg-green-500/20 text-green-500';
+      return strength === 'strong' ? 'bg-bullish text-primary-foreground' : 'bg-bullish/20 text-bullish';
     }
-    return strength === 'strong' ? 'bg-red-500 text-white' : 'bg-red-500/20 text-red-500';
+    return strength === 'strong' ? 'bg-bearish text-primary-foreground' : 'bg-bearish/20 text-bearish';
   };
   
   const getStructureColor = (type: string) => {
     switch (type) {
       case 'uptrend':
-        return 'bg-green-500/10 text-green-500 border-green-500/20';
+        return 'bg-bullish/10 text-bullish border-bullish/20';
       case 'downtrend':
-        return 'bg-red-500/10 text-red-500 border-red-500/20';
+        return 'bg-bearish/10 text-bearish border-bearish/20';
       case 'range':
-        return 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20';
+        return 'bg-warning/10 text-warning border-warning/20';
       default:
-        return 'bg-blue-500/10 text-blue-500 border-blue-500/20';
+        return 'bg-info/10 text-info border-info/20';
     }
   };
   
   return (
-    <Card className="bg-[#1A1F2C] border-border/40 text-white">
+    <Card className="bg-surface-1 border-border/40 text-primary-foreground">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg">Support & Resistance Levels</CardTitle>
@@ -48,7 +48,7 @@ export const SupportResistanceLevels = () => {
             size="sm"
             onClick={() => fetchLevels(selectedCrypto.pairSymbol)}
             disabled={isLoading}
-            className="bg-white/5 border-white/10 hover:bg-white/10 text-white"
+            className="bg-card/5 border-border/10 hover:bg-card/10 text-primary-foreground"
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
             Refresh
@@ -68,7 +68,7 @@ export const SupportResistanceLevels = () => {
               variant="ghost"
               size="sm"
               onClick={() => fetchLevels(selectedCrypto.pairSymbol)}
-              className="mt-2 hover:bg-white/10 text-white"
+              className="mt-2 hover:bg-card/10 text-primary-foreground"
             >
               Try again
             </Button>
@@ -96,7 +96,7 @@ export const SupportResistanceLevels = () => {
               {levels.length > 0 ? (
                 <div className="space-y-2">
                   {levels.map((level, index) => (
-                    <div key={index} className="flex justify-between items-center p-2 rounded-md border border-white/10 bg-white/5">
+                    <div key={index} className="flex justify-between items-center p-2 rounded-md border border-border/10 bg-card/5">
                       <div className="flex items-center gap-2">
                         <Badge className={getLevelColor(level.type, level.strength)}>
                           {level.type === 'support' ? 'Support' : 'Resistance'}

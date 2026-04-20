@@ -150,13 +150,13 @@ const ComingUpEvents = () => {
     <Card className="bg-card/60 backdrop-blur-sm border-border/40 overflow-hidden">
       <CardHeader className="pb-3 pt-5">
         <CardTitle className="text-lg font-medium flex items-center gap-2">
-          <Clock className="h-4 w-4 text-purple-400" />
+          <Clock className="h-4 w-4 text-mode-night" />
           Coming up
         </CardTitle>
       </CardHeader>
       <CardContent className="pb-4">
         <div className="relative">
-          <div className="absolute left-[22px] top-1 bottom-1 w-0.5 bg-purple-900/20 dark:bg-purple-400/10"></div>
+          <div className="absolute left-[22px] top-1 bottom-1 w-0.5 bg-mode-night/20"></div>
           <div className="space-y-3"> 
             {events.map((event, index) => {
               const showOpensPulse = event.openingInLessThanHour && !event.isOpenNow && event.isNext;
@@ -167,7 +167,7 @@ const ComingUpEvents = () => {
                   className={`flex items-start gap-3
                     ${event.isNext && !event.isOpenNow ? 'animate-pulse-moderate' : ''}
                     py-2 px-2 rounded-lg transition-colors
-                    ${event.isNext ? 'bg-purple-500/5 dark:bg-purple-950/30' : 'hover:bg-muted/30'}
+                    ${event.isNext ? 'bg-mode-night/10' : 'hover:bg-muted/30'}
                   `}
                 >
                   <div
@@ -175,11 +175,11 @@ const ComingUpEvents = () => {
                       relative z-10 mt-1.5
                       ${event.isNext
                         ? showOpensPulse
-                          ? 'bg-purple-500 border-purple-300 shadow-glow'
-                          : 'bg-purple-400 border-purple-300'
+                          ? 'bg-mode-night border-mode-night/40 shadow-glow'
+                          : 'bg-mode-night/80 border-mode-night/40'
                         : event.isOpenNow
-                          ? 'bg-green-500 border-green-400 shadow-glow'
-                          : 'bg-slate-700 border-slate-600'}
+                          ? 'bg-bullish border-bullish/40 shadow-glow'
+                          : 'bg-surface-3 border-border'}
                       rounded-full border-2
                       h-3 w-3
                       transition-all
@@ -192,14 +192,14 @@ const ComingUpEvents = () => {
                         {event.isOpenNow && event.isToday ? (
                           <span className="flex items-center gap-1">
                             <span className="truncate">{event.name}</span>
-                            <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/30 ml-2">
-                              LIVE <span className="ml-1 h-2 w-2 rounded-full bg-green-500 inline-block animate-pulse"></span>
+                            <Badge variant="outline" className="bg-bullish/10 text-bullish border-bullish/30 ml-2">
+                              LIVE <span className="ml-1 h-2 w-2 rounded-full bg-bullish inline-block animate-pulse"></span>
                             </Badge>
                           </span>
                         ) : event.openingInLessThanHour && event.isNext ? (
                           <span className="flex items-center gap-2">
                             <span className="truncate">{event.name}</span>
-                            <Badge variant="outline" className="bg-purple-500/10 text-purple-400 border-purple-400/30">
+                            <Badge variant="outline" className="bg-mode-night/10 text-mode-night border-mode-night/30">
                               Opening Soon
                             </Badge>
                           </span>
@@ -210,7 +210,7 @@ const ComingUpEvents = () => {
                       
                       <div className="flex items-center gap-1.5">
                         {event.openingInLessThanHour && event.isNext ? (
-                          <Badge variant="outline" className="animate-pulse-slow bg-purple-500/10 text-purple-400 border-purple-400/30">
+                          <Badge variant="outline" className="animate-pulse-slow bg-mode-night/10 text-mode-night border-mode-night/30">
                             <Timer className="inline-block h-3 w-3 mr-1" />
                             {event.countdown}
                           </Badge>

@@ -159,7 +159,7 @@ export const TradingEducation = () => {
                 value={category.id} 
                 className={cn(
                   "flex items-center justify-center gap-1.5 py-1.5",
-                  activeTab === category.id ? "bg-primary text-white" : ""
+                  activeTab === category.id ? "bg-primary text-primary-foreground" : ""
                 )}
               >
                 {category.icon}
@@ -197,8 +197,8 @@ export const TradingEducation = () => {
                         <p className="text-sm">{item.tips}</p>
                       </div>
                       
-                      <div className="bg-orange-500/5 border border-orange-500/10 rounded-md p-3 mb-2">
-                        <div className="flex items-center gap-1.5 text-orange-500 font-medium mb-1">
+                      <div className="bg-warning/5 border border-warning/10 rounded-md p-3 mb-2">
+                        <div className="flex items-center gap-1.5 text-warning font-medium mb-1">
                           <AlertTriangle className="h-4 w-4" />
                           <span className="text-sm md:text-base">Watch Out</span>
                         </div>

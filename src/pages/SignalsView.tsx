@@ -102,9 +102,9 @@ const SignalsView = () => {
 
   const getModeColor = () => {
     switch(tradingMode) {
-      case 'scalp': return 'text-blue-500';
-      case 'day': return 'text-amber-500';
-      case 'night': return 'text-indigo-500';
+      case 'scalp': return 'text-info';
+      case 'day': return 'text-warning';
+      case 'night': return 'text-mode-night';
       default: return 'text-primary';
     }
   };

@@ -87,7 +87,7 @@ const PriceChartContainer: React.FC<PriceChartContainerProps> = ({
         high: candle.high,
         low: candle.low,
         volume: candle.volume,
-        color: candle.close >= candle.open ? "#16a34a" : "#dc2626",
+        color: candle.close >= candle.open ? "hsl(var(--bullish))" : "hsl(var(--bearish))",
         date: new Date(candle.timestamp)
       }));
 
@@ -168,13 +168,13 @@ const PriceChartContainer: React.FC<PriceChartContainerProps> = ({
                 <Badge variant="outline" className="text-xs flex items-center gap-1">
                   <span>Bybit API</span>
                   {connectionStatus === 'connected' && (
-                    <CheckCircle className="h-3 w-3 text-green-500" />
+                    <CheckCircle className="h-3 w-3 text-bullish" />
                   )}
                   {connectionStatus === 'connecting' && (
-                    <RefreshCw className="h-3 w-3 animate-spin text-yellow-500" />
+                    <RefreshCw className="h-3 w-3 animate-spin text-warning" />
                   )}
                   {connectionStatus === 'disconnected' && (
-                    <AlertTriangle className="h-3 w-3 text-red-500" />
+                    <AlertTriangle className="h-3 w-3 text-bearish" />
                   )}
                 </Badge>
               </div>
@@ -183,7 +183,7 @@ const PriceChartContainer: React.FC<PriceChartContainerProps> = ({
               {currentPrice !== null ? formatCurrency(currentPrice.price) : 'Loading...'}
               {currentPrice && currentPrice.change24h !== 0 && (
                 <Badge
-                  className={`ml-2 ${currentPrice.change24h > 0 ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}
+                  className={`ml-2 ${currentPrice.change24h > 0 ? 'bg-bullish text-primary-foreground' : 'bg-bearish text-primary-foreground'}`}
                 >
                   {currentPrice.change24h > 0 ? (
                     <ArrowUp className="h-3 w-3 mr-1" />
@@ -238,9 +238,9 @@ const PriceChartContainer: React.FC<PriceChartContainerProps> = ({
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Status:</span>
                       <span className={
-                        connectionStatus === 'connected' ? 'text-green-500' :
-                          connectionStatus === 'connecting' ? 'text-yellow-500' :
-                            'text-red-500'
+                        connectionStatus === 'connected' ? 'text-bullish' :
+                          connectionStatus === 'connecting' ? 'text-warning' :
+                            'text-bearish'
                       }>
                         {connectionStatus === 'connected' ? 'Connected' :
                           connectionStatus === 'connecting' ? 'Connecting' :

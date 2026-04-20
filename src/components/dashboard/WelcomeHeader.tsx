@@ -17,22 +17,22 @@ const systemServices = [
   {
     name: 'Bybit API',
     status: 'connected',
-    icon: <Wifi className="h-4 w-4 text-green-500" />,
+    icon: <Wifi className="h-4 w-4 text-bullish" />,
   },
   {
     name: 'Forex Factory',
     status: 'connected',
-    icon: <Globe className="h-4 w-4 text-green-500" />,
+    icon: <Globe className="h-4 w-4 text-bullish" />,
   },
   {
     name: 'Market Data',
     status: 'connected',
-    icon: <Database className="h-4 w-4 text-green-500" />,
+    icon: <Database className="h-4 w-4 text-bullish" />,
   },
   {
     name: 'AI Engine',
     status: 'connected',
-    icon: <BrainCircuit className="h-4 w-4 text-green-500" />,
+    icon: <BrainCircuit className="h-4 w-4 text-bullish" />,
   }
 ];
 
@@ -46,7 +46,7 @@ const WelcomeHeader = () => {
 
   const [latencies, setLatencies] = useState(systemServices.map(service => ({
     value: Math.floor(Math.random() * (180 - 70) + 70),
-    color: 'text-green-500'
+    color: 'text-bullish'
   })));
 
   // Simulate changing latencies
@@ -57,9 +57,9 @@ const WelcomeHeader = () => {
           const change = Math.random() > 0.5 ? 1 : -1;
           const newValue = Math.max(50, Math.min(200, item.value + change * Math.floor(Math.random() * 5)));
           
-          let color = 'text-green-500';
-          if (newValue > 150) color = 'text-red-500';
-          else if (newValue > 100) color = 'text-amber-500';
+          let color = 'text-bullish';
+          if (newValue > 150) color = 'text-bearish';
+          else if (newValue > 100) color = 'text-warning';
           
           return { value: newValue, color };
         })

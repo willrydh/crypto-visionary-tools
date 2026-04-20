@@ -71,12 +71,12 @@ const TimedOffer: React.FC<TimedOfferProps> = ({
   
   if (isExpired) {
     return (
-      <Card className="relative overflow-hidden border-amber-500/30 bg-amber-500/5 shadow-lg mt-8 mb-16">
+      <Card className="relative overflow-hidden border-warning/30 bg-warning/5 shadow-lg mt-8 mb-16">
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="bg-amber-500/10 p-2 rounded-full">
-                <Gift className="h-6 w-6 text-amber-500" />
+              <div className="bg-warning/10 p-2 rounded-full">
+                <Gift className="h-6 w-6 text-warning" />
               </div>
               <div>
                 <h3 className="text-xl font-bold">Offer Expired</h3>
@@ -88,7 +88,7 @@ const TimedOffer: React.FC<TimedOfferProps> = ({
             
             <div className="mt-4 md:mt-0">
               <Button 
-                className="text-white" 
+                className="text-primary-foreground" 
                 variant="outline"
                 onClick={() => navigate('/easter-egg')}
               >
@@ -104,17 +104,17 @@ const TimedOffer: React.FC<TimedOfferProps> = ({
   if (!isVisible) return null;
   
   return (
-    <Card className="relative overflow-hidden border-amber-500/30 bg-amber-500/5 shadow-lg mt-8 mb-16">
-      <div className="absolute bottom-0 left-0 h-1 bg-amber-500" style={{ width: `${percentComplete}%` }}></div>
+    <Card className="relative overflow-hidden border-warning/30 bg-warning/5 shadow-lg mt-8 mb-16">
+      <div className="absolute bottom-0 left-0 h-1 bg-warning" style={{ width: `${percentComplete}%` }}></div>
       
       <CardContent className="p-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="bg-amber-500/10 p-2 rounded-full">
-              <Sparkles className="h-6 w-6 text-amber-500" />
+            <div className="bg-warning/10 p-2 rounded-full">
+              <Sparkles className="h-6 w-6 text-warning" />
             </div>
             <div>
-              <Badge className="bg-amber-500 text-white mb-1">Limited Time Offer</Badge>
+              <Badge className="bg-warning text-primary-foreground mb-1">Limited Time Offer</Badge>
               <h3 className="text-xl font-bold">Special 25% Discount!</h3>
               <p className="text-muted-foreground">
                 Subscribe now to get 25% off your first month
@@ -125,7 +125,7 @@ const TimedOffer: React.FC<TimedOfferProps> = ({
           <div className="flex flex-col sm:flex-row items-center gap-4 mt-4 md:mt-0">
             <div className="flex items-center gap-2 bg-background/50 backdrop-blur-sm px-4 py-2 rounded-lg border border-border">
               <div className="flex items-center gap-1.5">
-                <Clock className="h-4 w-4 text-amber-500 animate-pulse" />
+                <Clock className="h-4 w-4 text-warning animate-pulse" />
                 <span className="text-sm font-medium">Expires in:</span>
               </div>
               <div className="text-lg font-bold tabular-nums">{timeLeft}s</div>
@@ -134,22 +134,22 @@ const TimedOffer: React.FC<TimedOfferProps> = ({
             <div className="flex gap-2 w-full sm:w-auto">
               <div className="relative group w-full sm:w-auto">
                 <div 
-                  className="flex items-center justify-between gap-2 bg-background px-4 py-2 rounded-lg border border-amber-500/30 cursor-pointer w-full sm:w-auto"
+                  className="flex items-center justify-between gap-2 bg-background px-4 py-2 rounded-lg border border-warning/30 cursor-pointer w-full sm:w-auto"
                   onClick={copyToClipboard}
                 >
                   <code className="font-mono font-bold">{couponCode}</code>
                   {copied ? (
-                    <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
+                    <CheckCircle className="h-4 w-4 text-bullish flex-shrink-0" />
                   ) : (
-                    <Copy className="h-4 w-4 text-amber-500 group-hover:text-amber-400 flex-shrink-0" />
+                    <Copy className="h-4 w-4 text-warning group-hover:text-warning flex-shrink-0" />
                   )}
                 </div>
-                <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-black/80 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-foreground/80 text-primary-foreground text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                   Click to copy
                 </div>
               </div>
               
-              <Button className="text-white whitespace-nowrap" onClick={handleUseClick}>
+              <Button className="text-primary-foreground whitespace-nowrap" onClick={handleUseClick}>
                 Use Coupon
               </Button>
             </div>

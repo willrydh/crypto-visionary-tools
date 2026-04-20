@@ -31,7 +31,7 @@ const WorkflowStep: React.FC<WorkflowStepProps> = ({
     <div className="relative">
       {/* Step number bubble - updated to white text and no transparency */}
       <div className={cn(
-        "absolute -left-4 -top-4 w-8 h-8 rounded-full flex items-center justify-center font-bold text-white z-10",
+        "absolute -left-4 -top-4 w-8 h-8 rounded-full flex items-center justify-center font-bold text-primary-foreground z-10",
         color
       )}>
         {step}
@@ -46,9 +46,9 @@ const WorkflowStep: React.FC<WorkflowStepProps> = ({
             <Badge variant="outline" className="self-start text-xs font-medium bg-background/20 backdrop-blur-sm mb-1">
               Step {step}
             </Badge>
-            <h3 className="text-2xl font-bold text-white">{title}</h3>
+            <h3 className="text-2xl font-bold text-primary-foreground">{title}</h3>
           </div>
-          <p className="text-white/80">{description}</p>
+          <p className="text-primary-foreground/80">{description}</p>
         </div>
       </Card>
     </div>
@@ -61,36 +61,36 @@ const HowItWorksSection = () => {
       title: "Data Collection",
       description: "Our advanced systems gather high-frequency market data from multiple exchanges, combining real-time price action with volume profiles and order flow analytics.",
       icon: <Database className="h-5 w-5" />,
-      color: "bg-indigo-600", // Removed transparency
-      bgColor: "bg-[#1A1F2C]/90 border-none"
+      color: "bg-mode-night", // Removed transparency
+      bgColor: "bg-surface-1/90 border-none"
     },
     {
       title: "AI Processing",
       description: "Proprietary machine learning algorithms analyze patterns, trends, and market conditions, identifying key support and resistance levels with unprecedented accuracy.",
       icon: <BrainCircuit className="h-5 w-5" />,
-      color: "bg-purple-600", // Removed transparency
-      bgColor: "bg-[#1A1F2C]/90 border-none"
+      color: "bg-mode-night", // Removed transparency
+      bgColor: "bg-surface-1/90 border-none"
     },
     {
       title: "Signal Generation",
       description: "High-probability trading signals are generated based on multi-timeframe analysis, with risk management parameters tailored to your selected trading strategy.",
       icon: <Zap className="h-5 w-5" />,
-      color: "bg-amber-500", // Removed transparency
-      bgColor: "bg-gradient-to-br from-amber-500/70 to-orange-600/70 border-none"
+      color: "bg-warning", // Removed transparency
+      bgColor: "bg-gradient-to-br from-warning/70 to-warning/40 border-none"
     },
     {
       title: "Actionable Insights",
       description: "Receive precise entry and exit points, position sizing recommendations, and real-time alerts on your dashboard to execute trades with confidence.",
       icon: <Lightbulb className="h-5 w-5" />,
-      color: "bg-green-600", // Removed transparency
-      bgColor: "bg-gradient-to-br from-green-500/70 to-emerald-600/70 border-none"
+      color: "bg-bullish", // Removed transparency
+      bgColor: "bg-gradient-to-br from-bullish/70 to-bullish/40 border-none"
     }
   ];
 
   return (
     <section className="relative overflow-hidden py-16 px-6 bg-background/50">
       {/* Dark gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/80 to-background/90 z-0"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-foreground/80 to-background/90 z-0"></div>
       
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="text-center mb-12">

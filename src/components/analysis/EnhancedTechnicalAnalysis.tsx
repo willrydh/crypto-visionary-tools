@@ -41,11 +41,11 @@ const EnhancedTechnicalAnalysis: React.FC<EnhancedTechnicalAnalysisProps> = ({
   const getBiasColor = (bias: MarketBias) => {
     switch(bias) {
       case 'bullish':
-        return 'bg-green-500 text-white';
+        return 'bg-bullish text-primary-foreground';
       case 'bearish':
-        return 'bg-red-500 text-white';
+        return 'bg-bearish text-primary-foreground';
       case 'neutral':
-        return 'bg-yellow-500 text-white';
+        return 'bg-warning text-primary-foreground';
       default:
         return 'bg-muted';
     }
@@ -134,11 +134,11 @@ const EnhancedTechnicalAnalysis: React.FC<EnhancedTechnicalAnalysisProps> = ({
             
             <div className="grid grid-cols-3 gap-3 pt-2">
               <div className="rounded-lg border p-2 text-center">
-                <div className="text-sm font-medium text-green-500">{bullishCount}</div>
+                <div className="text-sm font-medium text-bullish">{bullishCount}</div>
                 <div className="text-xs text-muted-foreground">Bullish</div>
               </div>
               <div className="rounded-lg border p-2 text-center">
-                <div className="text-sm font-medium text-red-500">{bearishCount}</div>
+                <div className="text-sm font-medium text-bearish">{bearishCount}</div>
                 <div className="text-xs text-muted-foreground">Bearish</div>
               </div>
               <div className="rounded-lg border p-2 text-center">
@@ -153,9 +153,9 @@ const EnhancedTechnicalAnalysis: React.FC<EnhancedTechnicalAnalysisProps> = ({
                 {indicators.slice(0, 4).map((indicator, idx) => (
                   <div key={idx} className="text-xs flex items-center gap-1">
                     <span className={`w-2 h-2 rounded-full ${
-                      indicator.signal === 'bullish' ? 'bg-green-500' : 
-                      indicator.signal === 'bearish' ? 'bg-red-500' : 
-                      'bg-yellow-500'
+                      indicator.signal === 'bullish' ? 'bg-bullish' : 
+                      indicator.signal === 'bearish' ? 'bg-bearish' : 
+                      'bg-warning'
                     }`}></span>
                     <span>{indicator.name}</span>
                   </div>

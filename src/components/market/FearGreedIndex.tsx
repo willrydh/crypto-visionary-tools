@@ -15,11 +15,11 @@ interface FearGreedData {
 }
 
 const getFearGreedColor = (value: number): string => {
-  if (value <= 25) return 'bg-red-500'; // Extreme Fear
-  if (value <= 40) return 'bg-orange-500'; // Fear
-  if (value <= 60) return 'bg-yellow-500'; // Neutral
-  if (value <= 75) return 'bg-green-500'; // Greed
-  return 'bg-emerald-500'; // Extreme Greed
+  if (value <= 25) return 'bg-bearish'; // Extreme Fear
+  if (value <= 40) return 'bg-warning'; // Fear
+  if (value <= 60) return 'bg-warning'; // Neutral
+  if (value <= 75) return 'bg-bullish'; // Greed
+  return 'bg-bullish'; // Extreme Greed
 };
 
 const FearGreedIndex = () => {
@@ -116,7 +116,7 @@ const FearGreedIndex = () => {
               </TooltipProvider>
             </div>
             
-            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4">
+            <div className="w-full bg-muted rounded-full h-4">
               <div 
                 className={`${getFearGreedColor(parseInt(data.value))} h-4 rounded-full transition-all duration-500 ease-in-out`}
                 style={{ width: `${data.value}%` }}
@@ -136,7 +136,7 @@ const FearGreedIndex = () => {
         )}
         
         {isError && (
-          <div className="mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded-md text-sm text-red-500">
+          <div className="mt-4 p-3 bg-bearish/10 border border-bearish/30 rounded-md text-sm text-bearish">
             Using fallback data due to API connection issues.
           </div>
         )}

@@ -59,7 +59,7 @@ const ThankYouPage = () => {
       
       <div className="container max-w-4xl px-4 py-12 relative z-10">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-100 dark:bg-green-900/30 text-green-500 mb-6">
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-bullish/10 dark:bg-bullish/30 text-bullish mb-6">
             <CheckCircle className="h-10 w-10" />
           </div>
           <h1 className="text-3xl md:text-4xl font-bold mb-3">Thank You for Your Purchase!</h1>
@@ -89,23 +89,23 @@ const ThankYouPage = () => {
                 <h3 className="text-sm font-medium mb-1">Your Pro Benefits</h3>
                 <ul className="text-sm text-muted-foreground space-y-1">
                   <li className="flex items-center gap-2">
-                    <CheckCircle className="h-3.5 w-3.5 text-green-500" />
+                    <CheckCircle className="h-3.5 w-3.5 text-bullish" />
                     <span>AI Trading Signals</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle className="h-3.5 w-3.5 text-green-500" />
+                    <CheckCircle className="h-3.5 w-3.5 text-bullish" />
                     <span>Real-time Technical Analysis</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle className="h-3.5 w-3.5 text-green-500" />
+                    <CheckCircle className="h-3.5 w-3.5 text-bullish" />
                     <span>Support & Resistance Levels</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle className="h-3.5 w-3.5 text-green-500" />
+                    <CheckCircle className="h-3.5 w-3.5 text-bullish" />
                     <span>Economic Calendar</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle className="h-3.5 w-3.5 text-green-500" />
+                    <CheckCircle className="h-3.5 w-3.5 text-bullish" />
                     <span>Premium Market Insights</span>
                   </li>
                 </ul>

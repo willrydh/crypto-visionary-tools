@@ -94,11 +94,11 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
   const getBgGradient = () => {
     const intensity = getIntensity(pnlPct);
     if (pnlPct > 0) {
-      return `bg-gradient-to-br from-slate-900 to-green-900/${intensity} border-green-700/${intensity}`;
+      return `bg-gradient-to-br from-surface-1 to-bullish/${intensity} border-bullish/${intensity}`;
     } else if (pnlPct < 0) {
-      return `bg-gradient-to-br from-slate-900 to-red-900/${intensity} border-red-700/${intensity}`;
+      return `bg-gradient-to-br from-surface-1 to-bearish/${intensity} border-bearish/${intensity}`;
     }
-    return "bg-gradient-to-br from-slate-900 to-slate-800 border-slate-700/30";
+    return "bg-gradient-to-br from-surface-1 to-surface-2 border-border/30";
   };
   
   useEffect(() => {
@@ -170,7 +170,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
       return (
         <div className="space-y-1">
           <div>{ethValue.toFixed(8)} ETH</div>
-          <div className="text-sm text-slate-300">≈ {formatCurrency(sekValue, 'SEK', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+          <div className="text-sm text-muted-foreground">≈ {formatCurrency(sekValue, 'SEK', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
         </div>
       );
     }
@@ -182,20 +182,20 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
       <div className={cn(
         "w-full px-6 py-4 rounded-lg text-center",
         pct >= 0 
-          ? "bg-green-500/30 border border-green-500/40" 
-          : "bg-red-500/30 border border-red-500/40"
+          ? "bg-bullish/30 border border-bullish/40" 
+          : "bg-bearish/30 border border-bearish/40"
       )}>
-        <div className="text-xs text-slate-200 mb-1">P&amp;L %</div>
+        <div className="text-xs text-primary-foreground/80 mb-1">P&amp;L %</div>
         <div className={cn(
           "flex items-center justify-center gap-1 font-bold text-2xl",
-          pct >= 0 ? "text-green-400" : "text-red-400"
+          pct >= 0 ? "text-bullish" : "text-bearish"
         )}>
           {pct >= 0 ? <ArrowUp className="h-5 w-5" /> : <ArrowDown className="h-5 w-5" />}
           {Math.abs(pct).toFixed(2)}%
         </div>
         <div className={cn(
           "text-lg mt-1 font-semibold",
-          trade.symbol.toUpperCase().includes('ETH') ? "text-[#9b87f5]" : pnlVal >= 0 ? "text-green-300" : "text-red-300"
+          trade.symbol.toUpperCase().includes('ETH') ? "text-mode-night" : pnlVal >= 0 ? "text-bullish" : "text-bearish"
         )}>
           {formatPnLValue(pnlVal, trade.symbol)}
         </div>
@@ -238,24 +238,24 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
       <div className="p-4 sm:p-6">
         {!hideHeader && (
           <div className="flex items-center justify-between mb-2">
-            <h2 className="text-2xl font-bold text-white">AI Recommendation</h2>
+            <h2 className="text-2xl font-bold text-primary-foreground">AI Recommendation</h2>
             <button
               onClick={() => setIsFullscreen(true)}
-              className="p-2 hover:bg-slate-700/50 rounded-lg transition-colors"
+              className="p-2 hover:bg-surface-3/50 rounded-lg transition-colors"
             >
-              <Maximize2 className="h-5 w-5 text-slate-300" />
+              <Maximize2 className="h-5 w-5 text-muted-foreground" />
             </button>
           </div>
         )}
         
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-sm text-slate-300 mb-3">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-sm text-muted-foreground mb-3">
           <span className="font-medium">{trade.name}</span>
           <span className="hidden sm:block">•</span>
           <span>{trade.pairSymbol}</span>
           {trade.leverage > 1 && (
             <>
               <span className="hidden sm:block">•</span>
-              <span className="font-medium text-orange-400">{trade.leverage}x</span>
+              <span className="font-medium text-warning">{trade.leverage}x</span>
             </>
           )}
         </div>
@@ -266,9 +266,9 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
               <Badge 
                 className={cn(
                   "text-base px-6 py-2 rounded-full font-bold cursor-pointer",
-                  rec === "ADD" ? "bg-green-500/80 text-white border-0" : 
-                  rec === "REMOVE" ? "bg-red-500/80 text-white border-0" : 
-                  "bg-yellow-500/80 text-black border-0"
+                  rec === "ADD" ? "bg-bullish/80 text-primary-foreground border-0" : 
+                  rec === "REMOVE" ? "bg-bearish/80 text-primary-foreground border-0" : 
+                  "bg-warning/80 text-foreground border-0"
                 )}
               >
                 {rec === "ADD" && <CircleCheck className="mr-1 h-4 w-4" />}
@@ -278,7 +278,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
               </Badge>
             </HoverCardTrigger>
             <HoverCardContent 
-              className="w-80 p-4 bg-slate-800 border-slate-700 text-white"
+              className="w-80 p-4 bg-surface-2 border-border text-primary-foreground"
               side="right"
             >
               <p className="text-sm">{reason}</p>
@@ -287,9 +287,9 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
         </div>
         
         <div className="flex flex-col items-center my-4 py-3 rounded-lg">
-          <div className="text-xs text-slate-400 mb-1">Current price</div>
+          <div className="text-xs text-muted-foreground mb-1">Current price</div>
           <div className={cn(
-            "text-3xl sm:text-4xl font-bold text-white transition-all duration-300 transform",
+            "text-3xl sm:text-4xl font-bold text-primary-foreground transition-all duration-300 transform",
             ticking ? "scale-105" : "scale-100"
           )}>
             ${lastPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -301,61 +301,61 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
-          <div className="bg-slate-800/50 p-3 rounded-lg border border-slate-700/30">
-            <div className="text-xs text-slate-400">Entry</div>
-            <div className="font-bold text-white text-base sm:text-lg">
+          <div className="bg-surface-2/50 p-3 rounded-lg border border-border/30">
+            <div className="text-xs text-muted-foreground">Entry</div>
+            <div className="font-bold text-primary-foreground text-base sm:text-lg">
               {trade.entryPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
           </div>
           
-          <div className="bg-slate-800/50 p-3 rounded-lg border border-slate-700/30">
-            <div className="text-xs text-slate-400">P&amp;L</div>
+          <div className="bg-surface-2/50 p-3 rounded-lg border border-border/30">
+            <div className="text-xs text-muted-foreground">P&amp;L</div>
             <div className={cn(
               "font-bold text-base sm:text-lg",
-              trade.symbol.toUpperCase().includes('ETH') ? "text-[#9b87f5]" : pnlVal >= 0 ? "text-green-400" : "text-red-400"
+              trade.symbol.toUpperCase().includes('ETH') ? "text-mode-night" : pnlVal >= 0 ? "text-bullish" : "text-bearish"
             )}>
               {formatPnLValue(pnlVal, trade.symbol)}
             </div>
           </div>
           
-          <div className="bg-slate-800/50 p-3 rounded-lg border border-slate-700/30">
-            <div className="text-xs text-slate-400">
+          <div className="bg-surface-2/50 p-3 rounded-lg border border-border/30">
+            <div className="text-xs text-muted-foreground">
               {trade.leverage > 1 ? "Size (leverage)" : "Size"}
             </div>
-            <div className="font-bold text-white text-base sm:text-lg flex items-center gap-2">
+            <div className="font-bold text-primary-foreground text-base sm:text-lg flex items-center gap-2">
               <span>{formatPositionSize(trade.size, trade.symbol)}</span>
-              {trade.leverage > 1 && <span className="text-orange-400">{trade.leverage}x</span>}
+              {trade.leverage > 1 && <span className="text-warning">{trade.leverage}x</span>}
             </div>
           </div>
           
-          <div className="bg-slate-800/50 p-3 rounded-lg border border-slate-700/30">
-            <div className="text-xs text-slate-400">Trade</div>
+          <div className="bg-surface-2/50 p-3 rounded-lg border border-border/30">
+            <div className="text-xs text-muted-foreground">Trade</div>
             <div className={cn(
               "font-bold text-base sm:text-lg",
-              trade.type === "long" ? "text-green-400" : "text-red-400"
+              trade.type === "long" ? "text-bullish" : "text-bearish"
             )}>
               {trade.type === "long" ? "LONG" : "SHORT"}
             </div>
           </div>
         </div>
         
-        <div className="space-y-4 mb-4 sm:mb-6 bg-slate-800/30 p-3 sm:p-4 rounded-lg border border-slate-700/30">
-          <h3 className="text-xs uppercase text-slate-400 font-medium text-center mb-2">PRICE RANGES</h3>
+        <div className="space-y-4 mb-4 sm:mb-6 bg-surface-2/30 p-3 sm:p-4 rounded-lg border border-border/30">
+          <h3 className="text-xs uppercase text-muted-foreground font-medium text-center mb-2">PRICE RANGES</h3>
           
           <div className="space-y-1">
-            <div className="flex justify-between text-xs text-slate-400">
+            <div className="flex justify-between text-xs text-muted-foreground">
               <span>Hourly (high/low)</span>
             </div>
             <div className="flex justify-between text-xs font-medium mb-1">
-              <span className="text-green-400">
+              <span className="text-bullish">
                 ${formatPriceValue(hourlyHigh)}
               </span>
-              <span className="text-red-400">
+              <span className="text-bearish">
                 ${formatPriceValue(hourlyLow)}
               </span>
             </div>
-            <div className="h-1.5 bg-slate-700/50 rounded-full relative">
-              <div className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-white border-2 border-blue-500"
+            <div className="h-1.5 bg-surface-3/50 rounded-full relative">
+              <div className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-card border-2 border-info"
                 style={{
                   left: renderPriceMarker(
                     hourlyHigh,
@@ -365,25 +365,25 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
                 }}
               ></div>
             </div>
-            <div className="text-center text-xs text-slate-400 mt-1">
+            <div className="text-center text-xs text-muted-foreground mt-1">
               Market price: ${lastPrice.toFixed(2)}
             </div>
           </div>
           
           <div className="space-y-1">
-            <div className="flex justify-between text-xs text-slate-400">
+            <div className="flex justify-between text-xs text-muted-foreground">
               <span>Daily (high/low)</span>
             </div>
             <div className="flex justify-between text-xs font-medium mb-1">
-              <span className="text-green-400">
+              <span className="text-bullish">
                 ${formatPriceValue(dailyHigh)}
               </span>
-              <span className="text-red-400">
+              <span className="text-bearish">
                 ${formatPriceValue(dailyLow)}
               </span>
             </div>
-            <div className="h-1.5 bg-slate-700/50 rounded-full relative">
-              <div className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-white border-2 border-blue-500"
+            <div className="h-1.5 bg-surface-3/50 rounded-full relative">
+              <div className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-card border-2 border-info"
                 style={{
                   left: renderPriceMarker(
                     dailyHigh,
@@ -393,25 +393,25 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
                 }}
               ></div>
             </div>
-            <div className="text-center text-xs text-slate-400 mt-1">
+            <div className="text-center text-xs text-muted-foreground mt-1">
               Market price: ${lastPrice.toFixed(2)}
             </div>
           </div>
           
           <div className="space-y-1">
-            <div className="flex justify-between text-xs text-slate-400">
+            <div className="flex justify-between text-xs text-muted-foreground">
               <span>Weekly (high/low)</span>
             </div>
             <div className="flex justify-between text-xs font-medium mb-1">
-              <span className="text-green-400">
+              <span className="text-bullish">
                 ${formatPriceValue(weeklyHigh)}
               </span>
-              <span className="text-red-400">
+              <span className="text-bearish">
                 ${formatPriceValue(weeklyLow)}
               </span>
             </div>
-            <div className="h-1.5 bg-slate-700/50 rounded-full relative">
-              <div className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-white border-2 border-blue-500"
+            <div className="h-1.5 bg-surface-3/50 rounded-full relative">
+              <div className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-card border-2 border-info"
                 style={{
                   left: renderPriceMarker(
                     weeklyHigh,
@@ -421,7 +421,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
                 }}
               ></div>
             </div>
-            <div className="text-center text-xs text-slate-400 mt-1">
+            <div className="text-center text-xs text-muted-foreground mt-1">
               Market price: ${lastPrice.toFixed(2)}
             </div>
           </div>
@@ -429,14 +429,14 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
         
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <button 
-            className="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+            className="w-full bg-surface-2 hover:bg-surface-3 text-primary-foreground font-medium py-2 px-4 rounded-lg transition-colors"
             onClick={handleResetTrade}
           >
             Start over
           </button>
           
           <button 
-            className="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+            className="w-full bg-surface-2 hover:bg-surface-3 text-primary-foreground font-medium py-2 px-4 rounded-lg transition-colors"
             onClick={handleEndTrade}
           >
             End trade

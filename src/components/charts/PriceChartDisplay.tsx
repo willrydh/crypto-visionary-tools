@@ -29,7 +29,7 @@ export const PriceChartDisplay: React.FC<PriceChartDisplayProps> = ({ processedD
     if (!processedData || processedData.length === 0) {
       return (
         <div className="h-full flex items-center justify-center">
-          <AlertTriangle className="h-8 w-8 text-yellow-500 mr-2" />
+          <AlertTriangle className="h-8 w-8 text-warning mr-2" />
           <p>No chart data available</p>
         </div>
       );
@@ -43,8 +43,8 @@ export const PriceChartDisplay: React.FC<PriceChartDisplayProps> = ({ processedD
         >
           <defs>
             <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.2} />
-              <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+              <stop offset="5%" stopColor="hsl(var(--primary)))" stopOpacity={0.2} />
+              <stop offset="95%" stopColor="hsl(var(--primary)))" stopOpacity={0} />
             </linearGradient>
           </defs>
           <XAxis
@@ -72,7 +72,7 @@ export const PriceChartDisplay: React.FC<PriceChartDisplayProps> = ({ processedD
           <Area
             type="monotone"
             dataKey="price"
-            stroke="hsl(var(--primary))"
+            stroke="hsl(var(--primary)))"
             fill="url(#colorPrice)"
             isAnimationActive={false}
           />

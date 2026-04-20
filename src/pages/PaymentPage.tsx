@@ -156,7 +156,7 @@ const PaymentPage = () => {
           <h1 className="text-2xl md:text-3xl font-bold mb-2">Complete Your Purchase</h1>
           <p className="text-base text-muted-foreground">
             You've selected the <span className="font-semibold">{plan}</span> plan, billed {cycle}.
-            {discount && <span className="text-green-500 ml-2">({discountPercentage}% off with code {discount})</span>}
+            {discount && <span className="text-bullish ml-2">({discountPercentage}% off with code {discount})</span>}
           </p>
         </div>
 
@@ -182,7 +182,7 @@ const PaymentPage = () => {
                 </div>
                 
                 {discount && (
-                  <div className="flex justify-between text-green-500">
+                  <div className="flex justify-between text-bullish">
                     <span>Discount ({discount})</span>
                     <span>-${(standardPricing.Pro.price.yearly - pricing.Pro.price.yearly).toFixed(2)}</span>
                   </div>
@@ -200,7 +200,7 @@ const PaymentPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <Button 
             variant="outline" 
-            className="h-14 bg-black text-white hover:bg-black/90 flex items-center justify-center"
+            className="h-14 bg-foreground text-primary-foreground hover:bg-foreground/90 flex items-center justify-center"
             onClick={() => handleQuickPay('Apple Pay')}
             disabled={isProcessing}
           >
@@ -209,7 +209,7 @@ const PaymentPage = () => {
           
           <Button 
             variant="outline" 
-            className="h-14 bg-white text-black hover:bg-gray-100 border-gray-300 flex items-center justify-center"
+            className="h-14 bg-card text-foreground hover:bg-gray-100 border-border flex items-center justify-center"
             onClick={() => handleQuickPay('Google Pay')}
             disabled={isProcessing}
           >
@@ -325,7 +325,7 @@ const PaymentPage = () => {
                                 type="checkbox"
                                 checked={field.value}
                                 onChange={field.onChange}
-                                className="form-checkbox h-4 w-4 text-primary rounded border-gray-300 focus:ring-primary"
+                                className="form-checkbox h-4 w-4 text-primary rounded border-border focus:ring-primary"
                               />
                               <label htmlFor="saveCard" className="text-sm font-medium leading-none cursor-pointer">
                                 Save card for future payments
@@ -397,14 +397,14 @@ const PaymentPage = () => {
                               <div className="flex items-center space-x-2 rounded-md border p-4">
                                 <RadioGroupItem value="bitcoin" id="bitcoin" />
                                 <Label htmlFor="bitcoin" className="flex items-center gap-2 cursor-pointer font-medium">
-                                  <Bitcoin className="h-5 w-5 text-orange-500" />
+                                  <Bitcoin className="h-5 w-5 text-warning" />
                                   Bitcoin (BTC)
                                 </Label>
                               </div>
                               <div className="flex items-center space-x-2 rounded-md border p-4">
                                 <RadioGroupItem value="ethereum" id="ethereum" />
                                 <Label htmlFor="ethereum" className="flex items-center gap-2 cursor-pointer font-medium">
-                                  <svg className="h-5 w-5 text-purple-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <svg className="h-5 w-5 text-mode-night" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M12 2L19 12L12 16L5 12L12 2Z" fill="currentColor" />
                                     <path d="M12 16L19 12L12 22L5 12L12 16Z" fill="currentColor" />
                                   </svg>
@@ -414,7 +414,7 @@ const PaymentPage = () => {
                               <div className="flex items-center space-x-2 rounded-md border p-4">
                                 <RadioGroupItem value="usdt" id="usdt" />
                                 <Label htmlFor="usdt" className="flex items-center gap-2 cursor-pointer font-medium">
-                                  <svg className="h-5 w-5 text-green-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <svg className="h-5 w-5 text-bullish" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <circle cx="12" cy="12" r="10" fill="currentColor" />
                                     <path d="M8 11.5H16V14.5H8V11.5Z" fill="white" />
                                     <path d="M12 6V8.5M12 8.5H8V11.5M12 8.5H16V11.5" stroke="white" strokeWidth="1.5" />

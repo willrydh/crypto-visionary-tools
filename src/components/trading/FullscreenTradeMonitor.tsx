@@ -36,14 +36,14 @@ const FullscreenTradeMonitor: React.FC<FullscreenTradeMonitorProps> = ({
     
     if (pnl > 0) {
       // Much more visible green gradient for profit with higher opacity
-      return "bg-gradient-to-br from-slate-900 via-slate-900/90 to-green-700/60 border-green-500/50";
+      return "bg-gradient-to-br from-surface-1 via-surface-2/90 to-bullish/60 border-bullish/50";
     } 
     else if (pnl < 0) {
       // More visible red gradient for loss with higher opacity
-      return "bg-gradient-to-br from-slate-900 via-slate-900/90 to-red-700/60 border-red-500/50";
+      return "bg-gradient-to-br from-surface-1 via-surface-2/90 to-bearish/60 border-bearish/50";
     }
     
-    return "bg-gradient-to-br from-slate-900 to-slate-800 border-slate-700/30";
+    return "bg-gradient-to-br from-surface-1 to-surface-2 border-border/30";
   };
 
   // Add escape key handler
@@ -103,7 +103,7 @@ const FullscreenTradeMonitor: React.FC<FullscreenTradeMonitorProps> = ({
   return (
     <div 
       className={cn(
-        "fixed inset-0 text-white z-[9999] flex flex-col p-4 overflow-hidden",
+        "fixed inset-0 text-primary-foreground z-[9999] flex flex-col p-4 overflow-hidden",
         getBackgroundGradient()
       )}
       onClick={handleScreenClick}
@@ -119,10 +119,10 @@ const FullscreenTradeMonitor: React.FC<FullscreenTradeMonitorProps> = ({
     >
       <div className="absolute top-2 right-2 z-10">
         <button 
-          className="p-2 rounded-full bg-slate-800/70 hover:bg-slate-700/70 shadow-lg"
+          className="p-2 rounded-full bg-surface-2/70 hover:bg-surface-3/70 shadow-lg"
           onClick={handleExit}
         >
-          <Minimize2 className="h-5 w-5 text-slate-300" />
+          <Minimize2 className="h-5 w-5 text-muted-foreground" />
         </button>
       </div>
 
@@ -136,18 +136,18 @@ const FullscreenTradeMonitor: React.FC<FullscreenTradeMonitorProps> = ({
           />
         </div>
         
-        <div className="flex-1 bg-slate-800/70 rounded-lg border border-slate-700/50 p-4 shadow-lg">
+        <div className="flex-1 bg-surface-2/70 rounded-lg border border-border/50 p-4 shadow-lg">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={priceData}>
               <XAxis 
                 dataKey="timestamp" 
                 tickFormatter={(value) => new Date(value).toLocaleTimeString()}
-                stroke="#666"
+                stroke="hsl(var(--muted-foreground))"
               />
               <YAxis 
                 domain={['auto', 'auto']}
                 tickFormatter={(value) => formatCurrency(value)}
-                stroke="#666"
+                stroke="hsl(var(--muted-foreground))"
               />
               <Tooltip
                 labelFormatter={(value) => new Date(value).toLocaleTimeString()}
@@ -156,7 +156,7 @@ const FullscreenTradeMonitor: React.FC<FullscreenTradeMonitorProps> = ({
               <Line 
                 type="monotone" 
                 dataKey="price" 
-                stroke="#9b87f5"
+                stroke="hsl(var(--mode-night))"
                 dot={false}
                 strokeWidth={2}
               />
@@ -165,7 +165,7 @@ const FullscreenTradeMonitor: React.FC<FullscreenTradeMonitorProps> = ({
         </div>
       </div>
 
-      <div className="text-center text-xs text-slate-400 mt-2 absolute bottom-2 left-0 right-0">
+      <div className="text-center text-xs text-muted-foreground mt-2 absolute bottom-2 left-0 right-0">
         Triple-click anywhere to exit fullscreen
       </div>
     </div>

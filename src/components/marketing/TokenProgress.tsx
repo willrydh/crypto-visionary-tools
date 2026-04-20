@@ -39,7 +39,7 @@ export const TokenProgress = () => {
                   <span className="text-xs font-medium">Price</span>
                 </div>
                 <div className="text-lg font-bold">$0.0258</div>
-                <div className="text-xs text-green-500">+12.4% 24h</div>
+                <div className="text-xs text-bullish">+12.4% 24h</div>
               </div>
               
               <div className="bg-muted p-4 rounded-lg">
@@ -48,7 +48,7 @@ export const TokenProgress = () => {
                   <span className="text-xs font-medium">Holders</span>
                 </div>
                 <div className="text-lg font-bold">13,687</div>
-                <div className="text-xs text-green-500">+842 24h</div>
+                <div className="text-xs text-bullish">+842 24h</div>
               </div>
               
               <div className="bg-muted p-4 rounded-lg">
@@ -57,7 +57,7 @@ export const TokenProgress = () => {
                   <span className="text-xs font-medium">Market Cap</span>
                 </div>
                 <div className="text-lg font-bold">$2.58M</div>
-                <div className="text-xs text-green-500">+15.2% 24h</div>
+                <div className="text-xs text-bullish">+15.2% 24h</div>
               </div>
               
               <div className="bg-muted p-4 rounded-lg">

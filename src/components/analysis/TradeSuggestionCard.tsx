@@ -71,10 +71,10 @@ export const TradeSuggestionCard: React.FC<TradeSuggestionCardProps> = ({
 
   // Get color and text based on direction
   const directionColor = direction === 'long' 
-    ? 'bg-green-500 text-white' 
+    ? 'bg-bullish text-primary-foreground' 
     : direction === 'short' 
-      ? 'bg-red-500 text-white' 
-      : 'bg-yellow-500 text-white';
+      ? 'bg-bearish text-primary-foreground' 
+      : 'bg-warning text-primary-foreground';
 
   // Handle NaN values
   const displayConfidence = isNaN(confidence) ? 50 : confidence;
@@ -89,9 +89,9 @@ export const TradeSuggestionCard: React.FC<TradeSuggestionCardProps> = ({
   return (
     <Card className="relative overflow-hidden w-full">
       <div className={`absolute top-0 left-0 w-1 h-full ${
-        direction === 'long' ? 'bg-green-500' : 
-        direction === 'short' ? 'bg-red-500' : 
-        'bg-yellow-500'
+        direction === 'long' ? 'bg-bullish' : 
+        direction === 'short' ? 'bg-bearish' : 
+        'bg-warning'
       }`} />
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
@@ -120,11 +120,11 @@ export const TradeSuggestionCard: React.FC<TradeSuggestionCardProps> = ({
               </div>
               <div className="p-2 md:p-3 rounded-md border bg-background space-y-1">
                 <p className="text-xs text-muted-foreground">Stop Loss</p>
-                <p className="text-sm md:text-base font-mono font-medium text-red-500">${Math.round(stopLoss)}</p>
+                <p className="text-sm md:text-base font-mono font-medium text-bearish">${Math.round(stopLoss)}</p>
               </div>
               <div className="p-2 md:p-3 rounded-md border bg-background space-y-1">
                 <p className="text-xs text-muted-foreground">Take Profit</p>
-                <p className="text-sm md:text-base font-mono font-medium text-green-500">${Math.round(takeProfit)}</p>
+                <p className="text-sm md:text-base font-mono font-medium text-bullish">${Math.round(takeProfit)}</p>
               </div>
             </div>
             
@@ -133,9 +133,9 @@ export const TradeSuggestionCard: React.FC<TradeSuggestionCardProps> = ({
                 <span className="text-sm">Confidence</span>
                 <span 
                   className={`font-medium ${
-                    displayConfidence >= 70 ? 'text-green-500' : 
-                    displayConfidence >= 50 ? 'text-yellow-500' : 
-                    'text-red-500'
+                    displayConfidence >= 70 ? 'text-bullish' : 
+                    displayConfidence >= 50 ? 'text-warning' : 
+                    'text-bearish'
                   }`}
                 >
                   {displayConfidence}%
@@ -179,9 +179,9 @@ export const TradeSuggestionCard: React.FC<TradeSuggestionCardProps> = ({
                     <div key={idx} className="flex items-center justify-between p-2 rounded-md border bg-muted/30">
                       <span className="text-sm font-medium">{indicator.name}</span>
                       <Badge variant="outline" className={
-                        indicator.signal === 'bullish' ? 'text-green-500 border-green-500/20' :
-                        indicator.signal === 'bearish' ? 'text-red-500 border-red-500/20' :
-                        'text-yellow-500 border-yellow-500/20'
+                        indicator.signal === 'bullish' ? 'text-bullish border-bullish/20' :
+                        indicator.signal === 'bearish' ? 'text-bearish border-bearish/20' :
+                        'text-warning border-warning/20'
                       }>
                         {typeof indicator.value === 'number' 
                           ? indicator.value.toFixed(2) 
@@ -199,9 +199,9 @@ export const TradeSuggestionCard: React.FC<TradeSuggestionCardProps> = ({
               <div className="flex justify-between items-center mb-1">
                 <span className="text-xs text-muted-foreground">Recommended Trading Mode</span>
                 <Badge variant="outline" className={
-                  timeframe === '15m' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' :
-                  timeframe === '1h' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
-                  'bg-indigo-500/10 text-indigo-500 border-indigo-500/20'
+                  timeframe === '15m' ? 'bg-info/10 text-info border-info/20' :
+                  timeframe === '1h' ? 'bg-warning/10 text-warning border-warning/20' :
+                  'bg-mode-night/10 text-mode-night border-mode-night/20'
                 }>
                   {timeframe === '15m' ? 'Scalp' : 
                    timeframe === '1h' ? 'Day' : 'Night'}

@@ -247,13 +247,13 @@ export const ImprovedEconomicCalendar: React.FC<ImprovedEconomicCalendarProps> =
   const getImpactColor = (impact: 'low' | 'medium' | 'high'): string => {
     switch (impact) {
       case 'high':
-        return 'bg-red-500';
+        return 'bg-bearish';
       case 'medium':
-        return 'bg-amber-500';
+        return 'bg-warning';
       case 'low':
-        return 'bg-green-500';
+        return 'bg-bullish';
       default:
-        return 'bg-slate-500';
+        return 'bg-muted-foreground';
     }
   };
   

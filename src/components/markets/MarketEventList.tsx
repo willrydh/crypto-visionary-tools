@@ -137,12 +137,12 @@ const MarketEventList: React.FC<MarketEventListProps> = ({
             <CardTitle className="text-lg flex items-center">
               {selectedType === 'pump' ? (
                 <>
-                  <TrendingUp className="h-5 w-5 text-green-500 mr-2" />
+                  <TrendingUp className="h-5 w-5 text-bullish mr-2" />
                   Market Pumps
                 </>
               ) : selectedType === 'dump' ? (
                 <>
-                  <TrendingDown className="h-5 w-5 text-red-500 mr-2" />
+                  <TrendingDown className="h-5 w-5 text-bearish mr-2" />
                   Market Dumps
                 </>
               ) : (
@@ -162,9 +162,9 @@ const MarketEventList: React.FC<MarketEventListProps> = ({
                   <div key={event.id} className="flex items-center justify-between p-2 border rounded-md">
                     <div className="flex items-center gap-2">
                       {event.type === 'pump' ? (
-                        <TrendingUp className="h-4 w-4 text-green-500" />
+                        <TrendingUp className="h-4 w-4 text-bullish" />
                       ) : (
-                        <TrendingDown className="h-4 w-4 text-red-500" />
+                        <TrendingDown className="h-4 w-4 text-bearish" />
                       )}
                       <div>
                         <div className="font-medium">{event.symbol}</div>
@@ -172,7 +172,7 @@ const MarketEventList: React.FC<MarketEventListProps> = ({
                       </div>
                     </div>
                     <div className="text-right">
-                      <Badge className={event.type === 'pump' ? "bg-green-500" : "bg-red-500"}>
+                      <Badge className={event.type === 'pump' ? "bg-bullish" : "bg-bearish"}>
                         {event.change > 0 ? '+' : ''}{event.change}%
                       </Badge>
                       <div className="text-xs text-muted-foreground flex items-center mt-1 justify-end">
