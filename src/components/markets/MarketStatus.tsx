@@ -47,7 +47,7 @@ export const MarketStatus: React.FC<MarketStatusProps> = ({
       case 'open':
         return "bg-bullish/20 text-bullish border-bullish";
       case 'opening-soon':
-        return "bg-warning/20 text-warning border-amber-500";
+        return "bg-warning/20 text-warning border-warning";
       default:
         return "";
     }

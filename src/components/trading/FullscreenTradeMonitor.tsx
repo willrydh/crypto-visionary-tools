@@ -36,14 +36,14 @@ const FullscreenTradeMonitor: React.FC<FullscreenTradeMonitorProps> = ({
     
     if (pnl > 0) {
       // Much more visible green gradient for profit with higher opacity
-      return "bg-gradient-to-br from-surface-1 via-slate-900/90 to-green-700/60 border-bullish/50";
+      return "bg-gradient-to-br from-surface-1 via-surface-2/90 to-bullish/60 border-bullish/50";
     } 
     else if (pnl < 0) {
       // More visible red gradient for loss with higher opacity
-      return "bg-gradient-to-br from-surface-1 via-slate-900/90 to-red-700/60 border-bearish/50";
+      return "bg-gradient-to-br from-surface-1 via-surface-2/90 to-bearish/60 border-bearish/50";
     }
     
-    return "bg-gradient-to-br from-surface-1 to-slate-800 border-border/30";
+    return "bg-gradient-to-br from-surface-1 to-surface-2 border-border/30";
   };
 
   // Add escape key handler
@@ -142,12 +142,12 @@ const FullscreenTradeMonitor: React.FC<FullscreenTradeMonitorProps> = ({
               <XAxis 
                 dataKey="timestamp" 
                 tickFormatter={(value) => new Date(value).toLocaleTimeString()}
-                stroke="#666"
+                stroke="hsl(var(--muted-foreground))"
               />
               <YAxis 
                 domain={['auto', 'auto']}
                 tickFormatter={(value) => formatCurrency(value)}
-                stroke="#666"
+                stroke="hsl(var(--muted-foreground))"
               />
               <Tooltip
                 labelFormatter={(value) => new Date(value).toLocaleTimeString()}
@@ -156,7 +156,7 @@ const FullscreenTradeMonitor: React.FC<FullscreenTradeMonitorProps> = ({
               <Line 
                 type="monotone" 
                 dataKey="price" 
-                stroke="#9b87f5"
+                stroke="hsl(var(--mode-night))"
                 dot={false}
                 strokeWidth={2}
               />

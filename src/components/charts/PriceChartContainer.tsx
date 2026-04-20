@@ -87,7 +87,7 @@ const PriceChartContainer: React.FC<PriceChartContainerProps> = ({
         high: candle.high,
         low: candle.low,
         volume: candle.volume,
-        color: candle.close >= candle.open ? "#16a34a" : "#dc2626",
+        color: candle.close >= candle.open ? "hsl(var(--bullish))" : "hsl(var(--bearish))",
         date: new Date(candle.timestamp)
       }));
 

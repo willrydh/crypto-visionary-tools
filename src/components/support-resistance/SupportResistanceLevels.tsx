@@ -39,7 +39,7 @@ export const SupportResistanceLevels = () => {
   };
   
   return (
-    <Card className="bg-[#1A1F2C] border-border/40 text-primary-foreground">
+    <Card className="bg-surface-1 border-border/40 text-primary-foreground">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg">Support & Resistance Levels</CardTitle>

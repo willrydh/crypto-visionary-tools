@@ -45,7 +45,7 @@ export const SetupCard: React.FC<SetupCardProps> = ({ setup }) => {
     if (isBullish) {
       return "bg-bullish/20 text-bullish border-bullish/30";
     } else {
-      return "bg-bearish/20 text-red-600 border-bearish/30";
+      return "bg-bearish/20 text-bearish border-bearish/30";
     }
   };
   

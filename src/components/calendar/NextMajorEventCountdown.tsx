@@ -64,8 +64,7 @@ export const NextMajorEventCountdown: React.FC = () => {
             href={event.source}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-lightPurple-300 hover:text-warning text-xs underline font-medium transition"
-            className="inline-flex items-center gap-1 text-mode-night-foreground hover:text-warning text-xs underline font-medium transition" // light purple
+            className="inline-flex items-center gap-1 text-mode-night-foreground hover:text-warning text-xs underline font-medium transition"
           >
             Go to livestream/news page
             <ExternalLink className="h-4 w-4" />

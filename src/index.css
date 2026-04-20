@@ -235,15 +235,15 @@
 
 /* Trading Mode Specific Styles */
 .trading-mode-scalp {
-  @apply bg-blue-50/10 dark:bg-blue-950/10;
+  @apply bg-info/10;
 }
 
 .trading-mode-day {
-  @apply bg-amber-50/10 dark:bg-amber-950/10;
+  @apply bg-warning/10;
 }
 
 .trading-mode-night {
-  @apply bg-indigo-50/10 dark:bg-indigo-950/10;
+  @apply bg-mode-night/10;
 }
 
 /* Animation Classes */
@@ -264,7 +264,7 @@
 
 /* Shadow glow for price indicator dot */
 .shadow-glow {
-  box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 8px 2px hsl(var(--primary-foreground) / 0.3);
 }
 
 /* Scrollbar Styles */
