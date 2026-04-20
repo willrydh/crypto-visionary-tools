@@ -161,7 +161,7 @@ const PriceRangeIndicator: React.FC<PriceRangeIndicatorProps> = ({
       return {
         text: "Stand by for new entries",
         icon: <BarChart2 className="h-4 w-4 mr-2" />,
-        color: "bg-info/20 border-blue-600/30 text-info"
+        color: "bg-info/20 border-info/30 text-info"
       };
     }
   };

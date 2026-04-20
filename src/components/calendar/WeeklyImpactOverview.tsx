@@ -68,7 +68,7 @@ export const WeeklyImpactOverview: React.FC<Props> = ({ showHighOnly }) => {
                     key={ev.id}
                     className={`
                       w-2 h-2 rounded-full
-                      ${ev.impact === "high" ? "bg-bearish" : ev.impact === "medium" ? "bg-warning" : "bg-yellow-300"}
+                      ${ev.impact === "high" ? "bg-bearish" : ev.impact === "medium" ? "bg-warning" : "bg-warning"}
                       mr-0.5
                     `}
                     title={ev.title}

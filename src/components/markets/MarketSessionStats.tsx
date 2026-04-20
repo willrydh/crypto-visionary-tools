@@ -248,13 +248,13 @@ const MarketSessionStats = ({
   const getImpactColor = (impact: string) => {
     switch (impact.toLowerCase()) {
       case 'high':
-        return 'bg-bearish/10 text-bearish border-red-200/20';
+        return 'bg-bearish/10 text-bearish border-bearish/20';
       case 'medium':
-        return 'bg-warning/10 text-warning border-amber-200/20';
+        return 'bg-warning/10 text-warning border-warning/20';
       case 'low':
-        return 'bg-bullish/10 text-bullish border-green-200/20';
+        return 'bg-bullish/10 text-bullish border-bullish/20';
       default:
-        return 'bg-info/10 text-info border-blue-200/20';
+        return 'bg-info/10 text-info border-info/20';
     }
   };
 
@@ -340,7 +340,7 @@ const MarketSessionStats = ({
                     </div>
                     <div className="h-2 w-full bg-muted/60 rounded-full overflow-hidden">
                       <div 
-                        className="h-full bg-gradient-to-r from-green-500/80 to-green-400 rounded-full transition-all duration-500 ease-out"
+                        className="h-full bg-gradient-to-r from-bullish/80 to-bullish/50 rounded-full transition-all duration-500 ease-out"
                         style={{ width: `${session.pumpFrequency}%` }}
                       />
                     </div>
@@ -356,7 +356,7 @@ const MarketSessionStats = ({
                     </div>
                     <div className="h-2 w-full bg-muted/60 rounded-full overflow-hidden">
                       <div 
-                        className="h-full bg-gradient-to-r from-red-500/80 to-red-400 rounded-full transition-all duration-500 ease-out"
+                        className="h-full bg-gradient-to-r from-bearish/80 to-bearish/50 rounded-full transition-all duration-500 ease-out"
                         style={{ width: `${session.dumpFrequency}%` }}
                       />
                     </div>

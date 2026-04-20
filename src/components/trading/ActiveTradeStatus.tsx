@@ -94,11 +94,11 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
   const getBgGradient = () => {
     const intensity = getIntensity(pnlPct);
     if (pnlPct > 0) {
-      return `bg-gradient-to-br from-surface-1 to-green-900/${intensity} border-green-700/${intensity}`;
+      return `bg-gradient-to-br from-surface-1 to-bullish/${intensity} border-bullish/${intensity}`;
     } else if (pnlPct < 0) {
-      return `bg-gradient-to-br from-surface-1 to-red-900/${intensity} border-red-700/${intensity}`;
+      return `bg-gradient-to-br from-surface-1 to-bearish/${intensity} border-bearish/${intensity}`;
     }
-    return "bg-gradient-to-br from-surface-1 to-slate-800 border-border/30";
+    return "bg-gradient-to-br from-surface-1 to-surface-2 border-border/30";
   };
   
   useEffect(() => {
@@ -185,7 +185,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
           ? "bg-bullish/30 border border-bullish/40" 
           : "bg-bearish/30 border border-bearish/40"
       )}>
-        <div className="text-xs text-slate-200 mb-1">P&amp;L %</div>
+        <div className="text-xs text-primary-foreground/80 mb-1">P&amp;L %</div>
         <div className={cn(
           "flex items-center justify-center gap-1 font-bold text-2xl",
           pct >= 0 ? "text-bullish" : "text-bearish"
@@ -195,7 +195,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
         </div>
         <div className={cn(
           "text-lg mt-1 font-semibold",
-          trade.symbol.toUpperCase().includes('ETH') ? "text-[#9b87f5]" : pnlVal >= 0 ? "text-bullish" : "text-bearish"
+          trade.symbol.toUpperCase().includes('ETH') ? "text-mode-night" : pnlVal >= 0 ? "text-bullish" : "text-bearish"
         )}>
           {formatPnLValue(pnlVal, trade.symbol)}
         </div>
@@ -312,7 +312,7 @@ const ActiveTradeStatus: React.FC<ActiveTradeStatusProps> = ({
             <div className="text-xs text-muted-foreground">P&amp;L</div>
             <div className={cn(
               "font-bold text-base sm:text-lg",
-              trade.symbol.toUpperCase().includes('ETH') ? "text-[#9b87f5]" : pnlVal >= 0 ? "text-bullish" : "text-bearish"
+              trade.symbol.toUpperCase().includes('ETH') ? "text-mode-night" : pnlVal >= 0 ? "text-bullish" : "text-bearish"
             )}>
               {formatPnLValue(pnlVal, trade.symbol)}
             </div>

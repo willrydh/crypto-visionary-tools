@@ -29,13 +29,13 @@ const CryptoCoinIcon: React.FC<CryptoCoinIconProps> = ({
 
   const colorMap: Record<SupportedCoin, string> = {
     BTC: 'text-warning',
-    ETH: 'text-indigo-400',
+    ETH: 'text-mode-night',
     XRP: 'text-info',
     SOL: 'text-mode-night',
     DOGE: 'text-warning',
     WLD: 'text-bullish',
     LTC: 'text-muted-foreground',
-    SUI: 'text-blue-300'
+    SUI: 'text-info'
   };
 
   // Use actual cryptocurrency icons when enabled and no error occurred

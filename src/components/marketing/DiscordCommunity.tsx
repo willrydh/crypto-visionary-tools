@@ -39,8 +39,8 @@ export const DiscordCommunity = () => {
             <div className="flex items-center justify-center">
               <div className="bg-surface-1/60 p-5 rounded-lg border border-mode-night/30 shadow-lg font-mono w-full max-w-xs">
                 <div className="flex items-center gap-2 border-b border-mode-night/30 pb-3 mb-4">
-                  <Code className="h-5 w-5 text-[#5865F2]" />
-                  <span className="text-[#5865F2] font-semibold">Discord Invite</span>
+                  <Code className="h-5 w-5 text-mode-night" />
+                  <span className="text-mode-night font-semibold">Discord Invite</span>
                 </div>
                 <div className="text-center space-y-3">
                   <p className="text-primary-foreground/90 font-bold">ProfitPilotAI</p>

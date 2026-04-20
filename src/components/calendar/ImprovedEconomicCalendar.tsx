@@ -253,7 +253,7 @@ export const ImprovedEconomicCalendar: React.FC<ImprovedEconomicCalendarProps> =
       case 'low':
         return 'bg-bullish';
       default:
-        return 'bg-slate-500';
+        return 'bg-muted-foreground';
     }
   };
   

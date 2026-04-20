@@ -156,7 +156,7 @@ const ComingUpEvents = () => {
       </CardHeader>
       <CardContent className="pb-4">
         <div className="relative">
-          <div className="absolute left-[22px] top-1 bottom-1 w-0.5 bg-purple-900/20 dark:bg-purple-400/10"></div>
+          <div className="absolute left-[22px] top-1 bottom-1 w-0.5 bg-mode-night/20"></div>
           <div className="space-y-3"> 
             {events.map((event, index) => {
               const showOpensPulse = event.openingInLessThanHour && !event.isOpenNow && event.isNext;
@@ -167,7 +167,7 @@ const ComingUpEvents = () => {
                   className={`flex items-start gap-3
                     ${event.isNext && !event.isOpenNow ? 'animate-pulse-moderate' : ''}
                     py-2 px-2 rounded-lg transition-colors
-                    ${event.isNext ? 'bg-purple-500/5 dark:bg-purple-950/30' : 'hover:bg-muted/30'}
+                    ${event.isNext ? 'bg-mode-night/10' : 'hover:bg-muted/30'}
                   `}
                 >
                   <div
@@ -175,11 +175,11 @@ const ComingUpEvents = () => {
                       relative z-10 mt-1.5
                       ${event.isNext
                         ? showOpensPulse
-                          ? 'bg-purple-500 border-purple-300 shadow-glow'
-                          : 'bg-purple-400 border-purple-300'
+                          ? 'bg-mode-night border-mode-night/40 shadow-glow'
+                          : 'bg-mode-night/80 border-mode-night/40'
                         : event.isOpenNow
-                          ? 'bg-bullish border-green-400 shadow-glow'
-                          : 'bg-surface-3 border-slate-600'}
+                          ? 'bg-bullish border-bullish/40 shadow-glow'
+                          : 'bg-surface-3 border-border'}
                       rounded-full border-2
                       h-3 w-3
                       transition-all
@@ -199,7 +199,7 @@ const ComingUpEvents = () => {
                         ) : event.openingInLessThanHour && event.isNext ? (
                           <span className="flex items-center gap-2">
                             <span className="truncate">{event.name}</span>
-                            <Badge variant="outline" className="bg-mode-night/10 text-mode-night border-purple-400/30">
+                            <Badge variant="outline" className="bg-mode-night/10 text-mode-night border-mode-night/30">
                               Opening Soon
                             </Badge>
                           </span>
@@ -210,7 +210,7 @@ const ComingUpEvents = () => {
                       
                       <div className="flex items-center gap-1.5">
                         {event.openingInLessThanHour && event.isNext ? (
-                          <Badge variant="outline" className="animate-pulse-slow bg-mode-night/10 text-mode-night border-purple-400/30">
+                          <Badge variant="outline" className="animate-pulse-slow bg-mode-night/10 text-mode-night border-mode-night/30">
                             <Timer className="inline-block h-3 w-3 mr-1" />
                             {event.countdown}
                           </Badge>

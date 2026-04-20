@@ -51,7 +51,7 @@ const PriceThermometer = () => {
         <CardTitle>Price Range</CardTitle>
       </CardHeader>
       <CardContent className="p-4 relative">
-        <div className="thermometer-container h-40 relative bg-gradient-to-t from-green-500 to-red-500 rounded-md overflow-hidden">
+        <div className="thermometer-container h-40 relative bg-gradient-to-t from-bullish to-bearish rounded-md overflow-hidden">
           <div
             className="thermometer-fill absolute bottom-0 left-0 w-full transition-height duration-300 ease-out"
             style={getThermometerStyle(dailyPricePosition)}

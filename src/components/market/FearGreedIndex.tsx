@@ -19,7 +19,7 @@ const getFearGreedColor = (value: number): string => {
   if (value <= 40) return 'bg-warning'; // Fear
   if (value <= 60) return 'bg-warning'; // Neutral
   if (value <= 75) return 'bg-bullish'; // Greed
-  return 'bg-emerald-500'; // Extreme Greed
+  return 'bg-bullish'; // Extreme Greed
 };
 
 const FearGreedIndex = () => {
@@ -116,7 +116,7 @@ const FearGreedIndex = () => {
               </TooltipProvider>
             </div>
             
-            <div className="w-full bg-muted dark:bg-muted rounded-full h-4">
+            <div className="w-full bg-muted rounded-full h-4">
               <div 
                 className={`${getFearGreedColor(parseInt(data.value))} h-4 rounded-full transition-all duration-500 ease-in-out`}
                 style={{ width: `${data.value}%` }}

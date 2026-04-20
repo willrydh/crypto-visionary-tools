@@ -197,7 +197,7 @@ export const TradingEducation = () => {
                         <p className="text-sm">{item.tips}</p>
                       </div>
                       
-                      <div className="bg-warning/5 border border-orange-500/10 rounded-md p-3 mb-2">
+                      <div className="bg-warning/5 border border-warning/10 rounded-md p-3 mb-2">
                         <div className="flex items-center gap-1.5 text-warning font-medium mb-1">
                           <AlertTriangle className="h-4 w-4" />
                           <span className="text-sm md:text-base">Watch Out</span>

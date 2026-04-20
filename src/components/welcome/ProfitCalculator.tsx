@@ -109,14 +109,14 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({ className }) => {
               <h3 className="text-lg font-medium mb-4">Potential Monthly Returns</h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-info/10 dark:bg-blue-900/20 rounded-lg p-4 relative overflow-hidden">
+                <div className="bg-info/10 rounded-lg p-4 relative overflow-hidden">
                   <div className="relative z-10">
                     <div className="flex items-center gap-2 mb-1">
                       <BarChart3 className="h-4 w-4 text-info" />
                       <h4 className="font-medium">Standard Trading</h4>
                     </div>
                     <p className="text-sm text-muted-foreground mb-3">Without ProfitPilot</p>
-                    <div className="text-2xl font-bold text-info dark:text-info">
+                    <div className="text-2xl font-bold text-info">
                       {formatCurrency(standardEarnings)}
                       <span className="text-sm font-normal text-muted-foreground ml-1">/mo</span>
                     </div>
@@ -180,7 +180,7 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({ className }) => {
                       <h5 className="font-medium">Potential Annual Growth</h5>
                       <p className="text-sm text-muted-foreground">With compound returns</p>
                     </div>
-                    <div className="text-xl font-bold text-bullish dark:text-bullish">
+                    <div className="text-xl font-bold text-bullish">
                       {formatCurrency(annualEarnings)}
                     </div>
                   </div>

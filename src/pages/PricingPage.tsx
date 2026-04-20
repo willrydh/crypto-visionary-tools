@@ -125,7 +125,7 @@ const PricingPage = () => {
                   <TabsTrigger value="monthly">Monthly</TabsTrigger>
                   <TabsTrigger value="yearly">
                     Yearly
-                    <Badge variant="secondary" className="ml-2 bg-bullish/10 text-green-800 dark:bg-green-900 dark:text-green-100">
+                    <Badge variant="secondary" className="ml-2 bg-bullish/10 text-bullish dark:bg-bullish/20 dark:text-bullish">
                       Save {savingsPercentage}%
                     </Badge>
                   </TabsTrigger>

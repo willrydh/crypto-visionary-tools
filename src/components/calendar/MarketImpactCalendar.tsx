@@ -23,8 +23,8 @@ const MarketImpactCalendar: React.FC = () => {
           <button
             className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition ${
               showHighOnly
-                ? "bg-red-600 text-primary-foreground"
-                : "bg-muted hover:bg-warning/10 dark:bg-muted-foreground/10 dark:hover:bg-red-50"
+                ? "bg-bearish text-primary-foreground"
+                : "bg-muted hover:bg-warning/10 bg-muted-foreground/10 hover:bg-bearish/10"
             }`}
             onClick={() => setShowHighOnly((v) => !v)}
             aria-pressed={showHighOnly}
